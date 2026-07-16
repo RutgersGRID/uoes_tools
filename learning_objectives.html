@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learning Objective Builder</title>
+  <style>
+    body {
+      font-family: Georgia, serif;
+      max-width: 750px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: #f4f7f9;
+      color: #333;
+    }
+    h1 { text-align: center; }
+    .subtitle {
+      text-align: center;
+      color: #666;
+    }
+
+    /* The objective sentence with inline blanks */
+    #storyForm {
+      background: white;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      padding: 24px;
+      font-size: 19px;
+      line-height: 3; /* generous spacing so the hanging hint labels have room */
+    }
+
+    /* Wrapper flows inline with the text; the input sits on the text baseline */
+    .blank-wrap {
+      display: inline-block;
+      position: relative;
+      vertical-align: baseline;
+      margin: 0 2px;
+      line-height: normal; /* don't inherit the paragraph's tall line-height,
+                              so the wrapper hugs the input and the hint sits
+                              right beneath the blank */
+    }
+    /* Resting blanks: Mid Blue underline. Focused blank: full Rutgers Blue
+       plus a Light Blue wash — "active", not "error". */
+    .blank-wrap input {
+      min-width: 140px;
+      border: none;
+      border-bottom: 2px solid #7DBFD6; /* Mid Blue */
+      background: transparent;
+      font-family: inherit;
+      font-size: inherit;
+      text-align: center;
+      padding: 0 2px;
+      outline: none;
+    }
+    .blank-wrap input:focus {
+      border-bottom-color: #007FAC; /* Rutgers Blue */
+      background: #DEF0F9;          /* Light Blue */
+      border-radius: 4px 4px 0 0;
+    }
+    /* Inline dropdowns get the same written-in-blank look */
+    .blank-wrap select {
+      border: none;
+      border-bottom: 2px solid #7DBFD6; /* Mid Blue */
+      background: transparent;
+      font-family: inherit;
+      font-size: inherit;
+      text-align: center;
+      padding: 0 2px;
+      outline: none;
+      cursor: pointer;
+    }
+    .blank-wrap select:focus {
+      border-bottom-color: #007FAC; /* Rutgers Blue */
+      background: #DEF0F9;          /* Light Blue */
+      border-radius: 4px 4px 0 0;
+    }
+    /* The subscript label hangs below the blank without affecting alignment */
+    .blank-wrap .hint {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 11px;
+      font-style: italic;
+      color: #888;
+      line-height: 1;
+      margin-top: 2px;
+    }
+
+    /* The collapsible guidance panel */
+    #guide {
+      background: #DEF0F9;   /* Light Blue */
+      border: 1px solid #7DBFD6; /* Mid Blue */
+      border-radius: 8px;
+      padding: 10px 16px;
+      margin-bottom: 16px;
+      font-size: 15px;
+    }
+    #guide summary {
+      cursor: pointer;
+      font-weight: bold;
+      color: #007FAC; /* Rutgers Blue */
+    }
+    #guide dt {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    #guide dd {
+      margin: 2px 0 0 0;
+      line-height: 1.5;
+    }
+    #guide .example {
+      margin: 14px 0 4px 0;
+      padding-top: 10px;
+      border-top: 1px solid #7DBFD6; /* Mid Blue */
+      font-style: italic;
+      line-height: 2.8; /* room for the labels hanging under each part */
+    }
+    /* Underlined phrases in the example, labeled just like the form's blanks */
+    #guide .ex-part {
+      display: inline-block;
+      position: relative;
+      border-bottom: 2px solid #007FAC; /* Rutgers Blue */
+      line-height: normal;
+      margin: 0 1px;
+    }
+    #guide .ex-label {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 11px;
+      font-style: italic;
+      color: #888;
+      line-height: 1;
+      margin-top: 2px;
+    }
+
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 12px 32px;
+      font-size: 18px;
+      background: #CC0033; /* Rutgers Red */
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover { background: #A30029; }
+
+    #story {
+      display: none;
+      background: white;
+      border: 2px solid #CC0033; /* Rutgers Red */
+      border-radius: 8px;
+      padding: 20px;
+      font-size: 18px;
+      line-height: 2.8; /* room for the labels hanging under each part */
+      margin-top: 20px;
+    }
+    /* Filled-in parts: underlined and labeled, same as the guide's example */
+    #story .blank {
+      display: inline-block;
+      position: relative;
+      border-bottom: 2px solid #007FAC; /* Rutgers Blue */
+      line-height: normal;
+      margin: 0 1px;
+    }
+    #story .blank-label {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 11px;
+      font-style: italic;
+      color: #888;
+      line-height: 1;
+      margin-top: 2px;
+    }
+    /* Small secondary copy button inside the result box */
+    #copyBtn {
+      display: inline-block;
+      margin: 14px 0 0 0;
+      padding: 6px 16px;
+      font-size: 14px;
+      background: white;
+      color: #CC0033;             /* Rutgers Red */
+      border: 2px solid #CC0033;
+      border-radius: 6px;
+      cursor: pointer;
+      line-height: normal;
+    }
+    #copyBtn:hover {
+      background: #CC0033;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Learning Objective Builder</h1>
+  <p class="subtitle">Fill in the blanks, then click the button to build your objective.</p>
+
+  <details id="guide">
+    <summary>What goes in each blank?</summary>
+    <dl>
+      <dt>Condition</dt>
+      <dd>The circumstances under which learners will <em>demonstrate</em> the
+        skill &mdash; what they'll have (&ldquo;given a map&rdquo;), what
+        they'll be denied (&ldquo;without a calculator&rdquo;), or the setting
+        or timing (&ldquo;at the end of the semester&rdquo;). It describes the
+        performance, not the instruction.</dd>
+      <dt>Audience</dt>
+      <dd>Who the learners are: &ldquo;students,&rdquo; &ldquo;third-grade
+        students,&rdquo; &ldquo;new hires.&rdquo;</dd>
+      <dt>Behavior</dt>
+      <dd>An observable, measurable action &mdash; what learners will
+        <em>do</em>: label, calculate, assemble, critique. Avoid verbs you
+        can't watch or check, like &ldquo;understand&rdquo; or
+        &ldquo;appreciate.&rdquo;</dd>
+      <dt>Degree</dt>
+      <dd>How well they must perform for it to count: accuracy
+        (&ldquo;with 90% accuracy&rdquo;), speed (&ldquo;within five
+        minutes&rdquo;), or completeness (&ldquo;all fifty states&rdquo;).</dd>
+    </dl>
+    <p class="example"><strong>Example:</strong> Given
+      <span class="ex-part">a blank map of the US<span class="ex-label">condition</span></span>,
+      <span class="ex-part">students<span class="ex-label">audience</span></span> will
+      <span class="ex-part">label all fifty states<span class="ex-label">behavior</span></span>
+      <span class="ex-part">with 90% accuracy<span class="ex-label">degree</span></span>.</p>
+  </details>
+
+  <!-- The sentence with inline inputs is generated by JavaScript -->
+  <div id="storyForm"></div>
+
+  <button id="generateBtn">Create Objective</button>
+
+  <div id="story">
+    <div id="storyText"></div>
+    <button id="copyBtn" type="button">Copy</button>
+  </div>
+
+  <script>
+    // The objective template (ABCD model: Audience, Behavior, Condition, Degree).
+    // Anything in {curly braces} becomes an inline blank, and the word inside
+    // the braces appears as the hint under the blank.
+    // Put \n wherever you want to force a line break.
+    // For a dropdown instead of a text box, separate choices with | like
+    // {Given|At|After|Upon}. To also show a hint under it, add "label:" in
+    // front, e.g. {opener:Given|At|After|Upon}.
+    const template =
+      "{opener:After|At|Given|Upon|Without} {condition}, {audience} will {behavior} {degree}.";
+
+    // Short guidance shown as a tooltip when hovering a blank.
+    // Keys must match the placeholder names in the template.
+    const GUIDANCE = {
+      condition:
+        "The circumstances of the demonstration: what learners will have, " +
+        "be denied, or the setting/timing. e.g. \"a map\", \"the end of the semester\"",
+      audience: "Who the learners are. e.g. \"students\", \"new hires\"",
+      behavior:
+        "An observable, measurable action. e.g. \"label all fifty states\" — " +
+        "avoid \"understand\" or \"know\"",
+      degree:
+        "How well they must perform. e.g. \"with 90% accuracy\", \"within five minutes\""
+    };
+
+    // Build the sentence: plain text stays as text,
+    // each {placeholder} becomes an inline input or dropdown.
+    const storyForm = document.getElementById("storyForm");
+    let count = 0;
+
+    // Split the template on placeholders, keeping the placeholders in the list
+    template.split(/(\{.+?\})/g).forEach(part => {
+      const match = part.match(/^\{(.+)\}$/);
+      if (match) {
+        const inner = match[1];
+        const wrap = document.createElement("span");
+        wrap.className = "blank-wrap";
+
+        if (inner.includes("|")) {
+          // It's a dropdown: optional "label:" prefix, then |-separated choices
+          const colon = inner.indexOf(":");
+          const label = colon > -1 ? inner.slice(0, colon) : "";
+          const choices = (colon > -1 ? inner.slice(colon + 1) : inner).split("|");
+          const optionsHtml = choices
+            .map(c => `<option value="${c}">${c}</option>`)
+            .join("");
+          wrap.innerHTML = `
+            <select id="word${count}">${optionsHtml}</select>
+            ${label ? `<span class="hint">${label}</span>` : ""}
+          `;
+        } else {
+          // It's a text blank: build the input + subscript hint
+          wrap.innerHTML = `
+            <input type="text" id="word${count}" autocomplete="off">
+            <span class="hint">${inner}</span>
+          `;
+          // Attach hover guidance if we have any for this placeholder
+          if (GUIDANCE[inner]) wrap.title = GUIDANCE[inner];
+        }
+
+        storyForm.appendChild(wrap);
+        count++;
+      } else if (part) {
+        // Plain text — turn any \n into a real line break
+        part.split("\n").forEach((chunk, j) => {
+          if (j > 0) storyForm.appendChild(document.createElement("br"));
+          if (chunk) storyForm.appendChild(document.createTextNode(chunk));
+        });
+      }
+    });
+
+    // Blanks grow as you type, since conditions and behaviors are full phrases.
+    // (min-width in the CSS sets the floor.)
+    storyForm.addEventListener("input", e => {
+      if (e.target.tagName === "INPUT") {
+        e.target.style.width = (e.target.value.length + 2) + "ch";
+      }
+    });
+
+    // When the button is clicked, build the finished objective from the inputs.
+    // Each filled part is underlined with its label beneath, like the guide's
+    // example. Dropdown picks without a "label:" prefix (e.g. the opener) are
+    // left as plain text, since they're the fixed scaffolding of the formula.
+    let plainStory = ""; // the unannotated sentence, for the copy button
+
+    document.getElementById("generateBtn").addEventListener("click", () => {
+      let i = 0;
+      const words = [];
+      const story = template.replace(/\{(.+?)\}/g, (m, inner) => {
+        const word = document.getElementById("word" + i).value.trim() || "______";
+        words.push(word);
+        i++;
+
+        // Work out the label for this part: the placeholder name for text
+        // blanks, or the "label:" prefix for dropdowns (empty if none).
+        let label = inner;
+        if (inner.includes("|")) {
+          const colon = inner.indexOf(":");
+          label = colon > -1 ? inner.slice(0, colon) : "";
+        }
+
+        return label
+          ? `<span class="blank">${word}<span class="blank-label">${label}</span></span>`
+          : word;
+      });
+
+      // Plain-text version: same words, no markup
+      let j = 0;
+      plainStory = template.replace(/\{.+?\}/g, () => words[j++]);
+
+      document.getElementById("storyText").innerHTML = story.replace(/\n/g, "<br>");
+      const storyDiv = document.getElementById("story");
+      storyDiv.style.display = "block";
+      storyDiv.scrollIntoView({ behavior: "smooth" });
+    });
+
+    // Copy the plain sentence to the clipboard, with brief feedback
+    const copyBtn = document.getElementById("copyBtn");
+    copyBtn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(plainStory);
+      } catch (err) {
+        // Fallback for contexts where the Clipboard API is unavailable
+        const ta = document.createElement("textarea");
+        ta.value = plainStory;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+      }
+      copyBtn.textContent = "Copied!";
+      setTimeout(() => { copyBtn.textContent = "Copy"; }, 1500);
+    });
+  </script>
+
+</body>
+</html>
