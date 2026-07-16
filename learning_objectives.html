@@ -219,24 +219,29 @@
   <details id="guide">
     <summary>What goes in each blank?</summary>
     <dl>
+      <dt>Opener</dt>
+      <dd>The word that starts the objective and introduces the condition.
+        Use Given when learners have something, Without when they must work
+        without it, and At, After, or Upon when the condition is a setting or
+        timing.</dd>
       <dt>Condition</dt>
-      <dd>The circumstances under which learners will <em>demonstrate</em> the
-        skill &mdash; what they'll have (&ldquo;given a map&rdquo;), what
-        they'll be denied (&ldquo;without a calculator&rdquo;), or the setting
-        or timing (&ldquo;at the end of the semester&rdquo;). It describes the
-        performance, not the instruction.</dd>
+      <dd>The circumstances under which learners will demonstrate their
+        learning. The condition describes the performance, not the
+        instruction. This could be something they are given, like a map,
+        something they must do without, like a calculator, or the setting or
+        timing, like the end of a semester.</dd>
       <dt>Audience</dt>
-      <dd>Who the learners are: &ldquo;students,&rdquo; &ldquo;third-grade
-        students,&rdquo; &ldquo;new hires.&rdquo;</dd>
+      <dd>Who the learners are. Examples include students, third-grade
+        students, or new hires.</dd>
       <dt>Behavior</dt>
-      <dd>An observable, measurable action &mdash; what learners will
-        <em>do</em>: label, calculate, assemble, critique. Avoid verbs you
-        can't watch or check, like &ldquo;understand&rdquo; or
-        &ldquo;appreciate.&rdquo;</dd>
+      <dd>What observable, measurable action will learners do? Examples
+        include verbs from Bloom's Taxonomy such as label, calculate,
+        assemble, etc. Avoid verbs you cannot watch or check, like understand
+        or appreciate.</dd>
       <dt>Degree</dt>
-      <dd>How well they must perform for it to count: accuracy
-        (&ldquo;with 90% accuracy&rdquo;), speed (&ldquo;within five
-        minutes&rdquo;), or completeness (&ldquo;all fifty states&rdquo;).</dd>
+      <dd>How well the learners must perform. Examples could be accuracy,
+        speed, or completeness, such as 90% accuracy, within 10 minutes, or
+        all 50 states.</dd>
     </dl>
     <p class="example"><strong>Example:</strong> Given
       <span class="ex-part">a blank map of the US<span class="ex-label" aria-hidden="true">condition</span></span>,
@@ -270,15 +275,21 @@
     // Short guidance shown as a tooltip when hovering a blank.
     // Keys must match the placeholder names in the template.
     const GUIDANCE = {
+      opener:
+        "The word that starts the objective and introduces the condition. " +
+        "Choose Given for something learners have, Without for something " +
+        "they must work without, or At, After, or Upon for a setting or timing.",
       condition:
         "The circumstances of the demonstration: what learners will have, " +
-        "be denied, or the setting/timing. e.g. \"a map\", \"the end of the semester\"",
-      audience: "Who the learners are. e.g. \"students\", \"new hires\"",
+        "what they must do without, or the setting or timing. Examples " +
+        "include a map, or the end of the semester.",
+      audience: "Who the learners are. Examples include students or new hires.",
       behavior:
-        "An observable, measurable action. e.g. \"label all fifty states\" — " +
-        "avoid \"understand\" or \"know\"",
+        "An observable, measurable action, like label all fifty states. " +
+        "Avoid verbs like understand or know.",
       degree:
-        "How well they must perform. e.g. \"with 90% accuracy\", \"within five minutes\""
+        "How well they must perform. Examples include with 90% accuracy, " +
+        "or within five minutes."
     };
 
     // Build the sentence: plain text stays as text,
@@ -303,7 +314,7 @@
             .map(c => `<option value="${c}">${c}</option>`)
             .join("");
           wrap.innerHTML = `
-            <select id="word${count}" aria-label="${label || "sentence opener"}">${optionsHtml}</select>
+            <select id="word${count}" aria-label="${label || "sentence opener"}"${GUIDANCE[label] ? ` aria-description="${GUIDANCE[label].replace(/"/g, "&quot;")}"` : ""}>${optionsHtml}</select>
             ${label ? `<span class="hint" aria-hidden="true">${label}</span>` : ""}
           `;
         } else {
