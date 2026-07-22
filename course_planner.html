@@ -130,6 +130,8 @@
     }
     .ev-goal { display: block; font-style: italic; margin-bottom: 6px; }
     .ev-goal.placeholder { color: #767676; }
+    .ev-assess { display: block; font-size: 14px; color: #555; margin: -2px 0 6px 0; }
+    .ev-assess.placeholder { color: #767676; font-style: italic; }
     .ev-list input[type="text"] { width: 100%; }
 
     /* Priority coloring on the topic triage dropdowns */
@@ -281,7 +283,7 @@
 
   <h1>Course Content Planner</h1>
   <p class="subtitle">Organize your course content with <strong>backwards design</strong>:
-    decide where students should end up, choose the evidence that will show
+    decide where students should end up, plan the assessments that will show
     they got there, and only then sequence the content and build your
     module-by-module schedule.</p>
 
@@ -294,7 +296,7 @@
       </div>
       <div class="field">
         <label for="moduleCount">Number of modules (usually weeks)</label>
-        <input type="number" id="moduleCount" min="1" max="20" value="8">
+        <input type="number" id="moduleCount" min="1" max="20" value="16">
       </div>
     </div>
   </section>
@@ -342,29 +344,52 @@
   </section>
 
   <section class="step" aria-labelledby="step2Head">
-    <h2 id="step2Head"><span class="step-num" aria-hidden="true">2</span>Decide what counts as evidence</h2>
-    <p class="step-lead">Before planning any activities, decide how students
-      will <em>show</em> they've met each goal. Your goals from Step 1 appear
-      below &mdash; give each one at least one piece of evidence.</p>
+    <h2 id="step2Head"><span class="step-num" aria-hidden="true">2</span>Decide how you'll assess each goal</h2>
+    <p class="step-lead">Before planning any activities, decide how you will
+      <em>assess</em> the goals you chose in Step 1. They appear below &mdash;
+      plan at least one assessment for each.</p>
 
     <details class="guide">
-      <summary>What makes good evidence online?</summary>
-      <p>Evidence is any student work you can assess against a goal. Common
-        options in online courses include auto-graded quizzes (recall and
-        concept checks), discussion posts and peer replies (critique and
+      <summary>What makes a good assessment online?</summary>
+      <p>An assessment is any student work you can evaluate against a goal.
+        Common options in online courses include auto-graded quizzes (recall
+        and concept checks), discussion posts and peer replies (critique and
         application), papers and problem sets, projects and portfolios,
         recorded presentations or demonstrations, and reflective journals.</p>
-      <p>Match the evidence to the verb in your goal: if students should
+      <p>Match the assessment to the verb in your goal: if students should
         <em>analyze</em>, a multiple-choice quiz alone won't show it. And keep
-        your own grading load in mind &mdash; every piece of evidence you collect
-        is something you (or an autograder) must respond to.</p>
+        your own grading load in mind &mdash; every assessment you assign is
+        something you (or an autograder) must respond to.</p>
     </details>
 
-    <ul class="ev-list" id="evidenceList" aria-label="Evidence for each goal"></ul>
+    <ul class="ev-list" id="evidenceList" aria-label="Assessments for each goal"></ul>
   </section>
 
   <section class="step" aria-labelledby="step3Head">
-    <h2 id="step3Head"><span class="step-num" aria-hidden="true">3</span>Choose a structure and teaching strategy</h2>
+    <h2 id="step3Head"><span class="step-num" aria-hidden="true">3</span>Design the learning activities</h2>
+    <p class="step-lead">Now plan the practice. For each goal, design
+      activities that build the skills and knowledge its assessment will
+      measure &mdash; so nothing on an assessment comes as a surprise.</p>
+
+    <details class="guide">
+      <summary>Choosing activities that prepare students</summary>
+      <p>Work backward from each assessment: what skills and knowledge does
+        it demand, and what practice will build them? Students should get
+        low-stakes practice &mdash; with feedback &mdash; in every skill before it
+        counts toward a grade.</p>
+      <p>Online, activities usually mix three moves: <em>absorb</em> (short
+        videos, readings, worked examples), <em>interact</em> (discussions,
+        group work, peer review), and <em>produce</em> (practice quizzes,
+        drafts, problem sets, simulations). Match the practice to the verb in
+        your goal: if the assessment asks students to analyze a case, they
+        need practice analyzing cases &mdash; not just watching you do it.</p>
+    </details>
+
+    <ul class="ev-list" id="activitiesList" aria-label="Activities for each goal"></ul>
+  </section>
+
+  <section class="step" aria-labelledby="step4Head">
+    <h2 id="step4Head"><span class="step-num" aria-hidden="true">4</span>Choose a structure and teaching strategy</h2>
     <p class="step-lead">Now decide how the essential topics will unfold
       across the course, and what mix of activities will move students from
       where they start to your goals.</p>
@@ -410,8 +435,8 @@
       placeholder="e.g., Each module: short lecture videos introduce a theory, a discussion board critiques it, and a case write-up applies it. Cases grow from single-issue to multi-issue, ending in a full project."></textarea>
   </section>
 
-  <section class="step" aria-labelledby="step4Head">
-    <h2 id="step4Head"><span class="step-num" aria-hidden="true">4</span>Map it onto your modules</h2>
+  <section class="step" aria-labelledby="step5Head">
+    <h2 id="step5Head"><span class="step-num" aria-hidden="true">5</span>Map it onto your modules</h2>
     <p class="step-lead">Distribute your essential topics, activities, and
       assessments across the modules. Rearrange until the workload feels
       realistic for students &mdash; and for you.</p>
@@ -485,8 +510,8 @@
 
   const state = {
     course: "",
-    moduleCount: 8,
-    goals: [],   // {id, text, evidence}
+    moduleCount: 16,
+    goals: [],   // {id, text, evidence (assessment), activities}
     topics: [],  // {id, text, priority}
     principle: "",
     strategy: "",
@@ -545,6 +570,8 @@
       if (!raw) return;
       const saved = JSON.parse(raw);
       Object.assign(state, saved);
+      // Work saved before the activities step existed lacks the field
+      state.goals.forEach(g => { if (g.activities === undefined) g.activities = ""; });
       // Re-derive the id counter so new rows never collide with saved ones
       const ids = [...state.goals, ...state.topics].map(x => x.id);
       seq = ids.length ? Math.max(...ids) + 1 : 0;
@@ -570,18 +597,20 @@
       input.placeholder = "Students will be able to…";
       input.addEventListener("input", () => {
         g.text = input.value;
-        // Keep the matching evidence row's label in sync without a
+        // Keep the matching rows in Steps 2 and 3 in sync without a
         // full re-render (which would steal focus mid-keystroke)
-        const span = document.querySelector('#evidenceList [data-goal="' + g.id + '"] .ev-goal');
-        if (span) {
-          span.textContent = g.text.trim() || goalLabel(i) + " (not written yet)";
-          span.classList.toggle("placeholder", !g.text.trim());
-        }
+        ["#evidenceList", "#activitiesList"].forEach(sel => {
+          const span = document.querySelector(sel + ' [data-goal="' + g.id + '"] .ev-goal');
+          if (span) {
+            span.textContent = g.text.trim() || goalLabel(i) + " (not written yet)";
+            span.classList.toggle("placeholder", !g.text.trim());
+          }
+        });
         save();
       });
       const rm = removeBtn("Remove " + goalLabel(i), () => {
         state.goals = state.goals.filter(x => x.id !== g.id);
-        renderGoals(); renderEvidence(); save();
+        renderGoals(); renderEvidence(); renderActivities(); save();
       });
       li.append(input, rm);
       list.appendChild(li);
@@ -609,10 +638,55 @@
       input.type = "text";
       input.autocomplete = "off";
       input.value = g.evidence;
-      input.setAttribute("aria-label", "Evidence for " + goalLabel(i));
-      input.placeholder = "How will students show this? e.g., case-analysis paper in Module 6";
-      input.addEventListener("input", () => { g.evidence = input.value; save(); });
+      input.setAttribute("aria-label", "Assessment for " + goalLabel(i));
+      input.placeholder = "How will you assess this? e.g., case-analysis paper in Module 6";
+      input.addEventListener("input", () => {
+        g.evidence = input.value;
+        // Keep the assessment shown in Step 3 in sync
+        const asmt = document.querySelector('#activitiesList [data-goal="' + g.id + '"] .ev-assess');
+        if (asmt) {
+          asmt.textContent = g.evidence.trim()
+            ? "Assessed by: " + g.evidence.trim()
+            : "No assessment planned yet (see Step 2)";
+          asmt.classList.toggle("placeholder", !g.evidence.trim());
+        }
+        save();
+      });
       li.append(span, input);
+      list.appendChild(li);
+    });
+  }
+
+  function renderActivities() {
+    const list = $("activitiesList");
+    list.innerHTML = "";
+    if (!state.goals.length) {
+      const li = document.createElement("li");
+      li.className = "muted";
+      li.style.borderLeft = "none";
+      li.textContent = "Add course goals in Step 1 and they will appear here.";
+      list.appendChild(li);
+      return;
+    }
+    state.goals.forEach((g, i) => {
+      const li = document.createElement("li");
+      li.dataset.goal = g.id;
+      const span = document.createElement("span");
+      span.className = "ev-goal" + (g.text.trim() ? "" : " placeholder");
+      span.textContent = g.text.trim() || goalLabel(i) + " (not written yet)";
+      const asmt = document.createElement("span");
+      asmt.className = "ev-assess" + (g.evidence.trim() ? "" : " placeholder");
+      asmt.textContent = g.evidence.trim()
+        ? "Assessed by: " + g.evidence.trim()
+        : "No assessment planned yet (see Step 2)";
+      const input = document.createElement("input");
+      input.type = "text";
+      input.autocomplete = "off";
+      input.value = g.activities;
+      input.setAttribute("aria-label", "Activities for " + goalLabel(i));
+      input.placeholder = "What practice builds these skills? e.g., worked-example videos, practice quiz, peer-reviewed draft";
+      input.addEventListener("input", () => { g.activities = input.value; save(); });
+      li.append(span, asmt, input);
       list.appendChild(li);
     });
   }
@@ -719,19 +793,23 @@
 
     text.push(title + " — Course Plan", "");
 
-    // Goals and evidence
-    html.push("<h3>Course goals &amp; evidence</h3>");
+    // Goals, assessments, and activities
+    html.push("<h3>Course goals, assessments &amp; activities</h3>");
     const goals = state.goals.filter(g => g.text.trim());
     if (goals.length) {
       html.push("<ul>");
-      text.push("COURSE GOALS & EVIDENCE");
+      text.push("COURSE GOALS, ASSESSMENTS & ACTIVITIES");
       goals.forEach(g => {
         const ev = g.evidence.trim();
+        const act = (g.activities || "").trim();
         html.push("<li><strong>" + esc(g.text.trim()) + "</strong><br>" +
-          (ev ? "Evidence: " + esc(ev)
-              : '<span class="muted">No evidence chosen yet</span>') + "</li>");
+          (ev ? "Assessment: " + esc(ev)
+              : '<span class="muted">No assessment planned yet</span>') + "<br>" +
+          (act ? "Activities: " + esc(act)
+               : '<span class="muted">No activities planned yet</span>') + "</li>");
         text.push("- " + g.text.trim());
-        text.push("  Evidence: " + (ev || "(none chosen yet)"));
+        text.push("  Assessment: " + (ev || "(none planned yet)"));
+        text.push("  Activities: " + (act || "(none planned yet)"));
       });
       html.push("</ul>");
       text.push("");
@@ -840,8 +918,8 @@
   });
 
   $("addGoalBtn").addEventListener("click", () => {
-    state.goals.push({ id: seq++, text: "", evidence: "" });
-    renderGoals(); renderEvidence(); save();
+    state.goals.push({ id: seq++, text: "", evidence: "", activities: "" });
+    renderGoals(); renderEvidence(); renderActivities(); save();
     const inputs = document.querySelectorAll("#goalsList input");
     inputs[inputs.length - 1].focus();
   });
@@ -882,13 +960,14 @@
     $("principleNote").textContent = PRINCIPLES[state.principle];
     $("principleNote").style.display = "block";
   }
-  if (!state.goals.length) state.goals.push({ id: seq++, text: "", evidence: "" });
+  if (!state.goals.length) state.goals.push({ id: seq++, text: "", evidence: "", activities: "" });
   if (!state.topics.length) {
     state.topics.push({ id: seq++, text: "", priority: "Essential" });
     state.topics.push({ id: seq++, text: "", priority: "Essential" });
   }
   renderGoals();
   renderEvidence();
+  renderActivities();
   renderTopics();
   renderModules();
 </script>
