@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Load Rock 'n' Roll Test Data</title>
+  <style>
+    body {
+      font-family: Georgia, serif;
+      max-width: 620px;
+      margin: 60px auto;
+      padding: 0 20px;
+      background: #f4f7f9;
+      color: #333;
+      text-align: center;
+    }
+    .card {
+      background: white;
+      border: 2px solid #007FAC;
+      border-radius: 8px;
+      padding: 28px;
+    }
+    h1 { font-size: 24px; margin-top: 0; }
+    p { line-height: 1.6; }
+    button {
+      font-family: inherit;
+      font-size: 18px;
+      padding: 12px 32px;
+      border: none;
+      border-radius: 8px;
+      background: #CC0033;
+      color: white;
+      cursor: pointer;
+      margin: 6px;
+    }
+    button:hover { background: #A30029; }
+    button.secondary {
+      background: white;
+      color: #CC0033;
+      border: 2px solid #CC0033;
+      font-size: 15px;
+      padding: 8px 20px;
+    }
+    button.secondary:hover { background: #CC0033; color: white; }
+    button:focus { outline: 2px solid #007FAC; outline-offset: 2px; }
+    #status { font-weight: bold; color: #A30029; min-height: 1.4em; }
+    .warn { font-size: 14px; color: #666; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Course Planner Test Data</h1>
+    <p>Loads the <strong>Rock 'n' Roll: Origins to Present</strong> syllabus
+      (13 modules, 4 goals, full schedule) into the Course Content Planner,
+      then opens it.</p>
+    <p class="warn">This replaces anything currently saved in the planner in
+      this browser. Use "Clear" afterward to empty the planner again.</p>
+    <button id="loadBtn">Load test data &amp; open planner</button>
+    <br>
+    <button id="clearBtn" class="secondary">Clear planner data</button>
+    <p id="status" role="status"></p>
+  </div>
+
+  <script>
+    const KEY = "uoes-course-planner";
+    const SEED = {
+  "course": "Rock 'n' Roll: Origins to Present (07:700:235)",
+  "moduleCount": 13,
+  "goals": [
+    {
+      "id": 0,
+      "text": "Understand the historical development of rock 'n' roll",
+      "evidence": "Exams 1 & 2 (10% each); module mini-quizzes",
+      "activities": "Weekly lecture videos with guided listening; assigned readings; Spotify playlists nos. 1-2"
+    },
+    {
+      "id": 1,
+      "text": "Evaluate the impact of social, political, and cultural contexts on the production and reception of rock music",
+      "evidence": "Discussion forums (Civil Rights & the Protest Song; Electric Dylan; Celebrity Singers & Bobbysoxers); Research & Analysis final presentation",
+      "activities": "Topic discussions and structured debate (Beatles vs. Beach Boys vs. Stones); Festival Poster activity; context readings"
+    },
+    {
+      "id": 2,
+      "text": "Analyze pre-rock, rock 'n' roll, and related recordings, identifying general musical characteristics, genre-specific performance styles, and likely historical period",
+      "evidence": "Listening Responses across modules (incl. outside-examples response in Module 10); Song Presentation",
+      "activities": "Guided listening embedded in lectures; Musical Terminology discussion; repeated low-stakes listening practice via playlists"
+    },
+    {
+      "id": 3,
+      "text": "Assess the relationship between recordings/performances and their broader historical, social, cultural, and technological contexts",
+      "evidence": "Research & Analysis project sequence: topic selection, progress report, peer review, final presentation",
+      "activities": "Scaffolded research milestones with instructor feedback between stages; peer-review practice; model analyses in lectures"
+    }
+  ],
+  "topics": [
+    {
+      "id": 4,
+      "text": "Origins: pre-war mainstream & marginal genres",
+      "priority": "Essential"
+    },
+    {
+      "id": 5,
+      "text": "1950s rock 'n' roll and R&B",
+      "priority": "Essential"
+    },
+    {
+      "id": 6,
+      "text": "The British Invasion & blues boom",
+      "priority": "Essential"
+    },
+    {
+      "id": 7,
+      "text": "Psychedelia & the counterculture",
+      "priority": "Essential"
+    },
+    {
+      "id": 8,
+      "text": "Soul, funk & the protest song",
+      "priority": "Essential"
+    },
+    {
+      "id": 9,
+      "text": "Punk & new wave",
+      "priority": "Essential"
+    },
+    {
+      "id": 10,
+      "text": "MTV & the megastar era",
+      "priority": "Essential"
+    },
+    {
+      "id": 11,
+      "text": "Grunge & 90s alternative",
+      "priority": "Essential"
+    },
+    {
+      "id": 12,
+      "text": "Doo wop & girl groups",
+      "priority": "Supporting"
+    },
+    {
+      "id": 13,
+      "text": "Heavy metal & art rock",
+      "priority": "Supporting"
+    },
+    {
+      "id": 14,
+      "text": "Roots/routes of reggae",
+      "priority": "Supporting"
+    },
+    {
+      "id": 15,
+      "text": "Pre-war recording-industry deep history",
+      "priority": "Trim"
+    },
+    {
+      "id": 16,
+      "text": "Individual artist discographies in full",
+      "priority": "Trim"
+    }
+  ],
+  "principle": "Chronological",
+  "strategy": "Each module follows an absorb-interact-produce rhythm: lecture videos with guided listening and readings, then a discussion or debate, then a listening response or mini-quiz. Complexity builds from identifying styles to analyzing context, culminating in a scaffolded research project and two exams.",
+  "modules": [
+    {
+      "topic": "What is Rock 'n' Roll? / The Modern Music Industry / That Old Southern Sound",
+      "objectives": "Define the course's central questions; identify pre-war roots",
+      "activities": "Lectures; guided listening; Getting Started orientation",
+      "assessments": "Getting Started Quiz; Song Presentation",
+      "duedates": "Due Sept 16",
+      "materials": "Canvas lectures & readings; Spotify playlist no. 1"
+    },
+    {
+      "topic": "Frankie, Bing & Bobbysoxers / Swing, Jump, & Boogie!",
+      "objectives": "Use basic musical terminology; connect celebrity culture to pop",
+      "activities": "Lectures; guided listening",
+      "assessments": "Musical Terminology Discussion; Celebrity Singers & Bobbysoxers Discussion",
+      "duedates": "Due Sept 20",
+      "materials": "Canvas lectures & readings; Spotify playlist no. 1"
+    },
+    {
+      "topic": "Plug it In, Turn it Up / Rocket 88",
+      "objectives": "",
+      "activities": "Lectures; guided listening",
+      "assessments": "Mini-Quiz; Listening Response",
+      "duedates": "Due Sept 27",
+      "materials": "Canvas lectures & readings; Spotify playlist no. 1"
+    },
+    {
+      "topic": "R&B or Rock n' Roll? / The (Other) King(s) of Rock",
+      "objectives": "",
+      "activities": "Lectures; guided listening",
+      "assessments": "Student's Choice Discussion; R&A Topic Selection (Oct 7)",
+      "duedates": "Module due Oct 4; R&A Topic Oct 7",
+      "materials": "Canvas lectures & readings; Spotify playlist no. 1"
+    },
+    {
+      "topic": "Sun/Rockabilly Sound / The Day(s) the Music Died",
+      "objectives": "",
+      "activities": "Lectures; guided listening",
+      "assessments": "Mini-Quiz; Listening Response",
+      "duedates": "Due Oct 11",
+      "materials": "Canvas lectures & readings; Spotify playlist no. 2"
+    },
+    {
+      "topic": "Doo Wop / Girl Groups & Manufacturing Hits",
+      "objectives": "",
+      "activities": "Lectures; guided listening; exam review",
+      "assessments": "Open Forum (optional); Exam 1 (Oct 18-20)",
+      "duedates": "Module due Oct 18; Exam 1 window Oct 18-20",
+      "materials": "Canvas lectures & readings; Spotify playlist no. 2"
+    },
+    {
+      "topic": "Meet the Beatles / The British Blues Boom / Best of the West (Coast)",
+      "objectives": "",
+      "activities": "Lectures; guided listening; structured debate prep",
+      "assessments": "Debate: Beatles, Beach Boys, Stones; Listening Response",
+      "duedates": "Due Oct 25",
+      "materials": "Canvas lectures & readings; Spotify playlist no. 2"
+    },
+    {
+      "topic": "Mr. Tambourine Man / Psychedelia / The Beatles, pt II",
+      "objectives": "",
+      "activities": "Lectures; guided listening",
+      "assessments": "Electric Dylan Discussion; R&A Progress Report (Nov 7)",
+      "duedates": "Module due Nov 1; R&A Progress Report Nov 7",
+      "materials": "Canvas lectures & readings; Spotify playlist no. 2"
+    },
+    {
+      "topic": "Festivals '69 / Soul and Funk",
+      "objectives": "",
+      "activities": "Lectures; guided listening; poster design",
+      "assessments": "Festival Poster; Civil Rights & the Protest Song Discussion; R&A Peer-Review (Nov 14)",
+      "duedates": "Module due Nov 8; Peer-Review Nov 14",
+      "materials": "Canvas lectures & readings; Spotify playlist no. 2"
+    },
+    {
+      "topic": "Heavy Metal Thunder / Art Rock / Rock n' Roll Troubadours",
+      "objectives": "",
+      "activities": "Lectures; guided listening; independent example-finding",
+      "assessments": "Listening Response - outside examples; R&A Project (Nov 22)",
+      "duedates": "Module due Nov 15; R&A Project Nov 22",
+      "materials": "Canvas lectures & readings; Spotify playlist no. 2"
+    },
+    {
+      "topic": "Punk / Roots-Routes of Reggae / The New Wave",
+      "objectives": "",
+      "activities": "Lectures; guided listening",
+      "assessments": "Open Forum; Hypothesis: Bob Marley",
+      "duedates": "Due Nov 27 (Thanksgiving Break Nov 28-Dec 1)",
+      "materials": "Canvas lectures & readings; Spotify playlist no. 2"
+    },
+    {
+      "topic": "Women Up Front / MTV & the Megastar / The Many Faces of 'Metal'",
+      "objectives": "",
+      "activities": "Lectures; guided listening; interactive video",
+      "assessments": "I Want My MTV (Playposit); Artist Profile Peer Comments",
+      "duedates": "Due Dec 4",
+      "materials": "Canvas lectures & readings; Spotify playlist no. 2"
+    },
+    {
+      "topic": "Festivals - New Generation / 90s in Focus: Grunge / 00: Indie Blues Rock",
+      "objectives": "",
+      "activities": "Lectures; guided listening; exam review",
+      "assessments": "Open Forum; Listening Response; Exam 2 (Dec 14-16)",
+      "duedates": "Module due Dec 11; Exam 2 window Dec 14-16",
+      "materials": "Canvas lectures & readings; Spotify playlist no. 2"
+    }
+  ]
+};
+
+    const status = document.getElementById("status");
+
+    document.getElementById("loadBtn").addEventListener("click", () => {
+      try {
+        localStorage.setItem(KEY, JSON.stringify(SEED));
+        status.textContent = "Loaded! Opening the planner…";
+        setTimeout(() => { window.location.href = "../course_planner.html"; }, 400);
+      } catch (e) {
+        status.textContent = "Could not save: " + e.message;
+      }
+    });
+
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      try {
+        localStorage.removeItem(KEY);
+        status.textContent = "Planner data cleared.";
+      } catch (e) {
+        status.textContent = "Could not clear: " + e.message;
+      }
+    });
+  </script>
+</body>
+</html>
