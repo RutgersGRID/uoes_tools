@@ -19,6 +19,8 @@ file — inline CSS and JS, no build step, no external dependencies.
   design walkthrough (see below).
 - `workload_estimator.html` — Course Workload Estimator, a JS port of an
   R/Shiny app (see below).
+- `credit_hour_planner.html` — Credit Hour Planner, a JS port of a
+  two-sheet Excel workbook (see below).
 
 ## Design system
 
@@ -186,6 +188,127 @@ The published details page
 posts, videos, exams, other assignments, or synchronous meetings — those
 were reverse-engineered from `server.R`.
 
+## Credit Hour Planner notes
+
+Port of the **Planning Time Calculator (Rutgers, FOR FACULTY DIY Version)**,
+an Excel workbook with two sheets, initially developed by **Ruth Ronan** at
+Rutgers University (created 2018, last modified 2020). The sheets carry an
+embedded CC BY-NC-SA badge, so this port is a derivative work: the footer
+must keep the Ruth Ronan credit, the Workload Estimator authors, and the
+same license. Credit wording confirmed by Maka July 27, 2026 — do not
+reword it without asking.
+
+Both sheets were password-protected (`Rutgers`); irrelevant in the port.
+
+### Sheet 1 → "Weekly time budget"
+
+Three inputs (semester weeks, Carnegie credits, study hours per credit)
+drive one calculation. The original had two parallel blocks —
+fully-online/traditional and blended/hybrid — computed side by side. The
+port makes it a **course-format choice at the top of the page** instead,
+which also disambiguates the module budget.
+
+The math, from the blended block (rows 19–23), generalizes to both:
+
+- `acceleration = 15 / weeks`. A course must deliver the same total hours
+  however long the term runs, so a 7-week term has a rate of ~2.14.
+- `MINUTES_PER_CREDIT_HOUR = 50`; one credit hour = one 50-minute period
+  of instruction per week.
+- Face-to-face minutes = `50 × f2f`, **never accelerated** (the original
+  hardcodes `F20 = 1`) — meetings run at their scheduled length.
+- Online instructional = `50 × accel × (credits − f2f) + (50 × accel × f2f
+  − f2fMinutes)`. The second term pushes the accelerated instructional
+  time the meetings don't cover into the online total.
+- Studying = `50 × accel × credits × study`.
+
+**The instructional row is seat time, and users do not infer that.** Maka
+asked whether it meant face-to-face class time — it does, in a traditional
+course (3 credits = 150 min/wk = three 50-minute periods); in a fully
+online course it is the asynchronous equivalent, and in a blended course it
+is the seat time the meetings don't cover. That ambiguity is inherent: the
+original merged "traditional" and "fully online" into one block precisely
+because the math is identical and only the delivery differs. Two things now
+carry the explanation and should be kept: an italic sub-label on each tile
+(`#desc-instr`, swapped by format, plus a static one on the face-to-face
+tile) and a `<details open>` panel, "What counts as instructional time", in
+the *How this is calculated* card. The harness asserts both.
+
+Setting `f2f = 0` makes the blended block identical to the fully-online
+block, so the port uses **one code path** for both formats. Invariant worth
+keeping: semester hours always equal `12.5 × credits × (1 + study)`,
+independent of weeks and format. The harness asserts this on every case.
+
+### Sheet 2 → "Module time planner"
+
+A module is one week. The budget it compares against is
+`online instructional + studying` (sheet 2's `B3` = `B23 + B24`), which
+excludes face-to-face time — correct for both formats.
+
+15 learning activities and 10 assessment activities, each with a suggested
+time. Those suggestions lived in Excel **data-validation input messages** —
+`<dataValidation showInputMessage="1" promptTitle="Blog" prompt="1 hour
+suggested" sqref="B15"/>` — with no `type`/`operator`/`formula`, so they
+imposed no constraint and were invisible until you clicked the cell. They
+are surfaced here as hint text under each label. The suggestion values live
+in the `sug` field of the `LEARN` / `ASSESS` arrays in the JS.
+
+Readings and Writing assignments are derived rows, not inputs — they mirror
+the two reading/writing hour fields and render as read-only `<output>` with
+no underline (an underline would read as editable, and Mid Blue fails
+contrast anyway).
+
+### Deliberate departures from the original workbook
+
+1. **The 50/60 scaling on reading and writing is gone.** Sheet 2 computed
+   `(B9 × 50) / 60` for readings and the same for writing, which shrank
+   both by 17%. Everything else on that sheet is plain clock hours and the
+   workload estimator reports clock hours, so the port adds them at face
+   value. Confirmed with Maka before changing. A `<details>` panel on the
+   Reading & writing card explains it.
+2. **Face-to-face hours are clamped to the course's credit hours.** The
+   original let `f2f > credits` produce a negative online instructional
+   total. The port clamps and shows an inline warning.
+3. **`weeks < 1` warns instead of failing silently.** The original wrapped
+   the acceleration rate in `IFERROR(15/B4, 0)`, which quietly produced a
+   zero-hour course.
+4. **Typos fixed:** "Poscast" → Podcast (a validation prompt), and
+   "additonal" (sheet 1, A23).
+
+### Do not add a bulk "fill with suggested times" control
+
+An earlier draft had a "Fill blanks with suggested times" button. Maka
+caught the result in testing: it filled all 21 suggestions at once for a
+planned total of **32.80 hours against a 7.50-hour budget**, flagged as
+25.30 hours over. The ported math was correct — the button was wrong.
+
+Ruth's directions box says the suggestions are read one at a time:
+*"Suggested times are provided when you click on the cell for each
+category."* Nothing in the workbook sums them; `B30` and `E25` total only
+what the user types. A bulk control silently reframes 21 independent
+per-activity hints as a menu to take wholesale, and no real module contains
+a blog *and* a case study *and* experiential learning *and* a webinar *and*
+a wiki *and* seven kinds of assessment.
+
+The button is gone. In its place, a line above the activity cards says the
+suggestions are not a checklist. `verify_credit_hour_planner.js` has a
+regression guard asserting no bulk-apply control exists.
+
+**Open question — revisit with Maka.** How to give instructors genuinely
+useful guidance on activity times without implying "use all of these."
+Ideas not yet evaluated: per-row click-to-apply; typical module *patterns*
+(e.g. a reading-and-discussion week vs. a project week) that fill a
+coherent set; showing each suggestion as a share of the weekly budget; or
+a running "you have N hours left" indicator beside the inputs as they are
+filled. Nothing here is decided.
+
+### Cross-links
+
+Sheet 2 had a red button to <https://cte.rice.edu/workload> for estimating
+reading and writing time — the same tool `workload_estimator.html` ports.
+The page links to the **local port as primary**, with the Rice original
+credited alongside. Note this means `credit_hour_planner.html` depends on
+`workload_estimator.html`, which is not yet cleared for publishing.
+
 ## Testing
 
 Changes were verified with headless Chromium (playwright-core) checks:
@@ -201,6 +324,20 @@ Contact, divide-by-zero guards, conditional panel visibility,
 localStorage round-trip and migration, report generation, print-PDF
 non-blankness, and label/aria coverage. Re-run it after any math change.
 
+For the credit hour planner, `test/verify_credit_hour_planner.js` runs 292
+checks: 18 scenarios against an independent transcription of the workbook's
+cell formulas, the Carnegie invariant, blended-with-zero-f2f equivalence,
+the non-accelerating face-to-face rule, all three guards, module totals and
+the budget comparison, over/under-budget styling, conditional visibility,
+the no-bulk-suggestions regression guard, the instructional-time explainer,
+localStorage round-trip and partial/corrupt
+saves, "Start over", report and copy text, print-PDF non-blankness,
+label/aria coverage, computed focus outlines, the design tokens, and the
+Mid-Blue-underline prohibition. Both harnesses need
+`npm install playwright-core`; launch with
+`executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome"` or
+wherever Chromium lives locally.
+
 ## Current status (July 2026)
 
 - v2 objective builder is in field testing; more feedback expected.
@@ -213,3 +350,10 @@ non-blankness, and label/aria coverage. Re-run it after any math change.
   Do not push it live, and do not change the credit/license wording in the
   meantime — if it comes back with required edits, that is the version to
   apply.
+- credit_hour_planner.html added July 27, 2026 and linked from index.html.
+  Footer credit settled: "Adapted from the Planning Time Calculator,
+  initially developed by Ruth Ronan at Rutgers University."
+  **Still not cleared for publishing**, for one remaining reason: it links
+  to workload_estimator.html as its reading/writing tool, so publishing it
+  first would expose that page before its CC BY-NC-SA sign-off lands. Ship
+  the two together.
