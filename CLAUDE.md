@@ -208,5 +208,8 @@ non-blankness, and label/aria coverage. Re-run it after any math change.
   via chat during a session when the synced computer was offline — verify
   the repo copy includes the module cards before editing.
 - workload_estimator.html added July 27, 2026 and linked from index.html.
-  Confirm the CC BY-NC-SA attribution wording in the footer is acceptable
-  before publishing.
+  **Not cleared for publishing yet.** The CC BY-NC-SA footer wording reads
+  fine to Maka but is awaiting sign-off from institutional stakeholders.
+  Do not push it live, and do not change the credit/license wording in the
+  meantime — if it comes back with required edits, that is the version to
+  apply.
