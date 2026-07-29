@@ -1350,8 +1350,8 @@
 
           const grid = document.createElement("div");
           grid.className = "two-col";
-          grid.appendChild(moduleField(m, i, "activities", "Activities", true));
           grid.appendChild(moduleField(m, i, "assessments", "Assessments", true));
+          grid.appendChild(moduleField(m, i, "activities", "Activities", true));
           body.appendChild(grid);
 
           card.appendChild(body);
@@ -1451,8 +1451,8 @@
           const fields = [
             ["Objectives", objText],
             ["Materials", m.materials],
-            ["Activities", m.activities],
-            ["Assessments", m.assessments]
+            ["Assessments", m.assessments],
+            ["Activities", m.activities]
           ].filter(f => (f[1] || "").trim());
           const lines = fields.map(f => f[0] + ": " + f[1].trim());
           html.push('<div class="plan-module"><strong>' + esc(title) + "</strong>" +

@@ -71,11 +71,16 @@ const ok = (name, cond, extra) => {
   const cardOrder = await page.$eval("#moduleCards .mod-card:first-child .card-body", n =>
     Array.from(n.children).map(c =>
       c.classList.contains("obj-block") ? "Objectives"
-        : c.classList.contains("two-col") ? "Activities+Assessments"
+        : c.classList.contains("two-col") ? "Assessments+Activities"
           : c.querySelector("label").textContent.trim()));
-  ok("module card row order: Objectives, Materials, then Activities+Assessments",
-    JSON.stringify(cardOrder) === JSON.stringify(["Objectives", "Materials & resources", "Activities+Assessments"]),
+  ok("module card row order: Objectives, Materials, then Assessments+Activities",
+    JSON.stringify(cardOrder) === JSON.stringify(["Objectives", "Materials & resources", "Assessments+Activities"]),
     JSON.stringify(cardOrder));
+  const twoColLabels = await page.$$eval("#moduleCards .mod-card:first-child .two-col label",
+    ns => ns.map(n => n.textContent.trim()));
+  ok("Assessments is the left column, Activities the right",
+    JSON.stringify(twoColLabels) === JSON.stringify(["Assessments", "Activities"]),
+    JSON.stringify(twoColLabels));
   const headCells = await page.$$eval("#moduleCards .mod-card:first-child .obj-head span",
     ns => ns.map(n => n.textContent.trim()));
   ok("objectives block is headed Objectives | Alignment",
@@ -380,8 +385,8 @@ const ok = (name, cond, extra) => {
     /Course goals & assessments/i.test(planText) ||
     !/goals, assessments & activities/i.test(planText));
   ok("plan shows topic", /Trophic levels/.test(planText));
-  ok("plan module order is Objectives, Materials, Activities, Assessments",
-    /Objectives: Identify trophic levels \[aligns with G1\][\s\S]*Materials: Chapter 3[\s\S]*Activities: Intro video[\s\S]*Assessments: Quiz 1/.test(planText),
+  ok("plan module order is Objectives, Materials, Assessments, Activities",
+    /Objectives: Identify trophic levels \[aligns with G1\][\s\S]*Materials: Chapter 3[\s\S]*Assessments: Quiz 1[\s\S]*Activities: Intro video/.test(planText),
     planText.slice(0, 400));
   ok("plan has no due dates row", !/Due dates/i.test(planText));
   ok("empty modules marked not planned", /\(not planned yet\)/.test(planText));
