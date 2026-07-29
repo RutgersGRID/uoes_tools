@@ -685,7 +685,7 @@
             list.</p>
         </details>
 
-        <h3><label for="goal-first" style="font-size:18px;">Course goals</label></h3>
+        <h3><label for="goal-first" style="font-size:24px;">Course goals</label></h3>
         <p class="step-lead">What should students be able to do by the end of
           the course.
         </p>
@@ -776,36 +776,8 @@
       <section class="step" aria-labelledby="step4Head">
         <h2 id="step4Head"><span class="step-num" aria-hidden="true">4</span>Map it onto your modules</h2>
         <p class="step-lead">Distribute your essential topics, activities, and
-          assessments across the modules. Rearrange until the workload feels
+          assessments across the modules (weeks). Rearrange until the workload feels
           realistic for students &mdash; and for you.</p>
-        <p class="step-lead">Need help wording an objective? Use the
-          <a href="learning_objectives.html">Learning Objective Builder</a>, then
-          paste the result into the module it belongs to.
-        </p>
-
-        <h3 style="margin-top:24px;">Activities for each goal</h3>
-        <p class="step-lead">First, plan the practice. For each goal, design
-          activities that build the skills and knowledge its assessment will
-          measure &mdash; so nothing on an assessment comes as a surprise. Then
-          distribute those activities across the module cards below.</p>
-
-        <details class="guide">
-          <summary>Choosing activities that prepare students</summary>
-          <p>Work backward from each assessment: what skills and knowledge does
-            it demand, and what practice will build them? Students should get
-            low-stakes practice &mdash; with feedback &mdash; in every skill before it
-            counts toward a grade.</p>
-          <p>Online, activities usually mix three moves: <em>absorb</em> (short
-            videos, readings, worked examples), <em>interact</em> (discussions,
-            group work, peer review), and <em>produce</em> (practice quizzes,
-            drafts, problem sets, simulations). Match the practice to the verb in
-            your goal: if the assessment asks students to analyze a case, they
-            need practice analyzing cases &mdash; not just watching you do it.</p>
-        </details>
-
-        <ul class="ev-list" id="activitiesList" aria-label="Activities for each goal"></ul>
-
-        <h3 style="margin-top:28px;">Module cards</h3>
 
         <details class="guide">
           <summary>Scheduling tips for online courses</summary>
@@ -831,6 +803,53 @@
               up.</li>
           </ul>
         </details>
+
+        <h3>Create Learning Objectives for each module.</h3>
+        <p class="step-lead">Create Learning Objectives for each module. If you
+           need help wording an objective? Use the
+          <a href="learning_objectives.html">Learning Objective Builder</a>, then
+          paste the result into the module it belongs to.
+        </p>
+
+        <h3>Decide how you will assess each module's learning objectives.</h3>
+        <details class="guide">
+          <summary>What makes a good assessment online?</summary>
+          <p>An assessment is any student work you can evaluate against a goal.
+            Common options in online courses include auto-graded quizzes (recall
+            and concept checks), discussion posts and peer replies (critique and
+            application), papers and problem sets, projects and portfolios,
+            recorded presentations or demonstrations, and reflective journals.</p>
+          <p>Match the assessment to the verb in your goal: if students should
+            <em>analyze</em>, a multiple-choice quiz alone won't show it. And keep
+            your own grading load in mind &mdash; every assessment you assign is
+            something you (or an autograder) must respond to.
+          </p>
+        </details>
+
+        <p class="step-lead">Before planning any activities, decide how you will assess the learning objectives for each module.</p>
+
+        <h3>Create Activities for each learning objective.</h3>
+        <p class="step-lead">First, plan the practice. For each goal, design
+          activities that build the skills and knowledge its assessment will
+          measure &mdash; so nothing on an assessment comes as a surprise. Then
+          distribute those activities across the module cards below.</p>
+
+        <details class="guide">
+          <summary>Choosing activities that prepare students</summary>
+          <p>Work backward from each assessment: what skills and knowledge does
+            it demand, and what practice will build them? Students should get
+            low-stakes practice &mdash; with feedback &mdash; in every skill before it
+            counts toward a grade.</p>
+          <p>Online, activities usually mix three moves: <em>absorb</em> (short
+            videos, readings, worked examples), <em>interact</em> (discussions,
+            group work, peer review), and <em>produce</em> (practice quizzes,
+            drafts, problem sets, simulations). Match the practice to the verb in
+            your goal: if the assessment asks students to analyze a case, they
+            need practice analyzing cases &mdash; not just watching you do it.</p>
+        </details>
+
+        <h3 style="margin-top:28px;">Module cards</h3>
+
 
         <p class="grid-caption">One card per module: what it's about, what students do, and what they'll need.
           Give each module its own objectives, and tick the course goals each one serves.</p>
@@ -869,7 +888,7 @@
       const state = {
         course: "",
         moduleCount: 16,
-        goals: [],   // {id, text, evidence (assessment), activities}
+        goals: [],   // {id, text, evidence (assessment)}
         topics: [],  // {id, text, priority}
         principle: "",
         strategy: "",
@@ -931,7 +950,9 @@
           const saved = JSON.parse(raw);
           Object.assign(state, saved);
           // Work saved before the activities step existed lacks the field
-          state.goals.forEach(g => { if (g.activities === undefined) g.activities = ""; });
+          // Per-goal activities were dropped; activities now live on the
+          // module cards
+          state.goals.forEach(g => { delete g.activities; });
           // Modules saved before the card layout lack the newer fields;
           // due dates were dropped in v2, so discard any saved value
           state.modules.forEach(m => {
@@ -1030,15 +1051,14 @@
             const wasWritten = !!g.text.trim();
             g.text = input.value;
             const isWritten = !!g.text.trim();
-            // Keep the matching rows in Steps 2 and 4 in sync without a
-            // full re-render (which would steal focus mid-keystroke)
-            ["#evidenceList", "#activitiesList"].forEach(sel => {
-              const span = document.querySelector(sel + ' [data-goal="' + g.id + '"] .ev-goal');
-              if (span) {
-                span.textContent = g.text.trim() || goalLabel(i) + " (not written yet)";
-                span.classList.toggle("placeholder", !g.text.trim());
-              }
-            });
+            // Keep the matching row in Step 2 in sync without a full
+            // re-render (which would steal focus mid-keystroke)
+            const span = document.querySelector(
+              '#evidenceList [data-goal="' + g.id + '"] .ev-goal');
+            if (span) {
+              span.textContent = g.text.trim() || goalLabel(i) + " (not written yet)";
+              span.classList.toggle("placeholder", !g.text.trim());
+            }
             renderGoalLegend();
             if (wasWritten !== isWritten) {
               // A goal just appeared or disappeared from the alignment
@@ -1062,7 +1082,7 @@
           const rm = removeBtn("Remove " + goalLabel(i), () => {
             state.goals = state.goals.filter(x => x.id !== g.id);
             pruneAlignments();
-            renderGoals(); renderEvidence(); renderActivities();
+            renderGoals(); renderEvidence();
             renderGoalLegend(); renderModules(); save();
           });
           li.append(input, rm);
@@ -1093,53 +1113,8 @@
           input.value = g.evidence;
           input.setAttribute("aria-label", "Assessment for " + goalLabel(i));
           input.placeholder = "How will you assess this? e.g., case-analysis paper in Module 6";
-          input.addEventListener("input", () => {
-            g.evidence = input.value;
-            // Keep the assessment shown in Step 4 in sync
-            const asmt = document.querySelector('#activitiesList [data-goal="' + g.id + '"] .ev-assess');
-            if (asmt) {
-              asmt.textContent = g.evidence.trim()
-                ? "Assessed by: " + g.evidence.trim()
-                : "No assessment planned yet (see Step 2)";
-              asmt.classList.toggle("placeholder", !g.evidence.trim());
-            }
-            save();
-          });
+          input.addEventListener("input", () => { g.evidence = input.value; save(); });
           li.append(span, input);
-          list.appendChild(li);
-        });
-      }
-
-      function renderActivities() {
-        const list = $("activitiesList");
-        list.innerHTML = "";
-        if (!state.goals.length) {
-          const li = document.createElement("li");
-          li.className = "muted";
-          li.style.borderLeft = "none";
-          li.textContent = "Add course goals in Step 1 and they will appear here.";
-          list.appendChild(li);
-          return;
-        }
-        state.goals.forEach((g, i) => {
-          const li = document.createElement("li");
-          li.dataset.goal = g.id;
-          const span = document.createElement("span");
-          span.className = "ev-goal" + (g.text.trim() ? "" : " placeholder");
-          span.textContent = g.text.trim() || goalLabel(i) + " (not written yet)";
-          const asmt = document.createElement("span");
-          asmt.className = "ev-assess" + (g.evidence.trim() ? "" : " placeholder");
-          asmt.textContent = g.evidence.trim()
-            ? "Assessed by: " + g.evidence.trim()
-            : "No assessment planned yet (see Step 2)";
-          const input = document.createElement("input");
-          input.type = "text";
-          input.autocomplete = "off";
-          input.value = g.activities;
-          input.setAttribute("aria-label", "Activities for " + goalLabel(i));
-          input.placeholder = "What practice builds these skills? e.g., worked-example videos, practice quiz, peer-reviewed draft";
-          input.addEventListener("input", () => { g.activities = input.value; save(); });
-          li.append(span, asmt, input);
           list.appendChild(li);
         });
       }
@@ -1396,9 +1371,9 @@
 
         text.push(title + " — Course Plan", "");
 
-        // Goals, assessments, and activities. Goals are numbered G1, G2, …
-        // so the module objectives can point back at them.
-        html.push("<h3>Course goals, assessments &amp; activities</h3>");
+        // Goals and their assessments. Goals are numbered G1, G2, … so the
+        // module objectives can point back at them.
+        html.push("<h3>Course goals &amp; assessments</h3>");
         const numbered = numberedGoals();
         const numOf = id => {
           const e = numbered.filter(x => x.id === id)[0];
@@ -1407,19 +1382,15 @@
         const goals = state.goals.filter(g => g.text.trim());
         if (goals.length) {
           html.push("<ul>");
-          text.push("COURSE GOALS, ASSESSMENTS & ACTIVITIES");
+          text.push("COURSE GOALS & ASSESSMENTS");
           goals.forEach(g => {
             const ev = g.evidence.trim();
-            const act = (g.activities || "").trim();
             const tag = numOf(g.id) ? numOf(g.id) + " — " : "";
             html.push("<li><strong>" + esc(tag + g.text.trim()) + "</strong><br>" +
               (ev ? "Assessment: " + esc(ev)
-                : '<span class="muted">No assessment planned yet</span>') + "<br>" +
-              (act ? "Activities: " + esc(act)
-                : '<span class="muted">No activities planned yet</span>') + "</li>");
+                : '<span class="muted">No assessment planned yet</span>') + "</li>");
             text.push("- " + tag + g.text.trim());
             text.push("  Assessment: " + (ev || "(none planned yet)"));
-            text.push("  Activities: " + (act || "(none planned yet)"));
           });
           html.push("</ul>");
           text.push("");
@@ -1544,8 +1515,8 @@
       });
 
       $("addGoalBtn").addEventListener("click", () => {
-        state.goals.push({ id: seq++, text: "", evidence: "", activities: "" });
-        renderGoals(); renderEvidence(); renderActivities();
+        state.goals.push({ id: seq++, text: "", evidence: "" });
+        renderGoals(); renderEvidence();
         renderGoalLegend(); renderModules(); save();
         const inputs = document.querySelectorAll("#goalsList input");
         inputs[inputs.length - 1].focus();
@@ -1587,14 +1558,13 @@
         $("principleNote").textContent = PRINCIPLES[state.principle];
         $("principleNote").style.display = "block";
       }
-      if (!state.goals.length) state.goals.push({ id: seq++, text: "", evidence: "", activities: "" });
+      if (!state.goals.length) state.goals.push({ id: seq++, text: "", evidence: "" });
       if (!state.topics.length) {
         state.topics.push({ id: seq++, text: "", priority: "Essential" });
         state.topics.push({ id: seq++, text: "", priority: "Essential" });
       }
       renderGoals();
       renderEvidence();
-      renderActivities();
       renderTopics();
       renderGoalLegend();
       renderModules();
