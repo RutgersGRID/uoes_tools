@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Learning Objective Builder v2</title>
+  <title>Learning Objective Builder</title>
   <style>
     body {
       font-family: Georgia, serif;
@@ -219,6 +219,11 @@
   <details id="guide">
     <summary>What goes in each blank?</summary>
     <dl>
+      <dt>Opener</dt>
+      <dd>The word that starts the objective and introduces the condition.
+        Use Given when learners have something, Without when they must work
+        without it, and At, After, or Upon when the condition is a setting or
+        timing.</dd>
       <dt>Condition</dt>
       <dd>The circumstances under which learners will demonstrate their
         learning. The condition describes the performance, not the
@@ -233,13 +238,13 @@
         include verbs from Bloom's Taxonomy such as label, calculate,
         assemble, etc. Avoid verbs you cannot watch or check, like understand
         or appreciate.</dd>
-      <dt>Degree (optional)</dt>
-      <dd>How well the learners must perform, if applicable. Some possible
-        examples could be measuring accuracy, completeness, time, quality,
-        any required elements, or alignment with a rubric.</dd>
+      <dt>Degree</dt>
+      <dd>How well the learners must perform. Examples could be accuracy,
+        speed, or completeness, such as 90% accuracy, within 10 minutes, or
+        all 50 states.</dd>
     </dl>
-    <p class="example"><strong>Example:</strong>
-      <span class="ex-part">Given a blank map of the US<span class="ex-label" aria-hidden="true">condition</span></span>,
+    <p class="example"><strong>Example:</strong> Given
+      <span class="ex-part">a blank map of the US<span class="ex-label" aria-hidden="true">condition</span></span>,
       <span class="ex-part">students<span class="ex-label" aria-hidden="true">audience</span></span> will
       <span class="ex-part">label all fifty states<span class="ex-label" aria-hidden="true">behavior</span></span>
       <span class="ex-part">with 90% accuracy<span class="ex-label" aria-hidden="true">degree</span></span>.</p>
@@ -265,23 +270,26 @@
     // {Given|At|After|Upon}. To also show a hint under it, add "label:" in
     // front, e.g. {opener:Given|At|After|Upon}.
     const template =
-      "{condition}, {audience} will {behavior} {degree (optional)}.";
+      "{opener:After|At|Given|Upon|Without} {condition}, {audience} will {behavior} {degree}.";
 
     // Short guidance shown as a tooltip when hovering a blank.
     // Keys must match the placeholder names in the template.
     const GUIDANCE = {
+      opener:
+        "The word that starts the objective and introduces the condition. " +
+        "Choose Given for something learners have, Without for something " +
+        "they must work without, or At, After, or Upon for a setting or timing.",
       condition:
         "The circumstances of the demonstration: what learners will have, " +
         "what they must do without, or the setting or timing. Examples " +
-        "include Given a map, or At the end of the semester.",
+        "include a map, or the end of the semester.",
       audience: "Who the learners are. Examples include students or new hires.",
       behavior:
         "An observable, measurable action, like label all fifty states. " +
         "Avoid verbs like understand or know.",
-      "degree (optional)":
-        "Optional: How well they must perform. Examples can include " +
-        "measuring accuracy, completeness, time, quality, any required " +
-        "elements, or alignment with a rubric."
+      degree:
+        "How well they must perform. Examples include with 90% accuracy, " +
+        "or within five minutes."
     };
 
     // Build the sentence: plain text stays as text,
@@ -349,12 +357,9 @@
       let i = 0;
       const words = [];
       const story = template.replace(/\{(.+?)\}/g, (m, inner) => {
-        const raw = document.getElementById("word" + i).value.trim();
-        // Optional parts left blank are omitted; required ones show ______
-        const word = raw || (inner.includes("(optional)") ? "" : "______");
+        const word = document.getElementById("word" + i).value.trim() || "______";
         words.push(word);
         i++;
-        if (!word) return "";
 
         // Work out the label for this part: the placeholder name for text
         // blanks, or the "label:" prefix for dropdowns (empty if none).
@@ -367,12 +372,11 @@
         return label
           ? `<span class="blank">${word}<span class="blank-label" aria-hidden="true">${label}</span></span>`
           : word;
-      }).replace(/ +([.,])/g, "$1"); // tidy spacing where an optional part was omitted
+      });
 
       // Plain-text version: same words, no markup
       let j = 0;
-      plainStory = template.replace(/\{.+?\}/g, () => words[j++])
-        .replace(/ +([.,])/g, "$1");
+      plainStory = template.replace(/\{.+?\}/g, () => words[j++]);
 
       document.getElementById("storyText").innerHTML = story.replace(/\n/g, "<br>");
       const storyDiv = document.getElementById("story");
