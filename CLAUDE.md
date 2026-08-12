@@ -9,18 +9,31 @@ v1 pages keep their CSS inline.
 
 ## Files
 
+**Naming convention:** the live version of a tool has the plain name;
+the superseded one gets a `_v1` suffix. Both planners and both objective
+builders were renamed to this scheme on August 12, 2026 — before that,
+`learning_objectives.html` meant v1 and `learning_objectives2.html` meant
+v2, which is the opposite of what it means now. Older notes in this file
+that name a file may predate the rename; trust this list.
+
 - `index.html` — landing page listing the tools. Add a `<li>` to the
-  tool list whenever a new tool page is added.
-- `learning_objectives.html` — Learning Objective Builder **v1**. Frozen:
-  do not modify. It is being field-tested side by side against v2.
-- `learning_objectives2.html` — Learning Objective Builder **v2**
-  (page `<title>` says "v2"; the on-page heading does not). Currently out
-  with instructional designers for feedback; a final version will be chosen
-  after field testing. Now linked from index.html.
-- `course_planner.html` — Course Content Planner **v1**, a 5-step backwards
-  design walkthrough (see below). Frozen while v2 is compared against it.
-- `course_planner_v2.html` — Course Content Planner **v2**, a 4-step
-  revision built from instructional designer feedback (see below).
+  tool list whenever a new tool page is added. It lists one entry per
+  tool, pointing at the live version — the frozen `_v1` pages are not
+  linked.
+- `learning_objectives.html` — Learning Objective Builder **v2**, the live
+  one (page `<title>` still says "v2"; the on-page heading does not).
+  Out with instructional designers for feedback; a final version will be
+  chosen after field testing.
+- `learning_objectives_v1.html` — Learning Objective Builder **v1**.
+  Frozen: do not modify. Field-tested side by side against v2.
+- `blooms_verbs.html` — Bloom's Taxonomy Verbs, a standalone reference
+  sheet linked from the objective builder (see below). Not listed on
+  index.html, on purpose.
+- `course_planner.html` — Course Content Planner **v2**, the live one: a
+  4-step revision built from instructional designer feedback (see below).
+- `course_planner_v1.html` — Course Content Planner **v1**, a 5-step
+  backwards design walkthrough (see below). Frozen while v2 is compared
+  against it.
 - `workload_estimator.html` — Course Workload Estimator, a JS port of an
   R/Shiny app (see below).
 - `credit_hour_planner.html` — Credit Hour Planner, a JS port of a
@@ -34,7 +47,8 @@ sheets in cascade order, most general first:
 | Page | Sheets |
 | --- | --- |
 | `index.html` | `base` + `index` |
-| `learning_objectives2.html` | `base` + `document` + `learning_objectives2` |
+| `learning_objectives.html` | `base` + `document` + `learning_objectives` |
+| `blooms_verbs.html` | `base` + `document` + `blooms_verbs` |
 | `course_planner.html` | `base` + `document` + `course_planner` |
 | `credit_hour_planner.html` | `base` + `calculator` + `credit_hour_planner` |
 | `workload_estimator.html` | `base` + `calculator` + `workload_estimator` |
@@ -62,7 +76,7 @@ Rules of thumb when editing:
 - Never write a brand hex code outside `base.css`; use the token.
   `test/verify_css_extraction.js` fails the build if you do.
 
-**`learning_objectives.html` and `course_planner_v1.html` still carry
+**`learning_objectives_v1.html` and `course_planner_v1.html` still carry
 inline CSS on purpose.** They are the frozen field-testing baselines, and
 they must keep rendering exactly as designers saw them however `css/`
 changes underneath. Do not convert them while the comparisons are live.
@@ -109,7 +123,7 @@ any new rule.
   and asserts the resolved outline. Note it keys off `:focus`, not
   `:focus-visible`, so the ring shows on mouse click too — that has
   always been the behaviour on the planner and the calculators, and
-  `learning_objectives2.html` was brought into line on August 12, 2026.
+  `learning_objectives.html` (v2) was brought into line on August 12, 2026.
 - Generated inputs get `aria-label` (and `aria-description` for guidance
   text where used). Decorative hint labels under blanks are
   `aria-hidden="true"`.
@@ -145,6 +159,66 @@ v2 differences (from instructional designer feedback):
 - An empty optional blank is omitted from the generated sentence (with
   punctuation cleanup — no stray space before the period). Empty
   *required* blanks still render as `______`.
+- The `<dl>` in the "What goes in each blank?" panel runs Condition,
+  Audience, Behavior, Degree — sentence order, not ABCD order.
+
+## Bloom's Taxonomy Verbs page
+
+`blooms_verbs.html` — a standalone reference sheet, linked from the
+**Behavior** entry in the objective builder's "What goes in each blank?"
+panel (`target="_blank"`). It started as a second guidance panel inside
+the builder on August 12, 2026 and was pulled out into its own page the
+same day, because the verb list is long enough to swamp the tool it was
+supposed to support.
+
+**It is deliberately not listed on index.html.** It is a reference sheet
+supporting one tool, not a tool in its own right; the home page keeps
+listing four tools. Its only navigation is the footer link back to the
+builder — worth remembering if it ever gets linked from somewhere else.
+
+### Sources
+
+Everything on the page comes from two papers, cited at the foot of it:
+
+> Newton, P. M., Da Silva, A., & Peters, L. G. (2020). A pragmatic master
+> list of action verbs for Bloom's Taxonomy. *Frontiers in Education*, 5,
+> 107. <https://doi.org/10.3389/feduc.2020.00107>
+
+> Krathwohl, D. R. (2002). A revision of Bloom's taxonomy: An overview.
+> *Theory Into Practice*, 41(4), 212–218.
+
+Newton et al. surveyed 47 verb lists from 35 UK higher-education sources
+and found very little agreement between them. Their master list keeps
+only the verbs appearing in more than half of those lists *and*
+consistently placed at the same tier. The page reproduces that list.
+**These are the paper's verbs, not a house list — don't add, drop or
+re-tier one without a source.** Krathwohl 2002 supplies the revised tier
+names (Remember, Understand, Apply, Analyze, Evaluate, Create), which the
+page shows alongside Bloom's originals.
+
+Two things on the page look like mistakes and are not:
+
+- **`explain`, `select` and `choose` appear on both the master list and
+  the avoid list.** That is Newton et al.'s own finding. The
+  `.avoid-note` under the callout says why — institutions place the same
+  verb at different tiers. Keep that note if the lists stay.
+- **The tiers run Evaluation *then* Synthesis.** That is the revised
+  order (Evaluate 5th, Create 6th). Bloom's original had them the other
+  way round — Synthesis 5th, Evaluation 6th — so with both naming schemes
+  shown per row, "lowest to highest" is only true of the revised scheme.
+  The `.note` callout under the lead paragraph states this. Do not
+  "fix" the order without also fixing that callout.
+
+### Styling
+
+`css/blooms_verbs.css`, on top of `base.css` + `document.css`. The tier
+list is a `<dl>` laid out as a two-column grid (`240px` for the tier name,
+the rest for its verbs) inside one white card, stacking to a single column
+under 640px. The level numbers 1–6 are a **CSS counter on `dt::before`**,
+not markup — decorative, since a sighted reader infers the order from
+position and the lead paragraph states it in words for everyone else. The
+two callouts intentionally echo the calculators: `.avoid` is the red
+`.warn` treatment, `.note` its Light Blue counterpart.
 
 ## Course Content Planner notes (v1)
 
@@ -183,7 +257,8 @@ Other behaviors to preserve:
 
 ## Course Content Planner v2 notes
 
-`course_planner_v2.html`, created July 29, 2026 from instructional
+`course_planner.html` (then named `course_planner_v2.html`), created
+July 29, 2026 from instructional
 designer feedback on v1. v1 stays in the repo unchanged so the two can be
 compared side by side. The page `<title>` reads "Course Content Planner
 (v2)"; the on-page `<h1>` does not — same convention as the objective
@@ -426,8 +501,15 @@ original merged "traditional" and "fully online" into one block precisely
 because the math is identical and only the delivery differs. Two things now
 carry the explanation and should be kept: an italic sub-label on each tile
 (`#desc-instr`, swapped by format, plus a static one on the face-to-face
-tile) and a `<details open>` panel, "What counts as instructional time", in
-the *How this is calculated* card. The harness asserts both.
+tile) and a `<details>` panel, "What counts as instructional time", in the
+*How this is calculated* card. The harness asserts both exist.
+
+The panel was `<details open>` at first; **Maka collapsed it on August 12,
+2026**, so the tile sub-labels now carry the explanation on first read and
+the panel is there for anyone who wants the detail. The harness no longer
+asserts an open/closed state — only that the panel exists. If this turns
+out to leave people reading the instructional row as face-to-face class
+time, reopening it is the cheap fix.
 
 Setting `f2f = 0` makes the blended block identical to the fully-online
 block, so the port uses **one code path** for both formats. Invariant worth
@@ -520,7 +602,7 @@ Contact, divide-by-zero guards, conditional panel visibility,
 localStorage round-trip and migration, report generation, print-PDF
 non-blankness, and label/aria coverage. Re-run it after any math change.
 
-For the credit hour planner, `test/verify_credit_hour_planner.js` runs 292
+For the credit hour planner, `test/verify_credit_hour_planner.js` runs 291
 checks: 18 scenarios against an independent transcription of the workbook's
 cell formulas, the Carnegie invariant, blended-with-zero-f2f equivalence,
 the non-accelerating face-to-face rule, all three guards, module totals and
@@ -552,10 +634,10 @@ Plus: saving under the v2 key and *not* the v1 key, round-trip, migration
 of a v1-shaped save (string `objectives` → one row, `duedates` and goal
 `activities` dropped), corrupt-save recovery, plan generation with
 G-number tags and field ordering, print-PDF non-blankness and print-CSS
-visibility, and a guard that `course_planner.html` is still untouched
+visibility, and a guard that `course_planner_v1.html` is still untouched
 (5 steps, due dates, single objectives field, v1 storage key).
 
-For the stylesheets, `test/verify_css_extraction.js` runs 104 checks: each
+For the stylesheets, `test/verify_css_extraction.js` runs 120 checks: each
 converted page links exactly the expected sheets in the expected order
 with `base.css` first, every sheet actually parses (a 404 or a typo'd
 `href` yields zero rules and fails), no inline `<style>` block survives,
@@ -581,13 +663,25 @@ the CSS work against symlinks supplying the old names.
 
 ## Current status (August 2026)
 
+- **Files renamed to the live/`_v1` scheme on August 12, 2026** (see
+  **Files**), and index.html trimmed to one link per tool. Anything
+  written before that date and not since corrected may still use the old
+  names.
+- **Bloom's Taxonomy Verbs moved to its own page**, `blooms_verbs.html`
+  (August 12, 2026). It was briefly a second panel inside the objective
+  builder; the builder now links to it from the Behavior guidance. Two
+  content corrections were made when it was styled: the lead had
+  attributed "A Revision of Bloom's Taxonomy: An Overview" to Anderson
+  and Krathwohl (2001) when it is Krathwohl alone (2002), and the tier
+  order needed the caveat callout about the two schemes disagreeing on
+  the top two tiers. See the Bloom's Taxonomy Verbs page notes.
 - **CSS moved into `css/` on August 12, 2026** (see **Stylesheets**).
   Verified as a pure refactor: every converted page renders pixel-identical
   to its inline-CSS predecessor at 1280px and 600px, in print, and after
   generating its plan/report/objective. `verify_course_planner_v2.js`
-  (96) and `verify_credit_hour_planner.js` (292) both still pass, and
-  `verify_css_extraction.js` (104) is new.
-  One deliberate exception: `learning_objectives2.html` previously had no
+  (96) and `verify_credit_hour_planner.js` (291) both still pass, and
+  `verify_css_extraction.js` (120) is new.
+  One deliberate exception: the v2 objective builder previously had no
   focus rule of its own, so its "Create Objective" button, copy button and
   `<summary>` used the browser's default focus ring. They now take the
   documented `2px solid #007FAC` ring from `base.css`, matching every
@@ -595,9 +689,9 @@ the CSS work against symlinks supplying the old names.
   the designers currently field-testing v2** if any of them report the
   page looking different.
 - v2 objective builder is in field testing; more feedback expected.
-- course_planner.html (v1) has the module-card Step 5 and is now frozen
+- course_planner_v1.html has the module-card Step 5 and is now frozen
   while v2 is field-tested against it.
-- course_planner_v2.html added July 29, 2026 and linked from index.html
+- course_planner.html (v2) added July 29, 2026 and linked from index.html
   as "Course Content Planner (updated v2)". Out for instructional designer
   comparison against v1. Things to confirm with Maka rather than change on
   a hunch: the Step 1 goals lead-in is punctuated as a statement ("…by the
