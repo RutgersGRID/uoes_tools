@@ -1,0 +1,47 @@
+/* ============================================================
+   Course Workload Estimator — page-specific styles
+   Loaded after base.css and calculator.css.
+   ============================================================ */
+
+header p { max-width: 44rem; }
+
+input[type="range"] { width: 100%; accent-color: var(--blue); }
+
+.check { display: flex; align-items: flex-start; gap: .5rem; font-size: .9rem; margin-top: .6rem; }
+.check input { margin-top: .35rem; accent-color: var(--red); }
+.check label { margin: 0; }
+
+/* The computed pages-per-hour / hours-per-page readout under a card's inputs */
+.rate {
+  background: var(--blue-light);
+  border-radius: 6px;
+  padding: .5rem .6rem;
+  margin: .75rem 0 .25rem;
+  font-size: .9rem;
+  text-align: center;
+}
+.rate strong { display: block; font-size: 1.05rem; color: var(--red-dark); }
+
+/* ---- results ---- */
+
+.totals { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+
+/* ---- per-category breakdown table ---- */
+
+.bar {
+  display: block;
+  height: 8px;
+  background: var(--blue);
+  border-radius: 4px;
+  min-width: 1px;
+}
+.bar-cell { width: 22%; }
+.tag {
+  font-size: .72rem;
+  padding: .1rem .4rem;
+  border-radius: 10px;
+  background: var(--blue-light);
+  color: var(--text);
+  white-space: nowrap;
+}
+.tag.contact { background: var(--red-tint); }

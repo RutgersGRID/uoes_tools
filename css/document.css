@@ -1,0 +1,54 @@
+/* ============================================================
+   UOES Tools — shared shell for the document-style pages
+   ------------------------------------------------------------
+   Used by learning_objectives2.html and course_planner.html:
+   pages that read as a centred document at reading width rather
+   than a wide calculator. Set --content-width in the page file
+   to change the measure (750px if unset).
+
+   Load order: base.css -> document.css -> <page>.css
+   ============================================================ */
+
+body {
+  font-family: Georgia, serif;
+  max-width: var(--content-width, 750px);
+  margin: 40px auto;
+  padding: 0 20px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+h1 { text-align: center; }
+
+.subtitle {
+  text-align: center;
+  color: var(--muted);
+}
+
+/* ---- collapsible guidance panel ----
+   A <details class="guide"> holding a <summary> and usually a
+   definition list. Appears on both tools and should look identical
+   on each; page files add only their own extras. */
+.guide {
+  background: var(--blue-light);
+  border: 1px solid var(--blue-mid);
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  font-size: 15px;
+}
+
+.guide summary {
+  cursor: pointer;
+  font-weight: bold;
+  color: #000;
+}
+
+.guide dt {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.guide dd {
+  margin: 2px 0 0 0;
+}

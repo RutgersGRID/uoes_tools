@@ -1,0 +1,174 @@
+/* ============================================================
+   Learning Objective Builder v2 — page-specific styles
+   Loaded after base.css and document.css.
+   ============================================================ */
+
+/* The objective sentence with inline blanks */
+#storyForm {
+  background: var(--surface);
+  border: 2px solid var(--rule-light);
+  border-radius: 8px;
+  padding: 24px;
+  font-size: 19px;
+  line-height: 3; /* generous spacing so the hanging hint labels have room */
+}
+
+/* Wrapper flows inline with the text; the input sits on the text baseline */
+.blank-wrap {
+  display: inline-block;
+  position: relative;
+  vertical-align: baseline;
+  margin: 0 2px;
+  line-height: normal; /* don't inherit the paragraph's tall line-height,
+                          so the wrapper hugs the input and the hint sits
+                          right beneath the blank */
+}
+
+/* Resting blanks: Rutgers Blue underline (Mid Blue failed the 3:1
+   non-text contrast requirement against white). Focused blank keeps the
+   Light Blue wash; its outline comes from base.css. */
+.blank-wrap input {
+  min-width: 140px;
+  border: none;
+  border-bottom: 2px solid var(--blue);
+  background: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  text-align: center;
+  padding: 0 2px;
+}
+.blank-wrap input:focus {
+  background: var(--blue-light);
+  border-radius: 4px 4px 0 0;
+}
+
+/* Inline dropdowns get the same written-in-blank look */
+.blank-wrap select {
+  border: none;
+  border-bottom: 2px solid var(--blue);
+  background: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  text-align: center;
+  padding: 0 2px;
+  cursor: pointer;
+}
+.blank-wrap select:focus {
+  background: var(--blue-light);
+  border-radius: 4px 4px 0 0;
+}
+
+/* The subscript label hangs below the blank without affecting alignment */
+.blank-wrap .hint {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 11px;
+  font-style: italic;
+  color: var(--muted);
+  line-height: 1;
+  margin-top: 2px;
+}
+
+/* ---- guidance panel extras (the base panel is in document.css) ---- */
+
+.guide dd {
+  line-height: 1.5;
+}
+
+.guide .example {
+  margin: 14px 0 4px 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--blue-mid);
+  font-style: italic;
+  line-height: 2.8; /* room for the labels hanging under each part */
+}
+
+/* Underlined phrases in the example, labeled just like the form's blanks */
+.guide .ex-part {
+  display: inline-block;
+  position: relative;
+  border-bottom: 2px solid var(--blue);
+  line-height: normal;
+  margin: 0 1px;
+}
+
+.guide .ex-label {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 11px;
+  font-style: italic;
+  color: var(--muted);
+  line-height: 1;
+  margin-top: 2px;
+}
+
+/* ---- buttons and generated objective ---- */
+
+button {
+  display: block;
+  margin: 20px auto;
+  padding: 12px 32px;
+  font-size: 18px;
+  background: var(--red);
+  color: var(--surface);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+button:hover { background: var(--red-dark); }
+
+#story {
+  display: none;
+  background: var(--surface);
+  border: 2px solid var(--red);
+  border-radius: 8px;
+  padding: 20px;
+  font-size: 18px;
+  line-height: 2.8; /* room for the labels hanging under each part */
+  margin-top: 20px;
+}
+
+/* Filled-in parts: underlined and labeled, same as the guide's example */
+#story .blank {
+  display: inline-block;
+  position: relative;
+  border-bottom: 2px solid var(--blue);
+  line-height: normal;
+  margin: 0 1px;
+}
+#story .blank-label {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 11px;
+  font-style: italic;
+  color: var(--muted);
+  line-height: 1;
+  margin-top: 2px;
+}
+
+/* Small secondary copy button inside the result box */
+#copyBtn {
+  display: inline-block;
+  margin: 14px 0 0 0;
+  padding: 6px 16px;
+  font-size: 14px;
+  background: var(--surface);
+  color: var(--red);
+  border: 2px solid var(--red);
+  border-radius: 6px;
+  cursor: pointer;
+  line-height: normal;
+}
+#copyBtn:hover {
+  background: var(--red);
+  color: var(--surface);
+}

@@ -1,0 +1,97 @@
+/* ============================================================
+   Credit Hour Planner — page-specific styles
+   Loaded after base.css and calculator.css.
+   ============================================================ */
+
+header p { max-width: 46rem; }
+
+.lede { margin: 0 0 1rem; font-size: .92rem; color: var(--muted); max-width: 46rem; }
+
+/* A wider two-up grid than calculator.css's .grid, for the pair of
+   cards that each hold a full column of activity rows. */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+/* ---- course-format radio group ---- */
+
+fieldset { border: none; margin: 0; padding: 0; }
+fieldset legend {
+  font-size: .9rem;
+  padding: 0;
+  margin-bottom: .4rem;
+}
+.choice { display: flex; align-items: flex-start; gap: .5rem; font-size: .95rem; margin-bottom: .4rem; }
+.choice input { margin-top: .35rem; accent-color: var(--red); }
+.choice label { margin: 0; font-size: .95rem; }
+.choice .hint { margin: .05rem 0 0; }
+
+/* ---- activity rows ---- */
+
+.act {
+  display: grid;
+  grid-template-columns: 1fr 5.5rem;
+  gap: .5rem .75rem;
+  align-items: baseline;
+  padding: .3rem 0;
+  border-bottom: 1px solid var(--blue-light);
+}
+.act:last-child { border-bottom: none; }
+.act label { margin: 0; }
+.act .sug { display: block; font-size: .75rem; color: var(--muted); }
+.act input[type="number"] { text-align: right; padding-right: .2rem; }
+/* Derived rows are read-only. No underline: an underline here would read
+   as an editable input, and Mid Blue fails 3:1 non-text contrast anyway. */
+.act .derived {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--red-dark);
+  padding: .35rem .2rem;
+  font-size: 1rem;
+  font-style: italic;
+}
+.subtotal {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: .8rem;
+  padding-top: .6rem;
+  border-top: 2px solid var(--blue);
+  font-weight: bold;
+}
+.subtotal .v { font-variant-numeric: tabular-nums; }
+
+/* ---- results ---- */
+
+.totals { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+.total { margin: 0; }
+.total .desc {
+  display: block;
+  font-size: .72rem;
+  color: var(--muted);
+  margin-top: .35rem;
+  font-style: italic;
+  line-height: 1.3;
+}
+.total .desc:empty { display: none; }
+/* `.over` is a semantic hook only. Being over budget takes the solid-red
+   .primary treatment so it reads as louder than being under, never softer. */
+
+.table-scroll { overflow-x: auto; }
+
+.note {
+  background: var(--blue-light);
+  border-left: 4px solid var(--blue);
+  padding: .6rem .8rem;
+  margin: .75rem 0;
+  font-size: .88rem;
+}
+.note p { margin: 0 0 .4rem; }
+.note p:last-child { margin: 0; }
+
+button.small { font-size: .82rem; padding: .3rem .7rem; }
+
+a { color: var(--blue); }

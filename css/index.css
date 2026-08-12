@@ -1,0 +1,62 @@
+/* ============================================================
+   UOES Tools home page — page-specific styles
+   Loaded after base.css.
+
+   The landing page has its own shell (a full-width red banner
+   above a centred list), so it does not use document.css.
+   ============================================================ */
+
+body {
+  font-family: Georgia, serif;
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+}
+
+header {
+  background: var(--red);
+  color: var(--surface);
+  padding: 28px 20px;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 32px;
+}
+
+main {
+  max-width: 750px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.tool-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tool-list li {
+  background: var(--surface);
+  border: 2px solid var(--blue);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.tool-list a {
+  color: var(--red);
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.tool-list a:hover,
+.tool-list a:focus {
+  color: var(--red-dark);
+}
+
+.tool-list p {
+  margin: 8px 0 0 0;
+  line-height: 1.5;
+}

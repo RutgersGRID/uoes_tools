@@ -1,0 +1,79 @@
+/* ============================================================
+   UOES Tools — design tokens and shared primitives
+   ------------------------------------------------------------
+   Loaded first by every tool page. Holds only what is genuinely
+   common to all of them: the Rutgers colour palette, the visually
+   hidden helper, and the focus-visibility convention.
+
+   Layout, typography scale and components live in the per-page
+   stylesheets (and, for the two calculators, in calculator.css),
+   because the pages deliberately differ: the objective builder and
+   the course planner are narrow reading-width documents, while the
+   workload and credit-hour tools are wide multi-column calculators.
+   ============================================================ */
+
+:root {
+  /* --- Rutgers brand ------------------------------------- */
+  --red: #CC0033;        /* headers, primary buttons, links, accents */
+  --red-dark: #A30029;   /* hover / darker variant of --red */
+  --blue: #007FAC;       /* card borders, input underlines, focus outlines */
+  --blue-light: #DEF0F9; /* guidance panels, focused-input wash, header bands */
+  --blue-mid: #7DBFD6;   /* thin borders and dividers ONLY.
+                            Fails the 3:1 non-text contrast requirement against
+                            white, so never use it alone for a meaningful UI
+                            boundary such as an input underline — that is why
+                            underlines use --blue. */
+
+  /* --- Surfaces ------------------------------------------ */
+  --bg: #f4f7f9;         /* page background */
+  --surface: #ffffff;    /* cards, panels, generated output */
+
+  /* --- Text ---------------------------------------------- */
+  --text: #333;          /* body copy */
+  --text-mid: #444;      /* step lead-ins */
+  --text-soft: #555;     /* secondary lines inside a list row */
+  --muted: #666;         /* captions, hints, footers */
+  --muted-light: #767676;/* placeholder-ish text on white. Lighter than
+                            --muted but still 4.5:1 against #fff. */
+
+  /* --- Neutral rules ------------------------------------- */
+  --rule: #999;          /* form control borders on the document-style pages */
+  --rule-light: #ccc;    /* lighter inner borders (module card fields) */
+
+  /* --- Red-tinted washes --------------------------------- */
+  --red-wash: #fff4f6;   /* warning callout background */
+  --red-tint: #ffe3ea;   /* "contact time" tag background */
+  --red-pale: #ffdbe4;   /* sub-label on a solid red tile */
+}
+
+/* Every interactive element gets a visible focus style (WCAG 2.4.7).
+   This is the single source of that rule — page stylesheets should not
+   restate it, only add a background wash where one is wanted. */
+input:focus,
+textarea:focus,
+select:focus,
+button:focus,
+summary:focus,
+a:focus,
+[tabindex]:focus {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+/* Visually hidden but available to screen readers. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* The `hidden` attribute must win over any display rule a component sets. */
+[hidden] {
+  display: none !important;
+}

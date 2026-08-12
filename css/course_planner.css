@@ -1,0 +1,556 @@
+/* ============================================================
+   Course Content Planner (v2) — page-specific styles
+   Loaded after base.css and document.css.
+   ============================================================ */
+
+:root {
+  --content-width: 900px; /* wider than the default document measure */
+}
+
+.subtitle {
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
+}
+
+/* Each step is a white card, echoing the tool list on the home page */
+section.step {
+  background: var(--surface);
+  border: 2px solid var(--blue);
+  border-radius: 8px;
+  padding: 20px 24px 24px 24px;
+  margin-bottom: 24px;
+}
+
+section.step h2 {
+  margin: 0 0 4px 0;
+  font-size: 22px;
+}
+
+.step-num {
+  display: inline-block;
+  background: var(--red);
+  color: var(--surface);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  font-size: 17px;
+  margin-right: 8px;
+}
+
+.step-lead {
+  margin: 6px 0 14px 0;
+  line-height: 1.5;
+  color: var(--text-mid);
+}
+
+/* ---- guidance panel extras (the base panel is in document.css) ---- */
+
+.guide { line-height: 1.55; }
+.guide ul { margin: 8px 0 4px 0; padding-left: 22px; }
+.guide li { margin-bottom: 6px; }
+.guide p { margin: 10px 0 4px 0; }
+
+/* ---- form controls ---- */
+
+label {
+  font-weight: bold;
+}
+
+input[type="text"],
+textarea,
+select {
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--text);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 8px 10px;
+  background: var(--surface);
+  box-sizing: border-box;
+}
+
+input[type="number"] {
+  font-family: inherit;
+  font-size: 16px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 8px 10px;
+  width: 80px;
+}
+
+textarea {
+  width: 100%;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.basics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-end;
+}
+
+.basics .field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.basics input[type="text"] {
+  min-width: 320px;
+}
+
+/* Dynamic rows (goals, topics) */
+.row-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px 0;
+}
+
+.row-list li {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.row-list input[type="text"] {
+  flex: 1;
+  min-width: 240px;
+}
+
+.row-list select {
+  flex: 0 0 auto;
+}
+
+/* Evidence rows: goal text shown above its evidence blank.
+   (The UI says "assessment"; the state field is still `evidence`
+   for saved-data compatibility, and these class names follow it.) */
+.ev-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ev-list li {
+  border-left: 4px solid var(--blue-mid);
+  padding: 4px 0 4px 14px;
+  margin-bottom: 14px;
+}
+
+.ev-goal {
+  display: block;
+  font-style: italic;
+  margin-bottom: 6px;
+}
+
+.ev-goal.placeholder {
+  color: var(--muted-light);
+}
+
+.ev-assess {
+  display: block;
+  font-size: 14px;
+  color: var(--text-soft);
+  margin: -2px 0 6px 0;
+}
+
+.ev-assess.placeholder {
+  color: var(--muted-light);
+  font-style: italic;
+}
+
+.ev-list input[type="text"] {
+  width: 100%;
+}
+
+/* Priority coloring on the topic triage dropdowns */
+select.pri-essential {
+  border-color: var(--red);
+  font-weight: bold;
+}
+
+select.pri-trim {
+  color: var(--muted);
+}
+
+/* ---- buttons ---- */
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.add-btn {
+  display: inline-block;
+  padding: 6px 16px;
+  font-size: 15px;
+  background: var(--surface);
+  color: var(--blue);
+  border: 2px solid var(--blue);
+}
+
+.add-btn:hover {
+  background: var(--blue-light);
+}
+
+.remove-btn {
+  flex: 0 0 auto;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  border-radius: 6px;
+  font-size: 14px;
+  padding: 4px 10px;
+}
+
+.remove-btn:hover {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.primary-btn {
+  display: block;
+  margin: 28px auto;
+  padding: 12px 32px;
+  font-size: 18px;
+  background: var(--red);
+  color: var(--surface);
+  border: none;
+}
+
+.primary-btn:hover {
+  background: var(--red-dark);
+}
+
+.small-btn {
+  display: inline-block;
+  margin: 14px 8px 0 0;
+  padding: 6px 16px;
+  font-size: 14px;
+  background: var(--surface);
+  color: var(--red);
+  border: 2px solid var(--red);
+  line-height: normal;
+}
+
+.small-btn:hover {
+  background: var(--red);
+  color: var(--surface);
+}
+
+/* The organizing-principle description box */
+#principleNote {
+  background: var(--blue-light);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 15px;
+  line-height: 1.5;
+  margin-top: 10px;
+  display: none;
+}
+
+/* ---- module schedule cards ---- */
+
+.grid-caption {
+  font-style: italic;
+  color: var(--muted);
+  margin: 12px 0 8px 0;
+}
+
+.mod-card {
+  border: 1px solid var(--blue-mid);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.mod-card header {
+  background: var(--blue-light);
+  padding: 8px 14px;
+  font-weight: bold;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.mod-card header input {
+  flex: 1;
+  font-size: 15px;
+}
+
+.mod-card .card-body {
+  padding: 12px 14px;
+}
+
+.mod-card .card-row {
+  margin-bottom: 12px;
+}
+
+.mod-card .card-row:last-child {
+  margin-bottom: 0;
+}
+
+.mod-card label {
+  font-size: 14px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.mod-card input[type="text"],
+.mod-card textarea {
+  width: 100%;
+  border: 1px solid var(--rule-light);
+  font-size: 15px;
+  padding: 6px 8px;
+}
+
+.mod-card textarea {
+  min-height: 60px;
+}
+
+.opt {
+  font-weight: normal;
+  color: var(--muted-light);
+  font-style: italic;
+}
+
+/* Course-goal key shown above the module cards, so the G1/G2
+   alignment checkboxes inside each card can be read at a glance */
+#goalLegend {
+  background: var(--blue-light);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 10px 0 14px 0;
+}
+
+#goalLegend .legend-goal {
+  white-space: normal;
+}
+
+/* Module objectives: a repeatable row of "objective + alignment" */
+.obj-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 8px 0;
+}
+
+.obj-head,
+.obj-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 150px 34px;
+  gap: 10px;
+  align-items: start;
+}
+
+.obj-row {
+  margin-bottom: 8px;
+}
+
+.obj-head span {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.align-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  align-items: center;
+  padding-top: 7px;
+  font-size: 13px;
+}
+
+.mod-card .align-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: normal;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.align-chip input[type="checkbox"] {
+  margin: 0;
+  accent-color: var(--red);
+}
+
+.align-none {
+  font-size: 13px;
+}
+
+/* Only shown when the row stacks on a narrow screen */
+.align-mini {
+  display: none;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.obj-row .remove-btn {
+  padding: 5px 0;
+  width: 34px;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+
+  /* Stacked: objective and its remove button on one line, the
+     alignment checkboxes on the line below */
+  .obj-head {
+    grid-template-columns: 1fr;
+  }
+
+  .obj-head span:nth-child(n+2) {
+    display: none;
+  }
+
+  .obj-row {
+    grid-template-columns: minmax(0, 1fr) 34px;
+    margin-bottom: 14px;
+  }
+
+  .obj-row>input[type="text"] {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .obj-row .remove-btn {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .align-box {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    padding-top: 0;
+  }
+
+  .align-mini {
+    display: inline;
+  }
+}
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 640px) {
+  .two-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---- generated plan ---- */
+
+#planWrap {
+  display: none;
+  background: var(--surface);
+  border: 2px solid var(--red);
+  border-radius: 8px;
+  padding: 24px;
+  margin-top: 8px;
+}
+
+#planWrap h2 {
+  margin-top: 0;
+}
+
+#plan h3 {
+  color: var(--red);
+  border-bottom: 1px solid var(--blue-mid);
+  padding-bottom: 4px;
+  margin-bottom: 10px;
+}
+
+#plan table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#plan th,
+#plan td {
+  border: 1px solid var(--blue-mid);
+  padding: 8px;
+  vertical-align: top;
+  text-align: left;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+#plan th {
+  background: var(--blue-light);
+}
+
+#plan .plan-module {
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+#plan ul {
+  margin: 6px 0;
+  padding-left: 24px;
+}
+
+#plan li {
+  margin-bottom: 4px;
+  line-height: 1.5;
+}
+
+.muted {
+  color: var(--muted-light);
+  font-style: italic;
+}
+
+footer {
+  text-align: center;
+  font-size: 14px;
+  color: var(--muted);
+  margin: 30px 0;
+  line-height: 1.6;
+}
+
+a {
+  color: var(--red);
+}
+
+a:hover,
+a:focus {
+  color: var(--red-dark);
+}
+
+/* ---- printing: show only the generated plan ----
+   The hide rule must target `main > :not(#planWrap)`. An earlier
+   `body > ...` selector hid <main> itself and printed a blank page. */
+@media print {
+  body {
+    background: var(--surface);
+    max-width: none;
+    margin: 0;
+  }
+
+  main> :not(#planWrap),
+  #planWrap .small-btn {
+    display: none !important;
+  }
+
+  #planWrap {
+    display: block !important;
+    border: none;
+    padding: 0;
+  }
+}
