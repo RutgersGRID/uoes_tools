@@ -2,8 +2,10 @@
 
 A collection of single-file HTML tools helping faculty and staff (mostly
 instructional designers) plan and build courses, with a focus on online
-courses. Repo: `themaka/uoes_tools`. Each tool is one self-contained .html
-file — inline CSS and JS, no build step, no external dependencies.
+courses. Repo: `themaka/uoes_tools`. Each tool is one .html file with its
+JS inline — no build step, no external dependencies, no framework. CSS
+lives in `css/` and is linked (see **Stylesheets** below); the two frozen
+v1 pages keep their CSS inline.
 
 ## Files
 
@@ -14,39 +16,100 @@ file — inline CSS and JS, no build step, no external dependencies.
 - `learning_objectives2.html` — Learning Objective Builder **v2**
   (page `<title>` says "v2"; the on-page heading does not). Currently out
   with instructional designers for feedback; a final version will be chosen
-  after field testing. Not linked from index.html (shared directly).
-- `course_planner.html` — Course Content Planner, a 5-step backwards
-  design walkthrough (see below).
+  after field testing. Now linked from index.html.
+- `course_planner.html` — Course Content Planner **v1**, a 5-step backwards
+  design walkthrough (see below). Frozen while v2 is compared against it.
+- `course_planner_v2.html` — Course Content Planner **v2**, a 4-step
+  revision built from instructional designer feedback (see below).
 - `workload_estimator.html` — Course Workload Estimator, a JS port of an
   R/Shiny app (see below).
 - `credit_hour_planner.html` — Credit Hour Planner, a JS port of a
   two-sheet Excel workbook (see below).
 
+## Stylesheets
+
+CSS was moved out of the pages on August 12, 2026. Each page links its
+sheets in cascade order, most general first:
+
+| Page | Sheets |
+| --- | --- |
+| `index.html` | `base` + `index` |
+| `learning_objectives2.html` | `base` + `document` + `learning_objectives2` |
+| `course_planner.html` | `base` + `document` + `course_planner` |
+| `credit_hour_planner.html` | `base` + `calculator` + `credit_hour_planner` |
+| `workload_estimator.html` | `base` + `calculator` + `workload_estimator` |
+
+- **`css/base.css`** — the `:root` design tokens, the `.sr-only` helper,
+  `[hidden]`, and the one focus-visibility rule. Loaded by every page and
+  always first. Change a brand colour here and it changes everywhere.
+- **`css/document.css`** — the shell for the reading-width pages
+  (`body`, centred `h1`, `.subtitle`, the `.guide` panel). The measure is
+  `var(--content-width, 750px)`; the planner sets `--content-width: 900px`
+  in its own sheet.
+- **`css/calculator.css`** — the shell for the two wide calculators
+  (header, section headings, `.card`, number/select fields, `details`
+  panels, `.results`/`.total` tiles, the breakdown table, `.warn`,
+  buttons, footer, print). Both calculators are ~90% this file.
+- **`css/<page>.css`** — only what is unique to that page.
+
+Rules of thumb when editing:
+
+- Put a rule in the shared sheet only if both consumers want the *same*
+  value. Where they differ (e.g. `.totals` column width, `header p`
+  max-width) the shared sheet omits the property and each page sets it.
+- Do not restate the focus outline in a page sheet — `base.css` owns it.
+  A page may add a background wash on `:focus`, nothing more.
+- Never write a brand hex code outside `base.css`; use the token.
+  `test/verify_css_extraction.js` fails the build if you do.
+
+**`learning_objectives.html` and `course_planner_v1.html` still carry
+inline CSS on purpose.** They are the frozen field-testing baselines, and
+they must keep rendering exactly as designers saw them however `css/`
+changes underneath. Do not convert them while the comparisons are live.
+
 ## Design system
 
-Fonts and colors are consistent across pages:
+Fonts and colors are consistent across pages. The values below are the
+tokens defined in `css/base.css`; prefer `var(--red)` over `#CC0033` in
+any new rule.
 
-- Font: Georgia, serif. Page background `#f4f7f9`, body text `#333`,
-  muted text `#666` (or `#767676` for placeholder-ish text on white).
-- **Rutgers Red `#CC0033`** — headers, primary buttons, links, accents.
-  Hover/darker variant `#A30029`.
-- **Rutgers Blue `#007FAC`** — card borders, input underlines, focus
-  outlines, secondary buttons.
-- **Light Blue `#DEF0F9`** — guidance panel backgrounds, focused-input
-  wash, table/card header bands.
-- **Mid Blue `#7DBFD6`** — thin borders, dividers. NOTE: Mid Blue fails
-  the 3:1 non-text contrast requirement against white, so never use it
-  alone for meaningful UI boundaries like input underlines (this is why
-  input underlines use Rutgers Blue).
-- White cards with `2px solid #007FAC` borders and `border-radius: 8px`.
+- Font: Georgia, serif. Page background `#f4f7f9` (`--bg`), body text
+  `#333` (`--text`), muted text `#666` (`--muted`) — or `#767676`
+  (`--muted-light`) for placeholder-ish text on white.
+- **Rutgers Red `#CC0033`** (`--red`) — headers, primary buttons, links,
+  accents. Hover/darker variant `#A30029` (`--red-dark`). Also the
+  `accent-color` on checkboxes.
+- **Rutgers Blue `#007FAC`** (`--blue`) — card borders, input underlines,
+  focus outlines, secondary buttons.
+- **Light Blue `#DEF0F9`** (`--blue-light`) — guidance panel backgrounds,
+  focused-input wash, table/card header bands.
+- **Mid Blue `#7DBFD6`** (`--blue-mid`) — thin borders, dividers. NOTE:
+  Mid Blue fails the 3:1 non-text contrast requirement against white, so
+  never use it alone for meaningful UI boundaries like input underlines
+  (this is why input underlines use Rutgers Blue).
+- White cards (`--surface`) with `2px solid var(--blue)` borders and
+  `border-radius: 8px`.
+- Supporting greys, all in `base.css`: `--text-mid` `#444` (step
+  lead-ins), `--text-soft` `#555`, `--rule` `#999` and `--rule-light`
+  `#ccc` (form control borders on the document-style pages).
+- Red-tinted washes: `--red-wash` `#fff4f6` (warning callouts),
+  `--red-tint` `#ffe3ea` (the "contact time" tag), `--red-pale` `#ffdbe4`
+  (sub-label on a solid red tile).
 - Content max-width: 750px on the objective builders and index page,
   900px on the planner, 1080px on the workload estimator (wider because
-  it is a multi-column calculator).
+  it is a multi-column calculator). On the two `document.css` pages this
+  is the `--content-width` token.
 
 ## Accessibility conventions
 
 - Every interactive element has a visible focus style:
-  `outline: 2px solid #007FAC; outline-offset: 2px`.
+  `outline: 2px solid #007FAC; outline-offset: 2px`. This lives in
+  `css/base.css` as a single rule covering every control, and
+  `verify_css_extraction.js` focuses each visible control on each page
+  and asserts the resolved outline. Note it keys off `:focus`, not
+  `:focus-visible`, so the ring shows on mouse click too — that has
+  always been the behaviour on the planner and the calculators, and
+  `learning_objectives2.html` was brought into line on August 12, 2026.
 - Generated inputs get `aria-label` (and `aria-description` for guidance
   text where used). Decorative hint labels under blanks are
   `aria-hidden="true"`.
@@ -55,6 +118,10 @@ Fonts and colors are consistent across pages:
 - Prefer real `<label for>` associations where a visible label exists
   (module cards in the planner do this; every input in the workload
   estimator does).
+- Where a control's visible label has to be abbreviated for space, the
+  accessible name must still *contain* that visible text — see the G1/G2
+  alignment checkboxes in course planner v2, whose names are
+  "G1: <goal text>".
 - Semantic HTML: `<main>`, `<section aria-labelledby>`, `<details>/<summary>`
   for collapsible guidance panels.
 
@@ -79,11 +146,11 @@ v2 differences (from instructional designer feedback):
   punctuation cleanup — no stray space before the period). Empty
   *required* blanks still render as `______`.
 
-## Course Content Planner notes
+## Course Content Planner notes (v1)
 
 Content adapted for online/asynchronous delivery from CMU Eberly Center's
 "Course Content & Schedule" guide (credited in the page footer), reframed
-around backwards design. Five steps:
+around backwards design. Five steps in v1:
 
 1. Decide where students should end up — course goals (links to the
    Learning Objective Builder) + "topic triage" (Essential / Supporting /
@@ -113,6 +180,135 @@ Other behaviors to preserve:
   `main > :not(#planWrap)` — an earlier `body > …` selector hid `<main>`
   itself and printed a blank page. Keep this in mind if restructuring.
 - "Start over" clears storage after a `confirm()`.
+
+## Course Content Planner v2 notes
+
+`course_planner_v2.html`, created July 29, 2026 from instructional
+designer feedback on v1. v1 stays in the repo unchanged so the two can be
+compared side by side. The page `<title>` reads "Course Content Planner
+(v2)"; the on-page `<h1>` does not — same convention as the objective
+builders.
+
+**Storage is deliberately separate.** v2 saves to
+`uoes-course-planner-v2`, so an instructor can fill in both tools without
+one clobbering the other. This matters because v2's module shape differs
+from v1's.
+
+### The four steps
+
+1. **Decide what your students will take away from your course** (was
+   "Decide where students should end up"). The Learning Objective Builder
+   link was removed from this step; the goals lead-in reads "What should
+   students be able to do by the end of the course." — punctuated as a
+   statement, per Maka's wording, and set at 24px. Topic triage unchanged.
+2. **Decide how you'll assess each course goal** (was "…each goal").
+   Still the per-goal assessment list, live-synced from Step 1.
+3. Was Step 4 — Choose a structure and teaching strategy (optional).
+   Unchanged apart from the number.
+4. Was Step 5 — Map it onto your modules.
+
+**The big shift in v2 is that the module is where the work happens.**
+Step 4 walks through objectives → assessments → activities *at the module
+level*, then presents the module cards. Its order is:
+
+- lead paragraph ("across the modules (weeks)")
+- "Scheduling tips for online courses" panel
+- **Create Learning Objectives for each module.** — carries the Learning
+  Objective Builder link, pointed at the module Objectives fields
+- **Decide how you will assess each module's learning objectives.** —
+  with a copy of the "What makes a good assessment online?" panel
+- **Create Activities for each learning objective.** — with the
+  "Choosing activities that prepare students" panel
+- **Module cards** — the goal key, then the cards
+
+The "What makes a good assessment online?" panel appears **twice on
+purpose**: once in Step 2 for course goals, once in Step 4 for module
+objectives. Do not dedupe it.
+
+v1's Step 3 (Design the learning activities) is gone entirely — both the
+standalone step and, as of the same day, the per-goal activities list that
+had been folded into Step 4. Goals no longer carry an `activities` field;
+`load()` deletes it from legacy saves. Activities are a module-card field
+only.
+
+### Module cards in v2
+
+Card order is **Objectives (a list) → Materials & resources → Assessments +
+Activities**.
+
+- **Due dates is removed.** The `duedates` state field is deleted in
+  `load()` rather than carried forward, and it is gone from `blankModule`
+  and from the generated plan.
+- Materials & resources moved **above** the two-column row.
+- The two-column row is `.two-col` (`1fr 1fr`), replacing v1's
+  `.three-col`. **Assessments is the left column, Activities the right** —
+  swapped July 29, 2026, so the card reads assess-then-practice, matching
+  the order of the Step 4 headings above it. Still stacks to one column
+  under 640px.
+- Objectives is no longer a single optional text field. It is a
+  **repeatable list**, added and removed the same way course goals are
+  ("+ Add an objective" plus a × on each row). A module always keeps at
+  least one row — removing the last one re-adds a blank.
+
+### Goal alignment
+
+Each module objective row carries a narrow **Alignment** column on its
+right: one checkbox per *written* course goal, so an instructor can tick
+which course goals that objective serves.
+
+- Goals are numbered **G1, G2, …** in Step 1 order, counting only goals
+  that actually have text. `numberedGoals()` is the single source of that
+  numbering; everything else derives from it.
+- Checkbox chips show just "G1"/"G2" because the column is deliberately
+  narrow (`150px` against `minmax(0, 1fr)` for the objective field). The
+  full goal text rides along in the `title` and the `aria-label`, which
+  reads "G1: <goal text>" — the visible label is a substring of the
+  accessible name, which is what WCAG label-in-name requires. The cluster
+  is a `role="group"` labelled "Course goals that objective N of module M
+  aligns with".
+- A **goal key** (`#goalLegend`) sits between the "Module cards" heading
+  and the cards, listing "G1 — <text> · G2 — <text> …". Keep it: the chips
+  are unreadable without it.
+- State: `module.objectives` is `[{text, align: [goalId, …]}]`. Alignments
+  store **goal ids, not numbers**, so renumbering after a deletion cannot
+  corrupt them.
+- `pruneAlignments()` drops ids for deleted goals — called on goal removal
+  and on `load()`.
+- Re-render rules, which matter for not stealing focus mid-keystroke:
+  typing in a goal only relabels the existing checkboxes (via
+  `[data-goal-check]`) and redraws the key. A full `renderModules()` fires
+  only when a goal crosses the empty/non-empty boundary, or on goal
+  add/remove — that is when the *set* of checkboxes changes.
+- Under 640px the row stacks: objective + × on the first line, the
+  checkboxes on a second line prefixed by a visible "Alignment:"
+  (`.align-mini`), and the `.obj-head` collapses to just "Objectives".
+- **Watch in field testing:** with more than about four course goals the
+  chip row wraps to several lines inside that 150px column, making tall
+  objective rows. If designers routinely set that many goals, the column
+  probably wants to become a dropdown or a full-width strip.
+
+### v2 plan output
+
+- Heading is "Course goals & assessments" — there is no per-goal
+  activities line any more.
+- Course goals are printed with their numbers: "G1 — Analyze a food web".
+- Module objectives print as one line, semicolon-separated, each tagged:
+  `Objectives: Identify trophic levels [aligns with G1]; Trace energy
+  through a web [aligns with G1, G2]`. Tags are emitted in goal order,
+  not click order.
+- Module fields print in the same order as the card: Objectives,
+  Materials, Assessments, Activities. Keep the two in step if either
+  changes.
+
+### Migration
+
+`load()` in v2 accepts v1-shaped saves: a string `objectives` becomes a
+one-row list, a missing or non-array `objectives` becomes a single blank
+row, string rows become `{text, align: []}`, `duedates` is deleted, and a
+goal's `activities` field is deleted. Everything else — auto-save
+debounce, print CSS, copy-as-text, "Start over", topic triage, the
+organizing-principle descriptions, the CMU Eberly Center footer credit —
+is unchanged from v1.
 
 ## Workload Estimator notes
 
@@ -333,17 +529,82 @@ the no-bulk-suggestions regression guard, the instructional-time explainer,
 localStorage round-trip and partial/corrupt
 saves, "Start over", report and copy text, print-PDF non-blankness,
 label/aria coverage, computed focus outlines, the design tokens, and the
-Mid-Blue-underline prohibition. Both harnesses need
-`npm install playwright-core`; launch with
+Mid-Blue-underline prohibition.
+
+For the course planner v2, `test/verify_course_planner_v2.js` runs 96
+checks: the four step headings and badge numbers, the reworded Step 1 and
+Step 2 text, the Learning Objective Builder link appearing exactly once and
+only in Step 4, the absence of the old per-goal activities list, module
+card row order (Objectives, Materials, then Assessments left of
+Activities), the absence of any due-date control, label/aria coverage, the
+focus outline, and live sync of goal text into Step 2 and the goal key.
+
+Alignment is covered specifically: the goal key's empty and populated
+states, checkboxes appearing the moment a goal is first written and
+disappearing when it is cleared, chip text being exactly G1/G2, accessible
+names containing the visible chip text, the `role="group"` label, live
+relabeling when a goal is reworded, adding and removing objective rows,
+per-objective alignment saved as goal ids, unticking, pruning and
+renumbering after a goal is deleted (surviving ticks must stay ticked), and
+the guarantee that a module never drops to zero objective rows.
+
+Plus: saving under the v2 key and *not* the v1 key, round-trip, migration
+of a v1-shaped save (string `objectives` → one row, `duedates` and goal
+`activities` dropped), corrupt-save recovery, plan generation with
+G-number tags and field ordering, print-PDF non-blankness and print-CSS
+visibility, and a guard that `course_planner.html` is still untouched
+(5 steps, due dates, single objectives field, v1 storage key).
+
+For the stylesheets, `test/verify_css_extraction.js` runs 104 checks: each
+converted page links exactly the expected sheets in the expected order
+with `base.css` first, every sheet actually parses (a 404 or a typo'd
+`href` yields zero rules and fails), no inline `<style>` block survives,
+all eight design tokens resolve on every page, every *visible* focusable
+control resolves the 2px Rutgers Blue outline, `.sr-only` is still clipped
+to 1×1, each print sheet still hides `main > :not(#…Wrap)`, the two frozen
+v1 pages still have inline CSS and no `css/` link, and no page-level sheet
+contains a raw brand hex code. Re-run it after touching anything in `css/`.
+
+All harnesses need `npm install playwright-core`; launch with
 `executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome"` or
-wherever Chromium lives locally.
+wherever Chromium lives locally. The two harnesses that read `cssRules`
+also need `args: ["--allow-file-access-from-files"]`, because Chromium
+will not expose the rules of a `file://` stylesheet without it — this is
+new since the CSS moved out of the pages.
 
-## Current status (July 2026)
+**Note on the harness filenames:** `verify_course_planner_v2.js` still
+resolves `course_planner_v2.html` (v2) and `course_planner.html` (v1)
+relative to `test/`, which no longer matches the repo — v2 is now
+`course_planner.html` and v1 is `course_planner_v1.html`, and both live
+one directory up. The harness needs its paths corrected; it was run for
+the CSS work against symlinks supplying the old names.
 
+## Current status (August 2026)
+
+- **CSS moved into `css/` on August 12, 2026** (see **Stylesheets**).
+  Verified as a pure refactor: every converted page renders pixel-identical
+  to its inline-CSS predecessor at 1280px and 600px, in print, and after
+  generating its plan/report/objective. `verify_course_planner_v2.js`
+  (96) and `verify_credit_hour_planner.js` (292) both still pass, and
+  `verify_css_extraction.js` (104) is new.
+  One deliberate exception: `learning_objectives2.html` previously had no
+  focus rule of its own, so its "Create Objective" button, copy button and
+  `<summary>` used the browser's default focus ring. They now take the
+  documented `2px solid #007FAC` ring from `base.css`, matching every
+  other page. Visible only while an element has focus. **Mention this to
+  the designers currently field-testing v2** if any of them report the
+  page looking different.
 - v2 objective builder is in field testing; more feedback expected.
-- course_planner.html's latest version (module-card Step 5) was delivered
-  via chat during a session when the synced computer was offline — verify
-  the repo copy includes the module cards before editing.
+- course_planner.html (v1) has the module-card Step 5 and is now frozen
+  while v2 is field-tested against it.
+- course_planner_v2.html added July 29, 2026 and linked from index.html
+  as "Course Content Planner (updated v2)". Out for instructional designer
+  comparison against v1. Things to confirm with Maka rather than change on
+  a hunch: the Step 1 goals lead-in is punctuated as a statement ("…by the
+  end of the course."); the alignment chips are abbreviated to G1/G2 by
+  design, with the goal key carrying the full text; and the "What makes a
+  good assessment online?" panel appears in both Step 2 and Step 4
+  deliberately.
 - workload_estimator.html added July 27, 2026 and linked from index.html.
   **Not cleared for publishing yet.** The CC BY-NC-SA footer wording reads
   fine to Maka but is awaiting sign-off from institutional stakeholders.
