@@ -64,7 +64,13 @@ function excelOnline(weeks, credits, study) {
 }
 
 (async () => {
-  const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome" });
+  // --allow-file-access-from-files: the page's CSS now lives in external
+  // files under css/, and Chromium otherwise refuses to expose cssRules for
+  // a file:// stylesheet, which the print-CSS check below reads.
+  const browser = await chromium.launch({
+    executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome",
+    args: ["--allow-file-access-from-files"]
+  });
   const page = await browser.newPage();
   const consoleErrors = [];
   page.on("pageerror", e => consoleErrors.push(String(e)));
@@ -319,7 +325,10 @@ function excelOnline(weeks, credits, study) {
       return s ? { open: s.parentElement.open, text: s.parentElement.textContent.replace(/\s+/g, " ") } : null;
     });
     ok("explainer panel for instructional time exists", !!card);
-    ok("explainer is open by default", card && card.open === true);
+    // Collapsed by default as of August 12, 2026 (Maka's call). The panel
+    // itself must stay — without it nothing on the page says the
+    // instructional row means seat time — but whether it starts open is a
+    // presentation choice, so this no longer asserts a state.
     ok("explainer says seat time", card && /seat time/.test(card.text));
     ok("explainer covers the online case", card && /asynchronous equivalent/.test(card.text));
     ok("explainer covers the blended split", card && /face-to-face row is what you actually meet for/.test(card.text));
@@ -523,8 +532,11 @@ function excelOnline(weeks, credits, study) {
         o.width === "2px" && o.style === "solid", o.width + " " + o.style);
     }
 
+    // Scan every stylesheet: the print block lives in css/calculator.css,
+    // which is not necessarily the first sheet the page links.
     const printRule = await page.evaluate(() =>
-      Array.from(document.styleSheets[0].cssRules)
+      Array.from(document.styleSheets)
+        .flatMap(s => Array.from(s.cssRules))
         .filter(r => r.media)
         .some(r => Array.from(r.cssRules)
           .some(x => x.selectorText === "main > :not(#reportWrap)")));
