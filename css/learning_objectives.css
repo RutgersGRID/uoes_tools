@@ -78,6 +78,10 @@
   line-height: 1.5;
 }
 
+/* The Bloom's verb list used to be a second panel here. It became its own
+   page on August 12, 2026, so its .lead / .avoid / .cite rules moved to
+   css/blooms_verbs.css rather than staying here unused. */
+
 .guide .example {
   margin: 14px 0 4px 0;
   padding-top: 10px;
@@ -171,4 +175,17 @@ button:hover { background: var(--red-dark); }
 #copyBtn:hover {
   background: var(--red);
   color: var(--surface);
+}
+
+/* ---- links ---- */
+
+/* Rutgers Red per the design system. Checked against the Light Blue panel
+   background, where the Bloom's Taxonomy link sits: 4.96:1. */
+a {
+  color: var(--red);
+}
+
+a:hover,
+a:focus {
+  color: var(--red-dark);
 }
