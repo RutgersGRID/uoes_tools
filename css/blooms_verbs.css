@@ -1,0 +1,155 @@
+/* ============================================================
+   Bloom's Taxonomy Verbs — page-specific styles
+   Loaded after base.css and document.css.
+
+   A standalone reference sheet linked from the Behavior guidance
+   in the Learning Objective Builder. Reading-width document page,
+   so it takes document.css's shell (body, centred h1, .subtitle)
+   and adds the tier table, the two callouts and the references.
+   ============================================================ */
+
+.lead {
+  margin: 0 0 16px 0;
+  line-height: 1.6;
+}
+
+/* Informational aside, same treatment as the .note callouts on the
+   credit hour planner: Light Blue wash, Rutgers Blue rule. Paired with
+   .avoid below, which is the red counterpart. */
+.note {
+  background: var(--blue-light);
+  border-left: 4px solid var(--blue);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 0 0 20px 0;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+/* ---- the tier list ----
+   A white card like the ones on every other page, holding a two-column
+   definition list: tier name on the left, its verbs on the right. */
+
+.tiers {
+  counter-reset: tier;
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  background: var(--surface);
+  border: 2px solid var(--blue);
+  border-radius: 8px;
+  margin: 0 0 20px 0;
+  padding: 4px 20px;
+}
+
+.tiers dt,
+.tiers dd {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--blue-light);
+  line-height: 1.5;
+}
+
+/* Flex so that when a long tier name wraps, the second line lines up with
+   the first rather than sliding under the number badge. */
+.tiers dt {
+  counter-increment: tier;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-weight: bold;
+  color: var(--red);
+  padding-right: 16px;
+}
+
+.tiers dd {
+  margin: 0;
+}
+
+/* The last row closes the card, so it needs no rule under it. */
+.tiers dt:nth-last-of-type(1),
+.tiers dd:nth-last-of-type(1) {
+  border-bottom: none;
+}
+
+/* Decorative level number, so "lowest to highest" is visible at a glance.
+   Generated content on purpose: it is an ordinal the sighted reader infers
+   from position anyway, and the lead paragraph states the ordering in
+   words for everyone else. */
+.tiers dt::before {
+  content: counter(tier);
+  flex: 0 0 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--red);
+  color: var(--surface);
+  font-size: 13px;
+  font-weight: bold;
+  line-height: 22px;
+  text-align: center;
+  vertical-align: 1px;
+}
+
+@media (max-width: 640px) {
+  /* Stack: the tier name sits directly above its verbs, and only the
+     verbs carry the divider, so each pair reads as one block. */
+  .tiers {
+    grid-template-columns: 1fr;
+    padding: 4px 16px;
+  }
+
+  .tiers dt {
+    padding: 12px 0 2px 0;
+    border-bottom: none;
+  }
+
+  .tiers dd {
+    padding: 0 0 12px 0;
+  }
+}
+
+/* ---- callouts and references ---- */
+
+/* Verbs to avoid. Same treatment as the .warn callouts on the calculator
+   pages, so a caution reads the same way across the toolset. */
+.avoid {
+  background: var(--red-wash);
+  border-left: 4px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin: 0 0 20px 0;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.avoid-note {
+  display: block;
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* Full references, set quieter than the guidance they support */
+.cite {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+footer {
+  margin: 30px 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--blue-mid);
+  text-align: center;
+  font-size: 14px;
+}
+
+/* ---- links ---- */
+
+a {
+  color: var(--red);
+}
+
+a:hover,
+a:focus {
+  color: var(--red-dark);
+}
