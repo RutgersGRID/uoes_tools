@@ -2,8 +2,9 @@
    UOES Tools home page — page-specific styles
    Loaded after base.css.
 
-   The landing page has its own shell (a full-width red banner
-   above a centred list), so it does not use document.css.
+   The landing page has its own shell (the shared Rutgers site
+   header from site_header.css above a centred list), so it does
+   not use document.css.
    ============================================================ */
 
 body {
@@ -13,16 +14,11 @@ body {
   margin: 0;
 }
 
-header {
-  background: var(--red);
-  color: var(--surface);
-  padding: 28px 20px;
-  text-align: center;
-}
-
-header h1 {
-  margin: 0;
+main h1 {
+  margin: 0 0 24px;
   font-size: 32px;
+  text-align: center;
+  color: var(--red);
 }
 
 main {
@@ -47,7 +43,7 @@ main {
 
 .tool-list a {
   color: var(--red);
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
 }
 

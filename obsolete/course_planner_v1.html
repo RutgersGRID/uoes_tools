@@ -4,50 +4,513 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Content Planner (v2)</title>
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/document.css">
-    <link rel="stylesheet" href="css/course_planner.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/site_header.css">
-</head>
+    <title>Course Content Planner</title>
+    <style>
+      body {
+        font-family: Georgia, serif;
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 20px;
+        background: #f4f7f9;
+        color: #333;
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #666;
+        max-width: 640px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.5;
+      }
+
+      /* Each step is a white card, echoing the tool list on the home page */
+      section.step {
+        background: white;
+        border: 2px solid #007FAC;
+        /* Rutgers Blue */
+        border-radius: 8px;
+        padding: 20px 24px 24px 24px;
+        margin-bottom: 24px;
+      }
+
+      section.step h2 {
+        margin: 0 0 4px 0;
+        font-size: 22px;
+      }
+
+      .step-num {
+        display: inline-block;
+        background: #CC0033;
+        /* Rutgers Red */
+        color: white;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        font-size: 17px;
+        margin-right: 8px;
+      }
+
+      .step-lead {
+        margin: 6px 0 14px 0;
+        line-height: 1.5;
+        color: #444;
+      }
+
+      /* Collapsible guidance panels, matching the Learning Objective Builder */
+      details.guide {
+        background: #DEF0F9;
+        /* Light Blue */
+        border: 1px solid #7DBFD6;
+        /* Mid Blue */
+        border-radius: 8px;
+        padding: 10px 16px;
+        margin-bottom: 16px;
+        font-size: 15px;
+        line-height: 1.55;
+      }
+
+      details.guide summary {
+        cursor: pointer;
+        font-weight: bold;
+        color: #000;
+      }
+
+      details.guide dt {
+        font-weight: bold;
+        margin-top: 10px;
+      }
+
+      details.guide dd {
+        margin: 2px 0 0 0;
+      }
+
+      details.guide ul {
+        margin: 8px 0 4px 0;
+        padding-left: 22px;
+      }
+
+      details.guide li {
+        margin-bottom: 6px;
+      }
+
+      details.guide p {
+        margin: 10px 0 4px 0;
+      }
+
+      /* Form controls */
+      label {
+        font-weight: bold;
+      }
+
+      input[type="text"],
+      textarea,
+      select {
+        font-family: inherit;
+        font-size: 16px;
+        color: #333;
+        border: 1px solid #999;
+        border-radius: 6px;
+        padding: 8px 10px;
+        background: white;
+        box-sizing: border-box;
+      }
+
+      input[type="number"] {
+        font-family: inherit;
+        font-size: 16px;
+        border: 1px solid #999;
+        border-radius: 6px;
+        padding: 8px 10px;
+        width: 80px;
+      }
+
+      textarea {
+        width: 100%;
+        resize: vertical;
+        line-height: 1.45;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus,
+      button:focus,
+      summary:focus,
+      a:focus {
+        outline: 2px solid #007FAC;
+        /* Rutgers Blue */
+        outline-offset: 2px;
+      }
+
+      .basics {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        align-items: flex-end;
+      }
+
+      .basics .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .basics input[type="text"] {
+        min-width: 320px;
+      }
+
+      /* Dynamic rows (goals, topics) */
+      .row-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 10px 0;
+      }
+
+      .row-list li {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+      }
+
+      .row-list input[type="text"] {
+        flex: 1;
+        min-width: 240px;
+      }
+
+      .row-list select {
+        flex: 0 0 auto;
+      }
+
+      /* Evidence rows: goal text shown above its evidence blank */
+      .ev-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .ev-list li {
+        border-left: 4px solid #7DBFD6;
+        /* Mid Blue */
+        padding: 4px 0 4px 14px;
+        margin-bottom: 14px;
+      }
+
+      .ev-goal {
+        display: block;
+        font-style: italic;
+        margin-bottom: 6px;
+      }
+
+      .ev-goal.placeholder {
+        color: #767676;
+      }
+
+      .ev-assess {
+        display: block;
+        font-size: 14px;
+        color: #555;
+        margin: -2px 0 6px 0;
+      }
+
+      .ev-assess.placeholder {
+        color: #767676;
+        font-style: italic;
+      }
+
+      .ev-list input[type="text"] {
+        width: 100%;
+      }
+
+      /* Priority coloring on the topic triage dropdowns */
+      select.pri-essential {
+        border-color: #CC0033;
+        font-weight: bold;
+      }
+
+      select.pri-trim {
+        color: #666;
+      }
+
+      /* Buttons */
+      button {
+        font-family: inherit;
+        cursor: pointer;
+        border-radius: 8px;
+      }
+
+      .add-btn {
+        display: inline-block;
+        padding: 6px 16px;
+        font-size: 15px;
+        background: white;
+        color: #007FAC;
+        /* Rutgers Blue */
+        border: 2px solid #007FAC;
+      }
+
+      .add-btn:hover {
+        background: #DEF0F9;
+      }
+
+      .remove-btn {
+        flex: 0 0 auto;
+        background: transparent;
+        border: 1px solid #999;
+        color: #666;
+        border-radius: 6px;
+        font-size: 14px;
+        padding: 4px 10px;
+      }
+
+      .remove-btn:hover {
+        border-color: #CC0033;
+        color: #CC0033;
+      }
+
+      .primary-btn {
+        display: block;
+        margin: 28px auto;
+        padding: 12px 32px;
+        font-size: 18px;
+        background: #CC0033;
+        /* Rutgers Red */
+        color: white;
+        border: none;
+      }
+
+      .primary-btn:hover {
+        background: #A30029;
+      }
+
+      .small-btn {
+        display: inline-block;
+        margin: 14px 8px 0 0;
+        padding: 6px 16px;
+        font-size: 14px;
+        background: white;
+        color: #CC0033;
+        /* Rutgers Red */
+        border: 2px solid #CC0033;
+        line-height: normal;
+      }
+
+      .small-btn:hover {
+        background: #CC0033;
+        color: white;
+      }
+
+      /* The organizing-principle description box */
+      #principleNote {
+        background: #DEF0F9;
+        /* Light Blue */
+        border-radius: 6px;
+        padding: 10px 14px;
+        font-size: 15px;
+        line-height: 1.5;
+        margin-top: 10px;
+        display: none;
+      }
+
+      /* Module schedule cards */
+      .grid-caption {
+        font-style: italic;
+        color: #666;
+        margin: 12px 0 8px 0;
+      }
+
+      .mod-card {
+        border: 1px solid #7DBFD6;
+        /* Mid Blue */
+        border-radius: 8px;
+        margin-bottom: 16px;
+        overflow: hidden;
+      }
+
+      .mod-card header {
+        background: #DEF0F9;
+        /* Light Blue */
+        padding: 8px 14px;
+        font-weight: bold;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .mod-card header input {
+        flex: 1;
+        font-size: 15px;
+      }
+
+      .mod-card .card-body {
+        padding: 12px 14px;
+      }
+
+      .mod-card .card-row {
+        margin-bottom: 12px;
+      }
+
+      .mod-card .card-row:last-child {
+        margin-bottom: 0;
+      }
+
+      .mod-card label {
+        font-size: 14px;
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .mod-card input[type="text"],
+      .mod-card textarea {
+        width: 100%;
+        border: 1px solid #ccc;
+        font-size: 15px;
+        padding: 6px 8px;
+      }
+
+      .mod-card textarea {
+        min-height: 60px;
+      }
+
+      .opt {
+        font-weight: normal;
+        color: #767676;
+        font-style: italic;
+      }
+
+      .three-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      @media (max-width: 640px) {
+        .three-col {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Generated plan */
+      #planWrap {
+        display: none;
+        background: white;
+        border: 2px solid #CC0033;
+        /* Rutgers Red */
+        border-radius: 8px;
+        padding: 24px;
+        margin-top: 8px;
+      }
+
+      #planWrap h2 {
+        margin-top: 0;
+      }
+
+      #plan h3 {
+        color: #CC0033;
+        /* Rutgers Red */
+        border-bottom: 1px solid #7DBFD6;
+        /* Mid Blue */
+        padding-bottom: 4px;
+        margin-bottom: 10px;
+      }
+
+      #plan table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      #plan th,
+      #plan td {
+        border: 1px solid #7DBFD6;
+        padding: 8px;
+        vertical-align: top;
+        text-align: left;
+        font-size: 15px;
+        line-height: 1.5;
+      }
+
+      #plan th {
+        background: #DEF0F9;
+      }
+
+      #plan .plan-module {
+        margin-bottom: 12px;
+        line-height: 1.6;
+      }
+
+      #plan ul {
+        margin: 6px 0;
+        padding-left: 24px;
+      }
+
+      #plan li {
+        margin-bottom: 4px;
+        line-height: 1.5;
+      }
+
+      .muted {
+        color: #767676;
+        font-style: italic;
+      }
+
+      /* Visually hidden but available to screen readers */
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+
+      footer {
+        text-align: center;
+        font-size: 14px;
+        color: #666;
+        margin: 30px 0;
+        line-height: 1.6;
+      }
+
+      a {
+        color: #CC0033;
+      }
+
+      a:hover,
+      a:focus {
+        color: #A30029;
+      }
+
+      /* Printing: show only the generated plan */
+      @media print {
+        body {
+          background: white;
+          max-width: none;
+          margin: 0;
+        }
+
+        main> :not(#planWrap),
+        #planWrap .small-btn {
+          display: none !important;
+        }
+
+        #planWrap {
+          display: block !important;
+          border: none;
+          padding: 0;
+        }
+      }
+    </style>
+  </head>
 
   <body>
-<header class="uoes-site-header">
-  <div class="ush-topbar"></div>
-  <div class="ush-inner">
-    <div class="ush-row-top">
-      <a class="ush-logo" href="index.html">
-        <img src="images/rutgers_primary_mark.svg"
-             onerror="this.onerror=null;this.src='https://uoes.rutgers.edu/profiles/contrib/rutgers/themes/rutgers_main/pattern_lab/source/images/icons/Rutgers_Primary_Mark.svg';"
-             alt="Rutgers University">
-        <span class="ush-site-name">University Online Education<br>Services</span>
-      </a>
-      <div class="ush-utility">
-        <nav aria-label="Rutgers utility links">
-          <a href="https://uoes.rutgers.edu/ruonlinecon-main">RUOnlineCon</a>
-          <a href="https://online.rutgers.edu">Rutgers Online Programs</a>
-          <a href="https://uoes.rutgers.edu/contact-us">Contact Us</a>
-          <a href="https://rutgers.edu">Visit Rutgers.edu</a>
-        </nav>
-        <a class="ush-search" href="https://search.rutgers.edu" aria-label="Search Rutgers">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.3" y1="15.3" x2="21" y2="21"/></svg>
-        </a>
-      </div>
-    </div>
-    <nav class="ush-mainnav" aria-label="UOES tools">
-      <a href="index.html">Home</a>
-      <a href="learning_objectives.html">Learning Objectives</a>
-      <a href="course_planner.html" class="active">Course Planner</a>
-      <a href="workload_estimator.html">Workload Estimator</a>
-      <a href="credit_hour_planner.html">Credit Hour Planner</a>
-      <a href="blooms_verbs.html">Bloom&rsquo;s Verbs</a>
-    </nav>
-  </div>
-</header>
-
     <main>
 
       <h1>Course Content Planner</h1>
@@ -72,8 +535,7 @@
       </section>
 
       <section class="step" aria-labelledby="step1Head">
-        <h2 id="step1Head"><span class="step-num" aria-hidden="true">1</span>Decide what your students will take away from your
-          course</h2>
+        <h2 id="step1Head"><span class="step-num" aria-hidden="true">1</span>Decide where students should end up</h2>
         <p class="step-lead">Backwards design starts at the finish line. Before
           choosing readings or lectures, name what students will be able to
           <em>do</em> when the course is over &mdash; then cut your topic list down to
@@ -100,9 +562,11 @@
             list.</p>
         </details>
 
-        <h3><label for="goal-first" style="font-size:24px;">Course goals</label></h3>
-        <p class="step-lead">What should students be able to do by the end of
-          the course.
+        <h3><label for="goal-first" style="font-size:18px;">Course goals</label></h3>
+        <p class="step-lead">What should students be able to do by the end?
+          Need help wording one? Use the
+          <a href="learning_objectives.html">Learning Objective Builder</a>, then
+          paste the result here.
         </p>
         <ul class="row-list" id="goalsList" aria-label="Course goals"></ul>
         <button type="button" class="add-btn" id="addGoalBtn">+ Add a goal</button>
@@ -117,7 +581,7 @@
       </section>
 
       <section class="step" aria-labelledby="step2Head">
-        <h2 id="step2Head"><span class="step-num" aria-hidden="true">2</span>Decide how you'll assess each course goal</h2>
+        <h2 id="step2Head"><span class="step-num" aria-hidden="true">2</span>Decide how you'll assess each goal</h2>
         <p class="step-lead">Before planning any activities, decide how you will
           <em>assess</em> the goals you chose in Step 1. They appear below &mdash;
           plan at least one assessment for each.
@@ -141,7 +605,30 @@
       </section>
 
       <section class="step" aria-labelledby="step3Head">
-        <h2 id="step3Head"><span class="step-num" aria-hidden="true">3</span>Choose a structure and teaching strategy
+        <h2 id="step3Head"><span class="step-num" aria-hidden="true">3</span>Design the learning activities</h2>
+        <p class="step-lead">Now plan the practice. For each goal, design
+          activities that build the skills and knowledge its assessment will
+          measure &mdash; so nothing on an assessment comes as a surprise.</p>
+
+        <details class="guide">
+          <summary>Choosing activities that prepare students</summary>
+          <p>Work backward from each assessment: what skills and knowledge does
+            it demand, and what practice will build them? Students should get
+            low-stakes practice &mdash; with feedback &mdash; in every skill before it
+            counts toward a grade.</p>
+          <p>Online, activities usually mix three moves: <em>absorb</em> (short
+            videos, readings, worked examples), <em>interact</em> (discussions,
+            group work, peer review), and <em>produce</em> (practice quizzes,
+            drafts, problem sets, simulations). Match the practice to the verb in
+            your goal: if the assessment asks students to analyze a case, they
+            need practice analyzing cases &mdash; not just watching you do it.</p>
+        </details>
+
+        <ul class="ev-list" id="activitiesList" aria-label="Activities for each goal"></ul>
+      </section>
+
+      <section class="step" aria-labelledby="step4Head">
+        <h2 id="step4Head"><span class="step-num" aria-hidden="true">4</span>Choose a structure and teaching strategy
           (optional)</h2>
         <p class="step-lead">Now decide how the essential topics will unfold
           across the course, and what mix of activities will move students from
@@ -188,10 +675,10 @@
           placeholder="e.g., Each module: short lecture videos introduce a theory, a discussion board critiques it, and a case write-up applies it. Cases grow from single-issue to multi-issue, ending in a full project."></textarea>
       </section>
 
-      <section class="step" aria-labelledby="step4Head">
-        <h2 id="step4Head"><span class="step-num" aria-hidden="true">4</span>Map it onto your modules</h2>
+      <section class="step" aria-labelledby="step5Head">
+        <h2 id="step5Head"><span class="step-num" aria-hidden="true">5</span>Map it onto your modules</h2>
         <p class="step-lead">Distribute your essential topics, activities, and
-          assessments across the modules (weeks). Rearrange until the workload feels
+          assessments across the modules. Rearrange until the workload feels
           realistic for students &mdash; and for you.</p>
 
         <details class="guide">
@@ -219,56 +706,7 @@
           </ul>
         </details>
 
-        <h3>Create Learning Objectives for each module.</h3>
-        <p class="step-lead">Create Learning Objectives for each module. If you
-           need help wording an objective? Use the
-          <a href="learning_objectives.html">Learning Objective Builder</a>, then
-          paste the result into the module it belongs to.
-        </p>
-
-        <h3>Decide how you will assess each module's learning objectives.</h3>
-        <details class="guide">
-          <summary>What makes a good assessment online?</summary>
-          <p>An assessment is any student work you can evaluate against a goal.
-            Common options in online courses include auto-graded quizzes (recall
-            and concept checks), discussion posts and peer replies (critique and
-            application), papers and problem sets, projects and portfolios,
-            recorded presentations or demonstrations, and reflective journals.</p>
-          <p>Match the assessment to the verb in your goal: if students should
-            <em>analyze</em>, a multiple-choice quiz alone won't show it. And keep
-            your own grading load in mind &mdash; every assessment you assign is
-            something you (or an autograder) must respond to.
-          </p>
-        </details>
-
-        <p class="step-lead">Before planning any activities, decide how you will assess the learning objectives for each module.</p>
-
-        <h3>Create Activities for each learning objective.</h3>
-        <p class="step-lead">First, plan the practice. For each goal, design
-          activities that build the skills and knowledge its assessment will
-          measure &mdash; so nothing on an assessment comes as a surprise. Then
-          distribute those activities across the module cards below.</p>
-
-        <details class="guide">
-          <summary>Choosing activities that prepare students</summary>
-          <p>Work backward from each assessment: what skills and knowledge does
-            it demand, and what practice will build them? Students should get
-            low-stakes practice &mdash; with feedback &mdash; in every skill before it
-            counts toward a grade.</p>
-          <p>Online, activities usually mix three moves: <em>absorb</em> (short
-            videos, readings, worked examples), <em>interact</em> (discussions,
-            group work, peer review), and <em>produce</em> (practice quizzes,
-            drafts, problem sets, simulations). Match the practice to the verb in
-            your goal: if the assessment asks students to analyze a case, they
-            need practice analyzing cases &mdash; not just watching you do it.</p>
-        </details>
-
-        <h3 style="margin-top:28px;">Module cards</h3>
-
-
-        <p class="grid-caption">One card per module: what it's about, what students do, and what they'll need.
-          Give each module its own objectives, and tick the course goals each one serves.</p>
-        <div id="goalLegend" aria-label="Course goal key"></div>
+        <p class="grid-caption">One card per module: what it's about, what students do, and what they'll need.</p>
         <div id="moduleCards"></div>
       </section>
 
@@ -297,19 +735,17 @@
       // State: one object holds everything the instructor types, so it
       // can be saved to this browser and rebuilt into the plan.
       // ---------------------------------------------------------------
-      const STORAGE_KEY = "uoes-course-planner-v2";
+      const STORAGE_KEY = "uoes-course-planner";
       let seq = 0; // id counter for goal and topic rows
 
       const state = {
         course: "",
         moduleCount: 16,
-        goals: [],   // {id, text, evidence (assessment)}
+        goals: [],   // {id, text, evidence (assessment), activities}
         topics: [],  // {id, text, priority}
         principle: "",
         strategy: "",
-        // {topic, objectives: [{text, align:[goalId]}], materials, activities,
-        // assessments} per module
-        modules: []
+        modules: []  // {topic, activities, materials} per module
       };
 
       // Descriptions shown when an organizing principle is chosen
@@ -365,32 +801,13 @@
           const saved = JSON.parse(raw);
           Object.assign(state, saved);
           // Work saved before the activities step existed lacks the field
-          // Per-goal activities were dropped; activities now live on the
-          // module cards
-          state.goals.forEach(g => { delete g.activities; });
-          // Modules saved before the card layout lack the newer fields;
-          // due dates were dropped in v2, so discard any saved value
+          state.goals.forEach(g => { if (g.activities === undefined) g.activities = ""; });
+          // Modules saved before the card layout lack the newer fields
           state.modules.forEach(m => {
-            ["activities", "assessments", "materials"].forEach(k => {
+            ["objectives", "assessments", "duedates"].forEach(k => {
               if (m[k] === undefined) m[k] = "";
             });
-            delete m.duedates;
-            // Objectives were a single string before they became a list
-            if (typeof m.objectives === "string") {
-              m.objectives = m.objectives.trim()
-                ? [{ text: m.objectives, align: [] }] : [];
-            }
-            if (!Array.isArray(m.objectives)) m.objectives = [];
-            m.objectives = m.objectives.map(o =>
-              typeof o === "string" ? { text: o, align: [] } : o);
-            m.objectives.forEach(o => {
-              if (!Array.isArray(o.align)) o.align = [];
-              if (typeof o.text !== "string") o.text = "";
-            });
-            if (!m.objectives.length) m.objectives.push({ text: "", align: [] });
           });
-          // Drop alignments pointing at goals that no longer exist
-          pruneAlignments();
           // Re-derive the id counter so new rows never collide with saved ones
           const ids = [...state.goals, ...state.topics].map(x => x.id);
           seq = ids.length ? Math.max(...ids) + 1 : 0;
@@ -401,54 +818,6 @@
       // Goals (Step 1) and their evidence rows (Step 2)
       // ---------------------------------------------------------------
       function goalLabel(i) { return "Goal " + (i + 1); }
-
-      // Goals that have actually been written, numbered G1, G2, … These are
-      // what the module-objective alignment checkboxes offer.
-      function numberedGoals() {
-        const out = [];
-        state.goals.forEach(g => {
-          const t = g.text.trim();
-          if (t) out.push({ id: g.id, num: "G" + (out.length + 1), text: t });
-        });
-        return out;
-      }
-
-      // A deleted goal must not leave stale ids behind in module objectives
-      function pruneAlignments() {
-        const live = state.goals.map(g => g.id);
-        state.modules.forEach(m => {
-          (m.objectives || []).forEach(o => {
-            o.align = (o.align || []).filter(id => live.indexOf(id) !== -1);
-          });
-        });
-      }
-
-      // The G1/G2 key printed above the module cards
-      function renderGoalLegend() {
-        const el = $("goalLegend");
-        el.innerHTML = "";
-        const gs = numberedGoals();
-        if (!gs.length) {
-          const s = document.createElement("span");
-          s.className = "muted";
-          s.textContent = "Write your course goals in Step 1 and they will appear " +
-            "here, ready to align your module objectives against.";
-          el.appendChild(s);
-          return;
-        }
-        const lead = document.createElement("strong");
-        lead.textContent = "Course goals: ";
-        el.appendChild(lead);
-        gs.forEach((g, i) => {
-          const span = document.createElement("span");
-          span.className = "legend-goal";
-          const num = document.createElement("strong");
-          num.textContent = g.num;
-          span.append(num, document.createTextNode(" — " + g.text));
-          el.appendChild(span);
-          if (i < gs.length - 1) el.appendChild(document.createTextNode("  ·  "));
-        });
-      }
 
       function renderGoals() {
         const list = $("goalsList");
@@ -463,42 +832,21 @@
           input.setAttribute("aria-label", goalLabel(i));
           input.placeholder = "Students will be able to…";
           input.addEventListener("input", () => {
-            const wasWritten = !!g.text.trim();
             g.text = input.value;
-            const isWritten = !!g.text.trim();
-            // Keep the matching row in Step 2 in sync without a full
-            // re-render (which would steal focus mid-keystroke)
-            const span = document.querySelector(
-              '#evidenceList [data-goal="' + g.id + '"] .ev-goal');
-            if (span) {
-              span.textContent = g.text.trim() || goalLabel(i) + " (not written yet)";
-              span.classList.toggle("placeholder", !g.text.trim());
-            }
-            renderGoalLegend();
-            if (wasWritten !== isWritten) {
-              // A goal just appeared or disappeared from the alignment
-              // choices, so the module cards need rebuilding
-              renderModules();
-            } else {
-              // Same choices, new wording — just relabel the checkboxes
-              const entry = numberedGoals().filter(x => x.id === g.id)[0];
-              if (entry) {
-                const name = entry.num + ": " + entry.text;
-                document.querySelectorAll(
-                  '#moduleCards input[data-goal-check="' + g.id + '"]'
-                ).forEach(cb => {
-                  cb.setAttribute("aria-label", name);
-                  if (cb.parentElement) cb.parentElement.title = name;
-                });
+            // Keep the matching rows in Steps 2 and 3 in sync without a
+            // full re-render (which would steal focus mid-keystroke)
+            ["#evidenceList", "#activitiesList"].forEach(sel => {
+              const span = document.querySelector(sel + ' [data-goal="' + g.id + '"] .ev-goal');
+              if (span) {
+                span.textContent = g.text.trim() || goalLabel(i) + " (not written yet)";
+                span.classList.toggle("placeholder", !g.text.trim());
               }
-            }
+            });
             save();
           });
           const rm = removeBtn("Remove " + goalLabel(i), () => {
             state.goals = state.goals.filter(x => x.id !== g.id);
-            pruneAlignments();
-            renderGoals(); renderEvidence();
-            renderGoalLegend(); renderModules(); save();
+            renderGoals(); renderEvidence(); renderActivities(); save();
           });
           li.append(input, rm);
           list.appendChild(li);
@@ -528,8 +876,53 @@
           input.value = g.evidence;
           input.setAttribute("aria-label", "Assessment for " + goalLabel(i));
           input.placeholder = "How will you assess this? e.g., case-analysis paper in Module 6";
-          input.addEventListener("input", () => { g.evidence = input.value; save(); });
+          input.addEventListener("input", () => {
+            g.evidence = input.value;
+            // Keep the assessment shown in Step 3 in sync
+            const asmt = document.querySelector('#activitiesList [data-goal="' + g.id + '"] .ev-assess');
+            if (asmt) {
+              asmt.textContent = g.evidence.trim()
+                ? "Assessed by: " + g.evidence.trim()
+                : "No assessment planned yet (see Step 2)";
+              asmt.classList.toggle("placeholder", !g.evidence.trim());
+            }
+            save();
+          });
           li.append(span, input);
+          list.appendChild(li);
+        });
+      }
+
+      function renderActivities() {
+        const list = $("activitiesList");
+        list.innerHTML = "";
+        if (!state.goals.length) {
+          const li = document.createElement("li");
+          li.className = "muted";
+          li.style.borderLeft = "none";
+          li.textContent = "Add course goals in Step 1 and they will appear here.";
+          list.appendChild(li);
+          return;
+        }
+        state.goals.forEach((g, i) => {
+          const li = document.createElement("li");
+          li.dataset.goal = g.id;
+          const span = document.createElement("span");
+          span.className = "ev-goal" + (g.text.trim() ? "" : " placeholder");
+          span.textContent = g.text.trim() || goalLabel(i) + " (not written yet)";
+          const asmt = document.createElement("span");
+          asmt.className = "ev-assess" + (g.evidence.trim() ? "" : " placeholder");
+          asmt.textContent = g.evidence.trim()
+            ? "Assessed by: " + g.evidence.trim()
+            : "No assessment planned yet (see Step 2)";
+          const input = document.createElement("input");
+          input.type = "text";
+          input.autocomplete = "off";
+          input.value = g.activities;
+          input.setAttribute("aria-label", "Activities for " + goalLabel(i));
+          input.placeholder = "What practice builds these skills? e.g., worked-example videos, practice quiz, peer-reviewed draft";
+          input.addEventListener("input", () => { g.activities = input.value; save(); });
+          li.append(span, asmt, input);
           list.appendChild(li);
         });
       }
@@ -591,20 +984,16 @@
       // Module schedule grid (Step 4)
       // ---------------------------------------------------------------
       function blankModule() {
-        return {
-          topic: "",
-          objectives: [{ text: "", align: [] }],
-          materials: "", activities: "", assessments: ""
-        };
+        return { topic: "", objectives: "", activities: "", assessments: "", duedates: "", materials: "" };
       }
 
       // One labeled input or textarea for a module field
-      function moduleField(m, i, key, labelText, useTextarea) {
+      function moduleField(m, i, key, labelText, optional, useTextarea) {
         const wrap = document.createElement("div");
         const id = "mod" + i + "-" + key;
         const lab = document.createElement("label");
         lab.htmlFor = id;
-        lab.innerHTML = labelText;
+        lab.innerHTML = labelText + (optional ? ' <span class="opt">(optional)</span>' : "");
         let ctrl;
         if (useTextarea) {
           ctrl = document.createElement("textarea");
@@ -619,114 +1008,6 @@
         ctrl.addEventListener("input", () => { m[key] = ctrl.value; save(); });
         wrap.append(lab, ctrl);
         return wrap;
-      }
-
-      // The Objectives block: a repeatable list of objective rows, each with
-      // a narrow "Alignment" column of checkboxes for the course goals.
-      function buildObjectivesBlock(m, i) {
-        const block = document.createElement("div");
-        block.className = "card-row obj-block";
-
-        const head = document.createElement("div");
-        head.className = "obj-head";
-        const hObj = document.createElement("span");
-        hObj.textContent = "Objectives";
-        const hAlign = document.createElement("span");
-        hAlign.textContent = "Alignment";
-        head.append(hObj, hAlign, document.createElement("span"));
-        block.appendChild(head);
-
-        const ul = document.createElement("ul");
-        ul.className = "obj-list";
-        ul.id = "mod" + i + "-objlist";
-        ul.setAttribute("aria-label", "Objectives for module " + (i + 1));
-        block.appendChild(ul);
-
-        const add = document.createElement("button");
-        add.type = "button";
-        add.className = "add-btn";
-        add.textContent = "+ Add an objective";
-        add.setAttribute("aria-label", "Add an objective to module " + (i + 1));
-        add.addEventListener("click", () => {
-          m.objectives.push({ text: "", align: [] });
-          renderObjectiveRows(m, i, ul);
-          save();
-          const inputs = ul.querySelectorAll('input[type="text"]');
-          inputs[inputs.length - 1].focus();
-        });
-        block.appendChild(add);
-
-        renderObjectiveRows(m, i, ul);
-        return block;
-      }
-
-      function renderObjectiveRows(m, i, ul) {
-        ul.innerHTML = "";
-        const goals = numberedGoals();
-        m.objectives.forEach((o, j) => {
-          const li = document.createElement("li");
-          li.className = "obj-row";
-
-          const input = document.createElement("input");
-          input.type = "text";
-          input.autocomplete = "off";
-          input.id = "mod" + i + "-obj" + j;
-          input.value = o.text;
-          input.placeholder = "Students will be able to…";
-          input.setAttribute("aria-label",
-            "Objective " + (j + 1) + " for module " + (i + 1));
-          input.addEventListener("input", () => { o.text = input.value; save(); });
-
-          const box = document.createElement("div");
-          box.className = "align-box";
-          box.setAttribute("role", "group");
-          box.setAttribute("aria-label", "Course goals that objective " + (j + 1) +
-            " of module " + (i + 1) + " aligns with");
-          const mini = document.createElement("span");
-          mini.className = "align-mini";
-          mini.textContent = "Alignment:";
-          box.appendChild(mini);
-
-          if (!goals.length) {
-            const none = document.createElement("span");
-            none.className = "muted align-none";
-            none.textContent = "no goals yet";
-            box.appendChild(none);
-          } else {
-            goals.forEach(g => {
-              const name = g.num + ": " + g.text;
-              const lab = document.createElement("label");
-              lab.className = "align-chip";
-              lab.title = name;
-              const cb = document.createElement("input");
-              cb.type = "checkbox";
-              cb.checked = o.align.indexOf(g.id) !== -1;
-              cb.dataset.goalCheck = g.id;
-              cb.setAttribute("aria-label", name);
-              cb.addEventListener("change", () => {
-                if (cb.checked) {
-                  if (o.align.indexOf(g.id) === -1) o.align.push(g.id);
-                } else {
-                  o.align = o.align.filter(x => x !== g.id);
-                }
-                save();
-              });
-              lab.append(cb, document.createTextNode(" " + g.num));
-              box.appendChild(lab);
-            });
-          }
-
-          const rm = removeBtn("Remove objective " + (j + 1) +
-            " from module " + (i + 1), () => {
-              m.objectives.splice(j, 1);
-              if (!m.objectives.length) m.objectives.push({ text: "", align: [] });
-              renderObjectiveRows(m, i, ul);
-              save();
-            });
-
-          li.append(input, box, rm);
-          ul.appendChild(li);
-        });
       }
 
       function renderModules() {
@@ -757,17 +1038,20 @@
           const body = document.createElement("div");
           body.className = "card-body";
 
-          body.appendChild(buildObjectivesBlock(m, i));
-
-          const matRow = moduleField(m, i, "materials", "Materials &amp; resources", false);
-          matRow.className = "card-row";
-          body.appendChild(matRow);
+          const objRow = moduleField(m, i, "objectives", "Objectives", true, false);
+          objRow.className = "card-row";
+          body.appendChild(objRow);
 
           const grid = document.createElement("div");
-          grid.className = "two-col";
-          grid.appendChild(moduleField(m, i, "assessments", "Assessments", true));
-          grid.appendChild(moduleField(m, i, "activities", "Activities", true));
+          grid.className = "three-col";
+          grid.appendChild(moduleField(m, i, "activities", "Activities", false, true));
+          grid.appendChild(moduleField(m, i, "assessments", "Assessments", false, true));
+          grid.appendChild(moduleField(m, i, "duedates", "Due dates", false, true));
           body.appendChild(grid);
+
+          const matRow = moduleField(m, i, "materials", "Materials &amp; resources", false, false);
+          matRow.className = "card-row";
+          body.appendChild(matRow);
 
           card.appendChild(body);
           cards.appendChild(card);
@@ -786,26 +1070,23 @@
 
         text.push(title + " — Course Plan", "");
 
-        // Goals and their assessments. Goals are numbered G1, G2, … so the
-        // module objectives can point back at them.
-        html.push("<h3>Course goals &amp; assessments</h3>");
-        const numbered = numberedGoals();
-        const numOf = id => {
-          const e = numbered.filter(x => x.id === id)[0];
-          return e ? e.num : null;
-        };
+        // Goals, assessments, and activities
+        html.push("<h3>Course goals, assessments &amp; activities</h3>");
         const goals = state.goals.filter(g => g.text.trim());
         if (goals.length) {
           html.push("<ul>");
-          text.push("COURSE GOALS & ASSESSMENTS");
+          text.push("COURSE GOALS, ASSESSMENTS & ACTIVITIES");
           goals.forEach(g => {
             const ev = g.evidence.trim();
-            const tag = numOf(g.id) ? numOf(g.id) + " — " : "";
-            html.push("<li><strong>" + esc(tag + g.text.trim()) + "</strong><br>" +
+            const act = (g.activities || "").trim();
+            html.push("<li><strong>" + esc(g.text.trim()) + "</strong><br>" +
               (ev ? "Assessment: " + esc(ev)
-                : '<span class="muted">No assessment planned yet</span>') + "</li>");
-            text.push("- " + tag + g.text.trim());
+                : '<span class="muted">No assessment planned yet</span>') + "<br>" +
+              (act ? "Activities: " + esc(act)
+                : '<span class="muted">No activities planned yet</span>') + "</li>");
+            text.push("- " + g.text.trim());
             text.push("  Assessment: " + (ev || "(none planned yet)"));
+            text.push("  Activities: " + (act || "(none planned yet)"));
           });
           html.push("</ul>");
           text.push("");
@@ -852,22 +1133,12 @@
         text.push("MODULE SCHEDULE");
         state.modules.forEach((m, i) => {
           const title = "Module " + (i + 1) + (m.topic.trim() ? ": " + m.topic.trim() : "");
-          // Each written objective, tagged with the goals it aligns with
-          const objText = (m.objectives || [])
-            .filter(o => (o.text || "").trim())
-            .map(o => {
-              const tags = numbered
-                .filter(x => (o.align || []).indexOf(x.id) !== -1)
-                .map(x => x.num);
-              return o.text.trim() +
-                (tags.length ? " [aligns with " + tags.join(", ") + "]" : "");
-            })
-            .join("; ");
           const fields = [
-            ["Objectives", objText],
-            ["Materials", m.materials],
+            ["Objectives", m.objectives],
+            ["Activities", m.activities],
             ["Assessments", m.assessments],
-            ["Activities", m.activities]
+            ["Due dates", m.duedates],
+            ["Materials", m.materials]
           ].filter(f => (f[1] || "").trim());
           const lines = fields.map(f => f[0] + ": " + f[1].trim());
           html.push('<div class="plan-module"><strong>' + esc(title) + "</strong>" +
@@ -930,9 +1201,8 @@
       });
 
       $("addGoalBtn").addEventListener("click", () => {
-        state.goals.push({ id: seq++, text: "", evidence: "" });
-        renderGoals(); renderEvidence();
-        renderGoalLegend(); renderModules(); save();
+        state.goals.push({ id: seq++, text: "", evidence: "", activities: "" });
+        renderGoals(); renderEvidence(); renderActivities(); save();
         const inputs = document.querySelectorAll("#goalsList input");
         inputs[inputs.length - 1].focus();
       });
@@ -973,15 +1243,15 @@
         $("principleNote").textContent = PRINCIPLES[state.principle];
         $("principleNote").style.display = "block";
       }
-      if (!state.goals.length) state.goals.push({ id: seq++, text: "", evidence: "" });
+      if (!state.goals.length) state.goals.push({ id: seq++, text: "", evidence: "", activities: "" });
       if (!state.topics.length) {
         state.topics.push({ id: seq++, text: "", priority: "Essential" });
         state.topics.push({ id: seq++, text: "", priority: "Essential" });
       }
       renderGoals();
       renderEvidence();
+      renderActivities();
       renderTopics();
-      renderGoalLegend();
       renderModules();
     </script>
   </body>

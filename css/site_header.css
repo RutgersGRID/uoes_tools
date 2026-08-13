@@ -1,0 +1,177 @@
+/* ============================================================
+   UOES Tools — site header, modeled on uoes.rutgers.edu
+   ------------------------------------------------------------
+   Replicates the University Online Education Services site
+   header: dark top strip, Rutgers primary mark + site name on
+   the left, bold utility links + search at top right, and the
+   main navigation row below, right-aligned.
+
+   Fonts match the live theme (Source Sans Pro for nav/utility,
+   PT Serif for the site name); pages load them from Google
+   Fonts as "Source Sans 3" (the current name for Source Sans
+   Pro) with Helvetica/Arial and Georgia fallbacks.
+
+   Load this LAST in each page's <head>, after the page styles:
+   it zeroes body's top margin (document.css sets one) and
+   breaks itself out to full viewport width, so it renders
+   identically on the narrow document pages and the wide
+   calculator pages.
+   ============================================================ */
+
+.uoes-site-header {
+  /* Full-bleed breakout: document.css constrains <body> to
+     reading width, so the header escapes it with the 100vw
+     negative-margin technique. */
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  margin-top: 0;
+  margin-bottom: 40px;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10);
+  text-align: left;            /* calculator.css centers <header>; undo */
+  line-height: 1.2;
+}
+
+body { margin-top: 0 !important; }  /* document.css gives body a 40px top
+                                       margin; the header supplies its own
+                                       spacing below instead. */
+
+.uoes-site-header,
+.uoes-site-header * { box-sizing: border-box; }
+
+/* --- dark strip across the very top ------------------------ */
+.ush-topbar {
+  height: 14px;
+  background: #330000;   /* dark maroon strip from the live site header —
+                            deliberately not a base.css brand token */
+}
+
+/* --- centered content column ------------------------------- */
+.ush-inner {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 22px 30px 0;
+}
+
+/* --- top row: branding left, utility links right ----------- */
+.ush-row-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: nowrap;
+}
+
+.ush-logo {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  text-decoration: none;
+  color: #000;
+}
+
+.ush-logo img {
+  height: 62px;
+  width: auto;
+  display: block;
+}
+
+.ush-site-name {
+  font-family: 'PT Serif', Georgia, serif;
+  font-weight: 400;
+  font-size: 23px;
+  line-height: 1.35;
+  color: #000;
+}
+
+/* --- utility links + search -------------------------------- */
+.ush-utility {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  align-self: flex-start;
+  padding-top: 12px;
+}
+
+.ush-utility nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.ush-utility nav a {
+  font-family: 'Source Sans 3', 'Source Sans Pro', Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: #000;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.ush-utility nav a:hover,
+.ush-utility nav a:focus {
+  color: var(--red);
+  text-decoration: underline;
+}
+
+.ush-search {
+  display: inline-flex;
+  align-items: center;
+  color: var(--red);
+}
+
+.ush-search svg { display: block; }
+
+.ush-search:hover,
+.ush-search:focus { color: var(--red-dark); }
+
+/* --- main navigation row ----------------------------------- */
+.ush-mainnav {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 22px;
+  flex-wrap: wrap;
+  padding: 10px 0;
+}
+
+.ush-mainnav a {
+  font-family: 'Source Sans 3', 'Source Sans Pro', Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  color: #000;
+  text-decoration: none;
+  padding-bottom: 6px;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+}
+
+.ush-mainnav a:hover,
+.ush-mainnav a:focus {
+  color: var(--red);
+  border-bottom-color: var(--red);
+}
+
+.ush-mainnav a.active {
+  border-bottom-color: var(--red);
+}
+
+/* --- small screens ----------------------------------------- */
+@media (max-width: 920px) {
+  .ush-inner { padding: 18px 20px 0; }
+  .ush-row-top { flex-wrap: wrap; justify-content: center; text-align: center; }
+  .ush-logo { flex-direction: column; gap: 10px; }
+  .ush-utility { align-self: center; padding-top: 0; }
+  .ush-utility nav { flex-wrap: wrap; justify-content: center; gap: 14px 22px; }
+  .ush-mainnav { justify-content: center; gap: 16px 26px; padding: 20px 0 16px; }
+  .ush-mainnav a { font-size: 17px; }
+}
+
+/* --- print: keep reports clean ----------------------------- */
+@media print {
+  .uoes-site-header { display: none; }
+}
