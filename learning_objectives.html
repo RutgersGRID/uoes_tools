@@ -1,249 +1,266 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Learning Objective Builder v2</title>
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/document.css">
-  <link rel="stylesheet" href="css/learning_objectives.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/site_header.css">
-</head>
-<body>
-<header class="uoes-site-header">
-  <div class="ush-topbar"></div>
-  <div class="ush-inner">
-    <div class="ush-row-top">
-      <a class="ush-logo" href="index.html">
-        <img src="images/rutgers_primary_mark.svg"
-             onerror="this.onerror=null;this.src='https://uoes.rutgers.edu/profiles/contrib/rutgers/themes/rutgers_main/pattern_lab/source/images/icons/Rutgers_Primary_Mark.svg';"
-             alt="Rutgers University">
-        <span class="ush-site-name">University Online Education<br>Services</span>
-      </a>
-      <div class="ush-utility">
-        <nav aria-label="Rutgers utility links">
-          <a href="https://uoes.rutgers.edu/ruonlinecon-main">RUOnlineCon</a>
-          <a href="https://online.rutgers.edu">Rutgers Online Programs</a>
-          <a href="https://uoes.rutgers.edu/contact-us">Contact Us</a>
-          <a href="https://rutgers.edu">Visit Rutgers.edu</a>
-        </nav>
-        <a class="ush-search" href="https://search.rutgers.edu" aria-label="Search Rutgers">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.3" y1="15.3" x2="21" y2="21"/></svg>
-        </a>
-      </div>
-    </div>
-    <nav class="ush-mainnav" aria-label="UOES tools">
-      <a href="index.html">Home</a>
-      <a href="learning_objectives.html" class="active">Learning Objectives</a>
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Objective Builder v2</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/document.css">
+    <link rel="stylesheet" href="css/learning_objectives.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet" href="css/site_header.css">
+  </head>
+
+  <body>
+    <header class="uoes-site-header">
+      <div class="ush-topbar"></div>
+      <div class="ush-inner">
+        <div class="ush-row-top">
+          <a class="ush-logo" href="https://uoes.rutgers.edu">
+            <img src="images/rutgers_primary_mark.svg"
+              onerror="this.onerror=null;this.src='https://uoes.rutgers.edu/profiles/contrib/rutgers/themes/rutgers_main/pattern_lab/source/images/icons/Rutgers_Primary_Mark.svg';"
+              alt="Rutgers University">
+            <span class="ush-site-name">University Online Education<br>Services</span>
+          </a>
+          <div class="ush-utility">
+            <nav aria-label="Rutgers utility links">
+              <a href="https://uoes.rutgers.edu/ruonlinecon-main">RUOnlineCon</a>
+              <a href="https://online.rutgers.edu">Rutgers Online Programs</a>
+              <a href="https://uoes.rutgers.edu/contact-us">Contact Us</a>
+              <a href="https://rutgers.edu">Visit Rutgers.edu</a>
+            </nav>
+            <a class="ush-search" href="https://search.rutgers.edu" aria-label="Search Rutgers">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" aria-hidden="true">
+                <circle cx="10.5" cy="10.5" r="6.5" />
+                <line x1="15.3" y1="15.3" x2="21" y2="21" />
+              </svg>
+            </a>
+          </div>
+        </div>
+        <!-- <nav class="ush-mainnav" aria-label="UOES tools">
+      <a href="index.html" class="active">Home</a>
+      <a href="learning_objectives.html">Learning Objectives</a>
       <a href="course_planner.html">Course Planner</a>
       <a href="workload_estimator.html">Workload Estimator</a>
       <a href="credit_hour_planner.html">Credit Hour Planner</a>
       <a href="blooms_verbs.html">Bloom&rsquo;s Verbs</a>
-    </nav>
-  </div>
-</header>
+    </nav> -->
+        <nav class="ush-mainnav" aria-label="UOES tools">
+          <a href="https://uoes.rutgers.edu" class="active">UOES Home</a>
+          <a href="index.html">Applications Home</a>
+          <a href="course_design_tools">Course Design Tools</a>
+        </nav>
+      </div>
+    </header>
 
-<main>
+    <main>
 
-  <h1>Learning Objective Builder</h1>
-  <p class="subtitle">Fill in the blanks, then click the button to build your objective.</p>
+      <h1>Learning Objective Builder</h1>
+      <p class="subtitle">Fill in the blanks, then click the button to build your objective.</p>
 
-  <details id="guide" class="guide">
-    <summary>What goes in each blank?</summary>
-    <dl>
-      <dt>Condition</dt>
-      <dd>The circumstances under which learners will demonstrate their
-        learning. The condition describes the performance, not the
-        instruction. This could be something they are given, like a map,
-        something they must do without, like a calculator, or the setting or
-        timing, like the end of a semester.</dd>
-      <dt>Audience</dt>
-      <dd>Who the learners are. Examples include students, third-grade
-        students, or new hires.</dd>
-      <dt>Behavior</dt>
-      <dd>What observable, measurable action will learners perform, and what content,
-        skill, or product will they act on or produce? Include verbs from
-        <a href="blooms_verbs.html" target="_blank" rel="noopener noreferrer">Bloom's 
-        Taxonomy</a> such as label, calculate, assemble, etc. Avoid verbs you cannot
-        measure or check, like understand or appreciate.</dd>
-      <dt>Degree (optional)</dt>
-      <dd>How well the learners must perform, if applicable. Some possible
-        examples could be an expectation of accuracy, completeness, time, or quality.
-        If there are any required elements, such as 'include three supporting sources', 
-        or if the objective must align with a rubric, such as 'meet all criteria on the rubric',
-        include that as part of the degree.
-</dd>
-    </dl>
-    <p class="example"><strong>Example:</strong>
-      <span class="ex-part">Given a blank map of the US<span class="ex-label" aria-hidden="true">condition</span></span>,
-      <span class="ex-part">students<span class="ex-label" aria-hidden="true">audience</span></span> will
-      <span class="ex-part">label all fifty states<span class="ex-label" aria-hidden="true">behavior</span></span>
-      <span class="ex-part">with 90% accuracy<span class="ex-label" aria-hidden="true">degree</span></span>.</p>
-  </details>
+      <details id="guide" class="guide">
+        <summary>What goes in each blank?</summary>
+        <dl>
+          <dt>Condition</dt>
+          <dd>The circumstances under which learners will demonstrate their
+            learning. The condition describes the performance, not the
+            instruction. This could be something they are given, like a map,
+            something they must do without, like a calculator, or the setting or
+            timing, like the end of a semester.</dd>
+          <dt>Audience</dt>
+          <dd>Who the learners are. Examples include students, third-grade
+            students, or new hires.</dd>
+          <dt>Behavior</dt>
+          <dd>What observable, measurable action will learners perform, and what content,
+            skill, or product will they act on or produce? Include verbs from
+            <a href="blooms_verbs.html" target="_blank" rel="noopener noreferrer">Bloom's
+              Taxonomy</a> such as label, calculate, assemble, etc. Avoid verbs you cannot
+            measure or check, like understand or appreciate.
+          </dd>
+          <dt>Degree (optional)</dt>
+          <dd>How well the learners must perform, if applicable. Some possible
+            examples could be an expectation of accuracy, completeness, time, or quality.
+            If there are any required elements, such as 'include three supporting sources',
+            or if the objective must align with a rubric, such as 'meet all criteria on the rubric',
+            include that as part of the degree.
+          </dd>
+        </dl>
+        <p class="example"><strong>Example:</strong>
+          <span class="ex-part">Given a blank map of the US<span class="ex-label"
+              aria-hidden="true">condition</span></span>,
+          <span class="ex-part">students<span class="ex-label" aria-hidden="true">audience</span></span> will
+          <span class="ex-part">label all fifty states<span class="ex-label" aria-hidden="true">behavior</span></span>
+          <span class="ex-part">with 90% accuracy<span class="ex-label" aria-hidden="true">degree</span></span>.
+        </p>
+      </details>
 
 
-  <!-- The sentence with inline inputs is generated by JavaScript -->
-  <div id="storyForm"></div>
+      <!-- The sentence with inline inputs is generated by JavaScript -->
+      <div id="storyForm"></div>
 
-  <button id="generateBtn">Create Objective</button>
+      <button id="generateBtn">Create Objective</button>
 
-  <div id="story" aria-live="polite">
-    <div id="storyText"></div>
-    <button id="copyBtn" type="button">Copy</button>
-    <span id="copyStatus" role="status" class="sr-only"></span>
-  </div>
+      <div id="story" aria-live="polite">
+        <div id="storyText"></div>
+        <button id="copyBtn" type="button">Copy</button>
+        <span id="copyStatus" role="status" class="sr-only"></span>
+      </div>
 
-  <script>
-    // The objective template (ABCD model: Audience, Behavior, Condition, Degree).
-    // Anything in {curly braces} becomes an inline blank, and the word inside
-    // the braces appears as the hint under the blank.
-    // Put \n wherever you want to force a line break.
-    // For a dropdown instead of a text box, separate choices with | like
-    // {Given|At|After|Upon}. To also show a hint under it, add "label:" in
-    // front, e.g. {opener:Given|At|After|Upon}.
-    const template =
-      "{condition}, {audience} will {behavior} {degree (optional)}.";
+      <script>
+        // The objective template (ABCD model: Audience, Behavior, Condition, Degree).
+        // Anything in {curly braces} becomes an inline blank, and the word inside
+        // the braces appears as the hint under the blank.
+        // Put \n wherever you want to force a line break.
+        // For a dropdown instead of a text box, separate choices with | like
+        // {Given|At|After|Upon}. To also show a hint under it, add "label:" in
+        // front, e.g. {opener:Given|At|After|Upon}.
+        const template =
+          "{condition}, {audience} will {behavior} {degree (optional)}.";
 
-    // Short guidance shown as a tooltip when hovering a blank.
-    // Keys must match the placeholder names in the template.
-    const GUIDANCE = {
-      condition:
-        "The circumstances of the demonstration: what learners will have, " +
-        "what they must do without, or the setting or timing. Examples " +
-        "include Given a map, or At the end of the semester.",
-      audience: "Who the learners are. Examples include students or new hires.",
-      behavior:
-        "An observable, measurable action, like label all fifty states. " +
-        "Avoid verbs like understand or know.",
-      "degree (optional)":
-        "Optional: How well they must perform. Examples can include " +
-        "measuring accuracy, completeness, time, quality, any required " +
-        "elements, or alignment with a rubric."
-    };
+        // Short guidance shown as a tooltip when hovering a blank.
+        // Keys must match the placeholder names in the template.
+        const GUIDANCE = {
+          condition:
+            "The circumstances of the demonstration: what learners will have, " +
+            "what they must do without, or the setting or timing. Examples " +
+            "include Given a map, or At the end of the semester.",
+          audience: "Who the learners are. Examples include students or new hires.",
+          behavior:
+            "An observable, measurable action, like label all fifty states. " +
+            "Avoid verbs like understand or know.",
+          "degree (optional)":
+            "Optional: How well they must perform. Examples can include " +
+            "measuring accuracy, completeness, time, quality, any required " +
+            "elements, or alignment with a rubric."
+        };
 
-    // Build the sentence: plain text stays as text,
-    // each {placeholder} becomes an inline input or dropdown.
-    const storyForm = document.getElementById("storyForm");
-    let count = 0;
+        // Build the sentence: plain text stays as text,
+        // each {placeholder} becomes an inline input or dropdown.
+        const storyForm = document.getElementById("storyForm");
+        let count = 0;
 
-    // Split the template on placeholders, keeping the placeholders in the list
-    template.split(/(\{.+?\})/g).forEach(part => {
-      const match = part.match(/^\{(.+)\}$/);
-      if (match) {
-        const inner = match[1];
-        const wrap = document.createElement("span");
-        wrap.className = "blank-wrap";
+        // Split the template on placeholders, keeping the placeholders in the list
+        template.split(/(\{.+?\})/g).forEach(part => {
+          const match = part.match(/^\{(.+)\}$/);
+          if (match) {
+            const inner = match[1];
+            const wrap = document.createElement("span");
+            wrap.className = "blank-wrap";
 
-        if (inner.includes("|")) {
-          // It's a dropdown: optional "label:" prefix, then |-separated choices
-          const colon = inner.indexOf(":");
-          const label = colon > -1 ? inner.slice(0, colon) : "";
-          const choices = (colon > -1 ? inner.slice(colon + 1) : inner).split("|");
-          const optionsHtml = choices
-            .map(c => `<option value="${c}">${c}</option>`)
-            .join("");
-          wrap.innerHTML = `
+            if (inner.includes("|")) {
+              // It's a dropdown: optional "label:" prefix, then |-separated choices
+              const colon = inner.indexOf(":");
+              const label = colon > -1 ? inner.slice(0, colon) : "";
+              const choices = (colon > -1 ? inner.slice(colon + 1) : inner).split("|");
+              const optionsHtml = choices
+                .map(c => `<option value="${c}">${c}</option>`)
+                .join("");
+              wrap.innerHTML = `
             <select id="word${count}" aria-label="${label || "sentence opener"}"${GUIDANCE[label] ? ` aria-description="${GUIDANCE[label].replace(/"/g, "&quot;")}"` : ""}>${optionsHtml}</select>
             ${label ? `<span class="hint" aria-hidden="true">${label}</span>` : ""}
           `;
-        } else {
-          // It's a text blank: build the input + subscript hint
-          wrap.innerHTML = `
+            } else {
+              // It's a text blank: build the input + subscript hint
+              wrap.innerHTML = `
             <input type="text" id="word${count}" autocomplete="off"
               aria-label="${inner}"${GUIDANCE[inner] ? ` aria-description="${GUIDANCE[inner].replace(/"/g, "&quot;")}"` : ""}>
             <span class="hint" aria-hidden="true">${inner}</span>
           `;
-          // Attach hover guidance if we have any for this placeholder
-          if (GUIDANCE[inner]) wrap.title = GUIDANCE[inner];
-        }
+              // Attach hover guidance if we have any for this placeholder
+              if (GUIDANCE[inner]) wrap.title = GUIDANCE[inner];
+            }
 
-        storyForm.appendChild(wrap);
-        count++;
-      } else if (part) {
-        // Plain text — turn any \n into a real line break
-        part.split("\n").forEach((chunk, j) => {
-          if (j > 0) storyForm.appendChild(document.createElement("br"));
-          if (chunk) storyForm.appendChild(document.createTextNode(chunk));
+            storyForm.appendChild(wrap);
+            count++;
+          } else if (part) {
+            // Plain text — turn any \n into a real line break
+            part.split("\n").forEach((chunk, j) => {
+              if (j > 0) storyForm.appendChild(document.createElement("br"));
+              if (chunk) storyForm.appendChild(document.createTextNode(chunk));
+            });
+          }
         });
-      }
-    });
 
-    // Blanks grow as you type, since conditions and behaviors are full phrases.
-    // (min-width in the CSS sets the floor.)
-    storyForm.addEventListener("input", e => {
-      if (e.target.tagName === "INPUT") {
-        e.target.style.width = (e.target.value.length + 2) + "ch";
-      }
-    });
+        // Blanks grow as you type, since conditions and behaviors are full phrases.
+        // (min-width in the CSS sets the floor.)
+        storyForm.addEventListener("input", e => {
+          if (e.target.tagName === "INPUT") {
+            e.target.style.width = (e.target.value.length + 2) + "ch";
+          }
+        });
 
-    // When the button is clicked, build the finished objective from the inputs.
-    // Each filled part is underlined with its label beneath, like the guide's
-    // example. Dropdown picks without a "label:" prefix (e.g. the opener) are
-    // left as plain text, since they're the fixed scaffolding of the formula.
-    let plainStory = ""; // the unannotated sentence, for the copy button
+        // When the button is clicked, build the finished objective from the inputs.
+        // Each filled part is underlined with its label beneath, like the guide's
+        // example. Dropdown picks without a "label:" prefix (e.g. the opener) are
+        // left as plain text, since they're the fixed scaffolding of the formula.
+        let plainStory = ""; // the unannotated sentence, for the copy button
 
-    document.getElementById("generateBtn").addEventListener("click", () => {
-      let i = 0;
-      const words = [];
-      const story = template.replace(/\{(.+?)\}/g, (m, inner) => {
-        const raw = document.getElementById("word" + i).value.trim();
-        // Optional parts left blank are omitted; required ones show ______
-        const word = raw || (inner.includes("(optional)") ? "" : "______");
-        words.push(word);
-        i++;
-        if (!word) return "";
+        document.getElementById("generateBtn").addEventListener("click", () => {
+          let i = 0;
+          const words = [];
+          const story = template.replace(/\{(.+?)\}/g, (m, inner) => {
+            const raw = document.getElementById("word" + i).value.trim();
+            // Optional parts left blank are omitted; required ones show ______
+            const word = raw || (inner.includes("(optional)") ? "" : "______");
+            words.push(word);
+            i++;
+            if (!word) return "";
 
-        // Work out the label for this part: the placeholder name for text
-        // blanks, or the "label:" prefix for dropdowns (empty if none).
-        let label = inner;
-        if (inner.includes("|")) {
-          const colon = inner.indexOf(":");
-          label = colon > -1 ? inner.slice(0, colon) : "";
-        }
+            // Work out the label for this part: the placeholder name for text
+            // blanks, or the "label:" prefix for dropdowns (empty if none).
+            let label = inner;
+            if (inner.includes("|")) {
+              const colon = inner.indexOf(":");
+              label = colon > -1 ? inner.slice(0, colon) : "";
+            }
 
-        return label
-          ? `<span class="blank">${word}<span class="blank-label" aria-hidden="true">${label}</span></span>`
-          : word;
-      }).replace(/ +([.,])/g, "$1"); // tidy spacing where an optional part was omitted
+            return label
+              ? `<span class="blank">${word}<span class="blank-label" aria-hidden="true">${label}</span></span>`
+              : word;
+          }).replace(/ +([.,])/g, "$1"); // tidy spacing where an optional part was omitted
 
-      // Plain-text version: same words, no markup
-      let j = 0;
-      plainStory = template.replace(/\{.+?\}/g, () => words[j++])
-        .replace(/ +([.,])/g, "$1");
+          // Plain-text version: same words, no markup
+          let j = 0;
+          plainStory = template.replace(/\{.+?\}/g, () => words[j++])
+            .replace(/ +([.,])/g, "$1");
 
-      document.getElementById("storyText").innerHTML = story.replace(/\n/g, "<br>");
-      const storyDiv = document.getElementById("story");
-      storyDiv.style.display = "block";
-      storyDiv.scrollIntoView({ behavior: "smooth" });
-    });
+          document.getElementById("storyText").innerHTML = story.replace(/\n/g, "<br>");
+          const storyDiv = document.getElementById("story");
+          storyDiv.style.display = "block";
+          storyDiv.scrollIntoView({ behavior: "smooth" });
+        });
 
-    // Copy the plain sentence to the clipboard, with brief feedback
-    const copyBtn = document.getElementById("copyBtn");
-    copyBtn.addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(plainStory);
-      } catch (err) {
-        // Fallback for contexts where the Clipboard API is unavailable
-        const ta = document.createElement("textarea");
-        ta.value = plainStory;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        ta.remove();
-      }
-      copyBtn.textContent = "Copied!";
-      document.getElementById("copyStatus").textContent = "Objective copied to clipboard";
-      setTimeout(() => {
-        copyBtn.textContent = "Copy";
-        document.getElementById("copyStatus").textContent = "";
-      }, 1500);
-    });
-  </script>
+        // Copy the plain sentence to the clipboard, with brief feedback
+        const copyBtn = document.getElementById("copyBtn");
+        copyBtn.addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(plainStory);
+          } catch (err) {
+            // Fallback for contexts where the Clipboard API is unavailable
+            const ta = document.createElement("textarea");
+            ta.value = plainStory;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            ta.remove();
+          }
+          copyBtn.textContent = "Copied!";
+          document.getElementById("copyStatus").textContent = "Objective copied to clipboard";
+          setTimeout(() => {
+            copyBtn.textContent = "Copy";
+            document.getElementById("copyStatus").textContent = "";
+          }, 1500);
+        });
+      </script>
 
 
-</main>
-</body>
+    </main>
+  </body>
+
 </html>

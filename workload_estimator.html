@@ -1,774 +1,790 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Course Workload Estimator</title>
-<link rel="stylesheet" href="css/base.css">
-<link rel="stylesheet" href="css/calculator.css">
-<link rel="stylesheet" href="css/workload_estimator.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/site_header.css">
-</head>
-<body>
-<header class="uoes-site-header">
-  <div class="ush-topbar"></div>
-  <div class="ush-inner">
-    <div class="ush-row-top">
-      <a class="ush-logo" href="index.html">
-        <img src="images/rutgers_primary_mark.svg"
-             onerror="this.onerror=null;this.src='https://uoes.rutgers.edu/profiles/contrib/rutgers/themes/rutgers_main/pattern_lab/source/images/icons/Rutgers_Primary_Mark.svg';"
-             alt="Rutgers University">
-        <span class="ush-site-name">University Online Education<br>Services</span>
-      </a>
-      <div class="ush-utility">
-        <nav aria-label="Rutgers utility links">
-          <a href="https://uoes.rutgers.edu/ruonlinecon-main">RUOnlineCon</a>
-          <a href="https://online.rutgers.edu">Rutgers Online Programs</a>
-          <a href="https://uoes.rutgers.edu/contact-us">Contact Us</a>
-          <a href="https://rutgers.edu">Visit Rutgers.edu</a>
-        </nav>
-        <a class="ush-search" href="https://search.rutgers.edu" aria-label="Search Rutgers">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.3" y1="15.3" x2="21" y2="21"/></svg>
-        </a>
-      </div>
-    </div>
-    <nav class="ush-mainnav" aria-label="UOES tools">
-      <a href="index.html">Home</a>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Course Workload Estimator</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/calculator.css">
+    <link rel="stylesheet" href="css/workload_estimator.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet" href="css/site_header.css">
+  </head>
+
+  <body>
+    <header class="uoes-site-header">
+      <div class="ush-topbar"></div>
+      <div class="ush-inner">
+        <div class="ush-row-top">
+          <a class="ush-logo" href="https://uoes.rutgers.edu">
+            <img src="images/rutgers_primary_mark.svg"
+              onerror="this.onerror=null;this.src='https://uoes.rutgers.edu/profiles/contrib/rutgers/themes/rutgers_main/pattern_lab/source/images/icons/Rutgers_Primary_Mark.svg';"
+              alt="Rutgers University">
+            <span class="ush-site-name">University Online Education<br>Services</span>
+          </a>
+          <div class="ush-utility">
+            <nav aria-label="Rutgers utility links">
+              <a href="https://uoes.rutgers.edu/ruonlinecon-main">RUOnlineCon</a>
+              <a href="https://online.rutgers.edu">Rutgers Online Programs</a>
+              <a href="https://uoes.rutgers.edu/contact-us">Contact Us</a>
+              <a href="https://rutgers.edu">Visit Rutgers.edu</a>
+            </nav>
+            <a class="ush-search" href="https://search.rutgers.edu" aria-label="Search Rutgers">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" aria-hidden="true">
+                <circle cx="10.5" cy="10.5" r="6.5" />
+                <line x1="15.3" y1="15.3" x2="21" y2="21" />
+              </svg>
+            </a>
+          </div>
+        </div>
+        <!-- <nav class="ush-mainnav" aria-label="UOES tools">
+      <a href="index.html" class="active">Home</a>
       <a href="learning_objectives.html">Learning Objectives</a>
       <a href="course_planner.html">Course Planner</a>
-      <a href="workload_estimator.html" class="active">Workload Estimator</a>
+      <a href="workload_estimator.html">Workload Estimator</a>
       <a href="credit_hour_planner.html">Credit Hour Planner</a>
       <a href="blooms_verbs.html">Bloom&rsquo;s Verbs</a>
-    </nav>
-  </div>
-</header>
-
-<main>
-
-<header>
-  <h1>Course Workload Estimator</h1>
-  <p>Estimate how many hours per week your course asks of students. Fill in what you
-  know and leave the rest at zero &mdash; every field updates the estimate immediately.</p>
-</header>
-
-<form id="f" autocomplete="off">
-
-<h2 id="h-inputs">Course inputs</h2>
-
-<div class="grid" role="group" aria-labelledby="h-inputs">
-
-  <!-- COURSE INFO + READING -->
-  <section class="card" aria-labelledby="s-course">
-    <h3 id="s-course">Course info</h3>
-    <div class="field">
-      <label for="classweeks">Class duration (weeks)</label>
-      <input type="number" id="classweeks" min="1" step="1" value="15">
-      <p class="hint">Semester-long totals are divided by this number.</p>
-    </div>
-  </section>
-
-  <section class="card" aria-labelledby="s-reading">
-    <h3 id="s-reading">Reading assignments</h3>
-    <div class="field">
-      <label for="weeklypages">Pages per week</label>
-      <input type="number" id="weeklypages" min="0" step="1" value="0">
-    </div>
-    <div class="field">
-      <label for="readingdensity">Page density</label>
-      <select id="readingdensity">
-        <option value="1">450 words (paperback / article)</option>
-        <option value="2">600 words (academic monograph)</option>
-        <option value="3">750 words (textbook)</option>
-      </select>
-    </div>
-    <div class="field">
-      <label for="difficulty">Difficulty</label>
-      <select id="difficulty">
-        <option value="1">No new concepts</option>
-        <option value="2">Some new concepts</option>
-        <option value="3">Many new concepts</option>
-      </select>
-    </div>
-    <div class="field">
-      <label for="readingpurpose">Purpose</label>
-      <select id="readingpurpose">
-        <option value="1">Survey &mdash; skim for main ideas</option>
-        <option value="2">Understand &mdash; comprehend the text</option>
-        <option value="3">Engage &mdash; analyze and critique</option>
-      </select>
-    </div>
-    <p class="rate">Estimated reading rate<strong id="out-readrate">&nbsp;</strong></p>
-    <div class="check">
-      <input type="checkbox" id="setreadingrate">
-      <label for="setreadingrate">Set this rate manually</label>
-    </div>
-    <div class="field" id="wrap-overridepages" hidden>
-      <label for="overridepagesperhour">Pages read per hour</label>
-      <input type="number" id="overridepagesperhour" min="0.1" step="0.5" value="10">
-    </div>
-    <details>
-      <summary>Where these numbers come from</summary>
-      <div class="body">
-        <p>Reading rate depends on page density, text difficulty, and reading purpose.
-        The table is built from Keith Rayner&rsquo;s synthesis of reading science: a
-        skilled adult reader&rsquo;s optimal rate is about 300 words per minute, with
-        comprehension dropping off above that. Real-world rates run somewhat slower.</p>
-        <p>&ldquo;Engage&rdquo; reading is treated as roughly equivalent to reading for
-        memorization (about 138 words per minute or slower) &mdash; the original authors
-        note this probably still understates the time.</p>
-        <p>Rates range from 67 pages/hour (light paperback, familiar material, skimming)
-        down to 5 pages/hour (dense textbook, all new concepts, critical engagement).</p>
+    </nav> -->
+        <nav class="ush-mainnav" aria-label="UOES tools">
+          <a href="https://uoes.rutgers.edu" class="active">UOES Home</a>
+          <a href="index.html">Applications Home</a>
+          <a href="course_design_tools">Course Design Tools</a>
+        </nav>
       </div>
-    </details>
-  </section>
+    </header>
 
-  <!-- WRITING -->
-  <section class="card" aria-labelledby="s-writing">
-    <h3 id="s-writing">Writing assignments</h3>
-    <div class="field">
-      <label for="semesterpages">Pages per semester</label>
-      <input type="number" id="semesterpages" min="0" step="1" value="0">
-    </div>
-    <div class="field">
-      <label for="writtendensity">Page density</label>
-      <select id="writtendensity">
-        <option value="1">250 words (double-spaced)</option>
-        <option value="2">500 words (single-spaced)</option>
-      </select>
-    </div>
-    <div class="field">
-      <label for="writingpurpose">Genre</label>
-      <select id="writingpurpose">
-        <option value="1">Reflection / narrative</option>
-        <option value="2">Argument</option>
-        <option value="3">Research</option>
-      </select>
-    </div>
-    <div class="field">
-      <label for="draftrevise">Drafting</label>
-      <select id="draftrevise">
-        <option value="1">No drafting</option>
-        <option value="2">Minimal drafting</option>
-        <option value="3">Extensive drafting</option>
-      </select>
-    </div>
-    <p class="rate">Estimated writing rate<strong id="out-writerate">&nbsp;</strong></p>
-    <div class="check">
-      <input type="checkbox" id="setwritingrate">
-      <label for="setwritingrate">Set this rate manually</label>
-    </div>
-    <div class="field" id="wrap-overridewriting" hidden>
-      <label for="overridehoursperwriting">Hours per written page</label>
-      <input type="number" id="overridehoursperwriting" min="0.1" step="0.25" value="0.5">
-    </div>
-    <details>
-      <summary>Where these numbers come from</summary>
-      <div class="body">
-        <p>These are the most speculative estimates in the tool. They rest largely on
-        Torrance et al.&rsquo;s study of 493 students writing 1,500-word essays, who
-        reported spending 9 to 15 hours per assignment.</p>
-        <p>The table assumes students write at a constant rate (unrealistic), that
-        reflection essays take half the time of arguments, and that research papers take
-        twice as long as arguments. The original authors flag these linear relationships
-        as &ldquo;highly unlikely&rdquo; but useful as a starting point.</p>
-        <p>Rates range from 45 minutes per page to 10 hours per page. If they look wrong
-        for your assignment, set the rate manually.</p>
-      </div>
-    </details>
-  </section>
+    <main>
 
-  <!-- VIDEO / PODCAST -->
-  <section class="card" aria-labelledby="s-video">
-    <h3 id="s-video">Videos / podcasts</h3>
-    <div class="field">
-      <label for="weeklyvideos">Hours per week</label>
-      <input type="number" id="weeklyvideos" min="0" step="0.25" value="0">
-    </div>
-    <p class="hint">Assigned viewing or listening. Entered directly as hours, so
-    it passes straight through to the estimate.</p>
-  </section>
+      <header>
+        <h1>Course Workload Estimator</h1>
+        <p>Estimate how many hours per week your course asks of students. Fill in what you
+          know and leave the rest at zero &mdash; every field updates the estimate immediately.</p>
+      </header>
 
-  <!-- DISCUSSION -->
-  <section class="card" aria-labelledby="s-disc">
-    <h3 id="s-disc">Discussion posts</h3>
-    <div class="field">
-      <label for="postsperweek">Posts per week</label>
-      <input type="number" id="postsperweek" min="0" step="1" value="0">
-    </div>
-    <div class="field">
-      <label for="postformat">Format</label>
-      <select id="postformat">
-        <option value="1">Text</option>
-        <option value="2">Audio / video</option>
-      </select>
-    </div>
-    <div class="field" id="wrap-posttext">
-      <label for="postlength_text">Average length (words)</label>
-      <input type="number" id="postlength_text" min="0" step="25" value="250">
-    </div>
-    <div class="field" id="wrap-postav" hidden>
-      <label for="postlength_av">Average length (minutes)</label>
-      <input type="number" id="postlength_av" min="0" step="1" value="3">
-    </div>
-    <p class="rate">Estimated discussion time<strong id="out-postrate">&nbsp;</strong></p>
-    <div class="check">
-      <input type="checkbox" id="setdiscussion">
-      <label for="setdiscussion">Set this manually</label>
-    </div>
-    <div class="field" id="wrap-overridedisc" hidden>
-      <label for="overridediscussion">Hours per week</label>
-      <input type="number" id="overridediscussion" min="0" step="0.25" value="1">
-    </div>
-    <details>
-      <summary>Where these numbers come from</summary>
-      <div class="body">
-        <p>These assumptions are not covered by the published methodology; they are taken
-        from the original tool&rsquo;s code.</p>
-        <p><strong>Text posts:</strong> 250 words of composed discussion writing per hour
-        &mdash; slower than drafting prose, since posts involve reading peers and
-        composing a response.</p>
-        <p><strong>Audio / video posts:</strong> 20 minutes of student work per finished
-        minute of recording, covering planning, recording, re-recording, and uploading.</p>
-        <p>Discussion time counts as <em>contact</em> time, since it is interaction with
-        the instructor and classmates.</p>
-      </div>
-    </details>
-  </section>
+      <form id="f" autocomplete="off">
 
-  <!-- EXAMS -->
-  <section class="card" aria-labelledby="s-exams">
-    <h3 id="s-exams">Exams</h3>
-    <div class="field">
-      <label for="exams">Exams per semester</label>
-      <input type="number" id="exams" min="0" step="1" value="0">
-    </div>
-    <div class="field">
-      <label for="examhours">Study hours per exam</label>
-      <input type="number" id="examhours" min="0" max="100" step="0.5" value="5">
-    </div>
-    <div class="check">
-      <input type="checkbox" id="takehome">
-      <label for="takehome">Take-home exams (add sitting time)</label>
-    </div>
-    <div class="field" id="wrap-examlength" hidden>
-      <label for="exam_length">Exam time limit (minutes)</label>
-      <input type="number" id="exam_length" min="0" step="15" value="60">
-    </div>
-    <p class="hint">Study hours and take-home sitting time are spread across the
-    weeks of the term.</p>
-  </section>
+        <h2 id="h-inputs">Course inputs</h2>
 
-  <!-- OTHER -->
-  <section class="card" aria-labelledby="s-other">
-    <h3 id="s-other">Other assignments</h3>
-    <div class="field">
-      <label for="otherassign">Number per semester</label>
-      <input type="number" id="otherassign" min="0" step="1" value="0">
-    </div>
-    <div class="field">
-      <label for="otherhours">Hours per assignment: <span id="otherhours_val">0</span></label>
-      <input type="range" id="otherhours" min="0" max="50" step="1" value="0"
-             aria-describedby="otherhours_val">
-    </div>
-    <div class="field">
-      <label for="other_bucket">Counts as</label>
-      <select id="other_bucket">
-        <option value="ind">Independent work</option>
-        <option value="con">Contact time with instructor</option>
-      </select>
-      <p class="hint">Problem sets and projects are usually independent; labs,
-      studio time, and workshops are usually contact time.</p>
-    </div>
-  </section>
+        <div class="grid" role="group" aria-labelledby="h-inputs">
 
-  <!-- MEETINGS -->
-  <section class="card" aria-labelledby="s-meet">
-    <h3 id="s-meet">Class meetings</h3>
-    <div class="field">
-      <label for="syncsessions">Live meetings per week</label>
-      <input type="number" id="syncsessions" min="0" step="1" value="0">
-    </div>
-    <div class="field">
-      <label for="synclength">Meeting length (hours)</label>
-      <input type="number" id="synclength" min="0" step="0.25" value="0">
-    </div>
-    <p class="hint">Synchronous sessions count as contact time.</p>
-  </section>
+          <!-- COURSE INFO + READING -->
+          <section class="card" aria-labelledby="s-course">
+            <h3 id="s-course">Course info</h3>
+            <div class="field">
+              <label for="classweeks">Class duration (weeks)</label>
+              <input type="number" id="classweeks" min="1" step="1" value="15">
+              <p class="hint">Semester-long totals are divided by this number.</p>
+            </div>
+          </section>
 
-</div>
-</form>
+          <section class="card" aria-labelledby="s-reading">
+            <h3 id="s-reading">Reading assignments</h3>
+            <div class="field">
+              <label for="weeklypages">Pages per week</label>
+              <input type="number" id="weeklypages" min="0" step="1" value="0">
+            </div>
+            <div class="field">
+              <label for="readingdensity">Page density</label>
+              <select id="readingdensity">
+                <option value="1">450 words (paperback / article)</option>
+                <option value="2">600 words (academic monograph)</option>
+                <option value="3">750 words (textbook)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="difficulty">Difficulty</label>
+              <select id="difficulty">
+                <option value="1">No new concepts</option>
+                <option value="2">Some new concepts</option>
+                <option value="3">Many new concepts</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="readingpurpose">Purpose</label>
+              <select id="readingpurpose">
+                <option value="1">Survey &mdash; skim for main ideas</option>
+                <option value="2">Understand &mdash; comprehend the text</option>
+                <option value="3">Engage &mdash; analyze and critique</option>
+              </select>
+            </div>
+            <p class="rate">Estimated reading rate<strong id="out-readrate">&nbsp;</strong></p>
+            <div class="check">
+              <input type="checkbox" id="setreadingrate">
+              <label for="setreadingrate">Set this rate manually</label>
+            </div>
+            <div class="field" id="wrap-overridepages" hidden>
+              <label for="overridepagesperhour">Pages read per hour</label>
+              <input type="number" id="overridepagesperhour" min="0.1" step="0.5" value="10">
+            </div>
+            <details>
+              <summary>Where these numbers come from</summary>
+              <div class="body">
+                <p>Reading rate depends on page density, text difficulty, and reading purpose.
+                  The table is built from Keith Rayner&rsquo;s synthesis of reading science: a
+                  skilled adult reader&rsquo;s optimal rate is about 300 words per minute, with
+                  comprehension dropping off above that. Real-world rates run somewhat slower.</p>
+                <p>&ldquo;Engage&rdquo; reading is treated as roughly equivalent to reading for
+                  memorization (about 138 words per minute or slower) &mdash; the original authors
+                  note this probably still understates the time.</p>
+                <p>Rates range from 67 pages/hour (light paperback, familiar material, skimming)
+                  down to 5 pages/hour (dense textbook, all new concepts, critical engagement).</p>
+              </div>
+            </details>
+          </section>
 
-<h2 id="h-est">Workload estimate</h2>
+          <!-- WRITING -->
+          <section class="card" aria-labelledby="s-writing">
+            <h3 id="s-writing">Writing assignments</h3>
+            <div class="field">
+              <label for="semesterpages">Pages per semester</label>
+              <input type="number" id="semesterpages" min="0" step="1" value="0">
+            </div>
+            <div class="field">
+              <label for="writtendensity">Page density</label>
+              <select id="writtendensity">
+                <option value="1">250 words (double-spaced)</option>
+                <option value="2">500 words (single-spaced)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="writingpurpose">Genre</label>
+              <select id="writingpurpose">
+                <option value="1">Reflection / narrative</option>
+                <option value="2">Argument</option>
+                <option value="3">Research</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="draftrevise">Drafting</label>
+              <select id="draftrevise">
+                <option value="1">No drafting</option>
+                <option value="2">Minimal drafting</option>
+                <option value="3">Extensive drafting</option>
+              </select>
+            </div>
+            <p class="rate">Estimated writing rate<strong id="out-writerate">&nbsp;</strong></p>
+            <div class="check">
+              <input type="checkbox" id="setwritingrate">
+              <label for="setwritingrate">Set this rate manually</label>
+            </div>
+            <div class="field" id="wrap-overridewriting" hidden>
+              <label for="overridehoursperwriting">Hours per written page</label>
+              <input type="number" id="overridehoursperwriting" min="0.1" step="0.25" value="0.5">
+            </div>
+            <details>
+              <summary>Where these numbers come from</summary>
+              <div class="body">
+                <p>These are the most speculative estimates in the tool. They rest largely on
+                  Torrance et al.&rsquo;s study of 493 students writing 1,500-word essays, who
+                  reported spending 9 to 15 hours per assignment.</p>
+                <p>The table assumes students write at a constant rate (unrealistic), that
+                  reflection essays take half the time of arguments, and that research papers take
+                  twice as long as arguments. The original authors flag these linear relationships
+                  as &ldquo;highly unlikely&rdquo; but useful as a starting point.</p>
+                <p>Rates range from 45 minutes per page to 10 hours per page. If they look wrong
+                  for your assignment, set the rate manually.</p>
+              </div>
+            </details>
+          </section>
 
-<section class="results" aria-labelledby="h-est">
-  <div id="warnings"></div>
+          <!-- VIDEO / PODCAST -->
+          <section class="card" aria-labelledby="s-video">
+            <h3 id="s-video">Videos / podcasts</h3>
+            <div class="field">
+              <label for="weeklyvideos">Hours per week</label>
+              <input type="number" id="weeklyvideos" min="0" step="0.25" value="0">
+            </div>
+            <p class="hint">Assigned viewing or listening. Entered directly as hours, so
+              it passes straight through to the estimate.</p>
+          </section>
 
-  <div class="totals">
-    <p class="total primary">
-      <span class="num" id="out-total">0.00</span>
-      <span class="lab">Total</span>
-      <span class="sub">hours per week</span>
-    </p>
-    <p class="total">
-      <span class="num" id="out-ind">0.00</span>
-      <span class="lab">Independent</span>
-      <span class="sub">hours per week</span>
-    </p>
-    <p class="total">
-      <span class="num" id="out-con">0.00</span>
-      <span class="lab">Contact</span>
-      <span class="sub">hours per week</span>
-    </p>
-  </div>
+          <!-- DISCUSSION -->
+          <section class="card" aria-labelledby="s-disc">
+            <h3 id="s-disc">Discussion posts</h3>
+            <div class="field">
+              <label for="postsperweek">Posts per week</label>
+              <input type="number" id="postsperweek" min="0" step="1" value="0">
+            </div>
+            <div class="field">
+              <label for="postformat">Format</label>
+              <select id="postformat">
+                <option value="1">Text</option>
+                <option value="2">Audio / video</option>
+              </select>
+            </div>
+            <div class="field" id="wrap-posttext">
+              <label for="postlength_text">Average length (words)</label>
+              <input type="number" id="postlength_text" min="0" step="25" value="250">
+            </div>
+            <div class="field" id="wrap-postav" hidden>
+              <label for="postlength_av">Average length (minutes)</label>
+              <input type="number" id="postlength_av" min="0" step="1" value="3">
+            </div>
+            <p class="rate">Estimated discussion time<strong id="out-postrate">&nbsp;</strong></p>
+            <div class="check">
+              <input type="checkbox" id="setdiscussion">
+              <label for="setdiscussion">Set this manually</label>
+            </div>
+            <div class="field" id="wrap-overridedisc" hidden>
+              <label for="overridediscussion">Hours per week</label>
+              <input type="number" id="overridediscussion" min="0" step="0.25" value="1">
+            </div>
+            <details>
+              <summary>Where these numbers come from</summary>
+              <div class="body">
+                <p>These assumptions are not covered by the published methodology; they are taken
+                  from the original tool&rsquo;s code.</p>
+                <p><strong>Text posts:</strong> 250 words of composed discussion writing per hour
+                  &mdash; slower than drafting prose, since posts involve reading peers and
+                  composing a response.</p>
+                <p><strong>Audio / video posts:</strong> 20 minutes of student work per finished
+                  minute of recording, covering planning, recording, re-recording, and uploading.</p>
+                <p>Discussion time counts as <em>contact</em> time, since it is interaction with
+                  the instructor and classmates.</p>
+              </div>
+            </details>
+          </section>
 
-  <table>
-    <caption>Where the hours go</caption>
-    <thead>
-      <tr>
-        <th scope="col">Category</th>
-        <th scope="col">Type</th>
-        <th scope="col" class="num">Hrs/wk</th>
-        <th scope="col" class="num">Share</th>
-        <th scope="col" class="bar-cell"><span class="sr-only">Relative size</span></th>
-      </tr>
-    </thead>
-    <tbody id="breakdown"></tbody>
-    <tfoot>
-      <tr>
-        <td>Total</td>
-        <td></td>
-        <td class="num" id="foot-hours">0.00</td>
-        <td class="num">100%</td>
-        <td></td>
-      </tr>
-    </tfoot>
-  </table>
+          <!-- EXAMS -->
+          <section class="card" aria-labelledby="s-exams">
+            <h3 id="s-exams">Exams</h3>
+            <div class="field">
+              <label for="exams">Exams per semester</label>
+              <input type="number" id="exams" min="0" step="1" value="0">
+            </div>
+            <div class="field">
+              <label for="examhours">Study hours per exam</label>
+              <input type="number" id="examhours" min="0" max="100" step="0.5" value="5">
+            </div>
+            <div class="check">
+              <input type="checkbox" id="takehome">
+              <label for="takehome">Take-home exams (add sitting time)</label>
+            </div>
+            <div class="field" id="wrap-examlength" hidden>
+              <label for="exam_length">Exam time limit (minutes)</label>
+              <input type="number" id="exam_length" min="0" step="15" value="60">
+            </div>
+            <p class="hint">Study hours and take-home sitting time are spread across the
+              weeks of the term.</p>
+          </section>
 
-  <p class="sr-only" aria-live="polite" id="live"></p>
+          <!-- OTHER -->
+          <section class="card" aria-labelledby="s-other">
+            <h3 id="s-other">Other assignments</h3>
+            <div class="field">
+              <label for="otherassign">Number per semester</label>
+              <input type="number" id="otherassign" min="0" step="1" value="0">
+            </div>
+            <div class="field">
+              <label for="otherhours">Hours per assignment: <span id="otherhours_val">0</span></label>
+              <input type="range" id="otherhours" min="0" max="50" step="1" value="0" aria-describedby="otherhours_val">
+            </div>
+            <div class="field">
+              <label for="other_bucket">Counts as</label>
+              <select id="other_bucket">
+                <option value="ind">Independent work</option>
+                <option value="con">Contact time with instructor</option>
+              </select>
+              <p class="hint">Problem sets and projects are usually independent; labs,
+                studio time, and workshops are usually contact time.</p>
+            </div>
+          </section>
 
-  <div class="actions">
-    <button type="button" id="btn-report">Create printable summary</button>
-    <button type="button" class="secondary" id="btn-copy">Copy as text</button>
-    <button type="button" class="secondary" id="btn-print">Print</button>
-    <button type="button" class="secondary" id="btn-reset">Start over</button>
-  </div>
-  <p class="sr-only" role="status" id="copystatus"></p>
-</section>
+          <!-- MEETINGS -->
+          <section class="card" aria-labelledby="s-meet">
+            <h3 id="s-meet">Class meetings</h3>
+            <div class="field">
+              <label for="syncsessions">Live meetings per week</label>
+              <input type="number" id="syncsessions" min="0" step="1" value="0">
+            </div>
+            <div class="field">
+              <label for="synclength">Meeting length (hours)</label>
+              <input type="number" id="synclength" min="0" step="0.25" value="0">
+            </div>
+            <p class="hint">Synchronous sessions count as contact time.</p>
+          </section>
 
-<div id="reportWrap" hidden></div>
+        </div>
+      </form>
 
-<footer>
-  <p>Adapted from the <strong>Course Workload Estimator</strong> by
-  Betsy Barre, Allen Brown, and Justin Esarey
-  (Wake Forest University Center for the Advancement of Teaching and
-  Rice University Center for Teaching Excellence).</p>
-  <p>Original methodology:
-  <a href="https://cat.wfu.edu/resources/workload/estimationdetails/" target="_blank" rel="noopener">estimation details</a>.
-  Licensed under
-  <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>;
-  this adaptation is shared under the same license.</p>
-</footer>
+      <h2 id="h-est">Workload estimate</h2>
 
-</main>
+      <section class="results" aria-labelledby="h-est">
+        <div id="warnings"></div>
 
-<script>
-(function(){
-  "use strict";
+        <div class="totals">
+          <p class="total primary">
+            <span class="num" id="out-total">0.00</span>
+            <span class="lab">Total</span>
+            <span class="sub">hours per week</span>
+          </p>
+          <p class="total">
+            <span class="num" id="out-ind">0.00</span>
+            <span class="lab">Independent</span>
+            <span class="sub">hours per week</span>
+          </p>
+          <p class="total">
+            <span class="num" id="out-con">0.00</span>
+            <span class="lab">Contact</span>
+            <span class="sub">hours per week</span>
+          </p>
+        </div>
 
-  /* ------------------------------------------------------------------
-     Lookup tables, transcribed from the original R arrays.
-     R fills arrays column-major, so the flat data vectors in server.R
-     decode as follows. Verified against the published rate tables.
-  ------------------------------------------------------------------ */
+        <table>
+          <caption>Where the hours go</caption>
+          <thead>
+            <tr>
+              <th scope="col">Category</th>
+              <th scope="col">Type</th>
+              <th scope="col" class="num">Hrs/wk</th>
+              <th scope="col" class="num">Share</th>
+              <th scope="col" class="bar-cell"><span class="sr-only">Relative size</span></th>
+            </tr>
+          </thead>
+          <tbody id="breakdown"></tbody>
+          <tfoot>
+            <tr>
+              <td>Total</td>
+              <td></td>
+              <td class="num" id="foot-hours">0.00</td>
+              <td class="num">100%</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
 
-  // PAGES_PER_HOUR[density][difficulty][purpose]
-  // density: 1=450w  2=600w  3=750w
-  // difficulty: 1=none  2=some  3=many new concepts
-  // purpose: 1=survey  2=understand  3=engage
-  var PAGES_PER_HOUR = {
-    1: { 1:{1:67,2:33,3:17}, 2:{1:47,2:24,3:12}, 3:{1:33,2:17,3:9} },
-    2: { 1:{1:50,2:25,3:13}, 2:{1:35,2:18,3:9},  3:{1:25,2:13,3:7} },
-    3: { 1:{1:40,2:20,3:10}, 2:{1:28,2:14,3:7},  3:{1:20,2:10,3:5} }
-  };
+        <p class="sr-only" aria-live="polite" id="live"></p>
 
-  // HOURS_PER_PAGE[genre][drafting][density]
-  // genre: 1=reflection  2=argument  3=research
-  // drafting: 1=none  2=minimal  3=extensive
-  // density: 1=250w  2=500w
-  var HOURS_PER_PAGE = {
-    1: { 1:{1:0.75,2:1.5}, 2:{1:1,2:2},   3:{1:1.25,2:2.5} },
-    2: { 1:{1:1.5,2:3},    2:{1:2,2:4},   3:{1:2.5,2:5} },
-    3: { 1:{1:3,2:6},      2:{1:4,2:8},   3:{1:5,2:10} }
-  };
+        <div class="actions">
+          <button type="button" id="btn-report">Create printable summary</button>
+          <button type="button" class="secondary" id="btn-copy">Copy as text</button>
+          <button type="button" class="secondary" id="btn-print">Print</button>
+          <button type="button" class="secondary" id="btn-reset">Start over</button>
+        </div>
+        <p class="sr-only" role="status" id="copystatus"></p>
+      </section>
 
-  // Discussion assumptions (from the original code)
-  var TEXT_WORDS_PER_HOUR = 250;   // composing discussion prose
-  var AV_MINUTES_PER_HOUR = 3;     // 20 min of work per finished minute
+      <div id="reportWrap" hidden></div>
 
-  var STORAGE_KEY = "uoes-workload-estimator";
+      <footer>
+        <p>Adapted from the <strong>Course Workload Estimator</strong> by
+          Betsy Barre, Allen Brown, and Justin Esarey
+          (Wake Forest University Center for the Advancement of Teaching and
+          Rice University Center for Teaching Excellence).</p>
+        <p>Original methodology:
+          <a href="https://cat.wfu.edu/resources/workload/estimationdetails/" target="_blank" rel="noopener">estimation
+            details</a>.
+          Licensed under
+          <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA
+            4.0</a>;
+          this adaptation is shared under the same license.
+        </p>
+      </footer>
 
-  var FIELDS = [
-    "classweeks","weeklypages","readingdensity","difficulty","readingpurpose",
-    "setreadingrate","overridepagesperhour",
-    "semesterpages","writtendensity","writingpurpose","draftrevise",
-    "setwritingrate","overridehoursperwriting",
-    "weeklyvideos",
-    "postsperweek","postformat","postlength_text","postlength_av",
-    "setdiscussion","overridediscussion",
-    "exams","examhours","takehome","exam_length",
-    "otherassign","otherhours","other_bucket",
-    "syncsessions","synclength"
-  ];
+    </main>
 
-  var el = {};
-  FIELDS.forEach(function(id){ el[id] = document.getElementById(id); });
+    <script>
+      (function () {
+        "use strict";
 
-  function num(id){
-    var v = parseFloat(el[id].value);
-    return isFinite(v) ? v : 0;
-  }
-  function opt(id){
-    var v = parseInt(el[id].value, 10);
-    return isFinite(v) ? v : 1;
-  }
-  function on(id){ return el[id].checked; }
+        /* ------------------------------------------------------------------
+           Lookup tables, transcribed from the original R arrays.
+           R fills arrays column-major, so the flat data vectors in server.R
+           decode as follows. Verified against the published rate tables.
+        ------------------------------------------------------------------ */
 
-  function fmt(n){
-    if (!isFinite(n)) return "0.00";
-    return n.toFixed(2);
-  }
+        // PAGES_PER_HOUR[density][difficulty][purpose]
+        // density: 1=450w  2=600w  3=750w
+        // difficulty: 1=none  2=some  3=many new concepts
+        // purpose: 1=survey  2=understand  3=engage
+        var PAGES_PER_HOUR = {
+          1: { 1: { 1: 67, 2: 33, 3: 17 }, 2: { 1: 47, 2: 24, 3: 12 }, 3: { 1: 33, 2: 17, 3: 9 } },
+          2: { 1: { 1: 50, 2: 25, 3: 13 }, 2: { 1: 35, 2: 18, 3: 9 }, 3: { 1: 25, 2: 13, 3: 7 } },
+          3: { 1: { 1: 40, 2: 20, 3: 10 }, 2: { 1: 28, 2: 14, 3: 7 }, 3: { 1: 20, 2: 10, 3: 5 } }
+        };
 
-  /* ---------------- calculation ---------------- */
+        // HOURS_PER_PAGE[genre][drafting][density]
+        // genre: 1=reflection  2=argument  3=research
+        // drafting: 1=none  2=minimal  3=extensive
+        // density: 1=250w  2=500w
+        var HOURS_PER_PAGE = {
+          1: { 1: { 1: 0.75, 2: 1.5 }, 2: { 1: 1, 2: 2 }, 3: { 1: 1.25, 2: 2.5 } },
+          2: { 1: { 1: 1.5, 2: 3 }, 2: { 1: 2, 2: 4 }, 3: { 1: 2.5, 2: 5 } },
+          3: { 1: { 1: 3, 2: 6 }, 2: { 1: 4, 2: 8 }, 3: { 1: 5, 2: 10 } }
+        };
 
-  function calculate(){
-    var warnings = [];
+        // Discussion assumptions (from the original code)
+        var TEXT_WORDS_PER_HOUR = 250;   // composing discussion prose
+        var AV_MINUTES_PER_HOUR = 3;     // 20 min of work per finished minute
 
-    var weeks = num("classweeks");
-    if (weeks < 1){
-      warnings.push("Class duration must be at least 1 week. Per-semester totals are not being spread until you set it.");
-      weeks = 0; // signals "cannot divide"
-    }
-    var perWeek = function(semesterTotal){
-      return weeks > 0 ? semesterTotal / weeks : 0;
-    };
+        var STORAGE_KEY = "uoes-workload-estimator";
 
-    // --- reading rate ---
-    var readRate;
-    if (on("setreadingrate")){
-      readRate = num("overridepagesperhour");
-      if (readRate <= 0){
-        warnings.push("Pages read per hour must be greater than zero; reading time is being counted as 0.");
-        readRate = 0;
-      }
-    } else {
-      readRate = PAGES_PER_HOUR[opt("readingdensity")][opt("difficulty")][opt("readingpurpose")];
-    }
-    var readingHours = readRate > 0 ? num("weeklypages") / readRate : 0;
+        var FIELDS = [
+          "classweeks", "weeklypages", "readingdensity", "difficulty", "readingpurpose",
+          "setreadingrate", "overridepagesperhour",
+          "semesterpages", "writtendensity", "writingpurpose", "draftrevise",
+          "setwritingrate", "overridehoursperwriting",
+          "weeklyvideos",
+          "postsperweek", "postformat", "postlength_text", "postlength_av",
+          "setdiscussion", "overridediscussion",
+          "exams", "examhours", "takehome", "exam_length",
+          "otherassign", "otherhours", "other_bucket",
+          "syncsessions", "synclength"
+        ];
 
-    // --- writing rate ---
-    var writeRate;
-    if (on("setwritingrate")){
-      writeRate = num("overridehoursperwriting");
-      if (writeRate < 0) writeRate = 0;
-    } else {
-      writeRate = HOURS_PER_PAGE[opt("writingpurpose")][opt("draftrevise")][opt("writtendensity")];
-    }
-    var writingHours = perWeek(writeRate * num("semesterpages"));
+        var el = {};
+        FIELDS.forEach(function (id) { el[id] = document.getElementById(id); });
 
-    // --- discussion ---
-    // NOTE: the original R used two slightly different audio/video formulas
-    // (0.18x + x/6 in the total, x/3 in the sub-totals), so the parts did not
-    // add up to the whole. This version uses x/3 everywhere.
-    var discussionHours;
-    if (on("setdiscussion")){
-      discussionHours = num("overridediscussion");
-    } else if (opt("postformat") === 1){
-      discussionHours = num("postlength_text") * num("postsperweek") / TEXT_WORDS_PER_HOUR;
-    } else {
-      discussionHours = num("postlength_av") * num("postsperweek") / AV_MINUTES_PER_HOUR;
-    }
+        function num(id) {
+          var v = parseFloat(el[id].value);
+          return isFinite(v) ? v : 0;
+        }
+        function opt(id) {
+          var v = parseInt(el[id].value, 10);
+          return isFinite(v) ? v : 1;
+        }
+        function on(id) { return el[id].checked; }
 
-    // --- exams ---
-    var examStudyHours = perWeek(num("exams") * num("examhours"));
-    var takehomeHours  = on("takehome")
-      ? perWeek((num("exam_length") / 60) * num("exams"))
-      : 0;
+        function fmt(n) {
+          if (!isFinite(n)) return "0.00";
+          return n.toFixed(2);
+        }
 
-    // --- other, videos, meetings ---
-    var otherHours = perWeek(num("otherassign") * num("otherhours"));
-    var videoHours = num("weeklyvideos");
-    var syncHours  = num("syncsessions") * num("synclength");
+        /* ---------------- calculation ---------------- */
 
-    var otherIsContact = el.other_bucket.value === "con";
+        function calculate() {
+          var warnings = [];
 
-    var rows = [
-      {name:"Reading",            hours:readingHours,   contact:false},
-      {name:"Writing",            hours:writingHours,   contact:false},
-      {name:"Videos / podcasts",  hours:videoHours,     contact:false},
-      {name:"Exam study",         hours:examStudyHours, contact:false},
-      {name:"Take-home exams",    hours:takehomeHours,  contact:false},
-      {name:"Other assignments",  hours:otherHours,     contact:otherIsContact},
-      {name:"Discussion posts",   hours:discussionHours,contact:true},
-      {name:"Class meetings",     hours:syncHours,      contact:true}
-    ];
+          var weeks = num("classweeks");
+          if (weeks < 1) {
+            warnings.push("Class duration must be at least 1 week. Per-semester totals are not being spread until you set it.");
+            weeks = 0; // signals "cannot divide"
+          }
+          var perWeek = function (semesterTotal) {
+            return weeks > 0 ? semesterTotal / weeks : 0;
+          };
 
-    var independent = 0, contact = 0;
-    rows.forEach(function(r){
-      if (!isFinite(r.hours) || r.hours < 0) r.hours = 0;
-      if (r.contact) contact += r.hours; else independent += r.hours;
-    });
+          // --- reading rate ---
+          var readRate;
+          if (on("setreadingrate")) {
+            readRate = num("overridepagesperhour");
+            if (readRate <= 0) {
+              warnings.push("Pages read per hour must be greater than zero; reading time is being counted as 0.");
+              readRate = 0;
+            }
+          } else {
+            readRate = PAGES_PER_HOUR[opt("readingdensity")][opt("difficulty")][opt("readingpurpose")];
+          }
+          var readingHours = readRate > 0 ? num("weeklypages") / readRate : 0;
 
-    return {
-      rows: rows,
-      independent: independent,
-      contact: contact,
-      total: independent + contact,
-      readRate: readRate,
-      writeRate: writeRate,
-      discussionHours: discussionHours,
-      warnings: warnings
-    };
-  }
+          // --- writing rate ---
+          var writeRate;
+          if (on("setwritingrate")) {
+            writeRate = num("overridehoursperwriting");
+            if (writeRate < 0) writeRate = 0;
+          } else {
+            writeRate = HOURS_PER_PAGE[opt("writingpurpose")][opt("draftrevise")][opt("writtendensity")];
+          }
+          var writingHours = perWeek(writeRate * num("semesterpages"));
 
-  /* ---------------- rendering ---------------- */
+          // --- discussion ---
+          // NOTE: the original R used two slightly different audio/video formulas
+          // (0.18x + x/6 in the total, x/3 in the sub-totals), so the parts did not
+          // add up to the whole. This version uses x/3 everywhere.
+          var discussionHours;
+          if (on("setdiscussion")) {
+            discussionHours = num("overridediscussion");
+          } else if (opt("postformat") === 1) {
+            discussionHours = num("postlength_text") * num("postsperweek") / TEXT_WORDS_PER_HOUR;
+          } else {
+            discussionHours = num("postlength_av") * num("postsperweek") / AV_MINUTES_PER_HOUR;
+          }
 
-  function syncVisibility(){
-    document.getElementById("wrap-overridepages").hidden   = !on("setreadingrate");
-    document.getElementById("wrap-overridewriting").hidden = !on("setwritingrate");
-    document.getElementById("wrap-overridedisc").hidden    = !on("setdiscussion");
-    document.getElementById("wrap-examlength").hidden      = !on("takehome");
-    var isText = opt("postformat") === 1;
-    document.getElementById("wrap-posttext").hidden = !isText;
-    document.getElementById("wrap-postav").hidden   = isText;
-    document.getElementById("otherhours_val").textContent = el.otherhours.value;
-  }
+          // --- exams ---
+          var examStudyHours = perWeek(num("exams") * num("examhours"));
+          var takehomeHours = on("takehome")
+            ? perWeek((num("exam_length") / 60) * num("exams"))
+            : 0;
 
-  function render(){
-    syncVisibility();
-    var r = calculate();
+          // --- other, videos, meetings ---
+          var otherHours = perWeek(num("otherassign") * num("otherhours"));
+          var videoHours = num("weeklyvideos");
+          var syncHours = num("syncsessions") * num("synclength");
 
-    document.getElementById("out-readrate").textContent =
-      (on("setreadingrate") ? r.readRate : r.readRate) + " pages per hour";
-    document.getElementById("out-writerate").textContent =
-      r.writeRate + " hours per page";
-    document.getElementById("out-postrate").textContent =
-      fmt(r.discussionHours) + " hours per week";
+          var otherIsContact = el.other_bucket.value === "con";
 
-    document.getElementById("out-total").textContent = fmt(r.total);
-    document.getElementById("out-ind").textContent   = fmt(r.independent);
-    document.getElementById("out-con").textContent   = fmt(r.contact);
-    document.getElementById("foot-hours").textContent = fmt(r.total);
+          var rows = [
+            { name: "Reading", hours: readingHours, contact: false },
+            { name: "Writing", hours: writingHours, contact: false },
+            { name: "Videos / podcasts", hours: videoHours, contact: false },
+            { name: "Exam study", hours: examStudyHours, contact: false },
+            { name: "Take-home exams", hours: takehomeHours, contact: false },
+            { name: "Other assignments", hours: otherHours, contact: otherIsContact },
+            { name: "Discussion posts", hours: discussionHours, contact: true },
+            { name: "Class meetings", hours: syncHours, contact: true }
+          ];
 
-    var max = 0;
-    r.rows.forEach(function(x){ if (x.hours > max) max = x.hours; });
+          var independent = 0, contact = 0;
+          rows.forEach(function (r) {
+            if (!isFinite(r.hours) || r.hours < 0) r.hours = 0;
+            if (r.contact) contact += r.hours; else independent += r.hours;
+          });
 
-    var body = document.getElementById("breakdown");
-    body.innerHTML = "";
-    r.rows.forEach(function(x){
-      if (x.hours <= 0) return;
-      var tr = document.createElement("tr");
+          return {
+            rows: rows,
+            independent: independent,
+            contact: contact,
+            total: independent + contact,
+            readRate: readRate,
+            writeRate: writeRate,
+            discussionHours: discussionHours,
+            warnings: warnings
+          };
+        }
 
-      var td1 = document.createElement("td");
-      td1.textContent = x.name;
+        /* ---------------- rendering ---------------- */
 
-      var td2 = document.createElement("td");
-      var tag = document.createElement("span");
-      tag.className = "tag" + (x.contact ? " contact" : "");
-      tag.textContent = x.contact ? "Contact" : "Independent";
-      td2.appendChild(tag);
+        function syncVisibility() {
+          document.getElementById("wrap-overridepages").hidden = !on("setreadingrate");
+          document.getElementById("wrap-overridewriting").hidden = !on("setwritingrate");
+          document.getElementById("wrap-overridedisc").hidden = !on("setdiscussion");
+          document.getElementById("wrap-examlength").hidden = !on("takehome");
+          var isText = opt("postformat") === 1;
+          document.getElementById("wrap-posttext").hidden = !isText;
+          document.getElementById("wrap-postav").hidden = isText;
+          document.getElementById("otherhours_val").textContent = el.otherhours.value;
+        }
 
-      var td3 = document.createElement("td");
-      td3.className = "num";
-      td3.textContent = fmt(x.hours);
+        function render() {
+          syncVisibility();
+          var r = calculate();
 
-      var td4 = document.createElement("td");
-      td4.className = "num";
-      td4.textContent = r.total > 0 ? Math.round(x.hours / r.total * 100) + "%" : "0%";
+          document.getElementById("out-readrate").textContent =
+            (on("setreadingrate") ? r.readRate : r.readRate) + " pages per hour";
+          document.getElementById("out-writerate").textContent =
+            r.writeRate + " hours per page";
+          document.getElementById("out-postrate").textContent =
+            fmt(r.discussionHours) + " hours per week";
 
-      var td5 = document.createElement("td");
-      var bar = document.createElement("span");
-      bar.className = "bar";
-      bar.style.width = (max > 0 ? (x.hours / max * 100) : 0) + "%";
-      td5.appendChild(bar);
+          document.getElementById("out-total").textContent = fmt(r.total);
+          document.getElementById("out-ind").textContent = fmt(r.independent);
+          document.getElementById("out-con").textContent = fmt(r.contact);
+          document.getElementById("foot-hours").textContent = fmt(r.total);
 
-      [td1,td2,td3,td4,td5].forEach(function(td){ tr.appendChild(td); });
-      body.appendChild(tr);
-    });
+          var max = 0;
+          r.rows.forEach(function (x) { if (x.hours > max) max = x.hours; });
 
-    if (!body.children.length){
-      var tr = document.createElement("tr");
-      var td = document.createElement("td");
-      td.colSpan = 5;
-      td.textContent = "Nothing entered yet.";
-      td.style.color = "#666";
-      tr.appendChild(td);
-      body.appendChild(tr);
-    }
+          var body = document.getElementById("breakdown");
+          body.innerHTML = "";
+          r.rows.forEach(function (x) {
+            if (x.hours <= 0) return;
+            var tr = document.createElement("tr");
 
-    var wbox = document.getElementById("warnings");
-    wbox.innerHTML = "";
-    r.warnings.forEach(function(w){
-      var p = document.createElement("p");
-      p.className = "warn";
-      p.textContent = w;
-      wbox.appendChild(p);
-    });
+            var td1 = document.createElement("td");
+            td1.textContent = x.name;
 
-    document.getElementById("live").textContent =
-      "Total " + fmt(r.total) + " hours per week: " +
-      fmt(r.independent) + " independent, " + fmt(r.contact) + " contact.";
+            var td2 = document.createElement("td");
+            var tag = document.createElement("span");
+            tag.className = "tag" + (x.contact ? " contact" : "");
+            tag.textContent = x.contact ? "Contact" : "Independent";
+            td2.appendChild(tag);
 
-    save();
-    return r;
-  }
+            var td3 = document.createElement("td");
+            td3.className = "num";
+            td3.textContent = fmt(x.hours);
 
-  /* ---------------- text summary ---------------- */
+            var td4 = document.createElement("td");
+            td4.className = "num";
+            td4.textContent = r.total > 0 ? Math.round(x.hours / r.total * 100) + "%" : "0%";
 
-  function asText(){
-    var r = calculate();
-    var lines = [];
-    lines.push("COURSE WORKLOAD ESTIMATE");
-    lines.push("");
-    lines.push("Total:        " + fmt(r.total) + " hrs/week");
-    lines.push("Independent:  " + fmt(r.independent) + " hrs/week");
-    lines.push("Contact:      " + fmt(r.contact) + " hrs/week");
-    lines.push("Over " + num("classweeks") + " weeks: " + fmt(r.total * num("classweeks")) + " hours total");
-    lines.push("");
-    lines.push("BREAKDOWN");
-    r.rows.forEach(function(x){
-      if (x.hours <= 0) return;
-      var pad = (x.name + "                    ").slice(0, 20);
-      lines.push("  " + pad + fmt(x.hours) + " hrs/wk  (" +
-        (x.contact ? "contact" : "independent") + ")");
-    });
-    lines.push("");
-    lines.push("ASSUMPTIONS");
-    lines.push("  Reading rate: " + r.readRate + " pages/hour" +
-      (on("setreadingrate") ? " (set manually)" : ""));
-    lines.push("  Writing rate: " + r.writeRate + " hours/page" +
-      (on("setwritingrate") ? " (set manually)" : ""));
-    lines.push("");
-    lines.push("Adapted from the Course Workload Estimator by Betsy Barre,");
-    lines.push("Allen Brown, and Justin Esarey. CC BY-NC-SA 4.0.");
-    return lines.join("\n");
-  }
+            var td5 = document.createElement("td");
+            var bar = document.createElement("span");
+            bar.className = "bar";
+            bar.style.width = (max > 0 ? (x.hours / max * 100) : 0) + "%";
+            td5.appendChild(bar);
 
-  function buildReport(){
-    var r = calculate();
-    var wrap = document.getElementById("reportWrap");
-    wrap.innerHTML = "";
-    wrap.hidden = false;
+            [td1, td2, td3, td4, td5].forEach(function (td) { tr.appendChild(td); });
+            body.appendChild(tr);
+          });
 
-    var h = document.createElement("h2");
-    h.textContent = "Workload summary";
-    wrap.appendChild(h);
+          if (!body.children.length) {
+            var tr = document.createElement("tr");
+            var td = document.createElement("td");
+            td.colSpan = 5;
+            td.textContent = "Nothing entered yet.";
+            td.style.color = "#666";
+            tr.appendChild(td);
+            body.appendChild(tr);
+          }
 
-    var pre = document.createElement("pre");
-    pre.style.fontFamily = "Georgia, serif";
-    pre.style.whiteSpace = "pre-wrap";
-    pre.style.background = "#fff";
-    pre.style.border = "2px solid #007FAC";
-    pre.style.borderRadius = "8px";
-    pre.style.padding = "1rem";
-    pre.textContent = asText();
-    wrap.appendChild(pre);
-    return r;
-  }
+          var wbox = document.getElementById("warnings");
+          wbox.innerHTML = "";
+          r.warnings.forEach(function (w) {
+            var p = document.createElement("p");
+            p.className = "warn";
+            p.textContent = w;
+            wbox.appendChild(p);
+          });
 
-  /* ---------------- persistence ---------------- */
+          document.getElementById("live").textContent =
+            "Total " + fmt(r.total) + " hours per week: " +
+            fmt(r.independent) + " independent, " + fmt(r.contact) + " contact.";
 
-  var saveTimer = null;
-  function save(){
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(function(){
-      try {
-        var data = {};
-        FIELDS.forEach(function(id){
-          var e = el[id];
-          data[id] = (e.type === "checkbox") ? e.checked : e.value;
+          save();
+          return r;
+        }
+
+        /* ---------------- text summary ---------------- */
+
+        function asText() {
+          var r = calculate();
+          var lines = [];
+          lines.push("COURSE WORKLOAD ESTIMATE");
+          lines.push("");
+          lines.push("Total:        " + fmt(r.total) + " hrs/week");
+          lines.push("Independent:  " + fmt(r.independent) + " hrs/week");
+          lines.push("Contact:      " + fmt(r.contact) + " hrs/week");
+          lines.push("Over " + num("classweeks") + " weeks: " + fmt(r.total * num("classweeks")) + " hours total");
+          lines.push("");
+          lines.push("BREAKDOWN");
+          r.rows.forEach(function (x) {
+            if (x.hours <= 0) return;
+            var pad = (x.name + "                    ").slice(0, 20);
+            lines.push("  " + pad + fmt(x.hours) + " hrs/wk  (" +
+              (x.contact ? "contact" : "independent") + ")");
+          });
+          lines.push("");
+          lines.push("ASSUMPTIONS");
+          lines.push("  Reading rate: " + r.readRate + " pages/hour" +
+            (on("setreadingrate") ? " (set manually)" : ""));
+          lines.push("  Writing rate: " + r.writeRate + " hours/page" +
+            (on("setwritingrate") ? " (set manually)" : ""));
+          lines.push("");
+          lines.push("Adapted from the Course Workload Estimator by Betsy Barre,");
+          lines.push("Allen Brown, and Justin Esarey. CC BY-NC-SA 4.0.");
+          return lines.join("\n");
+        }
+
+        function buildReport() {
+          var r = calculate();
+          var wrap = document.getElementById("reportWrap");
+          wrap.innerHTML = "";
+          wrap.hidden = false;
+
+          var h = document.createElement("h2");
+          h.textContent = "Workload summary";
+          wrap.appendChild(h);
+
+          var pre = document.createElement("pre");
+          pre.style.fontFamily = "Georgia, serif";
+          pre.style.whiteSpace = "pre-wrap";
+          pre.style.background = "#fff";
+          pre.style.border = "2px solid #007FAC";
+          pre.style.borderRadius = "8px";
+          pre.style.padding = "1rem";
+          pre.textContent = asText();
+          wrap.appendChild(pre);
+          return r;
+        }
+
+        /* ---------------- persistence ---------------- */
+
+        var saveTimer = null;
+        function save() {
+          clearTimeout(saveTimer);
+          saveTimer = setTimeout(function () {
+            try {
+              var data = {};
+              FIELDS.forEach(function (id) {
+                var e = el[id];
+                data[id] = (e.type === "checkbox") ? e.checked : e.value;
+              });
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            } catch (err) { /* storage unavailable; ignore */ }
+          }, 400);
+        }
+
+        function load() {
+          try {
+            var raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return;
+            var data = JSON.parse(raw);
+            FIELDS.forEach(function (id) {
+              if (!(id in data)) return;              // migration: new fields keep defaults
+              var e = el[id];
+              if (e.type === "checkbox") e.checked = !!data[id];
+              else e.value = data[id];
+            });
+            // migration from the original checkbox-based "other.engage"
+            if ("other_engage" in data && !("other_bucket" in data)) {
+              el.other_bucket.value = data.other_engage ? "con" : "ind";
+            }
+          } catch (err) { /* corrupt or unavailable; ignore */ }
+        }
+
+        /* ---------------- wiring ---------------- */
+
+        document.getElementById("f").addEventListener("input", render);
+        document.getElementById("f").addEventListener("change", render);
+
+        document.getElementById("btn-report").addEventListener("click", function () {
+          buildReport();
+          document.getElementById("reportWrap").scrollIntoView({ behavior: "smooth" });
         });
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      } catch(err){ /* storage unavailable; ignore */ }
-    }, 400);
-  }
 
-  function load(){
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      var data = JSON.parse(raw);
-      FIELDS.forEach(function(id){
-        if (!(id in data)) return;              // migration: new fields keep defaults
-        var e = el[id];
-        if (e.type === "checkbox") e.checked = !!data[id];
-        else e.value = data[id];
-      });
-      // migration from the original checkbox-based "other.engage"
-      if ("other_engage" in data && !("other_bucket" in data)){
-        el.other_bucket.value = data.other_engage ? "con" : "ind";
-      }
-    } catch(err){ /* corrupt or unavailable; ignore */ }
-  }
+        document.getElementById("btn-copy").addEventListener("click", function () {
+          var text = asText();
+          var done = function () {
+            document.getElementById("copystatus").textContent = "Estimate copied to clipboard.";
+            setTimeout(function () {
+              document.getElementById("copystatus").textContent = "";
+            }, 3000);
+          };
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text, done); });
+          } else {
+            fallbackCopy(text, done);
+          }
+        });
 
-  /* ---------------- wiring ---------------- */
+        function fallbackCopy(text, done) {
+          var ta = document.createElement("textarea");
+          ta.value = text;
+          ta.setAttribute("readonly", "");
+          ta.style.position = "absolute";
+          ta.style.left = "-9999px";
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand("copy"); done(); } catch (e) { }
+          document.body.removeChild(ta);
+        }
 
-  document.getElementById("f").addEventListener("input", render);
-  document.getElementById("f").addEventListener("change", render);
+        document.getElementById("btn-print").addEventListener("click", function () {
+          buildReport();
+          window.print();
+        });
 
-  document.getElementById("btn-report").addEventListener("click", function(){
-    buildReport();
-    document.getElementById("reportWrap").scrollIntoView({behavior:"smooth"});
-  });
+        document.getElementById("btn-reset").addEventListener("click", function () {
+          if (!window.confirm("Clear all entries and start over?")) return;
+          try { localStorage.removeItem(STORAGE_KEY); } catch (e) { }
+          document.getElementById("f").reset();
+          document.getElementById("reportWrap").hidden = true;
+          render();
+        });
 
-  document.getElementById("btn-copy").addEventListener("click", function(){
-    var text = asText();
-    var done = function(){
-      document.getElementById("copystatus").textContent = "Estimate copied to clipboard.";
-      setTimeout(function(){
-        document.getElementById("copystatus").textContent = "";
-      }, 3000);
-    };
-    if (navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(text).then(done, function(){ fallbackCopy(text, done); });
-    } else {
-      fallbackCopy(text, done);
-    }
-  });
+        // expose for automated checks
+        window.__calc = calculate;
 
-  function fallbackCopy(text, done){
-    var ta = document.createElement("textarea");
-    ta.value = text;
-    ta.setAttribute("readonly","");
-    ta.style.position = "absolute";
-    ta.style.left = "-9999px";
-    document.body.appendChild(ta);
-    ta.select();
-    try { document.execCommand("copy"); done(); } catch(e){}
-    document.body.removeChild(ta);
-  }
+        load();
+        render();
+      })();
+    </script>
+  </body>
 
-  document.getElementById("btn-print").addEventListener("click", function(){
-    buildReport();
-    window.print();
-  });
-
-  document.getElementById("btn-reset").addEventListener("click", function(){
-    if (!window.confirm("Clear all entries and start over?")) return;
-    try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
-    document.getElementById("f").reset();
-    document.getElementById("reportWrap").hidden = true;
-    render();
-  });
-
-  // expose for automated checks
-  window.__calc = calculate;
-
-  load();
-  render();
-})();
-</script>
-</body>
 </html>

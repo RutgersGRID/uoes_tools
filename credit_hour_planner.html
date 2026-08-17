@@ -1,897 +1,928 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Credit Hour Planner</title>
-<link rel="stylesheet" href="css/base.css">
-<link rel="stylesheet" href="css/calculator.css">
-<link rel="stylesheet" href="css/credit_hour_planner.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/site_header.css">
-</head>
-<body>
-<header class="uoes-site-header">
-  <div class="ush-topbar"></div>
-  <div class="ush-inner">
-    <div class="ush-row-top">
-      <a class="ush-logo" href="index.html">
-        <img src="images/rutgers_primary_mark.svg"
-             onerror="this.onerror=null;this.src='https://uoes.rutgers.edu/profiles/contrib/rutgers/themes/rutgers_main/pattern_lab/source/images/icons/Rutgers_Primary_Mark.svg';"
-             alt="Rutgers University">
-        <span class="ush-site-name">University Online Education<br>Services</span>
-      </a>
-      <div class="ush-utility">
-        <nav aria-label="Rutgers utility links">
-          <a href="https://uoes.rutgers.edu/ruonlinecon-main">RUOnlineCon</a>
-          <a href="https://online.rutgers.edu">Rutgers Online Programs</a>
-          <a href="https://uoes.rutgers.edu/contact-us">Contact Us</a>
-          <a href="https://rutgers.edu">Visit Rutgers.edu</a>
-        </nav>
-        <a class="ush-search" href="https://search.rutgers.edu" aria-label="Search Rutgers">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.3" y1="15.3" x2="21" y2="21"/></svg>
-        </a>
-      </div>
-    </div>
-    <nav class="ush-mainnav" aria-label="UOES tools">
-      <a href="index.html">Home</a>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Credit Hour Planner</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/calculator.css">
+    <link rel="stylesheet" href="css/credit_hour_planner.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet" href="css/site_header.css">
+  </head>
+
+  <body>
+    <header class="uoes-site-header">
+      <div class="ush-topbar"></div>
+      <div class="ush-inner">
+        <div class="ush-row-top">
+          <a class="ush-logo" href="https://uoes.rutgers.edu">
+            <img src="images/rutgers_primary_mark.svg"
+              onerror="this.onerror=null;this.src='https://uoes.rutgers.edu/profiles/contrib/rutgers/themes/rutgers_main/pattern_lab/source/images/icons/Rutgers_Primary_Mark.svg';"
+              alt="Rutgers University">
+            <span class="ush-site-name">University Online Education<br>Services</span>
+          </a>
+          <div class="ush-utility">
+            <nav aria-label="Rutgers utility links">
+              <a href="https://uoes.rutgers.edu/ruonlinecon-main">RUOnlineCon</a>
+              <a href="https://online.rutgers.edu">Rutgers Online Programs</a>
+              <a href="https://uoes.rutgers.edu/contact-us">Contact Us</a>
+              <a href="https://rutgers.edu">Visit Rutgers.edu</a>
+            </nav>
+            <a class="ush-search" href="https://search.rutgers.edu" aria-label="Search Rutgers">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" aria-hidden="true">
+                <circle cx="10.5" cy="10.5" r="6.5" />
+                <line x1="15.3" y1="15.3" x2="21" y2="21" />
+              </svg>
+            </a>
+          </div>
+        </div>
+        <!-- <nav class="ush-mainnav" aria-label="UOES tools">
+      <a href="index.html" class="active">Home</a>
       <a href="learning_objectives.html">Learning Objectives</a>
       <a href="course_planner.html">Course Planner</a>
       <a href="workload_estimator.html">Workload Estimator</a>
-      <a href="credit_hour_planner.html" class="active">Credit Hour Planner</a>
+      <a href="credit_hour_planner.html">Credit Hour Planner</a>
       <a href="blooms_verbs.html">Bloom&rsquo;s Verbs</a>
-    </nav>
-  </div>
-</header>
+    </nav> -->
+        <nav class="ush-mainnav" aria-label="UOES tools">
+          <a href="https://uoes.rutgers.edu" class="active">UOES Home</a>
+          <a href="index.html">Applications Home</a>
+          <a href="course_design_tools">Course Design Tools</a>
+        </nav>
+      </div>
+    </header>
 
-<main>
+    <main>
 
-<header>
-  <h1>Credit Hour Planner</h1>
-  <p>Turn your course&rsquo;s credit hours into an hours-per-week budget, then check whether
-  the activities you have planned for a module actually fit inside it.</p>
-</header>
+      <header>
+        <h1>Credit Hour Planner</h1>
+        <p>Turn your course&rsquo;s credit hours into an hours-per-week budget, then check whether
+          the activities you have planned for a module actually fit inside it.</p>
+      </header>
 
-<form id="f" autocomplete="off">
+      <form id="f" autocomplete="off">
 
-<!-- ============================================================ -->
-<h2 id="h-course">1. Your course</h2>
+        <!-- ============================================================ -->
+        <h2 id="h-course">1. Your course</h2>
 
-<div class="grid" role="group" aria-labelledby="h-course">
+        <div class="grid" role="group" aria-labelledby="h-course">
 
-  <section class="card" aria-labelledby="s-format">
-    <h3 id="s-format">Course format</h3>
-    <fieldset>
-      <legend class="sr-only">Choose a course format</legend>
-      <div class="choice">
-        <input type="radio" name="format" id="fmt-online" value="online" checked>
-        <div>
-          <label for="fmt-online">Fully online or traditional</label>
-          <p class="hint">All instructional time happens in one place &mdash; either
-          fully online, or fully in a classroom.</p>
+          <section class="card" aria-labelledby="s-format">
+            <h3 id="s-format">Course format</h3>
+            <fieldset>
+              <legend class="sr-only">Choose a course format</legend>
+              <div class="choice">
+                <input type="radio" name="format" id="fmt-online" value="online" checked>
+                <div>
+                  <label for="fmt-online">Fully online or traditional</label>
+                  <p class="hint">All instructional time happens in one place &mdash; either
+                    fully online, or fully in a classroom.</p>
+                </div>
+              </div>
+              <div class="choice">
+                <input type="radio" name="format" id="fmt-blended" value="blended">
+                <div>
+                  <label for="fmt-blended">Blended / hybrid</label>
+                  <p class="hint">Some scheduled face-to-face meetings, with the rest of the
+                    instructional time online.</p>
+                </div>
+              </div>
+            </fieldset>
+
+            <div class="field" id="wrap-f2f" hidden style="margin-top:.9rem;">
+              <label for="f2f">Face-to-face meeting hours per week</label>
+              <input type="number" id="f2f" min="0" step="0.5" value="0">
+              <p class="hint">Counted in 50-minute academic hours, the way credit hours are.
+                One 80-minute class meeting is about 1.6.</p>
+            </div>
+          </section>
+
+          <section class="card" aria-labelledby="s-basics">
+            <h3 id="s-basics">Course basics</h3>
+            <div class="field">
+              <label for="weeks">Semester length (weeks)</label>
+              <input type="number" id="weeks" min="1" step="1" value="15">
+              <p class="hint">A standard semester is 15 weeks. A shorter term packs the same
+                total hours into fewer weeks.</p>
+            </div>
+            <div class="field">
+              <label for="credits">Carnegie course credits</label>
+              <input type="number" id="credits" min="0" step="0.5" value="3">
+            </div>
+            <div class="field">
+              <label for="study">Study time per credit hour</label>
+              <input type="number" id="study" min="0" step="0.5" value="2">
+              <p class="hint">Hours of out-of-class work expected per credit hour, typically 2 or 3.</p>
+            </div>
+          </section>
+
+          <section class="card" aria-labelledby="s-how">
+            <h3 id="s-how">How this is calculated</h3>
+            <p class="hint" style="font-size:.85rem;">
+              One credit hour means one 50-minute period of instruction plus the study time you
+              set above, each week, for a 15-week semester.</p>
+            <details open>
+              <summary>What counts as instructional time</summary>
+              <div class="body">
+                <p>The instructional row is <strong>seat time</strong> &mdash; the 50-minute
+                  period per credit hour a course meets for. A 3-credit course owes 150 minutes
+                  a week.</p>
+                <p>In a traditional course that is literally class meeting time. In a fully
+                  online course there is no room, so it is the asynchronous equivalent:
+                  instructor-directed content &mdash; recorded lectures, guided activities,
+                  anything standing in for a class meeting.</p>
+                <p>In a blended course it splits. The face-to-face row is what you actually
+                  meet for; the online instructional row is the seat time your meetings do not
+                  cover.</p>
+                <p>It is <em>not</em> homework. Out-of-class work is the studying row.</p>
+              </div>
+            </details>
+            <details>
+              <summary>The acceleration rate</summary>
+              <div class="body">
+                <p>A course worth the same credits has to deliver the same total hours no matter
+                  how long the term runs. The <strong>acceleration rate</strong> is
+                  15 &divide; your semester length.</p>
+                <p>A 15-week term has a rate of 1.0. A 7-week term has a rate of about 2.14,
+                  so every week carries roughly twice the work.</p>
+                <p>Face-to-face meetings are the exception: they stay at their actual scheduled
+                  length. In an accelerated blended course the extra instructional time that the
+                  meetings do not cover is pushed into the online instructional total.</p>
+              </div>
+            </details>
+          </section>
+
         </div>
-      </div>
-      <div class="choice">
-        <input type="radio" name="format" id="fmt-blended" value="blended">
-        <div>
-          <label for="fmt-blended">Blended / hybrid</label>
-          <p class="hint">Some scheduled face-to-face meetings, with the rest of the
-          instructional time online.</p>
+
+        <!-- ============================================================ -->
+        <h2 id="h-week">2. Weekly time budget</h2>
+
+        <section class="results" aria-labelledby="h-week">
+          <div id="warnings"></div>
+
+          <div class="totals">
+            <p class="total primary">
+              <span class="num" id="out-total">0.00</span>
+              <span class="lab">Total per week</span>
+              <span class="sub">hours</span>
+            </p>
+            <p class="total" id="tile-f2f" hidden>
+              <span class="num" id="out-f2f">0.00</span>
+              <span class="lab">Face-to-face</span>
+              <span class="sub">hours per week</span>
+              <span class="desc">scheduled class meetings</span>
+            </p>
+            <p class="total">
+              <span class="num" id="out-instr">0.00</span>
+              <span class="lab" id="lab-instr">Instructional activities</span>
+              <span class="sub">hours per week</span>
+              <span class="desc" id="desc-instr">class time, or its online equivalent</span>
+            </p>
+            <p class="total">
+              <span class="num" id="out-study">0.00</span>
+              <span class="lab">Homework / study</span>
+              <span class="sub">hours per week</span>
+            </p>
+            <p class="total" id="tile-online" hidden>
+              <span class="num" id="out-online">0.00</span>
+              <span class="lab">Online total</span>
+              <span class="sub">hours per week</span>
+            </p>
+            <p class="total">
+              <span class="num" id="out-semester">0.00</span>
+              <span class="lab">Total per semester</span>
+              <span class="sub">hours</span>
+            </p>
+          </div>
+
+          <div class="table-scroll">
+            <table>
+              <caption>Where the weekly hours come from</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Time type</th>
+                  <th scope="col" class="num">Weeks</th>
+                  <th scope="col" class="num">Acceleration</th>
+                  <th scope="col" class="num">Credit hours</th>
+                  <th scope="col" class="num">Weekly minutes</th>
+                  <th scope="col" class="num">Weekly hours</th>
+                  <th scope="col" class="num">Semester minutes</th>
+                  <th scope="col" class="num">Semester hours</th>
+                </tr>
+              </thead>
+              <tbody id="weekrows"></tbody>
+            </table>
+          </div>
+
+          <p class="sr-only" aria-live="polite" id="live-week"></p>
+        </section>
+
+        <!-- ============================================================ -->
+        <h2 id="h-module">3. Module time planner</h2>
+
+        <p class="lede">Now plan one module. Enter the time you expect students to spend on each
+          activity, and this checks the total against the online hours your credit budget allows for
+          a week. A module here is one week&rsquo;s worth of time.</p>
+
+        <div class="note">
+          <p><strong>Reading and writing:</strong> estimate those two with the
+            <a href="workload_estimator.html">Course Workload Estimator</a> &mdash; run it once for
+            readings and once for writing assignments &mdash; then enter the hours below.
+          </p>
+          <p class="hint" style="margin:0;">That tool is a port of the
+            <a href="https://cte.rice.edu/workload" target="_blank" rel="noopener">Rice / Wake Forest
+              Course Workload Estimator</a>, which you can also use directly.
+          </p>
         </div>
-      </div>
-    </fieldset>
 
-    <div class="field" id="wrap-f2f" hidden style="margin-top:.9rem;">
-      <label for="f2f">Face-to-face meeting hours per week</label>
-      <input type="number" id="f2f" min="0" step="0.5" value="0">
-      <p class="hint">Counted in 50-minute academic hours, the way credit hours are.
-      One 80-minute class meeting is about 1.6.</p>
-    </div>
-  </section>
-
-  <section class="card" aria-labelledby="s-basics">
-    <h3 id="s-basics">Course basics</h3>
-    <div class="field">
-      <label for="weeks">Semester length (weeks)</label>
-      <input type="number" id="weeks" min="1" step="1" value="15">
-      <p class="hint">A standard semester is 15 weeks. A shorter term packs the same
-      total hours into fewer weeks.</p>
-    </div>
-    <div class="field">
-      <label for="credits">Carnegie course credits</label>
-      <input type="number" id="credits" min="0" step="0.5" value="3">
-    </div>
-    <div class="field">
-      <label for="study">Study time per credit hour</label>
-      <input type="number" id="study" min="0" step="0.5" value="2">
-      <p class="hint">Hours of out-of-class work expected per credit hour, typically 2 or 3.</p>
-    </div>
-  </section>
-
-  <section class="card" aria-labelledby="s-how">
-    <h3 id="s-how">How this is calculated</h3>
-    <p class="hint" style="font-size:.85rem;">
-    One credit hour means one 50-minute period of instruction plus the study time you
-    set above, each week, for a 15-week semester.</p>
-    <details open>
-      <summary>What counts as instructional time</summary>
-      <div class="body">
-        <p>The instructional row is <strong>seat time</strong> &mdash; the 50-minute
-        period per credit hour a course meets for. A 3-credit course owes 150 minutes
-        a week.</p>
-        <p>In a traditional course that is literally class meeting time. In a fully
-        online course there is no room, so it is the asynchronous equivalent:
-        instructor-directed content &mdash; recorded lectures, guided activities,
-        anything standing in for a class meeting.</p>
-        <p>In a blended course it splits. The face-to-face row is what you actually
-        meet for; the online instructional row is the seat time your meetings do not
-        cover.</p>
-        <p>It is <em>not</em> homework. Out-of-class work is the studying row.</p>
-      </div>
-    </details>
-    <details>
-      <summary>The acceleration rate</summary>
-      <div class="body">
-        <p>A course worth the same credits has to deliver the same total hours no matter
-        how long the term runs. The <strong>acceleration rate</strong> is
-        15 &divide; your semester length.</p>
-        <p>A 15-week term has a rate of 1.0. A 7-week term has a rate of about 2.14,
-        so every week carries roughly twice the work.</p>
-        <p>Face-to-face meetings are the exception: they stay at their actual scheduled
-        length. In an accelerated blended course the extra instructional time that the
-        meetings do not cover is pushed into the online instructional total.</p>
-      </div>
-    </details>
-  </section>
-
-</div>
-
-<!-- ============================================================ -->
-<h2 id="h-week">2. Weekly time budget</h2>
-
-<section class="results" aria-labelledby="h-week">
-  <div id="warnings"></div>
-
-  <div class="totals">
-    <p class="total primary">
-      <span class="num" id="out-total">0.00</span>
-      <span class="lab">Total per week</span>
-      <span class="sub">hours</span>
-    </p>
-    <p class="total" id="tile-f2f" hidden>
-      <span class="num" id="out-f2f">0.00</span>
-      <span class="lab">Face-to-face</span>
-      <span class="sub">hours per week</span>
-      <span class="desc">scheduled class meetings</span>
-    </p>
-    <p class="total">
-      <span class="num" id="out-instr">0.00</span>
-      <span class="lab" id="lab-instr">Instructional activities</span>
-      <span class="sub">hours per week</span>
-      <span class="desc" id="desc-instr">class time, or its online equivalent</span>
-    </p>
-    <p class="total">
-      <span class="num" id="out-study">0.00</span>
-      <span class="lab">Homework / study</span>
-      <span class="sub">hours per week</span>
-    </p>
-    <p class="total" id="tile-online" hidden>
-      <span class="num" id="out-online">0.00</span>
-      <span class="lab">Online total</span>
-      <span class="sub">hours per week</span>
-    </p>
-    <p class="total">
-      <span class="num" id="out-semester">0.00</span>
-      <span class="lab">Total per semester</span>
-      <span class="sub">hours</span>
-    </p>
-  </div>
-
-  <div class="table-scroll">
-    <table>
-      <caption>Where the weekly hours come from</caption>
-      <thead>
-        <tr>
-          <th scope="col">Time type</th>
-          <th scope="col" class="num">Weeks</th>
-          <th scope="col" class="num">Acceleration</th>
-          <th scope="col" class="num">Credit hours</th>
-          <th scope="col" class="num">Weekly minutes</th>
-          <th scope="col" class="num">Weekly hours</th>
-          <th scope="col" class="num">Semester minutes</th>
-          <th scope="col" class="num">Semester hours</th>
-        </tr>
-      </thead>
-      <tbody id="weekrows"></tbody>
-    </table>
-  </div>
-
-  <p class="sr-only" aria-live="polite" id="live-week"></p>
-</section>
-
-<!-- ============================================================ -->
-<h2 id="h-module">3. Module time planner</h2>
-
-<p class="lede">Now plan one module. Enter the time you expect students to spend on each
-activity, and this checks the total against the online hours your credit budget allows for
-a week. A module here is one week&rsquo;s worth of time.</p>
-
-<div class="note">
-  <p><strong>Reading and writing:</strong> estimate those two with the
-  <a href="workload_estimator.html">Course Workload Estimator</a> &mdash; run it once for
-  readings and once for writing assignments &mdash; then enter the hours below.</p>
-  <p class="hint" style="margin:0;">That tool is a port of the
-  <a href="https://cte.rice.edu/workload" target="_blank" rel="noopener">Rice / Wake Forest
-  Course Workload Estimator</a>, which you can also use directly.</p>
-</div>
-
-<p class="lede">Each activity below shows a suggested time for <em>that activity on its
-own</em>. They are not a checklist &mdash; a module usually combines a handful of these,
-not all of them.</p>
-
-<div class="grid-2">
-
-  <section class="card" aria-labelledby="s-rw">
-    <h3 id="s-rw">Reading &amp; writing</h3>
-    <div class="field">
-      <label for="rw_reading">Reading assignments &mdash; total hours</label>
-      <input type="number" id="rw_reading" min="0" step="0.25" value="0">
-      <p class="hint">Hours per week from the workload estimator, readings only.</p>
-    </div>
-    <div class="field">
-      <label for="rw_writing">Writing assignments &mdash; total hours</label>
-      <input type="number" id="rw_writing" min="0" step="0.25" value="0">
-      <p class="hint">Hours per week from the workload estimator, writing only.</p>
-    </div>
-    <details>
-      <summary>A note on these two numbers</summary>
-      <div class="body">
-        <p>The original spreadsheet multiplied both of these by 50/60 before adding them
-        in, which quietly shrank them by 17%. Everything else on that sheet is entered in
-        plain clock hours, and the workload estimator reports clock hours, so this version
-        adds them at face value.</p>
-      </div>
-    </details>
-  </section>
-
-  <section class="card" aria-labelledby="s-learn">
-    <h3 id="s-learn">Learning activities</h3>
-    <p class="hint" style="margin:0 0 .6rem;">Estimated hours a student spends. Leave
-    anything you are not using at zero.</p>
-    <div id="learn-rows"></div>
-    <p class="subtotal"><span>Learning activities total</span>
-      <span class="v"><span id="out-learn">0.00</span> hrs</span></p>
-  </section>
-
-  <section class="card" aria-labelledby="s-assess">
-    <h3 id="s-assess">Assessment activities</h3>
-    <p class="hint" style="margin:0 0 .6rem;">Includes the time students spend preparing,
-    not just sitting the assessment.</p>
-    <div id="assess-rows"></div>
-    <p class="subtotal"><span>Assessment activities total</span>
-      <span class="v"><span id="out-assess">0.00</span> hrs</span></p>
-  </section>
-
-</div>
-
-</form>
-
-<!-- ============================================================ -->
-<h2 id="h-balance">4. Does the module fit?</h2>
-
-<section class="results" aria-labelledby="h-balance">
-  <div class="totals">
-    <p class="total">
-      <span class="num" id="out-budget">0.00</span>
-      <span class="lab">Weekly online hours available</span>
-      <span class="sub">from your credit budget</span>
-    </p>
-    <p class="total">
-      <span class="num" id="out-planned">0.00</span>
-      <span class="lab">Module hours planned</span>
-      <span class="sub">everything entered above</span>
-    </p>
-    <p class="total" id="tile-diff">
-      <span class="num" id="out-diff">0.00</span>
-      <span class="lab">Difference</span>
-      <span class="sub" id="diff-sub">hours</span>
-    </p>
-  </div>
-
-  <div id="balance-msg"></div>
-  <p class="sr-only" aria-live="polite" id="live-balance"></p>
-
-  <div class="actions">
-    <button type="button" id="btn-report">Create printable summary</button>
-    <button type="button" class="secondary" id="btn-copy">Copy as text</button>
-    <button type="button" class="secondary" id="btn-print">Print</button>
-    <button type="button" class="secondary" id="btn-reset">Start over</button>
-  </div>
-  <p class="sr-only" role="status" id="copystatus"></p>
-</section>
-
-<div id="reportWrap" hidden></div>
-
-<footer>
-  <p>Adapted from the <strong>Planning Time Calculator</strong>, initially developed by
-  Ruth Ronan at Rutgers University.</p>
-  <p>Reading and writing estimates come from the
-  <strong>Course Workload Estimator</strong> by Betsy Barre, Allen Brown, and Justin Esarey
-  (Wake Forest University Center for the Advancement of Teaching and Rice University
-  Center for Teaching Excellence).</p>
-  <p>Licensed under
-  <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>;
-  this adaptation is shared under the same license.</p>
-</footer>
-
-</main>
-
-<script>
-(function(){
-  "use strict";
-
-  var STORAGE_KEY = "uoes-credit-hour-planner";
-
-  /* A standard semester, used as the numerator of the acceleration rate. */
-  var STANDARD_WEEKS = 15;
-  /* One credit hour = one 50-minute period of instruction per week. */
-  var MINUTES_PER_CREDIT_HOUR = 50;
-
-  /* ------------------------------------------------------------------
-     Activity rows. `sug` is the suggested time shown to the user and
-     used by the "fill blanks" button; it comes from the tooltips in the
-     original workbook. Rows with `derived` are computed, not entered.
-  ------------------------------------------------------------------ */
-
-  var LEARN = [
-    {id:"blog",         name:"Blog",                          sug:1},
-    {id:"case",         name:"Case study",                    sug:2},
-    {id:"discussion",   name:"Discussion posts (combined)",    sug:3},
-    {id:"experiential", name:"Experiential learning",          sug:2,
-     note:"Attend an event, interview, field trip, lab, etc."},
-    {id:"journal",      name:"Journal posts",                  sug:1.5},
-    {id:"minilecture",  name:"Mini-lecture video",             sug:0.3},
-    {id:"othervideo",   name:"Other videos",                   sug:0.5},
-    {id:"podcast",      name:"Podcast",                        sug:0.5},
-    {id:"readings",     name:"Readings",                       derived:"reading",
-     note:"From the reading hours you entered"},
-    {id:"research",     name:"Research activities",            sug:2},
-    {id:"simulation",   name:"Simulation / eLearning tutorial",sug:0.5},
-    {id:"supplemental", name:"Supplemental materials",         sug:2},
-    {id:"webinar",      name:"Webinar session",                sug:1.5},
-    {id:"wiki",         name:"Wiki",                           sug:2},
-    {id:"addlearn",     name:"Additional learning activities",
-     note:"Anything not listed above"}
-  ];
-
-  var ASSESS = [
-    {id:"prep",       name:"Assessment preparation time", sug:3},
-    {id:"group",      name:"Group assignment",            sug:4},
-    {id:"individual", name:"Individual assignment",       sug:2},
-    {id:"peer",       name:"Peer review",                 sug:1.5},
-    {id:"preassess",  name:"Pre-assessment",              sug:1},
-    {id:"quiz",       name:"Quiz",                        sug:0.5},
-    {id:"project",    name:"Project / presentation",      sug:1},
-    {id:"test",       name:"Test",                        sug:1},
-    {id:"writing",    name:"Writing assignments",         derived:"writing",
-     note:"From the writing hours you entered"},
-    {id:"addassess",  name:"Other assessment activities",
-     note:"Anything not listed above"}
-  ];
-
-  /* ---------------- build the activity rows ---------------- */
-
-  function buildRows(list, container, prefix){
-    var frag = document.createDocumentFragment();
-    list.forEach(function(row){
-      var wrap = document.createElement("div");
-      wrap.className = "act";
-
-      var label = document.createElement("label");
-      label.setAttribute("for", prefix + "_" + row.id);
-      label.appendChild(document.createTextNode(row.name));
-
-      var subText = row.note ||
-        (typeof row.sug === "number" ? row.sug + (row.sug === 1 ? " hour suggested" : " hours suggested") : "");
-      if (row.note && typeof row.sug === "number"){
-        subText = row.note + " — " + row.sug + (row.sug === 1 ? " hour suggested" : " hours suggested");
-      }
-      if (subText){
-        var sug = document.createElement("span");
-        sug.className = "sug";
-        sug.textContent = subText;
-        label.appendChild(sug);
-      }
-      wrap.appendChild(label);
-
-      if (row.derived){
-        var out = document.createElement("output");
-        out.className = "derived";
-        out.id = prefix + "_" + row.id;
-        out.setAttribute("for", row.derived === "reading" ? "rw_reading" : "rw_writing");
-        out.textContent = "0.00";
-        wrap.appendChild(out);
-      } else {
-        var input = document.createElement("input");
-        input.type = "number";
-        input.id = prefix + "_" + row.id;
-        input.min = "0";
-        input.step = "0.25";
-        /* setAttribute, not .value — the content attribute is what
-           form.reset() restores, so "Start over" clears these rows. */
-        input.setAttribute("value", "0");
-        wrap.appendChild(input);
-      }
-      frag.appendChild(wrap);
-    });
-    container.appendChild(frag);
-  }
-
-  buildRows(LEARN,  document.getElementById("learn-rows"),  "l");
-  buildRows(ASSESS, document.getElementById("assess-rows"), "a");
-
-  /* ---------------- field access ---------------- */
-
-  var SIMPLE_FIELDS = ["weeks","credits","study","f2f","rw_reading","rw_writing"];
-
-  var ACTIVITY_FIELDS = [];
-  LEARN.forEach(function(r){ if (!r.derived) ACTIVITY_FIELDS.push("l_" + r.id); });
-  ASSESS.forEach(function(r){ if (!r.derived) ACTIVITY_FIELDS.push("a_" + r.id); });
-
-  var ALL_FIELDS = SIMPLE_FIELDS.concat(ACTIVITY_FIELDS);
-
-  function $(id){ return document.getElementById(id); }
-
-  function num(id){
-    var e = $(id);
-    if (!e) return 0;
-    var v = parseFloat(e.value);
-    return isFinite(v) ? v : 0;
-  }
-
-  function format(){
-    return $("fmt-blended").checked ? "blended" : "online";
-  }
-
-  function fmt(n){
-    if (!isFinite(n)) return "0.00";
-    return n.toFixed(2);
-  }
-  function fmt1(n){
-    if (!isFinite(n)) return "0.0";
-    return n.toFixed(1);
-  }
-
-  /* ---------------- calculation ---------------- */
-
-  function calcWeek(){
-    var warnings = [];
-
-    var weeks   = num("weeks");
-    var credits = num("credits");
-    var study   = num("study");
-    var blended = format() === "blended";
-    var f2f     = blended ? num("f2f") : 0;
-
-    if (credits < 0){ credits = 0; }
-    if (study < 0){ study = 0; }
-    if (f2f < 0){ f2f = 0; }
-
-    /* The original used IFERROR(15/weeks, 0), which silently produced a
-       zero-hour course. Warn instead of failing quietly. */
-    var accel;
-    if (weeks < 1){
-      warnings.push("Semester length must be at least 1 week. Nothing is being calculated until you set it.");
-      accel = 0;
-      weeks = 0;
-    } else {
-      accel = STANDARD_WEEKS / weeks;
-    }
-
-    /* The original let face-to-face hours exceed the course's credit hours,
-       which produced a negative online instructional total. Clamp and warn. */
-    if (blended && f2f > credits){
-      warnings.push("Face-to-face meeting hours (" + fmt1(f2f) + ") are more than the course's " +
-        fmt1(credits) + " credit hours. Capped at the credit hours — lower the meeting " +
-        "hours or raise the credits.");
-      f2f = credits;
-    }
-
-    var M = MINUTES_PER_CREDIT_HOUR;
-
-    /* Face-to-face meetings run at their actual scheduled length, so they
-       are never accelerated (rate is always 1). */
-    var f2fMin = accel > 0 ? M * f2f : 0;
-
-    /* Remaining credit hours online, plus whatever accelerated instructional
-       time the face-to-face meetings do not cover. */
-    var instrMin = M * accel * (credits - f2f) + (M * accel * f2f - f2fMin);
-    if (!isFinite(instrMin) || instrMin < 0) instrMin = 0;
-
-    var studyMin = M * accel * credits * study;
-    if (!isFinite(studyMin) || studyMin < 0) studyMin = 0;
-
-    var rows = [];
-    if (blended){
-      rows.push({name:"Face-to-face",        accel:1,     credits:f2f,              min:f2fMin});
-      rows.push({name:"Online instructional",accel:accel, credits:credits - f2f,    min:instrMin});
-    } else {
-      rows.push({name:"Instructional",       accel:accel, credits:credits,          min:instrMin});
-    }
-    rows.push({name:"Studying", accel:accel, credits:credits * study, min:studyMin});
-
-    rows.forEach(function(r){
-      r.weeklyHours   = r.min / 60;
-      r.semesterMin   = r.min * weeks;
-      r.semesterHours = r.semesterMin / 60;
-    });
-
-    var totalMin = rows.reduce(function(s,r){ return s + r.min; }, 0);
-
-    return {
-      blended: blended,
-      weeks: weeks,
-      accel: accel,
-      rows: rows,
-      f2fHours:      f2fMin / 60,
-      instrHours:    instrMin / 60,
-      studyHours:    studyMin / 60,
-      onlineHours:   (instrMin + studyMin) / 60,   /* the module budget */
-      totalHours:    totalMin / 60,
-      semesterHours: totalMin * weeks / 60,
-      warnings: warnings
-    };
-  }
-
-  function calcModule(){
-    /* Reading and writing are entered as clock hours and used as-is.
-       The original workbook scaled them by 50/60 first; see the note in
-       the Reading & writing card. */
-    var reading = Math.max(0, num("rw_reading"));
-    var writing = Math.max(0, num("rw_writing"));
-
-    var learn = 0, assess = 0;
-    var detail = [];
-
-    LEARN.forEach(function(r){
-      var v = r.derived ? reading : Math.max(0, num("l_" + r.id));
-      learn += v;
-      if (v > 0) detail.push({group:"Learning", name:r.name, hours:v});
-    });
-    ASSESS.forEach(function(r){
-      var v = r.derived ? writing : Math.max(0, num("a_" + r.id));
-      assess += v;
-      if (v > 0) detail.push({group:"Assessment", name:r.name, hours:v});
-    });
-
-    return {
-      reading: reading,
-      writing: writing,
-      learn: learn,
-      assess: assess,
-      planned: learn + assess,
-      detail: detail
-    };
-  }
-
-  /* ---------------- rendering ---------------- */
-
-  function syncVisibility(){
-    var blended = format() === "blended";
-    $("wrap-f2f").hidden    = !blended;
-    $("tile-f2f").hidden    = !blended;
-    $("tile-online").hidden = !blended;
-    $("lab-instr").textContent = blended ? "Online instructional" : "Instructional activities";
-    $("desc-instr").textContent = blended
-      ? "the seat time your meetings don’t cover"
-      : "class time, or its online equivalent";
-  }
-
-  function render(){
-    syncVisibility();
-
-    var w = calcWeek();
-    var m = calcModule();
-
-    /* --- weekly tiles --- */
-    $("out-total").textContent    = fmt(w.totalHours);
-    $("out-f2f").textContent      = fmt(w.f2fHours);
-    $("out-instr").textContent    = fmt(w.instrHours);
-    $("out-study").textContent    = fmt(w.studyHours);
-    $("out-online").textContent   = fmt(w.onlineHours);
-    $("out-semester").textContent = fmt(w.semesterHours);
-
-    /* --- weekly table --- */
-    var body = $("weekrows");
-    body.innerHTML = "";
-    w.rows.forEach(function(r){
-      body.appendChild(weekRow(r.name, r, w.weeks));
-    });
-    var totalRow = {
-      accel: null,
-      credits: w.rows.reduce(function(s,r){ return s + r.credits; }, 0),
-      min:     w.rows.reduce(function(s,r){ return s + r.min; }, 0)
-    };
-    totalRow.weeklyHours   = totalRow.min / 60;
-    totalRow.semesterMin   = totalRow.min * w.weeks;
-    totalRow.semesterHours = totalRow.semesterMin / 60;
-    var tr = weekRow("Total", totalRow, w.weeks);
-    tr.style.fontWeight = "bold";
-    tr.firstChild.style.borderTop = "2px solid #007FAC";
-    body.appendChild(tr);
-
-    /* --- warnings --- */
-    var wbox = $("warnings");
-    wbox.innerHTML = "";
-    w.warnings.forEach(function(msg){
-      var p = document.createElement("p");
-      p.className = "warn";
-      p.textContent = msg;
-      wbox.appendChild(p);
-    });
-
-    $("live-week").textContent =
-      "Weekly budget " + fmt(w.totalHours) + " hours, " +
-      fmt(w.semesterHours) + " hours for the semester.";
-
-    /* --- module --- */
-    var lr = $("l_readings"), aw = $("a_writing");
-    if (lr) lr.textContent = fmt(m.reading);
-    if (aw) aw.textContent = fmt(m.writing);
-    $("out-learn").textContent  = fmt(m.learn);
-    $("out-assess").textContent = fmt(m.assess);
-
-    /* --- balance --- */
-    var diff = w.onlineHours - m.planned;
-    $("out-budget").textContent  = fmt(w.onlineHours);
-    $("out-planned").textContent = fmt(m.planned);
-    $("out-diff").textContent    = fmt(diff);
-
-    var tile = $("tile-diff");
-    tile.className = diff < -0.005 ? "total primary over" : "total";
-    $("diff-sub").textContent = diff < -0.005 ? "hours over budget" : "hours remaining";
-
-    var msg = $("balance-msg");
-    msg.innerHTML = "";
-    if (m.planned <= 0){
-      msg.appendChild(noteEl("note",
-        "Nothing planned yet. Enter the hours you expect students to spend on each " +
-        "activity in this module."));
-    } else if (diff < -0.005){
-      msg.appendChild(noteEl("warn",
-        "This module asks for " + fmt(-diff) + " hours more than the credit hours allow. " +
-        "Trim activities, move something to another module, or reconsider the study time " +
-        "per credit hour."));
-    } else {
-      msg.appendChild(noteEl("note",
-        fmt(diff) + " hours still unassigned. That is room for the activities you have " +
-        "not listed yet — or slack, which students will use."));
-    }
-
-    $("live-balance").textContent =
-      "Planned " + fmt(m.planned) + " hours against a budget of " +
-      fmt(w.onlineHours) + " hours. " +
-      (diff < -0.005 ? fmt(-diff) + " hours over." : fmt(diff) + " hours remaining.");
-
-    save();
-    return {week:w, module:m, diff:diff};
-  }
-
-  function weekRow(name, r, weeks){
-    var tr = document.createElement("tr");
-    function cell(text, isNum){
-      var td = document.createElement("td");
-      if (isNum) td.className = "num";
-      td.textContent = text;
-      return td;
-    }
-    tr.appendChild(cell(name, false));
-    tr.appendChild(cell(weeks ? String(weeks) : "—", true));
-    tr.appendChild(cell(r.accel === null ? "—" : r.accel.toFixed(2), true));
-    tr.appendChild(cell(fmt1(r.credits), true));
-    tr.appendChild(cell(fmt1(r.min), true));
-    tr.appendChild(cell(fmt(r.weeklyHours), true));
-    tr.appendChild(cell(fmt1(r.semesterMin), true));
-    tr.appendChild(cell(fmt(r.semesterHours), true));
-    return tr;
-  }
-
-  function noteEl(cls, text){
-    var p = document.createElement("p");
-    p.className = cls;
-    p.textContent = text;
-    return p;
-  }
-
-  /* ---------------- text summary ---------------- */
-
-  function pad(s, n){
-    s = String(s);
-    while (s.length < n) s += " ";
-    return s;
-  }
-
-  function asText(){
-    var w = calcWeek();
-    var m = calcModule();
-    var diff = w.onlineHours - m.planned;
-    var lines = [];
-
-    lines.push("CREDIT HOUR PLAN");
-    lines.push("");
-    lines.push("COURSE");
-    lines.push("  Format:            " + (w.blended ? "Blended / hybrid" : "Fully online or traditional"));
-    lines.push("  Semester length:   " + num("weeks") + " weeks");
-    lines.push("  Credits:           " + num("credits"));
-    lines.push("  Study per credit:  " + num("study") + " hours");
-    if (w.blended) lines.push("  Face-to-face:      " + num("f2f") + " hours per week");
-    lines.push("  Acceleration rate: " + w.accel.toFixed(2));
-    lines.push("");
-
-    lines.push("WEEKLY TIME BUDGET");
-    if (w.blended) lines.push("  Face-to-face          " + fmt(w.f2fHours) + " hrs/wk");
-    lines.push("  " + pad(w.blended ? "Online instructional" : "Instructional", 22) + fmt(w.instrHours) + " hrs/wk");
-    lines.push("  " + pad("Homework / study", 22) + fmt(w.studyHours) + " hrs/wk");
-    if (w.blended) lines.push("  " + pad("Online total", 22) + fmt(w.onlineHours) + " hrs/wk");
-    lines.push("  " + pad("TOTAL", 22) + fmt(w.totalHours) + " hrs/wk");
-    lines.push("  " + pad("Semester total", 22) + fmt(w.semesterHours) + " hrs");
-    lines.push("");
-
-    lines.push("MODULE PLAN");
-    if (!m.detail.length){
-      lines.push("  (nothing entered yet)");
-    } else {
-      var group = "";
-      m.detail.forEach(function(d){
-        if (d.group !== group){
-          group = d.group;
-          lines.push("  " + group.toUpperCase());
+        <p class="lede">Each activity below shows a suggested time for <em>that activity on its
+            own</em>. They are not a checklist &mdash; a module usually combines a handful of these,
+          not all of them.</p>
+
+        <div class="grid-2">
+
+          <section class="card" aria-labelledby="s-rw">
+            <h3 id="s-rw">Reading &amp; writing</h3>
+            <div class="field">
+              <label for="rw_reading">Reading assignments &mdash; total hours</label>
+              <input type="number" id="rw_reading" min="0" step="0.25" value="0">
+              <p class="hint">Hours per week from the workload estimator, readings only.</p>
+            </div>
+            <div class="field">
+              <label for="rw_writing">Writing assignments &mdash; total hours</label>
+              <input type="number" id="rw_writing" min="0" step="0.25" value="0">
+              <p class="hint">Hours per week from the workload estimator, writing only.</p>
+            </div>
+            <details>
+              <summary>A note on these two numbers</summary>
+              <div class="body">
+                <p>The original spreadsheet multiplied both of these by 50/60 before adding them
+                  in, which quietly shrank them by 17%. Everything else on that sheet is entered in
+                  plain clock hours, and the workload estimator reports clock hours, so this version
+                  adds them at face value.</p>
+              </div>
+            </details>
+          </section>
+
+          <section class="card" aria-labelledby="s-learn">
+            <h3 id="s-learn">Learning activities</h3>
+            <p class="hint" style="margin:0 0 .6rem;">Estimated hours a student spends. Leave
+              anything you are not using at zero.</p>
+            <div id="learn-rows"></div>
+            <p class="subtotal"><span>Learning activities total</span>
+              <span class="v"><span id="out-learn">0.00</span> hrs</span>
+            </p>
+          </section>
+
+          <section class="card" aria-labelledby="s-assess">
+            <h3 id="s-assess">Assessment activities</h3>
+            <p class="hint" style="margin:0 0 .6rem;">Includes the time students spend preparing,
+              not just sitting the assessment.</p>
+            <div id="assess-rows"></div>
+            <p class="subtotal"><span>Assessment activities total</span>
+              <span class="v"><span id="out-assess">0.00</span> hrs</span>
+            </p>
+          </section>
+
+        </div>
+
+      </form>
+
+      <!-- ============================================================ -->
+      <h2 id="h-balance">4. Does the module fit?</h2>
+
+      <section class="results" aria-labelledby="h-balance">
+        <div class="totals">
+          <p class="total">
+            <span class="num" id="out-budget">0.00</span>
+            <span class="lab">Weekly online hours available</span>
+            <span class="sub">from your credit budget</span>
+          </p>
+          <p class="total">
+            <span class="num" id="out-planned">0.00</span>
+            <span class="lab">Module hours planned</span>
+            <span class="sub">everything entered above</span>
+          </p>
+          <p class="total" id="tile-diff">
+            <span class="num" id="out-diff">0.00</span>
+            <span class="lab">Difference</span>
+            <span class="sub" id="diff-sub">hours</span>
+          </p>
+        </div>
+
+        <div id="balance-msg"></div>
+        <p class="sr-only" aria-live="polite" id="live-balance"></p>
+
+        <div class="actions">
+          <button type="button" id="btn-report">Create printable summary</button>
+          <button type="button" class="secondary" id="btn-copy">Copy as text</button>
+          <button type="button" class="secondary" id="btn-print">Print</button>
+          <button type="button" class="secondary" id="btn-reset">Start over</button>
+        </div>
+        <p class="sr-only" role="status" id="copystatus"></p>
+      </section>
+
+      <div id="reportWrap" hidden></div>
+
+      <footer>
+        <p>Adapted from the <strong>Planning Time Calculator</strong>, initially developed by
+          Ruth Ronan at Rutgers University.</p>
+        <p>Reading and writing estimates come from the
+          <strong>Course Workload Estimator</strong> by Betsy Barre, Allen Brown, and Justin Esarey
+          (Wake Forest University Center for the Advancement of Teaching and Rice University
+          Center for Teaching Excellence).
+        </p>
+        <p>Licensed under
+          <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA
+            4.0</a>;
+          this adaptation is shared under the same license.
+        </p>
+      </footer>
+
+    </main>
+
+    <script>
+      (function () {
+        "use strict";
+
+        var STORAGE_KEY = "uoes-credit-hour-planner";
+
+        /* A standard semester, used as the numerator of the acceleration rate. */
+        var STANDARD_WEEKS = 15;
+        /* One credit hour = one 50-minute period of instruction per week. */
+        var MINUTES_PER_CREDIT_HOUR = 50;
+
+        /* ------------------------------------------------------------------
+           Activity rows. `sug` is the suggested time shown to the user and
+           used by the "fill blanks" button; it comes from the tooltips in the
+           original workbook. Rows with `derived` are computed, not entered.
+        ------------------------------------------------------------------ */
+
+        var LEARN = [
+          { id: "blog", name: "Blog", sug: 1 },
+          { id: "case", name: "Case study", sug: 2 },
+          { id: "discussion", name: "Discussion posts (combined)", sug: 3 },
+          {
+            id: "experiential", name: "Experiential learning", sug: 2,
+            note: "Attend an event, interview, field trip, lab, etc."
+          },
+          { id: "journal", name: "Journal posts", sug: 1.5 },
+          { id: "minilecture", name: "Mini-lecture video", sug: 0.3 },
+          { id: "othervideo", name: "Other videos", sug: 0.5 },
+          { id: "podcast", name: "Podcast", sug: 0.5 },
+          {
+            id: "readings", name: "Readings", derived: "reading",
+            note: "From the reading hours you entered"
+          },
+          { id: "research", name: "Research activities", sug: 2 },
+          { id: "simulation", name: "Simulation / eLearning tutorial", sug: 0.5 },
+          { id: "supplemental", name: "Supplemental materials", sug: 2 },
+          { id: "webinar", name: "Webinar session", sug: 1.5 },
+          { id: "wiki", name: "Wiki", sug: 2 },
+          {
+            id: "addlearn", name: "Additional learning activities",
+            note: "Anything not listed above"
+          }
+        ];
+
+        var ASSESS = [
+          { id: "prep", name: "Assessment preparation time", sug: 3 },
+          { id: "group", name: "Group assignment", sug: 4 },
+          { id: "individual", name: "Individual assignment", sug: 2 },
+          { id: "peer", name: "Peer review", sug: 1.5 },
+          { id: "preassess", name: "Pre-assessment", sug: 1 },
+          { id: "quiz", name: "Quiz", sug: 0.5 },
+          { id: "project", name: "Project / presentation", sug: 1 },
+          { id: "test", name: "Test", sug: 1 },
+          {
+            id: "writing", name: "Writing assignments", derived: "writing",
+            note: "From the writing hours you entered"
+          },
+          {
+            id: "addassess", name: "Other assessment activities",
+            note: "Anything not listed above"
+          }
+        ];
+
+        /* ---------------- build the activity rows ---------------- */
+
+        function buildRows(list, container, prefix) {
+          var frag = document.createDocumentFragment();
+          list.forEach(function (row) {
+            var wrap = document.createElement("div");
+            wrap.className = "act";
+
+            var label = document.createElement("label");
+            label.setAttribute("for", prefix + "_" + row.id);
+            label.appendChild(document.createTextNode(row.name));
+
+            var subText = row.note ||
+              (typeof row.sug === "number" ? row.sug + (row.sug === 1 ? " hour suggested" : " hours suggested") : "");
+            if (row.note && typeof row.sug === "number") {
+              subText = row.note + " — " + row.sug + (row.sug === 1 ? " hour suggested" : " hours suggested");
+            }
+            if (subText) {
+              var sug = document.createElement("span");
+              sug.className = "sug";
+              sug.textContent = subText;
+              label.appendChild(sug);
+            }
+            wrap.appendChild(label);
+
+            if (row.derived) {
+              var out = document.createElement("output");
+              out.className = "derived";
+              out.id = prefix + "_" + row.id;
+              out.setAttribute("for", row.derived === "reading" ? "rw_reading" : "rw_writing");
+              out.textContent = "0.00";
+              wrap.appendChild(out);
+            } else {
+              var input = document.createElement("input");
+              input.type = "number";
+              input.id = prefix + "_" + row.id;
+              input.min = "0";
+              input.step = "0.25";
+              /* setAttribute, not .value — the content attribute is what
+                 form.reset() restores, so "Start over" clears these rows. */
+              input.setAttribute("value", "0");
+              wrap.appendChild(input);
+            }
+            frag.appendChild(wrap);
+          });
+          container.appendChild(frag);
         }
-        lines.push("    " + pad(d.name, 34) + fmt(d.hours) + " hrs");
-      });
-    }
-    lines.push("");
-    lines.push("  " + pad("Learning activities total", 34) + fmt(m.learn) + " hrs");
-    lines.push("  " + pad("Assessment activities total", 34) + fmt(m.assess) + " hrs");
-    lines.push("");
 
-    lines.push("DOES IT FIT?");
-    lines.push("  " + pad("Weekly online hours available", 32) + fmt(w.onlineHours) + " hrs");
-    lines.push("  " + pad("Module hours planned", 32) + fmt(m.planned) + " hrs");
-    lines.push("  " + pad(diff < -0.005 ? "OVER BUDGET BY" : "Hours remaining", 32) +
-      fmt(Math.abs(diff)) + " hrs");
+        buildRows(LEARN, document.getElementById("learn-rows"), "l");
+        buildRows(ASSESS, document.getElementById("assess-rows"), "a");
 
-    if (w.warnings.length){
-      lines.push("");
-      lines.push("WARNINGS");
-      w.warnings.forEach(function(x){ lines.push("  - " + x); });
-    }
+        /* ---------------- field access ---------------- */
 
-    lines.push("");
-    lines.push("Adapted from the Planning Time Calculator, initially developed by Ruth");
-    lines.push("Ronan at Rutgers University. Reading and writing estimates from the");
-    lines.push("Course Workload Estimator by Betsy Barre, Allen Brown, and Justin Esarey.");
-    lines.push("CC BY-NC-SA 4.0.");
-    return lines.join("\n");
-  }
+        var SIMPLE_FIELDS = ["weeks", "credits", "study", "f2f", "rw_reading", "rw_writing"];
 
-  function buildReport(){
-    var wrap = $("reportWrap");
-    wrap.innerHTML = "";
-    wrap.hidden = false;
+        var ACTIVITY_FIELDS = [];
+        LEARN.forEach(function (r) { if (!r.derived) ACTIVITY_FIELDS.push("l_" + r.id); });
+        ASSESS.forEach(function (r) { if (!r.derived) ACTIVITY_FIELDS.push("a_" + r.id); });
 
-    var h = document.createElement("h2");
-    h.textContent = "Credit hour plan";
-    wrap.appendChild(h);
+        var ALL_FIELDS = SIMPLE_FIELDS.concat(ACTIVITY_FIELDS);
 
-    var pre = document.createElement("pre");
-    pre.style.fontFamily = "Georgia, serif";
-    pre.style.whiteSpace = "pre-wrap";
-    pre.style.background = "#fff";
-    pre.style.border = "2px solid #007FAC";
-    pre.style.borderRadius = "8px";
-    pre.style.padding = "1rem";
-    pre.textContent = asText();
-    wrap.appendChild(pre);
-  }
+        function $(id) { return document.getElementById(id); }
 
-  /* ---------------- persistence ---------------- */
-
-  var saveTimer = null;
-  function save(){
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(function(){
-      try {
-        var data = {format: format()};
-        ALL_FIELDS.forEach(function(id){
+        function num(id) {
           var e = $(id);
-          if (e) data[id] = e.value;
+          if (!e) return 0;
+          var v = parseFloat(e.value);
+          return isFinite(v) ? v : 0;
+        }
+
+        function format() {
+          return $("fmt-blended").checked ? "blended" : "online";
+        }
+
+        function fmt(n) {
+          if (!isFinite(n)) return "0.00";
+          return n.toFixed(2);
+        }
+        function fmt1(n) {
+          if (!isFinite(n)) return "0.0";
+          return n.toFixed(1);
+        }
+
+        /* ---------------- calculation ---------------- */
+
+        function calcWeek() {
+          var warnings = [];
+
+          var weeks = num("weeks");
+          var credits = num("credits");
+          var study = num("study");
+          var blended = format() === "blended";
+          var f2f = blended ? num("f2f") : 0;
+
+          if (credits < 0) { credits = 0; }
+          if (study < 0) { study = 0; }
+          if (f2f < 0) { f2f = 0; }
+
+          /* The original used IFERROR(15/weeks, 0), which silently produced a
+             zero-hour course. Warn instead of failing quietly. */
+          var accel;
+          if (weeks < 1) {
+            warnings.push("Semester length must be at least 1 week. Nothing is being calculated until you set it.");
+            accel = 0;
+            weeks = 0;
+          } else {
+            accel = STANDARD_WEEKS / weeks;
+          }
+
+          /* The original let face-to-face hours exceed the course's credit hours,
+             which produced a negative online instructional total. Clamp and warn. */
+          if (blended && f2f > credits) {
+            warnings.push("Face-to-face meeting hours (" + fmt1(f2f) + ") are more than the course's " +
+              fmt1(credits) + " credit hours. Capped at the credit hours — lower the meeting " +
+              "hours or raise the credits.");
+            f2f = credits;
+          }
+
+          var M = MINUTES_PER_CREDIT_HOUR;
+
+          /* Face-to-face meetings run at their actual scheduled length, so they
+             are never accelerated (rate is always 1). */
+          var f2fMin = accel > 0 ? M * f2f : 0;
+
+          /* Remaining credit hours online, plus whatever accelerated instructional
+             time the face-to-face meetings do not cover. */
+          var instrMin = M * accel * (credits - f2f) + (M * accel * f2f - f2fMin);
+          if (!isFinite(instrMin) || instrMin < 0) instrMin = 0;
+
+          var studyMin = M * accel * credits * study;
+          if (!isFinite(studyMin) || studyMin < 0) studyMin = 0;
+
+          var rows = [];
+          if (blended) {
+            rows.push({ name: "Face-to-face", accel: 1, credits: f2f, min: f2fMin });
+            rows.push({ name: "Online instructional", accel: accel, credits: credits - f2f, min: instrMin });
+          } else {
+            rows.push({ name: "Instructional", accel: accel, credits: credits, min: instrMin });
+          }
+          rows.push({ name: "Studying", accel: accel, credits: credits * study, min: studyMin });
+
+          rows.forEach(function (r) {
+            r.weeklyHours = r.min / 60;
+            r.semesterMin = r.min * weeks;
+            r.semesterHours = r.semesterMin / 60;
+          });
+
+          var totalMin = rows.reduce(function (s, r) { return s + r.min; }, 0);
+
+          return {
+            blended: blended,
+            weeks: weeks,
+            accel: accel,
+            rows: rows,
+            f2fHours: f2fMin / 60,
+            instrHours: instrMin / 60,
+            studyHours: studyMin / 60,
+            onlineHours: (instrMin + studyMin) / 60,   /* the module budget */
+            totalHours: totalMin / 60,
+            semesterHours: totalMin * weeks / 60,
+            warnings: warnings
+          };
+        }
+
+        function calcModule() {
+          /* Reading and writing are entered as clock hours and used as-is.
+             The original workbook scaled them by 50/60 first; see the note in
+             the Reading & writing card. */
+          var reading = Math.max(0, num("rw_reading"));
+          var writing = Math.max(0, num("rw_writing"));
+
+          var learn = 0, assess = 0;
+          var detail = [];
+
+          LEARN.forEach(function (r) {
+            var v = r.derived ? reading : Math.max(0, num("l_" + r.id));
+            learn += v;
+            if (v > 0) detail.push({ group: "Learning", name: r.name, hours: v });
+          });
+          ASSESS.forEach(function (r) {
+            var v = r.derived ? writing : Math.max(0, num("a_" + r.id));
+            assess += v;
+            if (v > 0) detail.push({ group: "Assessment", name: r.name, hours: v });
+          });
+
+          return {
+            reading: reading,
+            writing: writing,
+            learn: learn,
+            assess: assess,
+            planned: learn + assess,
+            detail: detail
+          };
+        }
+
+        /* ---------------- rendering ---------------- */
+
+        function syncVisibility() {
+          var blended = format() === "blended";
+          $("wrap-f2f").hidden = !blended;
+          $("tile-f2f").hidden = !blended;
+          $("tile-online").hidden = !blended;
+          $("lab-instr").textContent = blended ? "Online instructional" : "Instructional activities";
+          $("desc-instr").textContent = blended
+            ? "the seat time your meetings don’t cover"
+            : "class time, or its online equivalent";
+        }
+
+        function render() {
+          syncVisibility();
+
+          var w = calcWeek();
+          var m = calcModule();
+
+          /* --- weekly tiles --- */
+          $("out-total").textContent = fmt(w.totalHours);
+          $("out-f2f").textContent = fmt(w.f2fHours);
+          $("out-instr").textContent = fmt(w.instrHours);
+          $("out-study").textContent = fmt(w.studyHours);
+          $("out-online").textContent = fmt(w.onlineHours);
+          $("out-semester").textContent = fmt(w.semesterHours);
+
+          /* --- weekly table --- */
+          var body = $("weekrows");
+          body.innerHTML = "";
+          w.rows.forEach(function (r) {
+            body.appendChild(weekRow(r.name, r, w.weeks));
+          });
+          var totalRow = {
+            accel: null,
+            credits: w.rows.reduce(function (s, r) { return s + r.credits; }, 0),
+            min: w.rows.reduce(function (s, r) { return s + r.min; }, 0)
+          };
+          totalRow.weeklyHours = totalRow.min / 60;
+          totalRow.semesterMin = totalRow.min * w.weeks;
+          totalRow.semesterHours = totalRow.semesterMin / 60;
+          var tr = weekRow("Total", totalRow, w.weeks);
+          tr.style.fontWeight = "bold";
+          tr.firstChild.style.borderTop = "2px solid #007FAC";
+          body.appendChild(tr);
+
+          /* --- warnings --- */
+          var wbox = $("warnings");
+          wbox.innerHTML = "";
+          w.warnings.forEach(function (msg) {
+            var p = document.createElement("p");
+            p.className = "warn";
+            p.textContent = msg;
+            wbox.appendChild(p);
+          });
+
+          $("live-week").textContent =
+            "Weekly budget " + fmt(w.totalHours) + " hours, " +
+            fmt(w.semesterHours) + " hours for the semester.";
+
+          /* --- module --- */
+          var lr = $("l_readings"), aw = $("a_writing");
+          if (lr) lr.textContent = fmt(m.reading);
+          if (aw) aw.textContent = fmt(m.writing);
+          $("out-learn").textContent = fmt(m.learn);
+          $("out-assess").textContent = fmt(m.assess);
+
+          /* --- balance --- */
+          var diff = w.onlineHours - m.planned;
+          $("out-budget").textContent = fmt(w.onlineHours);
+          $("out-planned").textContent = fmt(m.planned);
+          $("out-diff").textContent = fmt(diff);
+
+          var tile = $("tile-diff");
+          tile.className = diff < -0.005 ? "total primary over" : "total";
+          $("diff-sub").textContent = diff < -0.005 ? "hours over budget" : "hours remaining";
+
+          var msg = $("balance-msg");
+          msg.innerHTML = "";
+          if (m.planned <= 0) {
+            msg.appendChild(noteEl("note",
+              "Nothing planned yet. Enter the hours you expect students to spend on each " +
+              "activity in this module."));
+          } else if (diff < -0.005) {
+            msg.appendChild(noteEl("warn",
+              "This module asks for " + fmt(-diff) + " hours more than the credit hours allow. " +
+              "Trim activities, move something to another module, or reconsider the study time " +
+              "per credit hour."));
+          } else {
+            msg.appendChild(noteEl("note",
+              fmt(diff) + " hours still unassigned. That is room for the activities you have " +
+              "not listed yet — or slack, which students will use."));
+          }
+
+          $("live-balance").textContent =
+            "Planned " + fmt(m.planned) + " hours against a budget of " +
+            fmt(w.onlineHours) + " hours. " +
+            (diff < -0.005 ? fmt(-diff) + " hours over." : fmt(diff) + " hours remaining.");
+
+          save();
+          return { week: w, module: m, diff: diff };
+        }
+
+        function weekRow(name, r, weeks) {
+          var tr = document.createElement("tr");
+          function cell(text, isNum) {
+            var td = document.createElement("td");
+            if (isNum) td.className = "num";
+            td.textContent = text;
+            return td;
+          }
+          tr.appendChild(cell(name, false));
+          tr.appendChild(cell(weeks ? String(weeks) : "—", true));
+          tr.appendChild(cell(r.accel === null ? "—" : r.accel.toFixed(2), true));
+          tr.appendChild(cell(fmt1(r.credits), true));
+          tr.appendChild(cell(fmt1(r.min), true));
+          tr.appendChild(cell(fmt(r.weeklyHours), true));
+          tr.appendChild(cell(fmt1(r.semesterMin), true));
+          tr.appendChild(cell(fmt(r.semesterHours), true));
+          return tr;
+        }
+
+        function noteEl(cls, text) {
+          var p = document.createElement("p");
+          p.className = cls;
+          p.textContent = text;
+          return p;
+        }
+
+        /* ---------------- text summary ---------------- */
+
+        function pad(s, n) {
+          s = String(s);
+          while (s.length < n) s += " ";
+          return s;
+        }
+
+        function asText() {
+          var w = calcWeek();
+          var m = calcModule();
+          var diff = w.onlineHours - m.planned;
+          var lines = [];
+
+          lines.push("CREDIT HOUR PLAN");
+          lines.push("");
+          lines.push("COURSE");
+          lines.push("  Format:            " + (w.blended ? "Blended / hybrid" : "Fully online or traditional"));
+          lines.push("  Semester length:   " + num("weeks") + " weeks");
+          lines.push("  Credits:           " + num("credits"));
+          lines.push("  Study per credit:  " + num("study") + " hours");
+          if (w.blended) lines.push("  Face-to-face:      " + num("f2f") + " hours per week");
+          lines.push("  Acceleration rate: " + w.accel.toFixed(2));
+          lines.push("");
+
+          lines.push("WEEKLY TIME BUDGET");
+          if (w.blended) lines.push("  Face-to-face          " + fmt(w.f2fHours) + " hrs/wk");
+          lines.push("  " + pad(w.blended ? "Online instructional" : "Instructional", 22) + fmt(w.instrHours) + " hrs/wk");
+          lines.push("  " + pad("Homework / study", 22) + fmt(w.studyHours) + " hrs/wk");
+          if (w.blended) lines.push("  " + pad("Online total", 22) + fmt(w.onlineHours) + " hrs/wk");
+          lines.push("  " + pad("TOTAL", 22) + fmt(w.totalHours) + " hrs/wk");
+          lines.push("  " + pad("Semester total", 22) + fmt(w.semesterHours) + " hrs");
+          lines.push("");
+
+          lines.push("MODULE PLAN");
+          if (!m.detail.length) {
+            lines.push("  (nothing entered yet)");
+          } else {
+            var group = "";
+            m.detail.forEach(function (d) {
+              if (d.group !== group) {
+                group = d.group;
+                lines.push("  " + group.toUpperCase());
+              }
+              lines.push("    " + pad(d.name, 34) + fmt(d.hours) + " hrs");
+            });
+          }
+          lines.push("");
+          lines.push("  " + pad("Learning activities total", 34) + fmt(m.learn) + " hrs");
+          lines.push("  " + pad("Assessment activities total", 34) + fmt(m.assess) + " hrs");
+          lines.push("");
+
+          lines.push("DOES IT FIT?");
+          lines.push("  " + pad("Weekly online hours available", 32) + fmt(w.onlineHours) + " hrs");
+          lines.push("  " + pad("Module hours planned", 32) + fmt(m.planned) + " hrs");
+          lines.push("  " + pad(diff < -0.005 ? "OVER BUDGET BY" : "Hours remaining", 32) +
+            fmt(Math.abs(diff)) + " hrs");
+
+          if (w.warnings.length) {
+            lines.push("");
+            lines.push("WARNINGS");
+            w.warnings.forEach(function (x) { lines.push("  - " + x); });
+          }
+
+          lines.push("");
+          lines.push("Adapted from the Planning Time Calculator, initially developed by Ruth");
+          lines.push("Ronan at Rutgers University. Reading and writing estimates from the");
+          lines.push("Course Workload Estimator by Betsy Barre, Allen Brown, and Justin Esarey.");
+          lines.push("CC BY-NC-SA 4.0.");
+          return lines.join("\n");
+        }
+
+        function buildReport() {
+          var wrap = $("reportWrap");
+          wrap.innerHTML = "";
+          wrap.hidden = false;
+
+          var h = document.createElement("h2");
+          h.textContent = "Credit hour plan";
+          wrap.appendChild(h);
+
+          var pre = document.createElement("pre");
+          pre.style.fontFamily = "Georgia, serif";
+          pre.style.whiteSpace = "pre-wrap";
+          pre.style.background = "#fff";
+          pre.style.border = "2px solid #007FAC";
+          pre.style.borderRadius = "8px";
+          pre.style.padding = "1rem";
+          pre.textContent = asText();
+          wrap.appendChild(pre);
+        }
+
+        /* ---------------- persistence ---------------- */
+
+        var saveTimer = null;
+        function save() {
+          clearTimeout(saveTimer);
+          saveTimer = setTimeout(function () {
+            try {
+              var data = { format: format() };
+              ALL_FIELDS.forEach(function (id) {
+                var e = $(id);
+                if (e) data[id] = e.value;
+              });
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            } catch (err) { /* storage unavailable; ignore */ }
+          }, 400);
+        }
+
+        function load() {
+          try {
+            var raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return;
+            var data = JSON.parse(raw);
+            if (data.format === "blended") $("fmt-blended").checked = true;
+            else if (data.format === "online") $("fmt-online").checked = true;
+            ALL_FIELDS.forEach(function (id) {
+              if (!(id in data)) return;          // migration: new fields keep defaults
+              var e = $(id);
+              if (e) e.value = data[id];
+            });
+          } catch (err) { /* corrupt or unavailable; ignore */ }
+        }
+
+        /* ---------------- wiring ---------------- */
+
+        $("f").addEventListener("input", render);
+        $("f").addEventListener("change", render);
+
+        /* There is deliberately no "fill everything with suggested times" control.
+           In the original workbook these were per-cell Excel input-message tooltips
+           ("Suggested times are provided when you click on the cell for each
+           category"), i.e. guidance for one activity at a time. Applying all 21 at
+           once totals 32.8 hours against a 7.5-hour budget — a module no one would
+           ever build. See CLAUDE.md; better guidance is an open question. */
+
+        $("btn-report").addEventListener("click", function () {
+          buildReport();
+          $("reportWrap").scrollIntoView({ behavior: "smooth" });
         });
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      } catch(err){ /* storage unavailable; ignore */ }
-    }, 400);
-  }
 
-  function load(){
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      var data = JSON.parse(raw);
-      if (data.format === "blended") $("fmt-blended").checked = true;
-      else if (data.format === "online") $("fmt-online").checked = true;
-      ALL_FIELDS.forEach(function(id){
-        if (!(id in data)) return;          // migration: new fields keep defaults
-        var e = $(id);
-        if (e) e.value = data[id];
-      });
-    } catch(err){ /* corrupt or unavailable; ignore */ }
-  }
+        $("btn-copy").addEventListener("click", function () {
+          var text = asText();
+          var done = function () {
+            $("copystatus").textContent = "Plan copied to clipboard.";
+            setTimeout(function () { $("copystatus").textContent = ""; }, 3000);
+          };
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text, done); });
+          } else {
+            fallbackCopy(text, done);
+          }
+        });
 
-  /* ---------------- wiring ---------------- */
+        function fallbackCopy(text, done) {
+          var ta = document.createElement("textarea");
+          ta.value = text;
+          ta.setAttribute("readonly", "");
+          ta.style.position = "absolute";
+          ta.style.left = "-9999px";
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand("copy"); done(); } catch (e) { }
+          document.body.removeChild(ta);
+        }
 
-  $("f").addEventListener("input", render);
-  $("f").addEventListener("change", render);
+        $("btn-print").addEventListener("click", function () {
+          buildReport();
+          window.print();
+        });
 
-  /* There is deliberately no "fill everything with suggested times" control.
-     In the original workbook these were per-cell Excel input-message tooltips
-     ("Suggested times are provided when you click on the cell for each
-     category"), i.e. guidance for one activity at a time. Applying all 21 at
-     once totals 32.8 hours against a 7.5-hour budget — a module no one would
-     ever build. See CLAUDE.md; better guidance is an open question. */
+        $("btn-reset").addEventListener("click", function () {
+          if (!window.confirm("Clear all entries and start over?")) return;
+          try { localStorage.removeItem(STORAGE_KEY); } catch (e) { }
+          $("f").reset();
+          $("reportWrap").hidden = true;
+          render();
+        });
 
-  $("btn-report").addEventListener("click", function(){
-    buildReport();
-    $("reportWrap").scrollIntoView({behavior:"smooth"});
-  });
+        // expose for automated checks
+        window.__calcWeek = calcWeek;
+        window.__calcModule = calcModule;
+        window.__asText = asText;
 
-  $("btn-copy").addEventListener("click", function(){
-    var text = asText();
-    var done = function(){
-      $("copystatus").textContent = "Plan copied to clipboard.";
-      setTimeout(function(){ $("copystatus").textContent = ""; }, 3000);
-    };
-    if (navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(text).then(done, function(){ fallbackCopy(text, done); });
-    } else {
-      fallbackCopy(text, done);
-    }
-  });
+        load();
+        render();
+      })();
+    </script>
+  </body>
 
-  function fallbackCopy(text, done){
-    var ta = document.createElement("textarea");
-    ta.value = text;
-    ta.setAttribute("readonly","");
-    ta.style.position = "absolute";
-    ta.style.left = "-9999px";
-    document.body.appendChild(ta);
-    ta.select();
-    try { document.execCommand("copy"); done(); } catch(e){}
-    document.body.removeChild(ta);
-  }
-
-  $("btn-print").addEventListener("click", function(){
-    buildReport();
-    window.print();
-  });
-
-  $("btn-reset").addEventListener("click", function(){
-    if (!window.confirm("Clear all entries and start over?")) return;
-    try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
-    $("f").reset();
-    $("reportWrap").hidden = true;
-    render();
-  });
-
-  // expose for automated checks
-  window.__calcWeek   = calcWeek;
-  window.__calcModule = calcModule;
-  window.__asText     = asText;
-
-  load();
-  render();
-})();
-</script>
-</body>
 </html>
