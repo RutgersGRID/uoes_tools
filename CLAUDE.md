@@ -289,21 +289,32 @@ builders.
 one clobbering the other. This matters because v2's module shape differs
 from v1's.
 
-### The four steps
+### The three steps
 
 1. **Decide what your students will take away from your course** (was
    "Decide where students should end up"). The Learning Objective Builder
-   link was removed from this step; the goals lead-in reads "What should
-   students be able to do by the end of the course." — punctuated as a
-   statement, per Maka's wording, and set at 24px. Topic triage unchanged.
+   link was removed from this step; the objectives lead-in reads "What
+   should students be able to do by the end of the course." — punctuated
+   as a statement, per Maka's wording, and set at 24px. Topic triage
+   unchanged.
 2. **Decide how you'll assess each course objective** (was "…each goal").
    Still the per-objective assessment list, live-synced from Step 1.
-3. Was Step 4 — Choose a structure and teaching strategy (optional).
-   Unchanged apart from the number.
-4. Was Step 5 — Map it onto your modules.
+3. **Map it onto your modules** (v1's Step 5).
+
+**v2 started with four steps.** The third — "Choose a structure and
+teaching strategy (optional)", carrying an organizing-principle dropdown
+and a strategy textarea — was **removed on August 26, 2026** at Maka's
+request, and the module step renumbered from 4 to 3. Gone with it: the
+`PRINCIPLES` description table, the "Ways to organize a course" guidance
+panel, `#principleNote` in the stylesheet, and the "Organization &
+teaching strategy" block of the generated plan. `load()` deletes
+`principle` and `strategy` from saved work, the same way `duedates` is
+dropped. The harness guards it staying gone — no such heading, no
+`#principle`/`#strategy`/`#principleNote` in the DOM, no orphaned
+`step4Head`/`step5Head` ids.
 
 **The big shift in v2 is that the module is where the work happens.**
-Step 4 walks through objectives → assessments → activities *at the module
+Step 3 walks through objectives → assessments → activities *at the module
 level*, then presents the module cards. Its order is:
 
 - lead paragraph ("across the modules (weeks)")
@@ -317,14 +328,15 @@ level*, then presents the module cards. Its order is:
 - **Module cards** — the course-objective key, then the cards
 
 The "What makes a good assessment online?" panel appears **twice on
-purpose**: once in Step 2 for course objectives, once in Step 4 for
+purpose**: once in Step 2 for course objectives, once in Step 3 for
 module objectives. Do not dedupe it. Their accessible names are
 distinguished by an `.sr-only` qualifier — see **Accessibility
 conventions**.
 
 v1's Step 3 (Design the learning activities) is gone entirely — both the
-standalone step and, as of the same day, the per-goal activities list that
-had been folded into Step 4. Goals no longer carry an `activities` field;
+standalone step and, as of the same day, the per-objective activities list
+that had been folded into the module step. Course objectives no longer
+carry an `activities` field;
 `load()` deletes it from legacy saves. Activities are a module-card field
 only.
 
@@ -340,7 +352,7 @@ Activities**.
 - The two-column row is `.two-col` (`1fr 1fr`), replacing v1's
   `.three-col`. **Assessments is the left column, Activities the right** —
   swapped July 29, 2026, so the card reads assess-then-practice, matching
-  the order of the Step 4 headings above it. Still stacks to one column
+  the order of the Step 3 headings above it. Still stacks to one column
   under 640px.
 - Objectives is no longer a single optional text field. It is a
   **repeatable list**, added and removed the same way course objectives are
@@ -414,10 +426,10 @@ identifiers alone unless you write a migration.
 `load()` in v2 accepts v1-shaped saves: a string `objectives` becomes a
 one-row list, a missing or non-array `objectives` becomes a single blank
 row, string rows become `{text, align: []}`, `duedates` is deleted, and a
-goal's `activities` field is deleted. Everything else — auto-save
-debounce, print CSS, copy-as-text, "Start over", topic triage, the
-organizing-principle descriptions, the CMU Eberly Center footer credit —
-is unchanged from v1.
+course objective's `activities` field is deleted, and `principle` and
+`strategy` are deleted. Everything else — auto-save debounce, print CSS,
+copy-as-text, "Start over", topic triage, the CMU Eberly Center footer
+credit — is unchanged from v1.
 
 ## Workload Estimator notes
 
@@ -647,10 +659,11 @@ saves, "Start over", report and copy text, print-PDF non-blankness,
 label/aria coverage, computed focus outlines, the design tokens, and the
 Mid-Blue-underline prohibition.
 
-For the course planner v2, `test/verify_course_planner_v2.js` runs 96
-checks: the four step headings and badge numbers, the reworded Step 1 and
+For the course planner v2, `test/verify_course_planner_v2.js` runs 98
+checks: the three step headings and badge numbers, the reworded Step 1 and
 Step 2 text, the Learning Objective Builder link appearing exactly once and
-only in Step 4, the absence of the old per-objective activities list, module
+only in the module step, the absence of the old per-objective activities
+list, module
 card row order (Objectives, Materials, then Assessments left of
 Activities), the absence of any due-date control, label/aria coverage, the
 focus outline, and live sync of course objective text into Step 2 and the
@@ -712,6 +725,12 @@ rather than counted as a parse failure.
 
 ## Current status (August 2026)
 
+- **The planner dropped to three steps, August 26, 2026.** "Choose a
+  structure and teaching strategy (optional)" was removed at Maka's
+  request and the module step renumbered 4 → 3. See **The three steps**.
+  Worth flagging to the designers comparing v2 against v1: v1 still has
+  its own five-step shape, so the two now differ by two steps, and any
+  v2 feedback about the organizing-principle dropdown is moot.
 - **Disclosure panel accessibility pass, August 26, 2026.** The
   collapsible guidance panels were sound in their bones — real
   `<details>/<summary>`, default marker intact, focus ring covered by
@@ -769,7 +788,7 @@ rather than counted as a parse failure.
   a hunch: the Step 1 objectives lead-in is punctuated as a statement
   ("…by the end of the course."); the alignment chips are abbreviated to
   CO1/CO2 by design, with the key carrying the full text; and the "What makes a
-  good assessment online?" panel appears in both Step 2 and Step 4
+  good assessment online?" panel appears in both Step 2 and Step 3
   deliberately.
 - workload_estimator.html added July 27, 2026 and linked from index.html.
   **Not cleared for publishing yet.** The CC BY-NC-SA footer wording reads
