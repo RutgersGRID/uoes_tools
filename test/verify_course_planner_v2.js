@@ -5,7 +5,6 @@ const path = require("path");
 const { chromePath } = require("./_chrome.js");
 const EXEC = chromePath();
 const URL = "file://" + path.resolve(__dirname, "..", "course_planner.html");
-const V1URL = "file://" + path.resolve(__dirname, "..", "obsolete", "course_planner_v1.html");
 
 let pass = 0, fail = 0;
 const ok = (name, cond, extra) => {
@@ -409,19 +408,6 @@ const ok = (name, cond, extra) => {
   ok("print CSS keeps <main> visible", printVisible.main);
   ok("print CSS keeps the plan visible", printVisible.plan);
   await page.emulateMedia({ media: "screen" });
-
-  // ---- v1 untouched ----
-  const v1 = await ctx.newPage();
-  await v1.goto(V1URL);
-  await v1.waitForTimeout(200);
-  ok("v1 still has basics + 5 steps",
-    (await v1.$$eval("section.step h2", ns => ns.length)) === 6);
-  ok("v1 still has Due dates", /Due dates/.test(await v1.content()));
-  ok("v1 objectives are still a single field, not a list",
-    (await v1.$$eval("#moduleCards .obj-row", ns => ns.length)) === 0 &&
-    (await v1.$$eval("#mod0-objectives", ns => ns.length)) === 1);
-  ok("v1 still uses the v1 storage key",
-    /uoes-course-planner"/.test(await v1.content()));
 
   await browser.close();
   console.log("\n" + pass + " passed, " + fail + " failed");

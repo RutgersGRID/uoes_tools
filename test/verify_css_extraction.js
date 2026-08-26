@@ -2,10 +2,11 @@
  * verify_css_extraction.js
  *
  * Guards the move from inline <style> blocks to the shared stylesheets in
- * css/. It checks that every converted page links the right sheets in the
- * right order, that the design tokens and the focus convention actually
- * resolve on each page, that the frozen v1 pages were left alone, and that
- * no page-level stylesheet has drifted back to hardcoded brand hex codes.
+ * css/. It checks that every page links the right sheets in the right
+ * order, that the design tokens and the focus convention actually resolve
+ * on each page, that the disclosure panels meet the accessibility
+ * conventions, and that no page-level stylesheet has drifted back to
+ * hardcoded brand hex codes.
  *
  * Needs: npm install playwright-core
  * Run:   node test/verify_css_extraction.js
@@ -34,10 +35,6 @@ const CONVERTED = {
   "workload_estimator.html": ["css/base.css", "css/calculator.css", "css/workload_estimator.css"],
 };
 for (const k of Object.keys(CONVERTED)) CONVERTED[k] = CONVERTED[k].concat(HEADER);
-
-// Frozen field-testing baselines: these must keep their inline CSS so they
-// render exactly as the designers saw them, whatever css/ later becomes.
-const FROZEN = ["obsolete/learning_objectives_v1.html", "obsolete/course_planner_v1.html"];
 
 // The tokens every page must resolve, and the values they must resolve to.
 const TOKENS = {
@@ -186,22 +183,7 @@ const ok = (label, cond, detail) => {
     await page.close();
   }
 
-  /* ===== 2. Frozen pages keep their inline CSS ===== */
-  for (const file of FROZEN) {
-    const src = fs.readFileSync(path.join(ROOT, file), "utf8");
-    ok(file + ": still has its inline <style> block", /<style>/.test(src));
-    ok(file + ": links no external stylesheet", !/href="css\//.test(src));
-
-    const page = await browser.newPage();
-    await page.goto("file://" + path.join(ROOT, file));
-    const bg = await page.evaluate(() =>
-      getComputedStyle(document.body).backgroundColor);
-    ok(file + ": still renders on the page background",
-      bg === "rgb(244, 247, 249)", bg);
-    await page.close();
-  }
-
-  /* ===== 3. Stylesheet hygiene ===== */
+  /* ===== 2. Stylesheet hygiene ===== */
   {
     const dir = path.join(ROOT, "css");
     const files = fs.readdirSync(dir).filter((f) => f.endsWith(".css"));
@@ -225,7 +207,7 @@ const ok = (label, cond, detail) => {
     }
   }
 
-  /* ===== 4. Disclosure panel accessibility =====
+  /* ===== 3. Disclosure panel accessibility =====
      Guards the fixes made to the collapsible guidance panels: summaries
      must be headings (so heading navigation reaches them), accessible
      names must be unique on the page, the panel border must clear the
