@@ -31,17 +31,28 @@ h1 { text-align: center; }
    on each; page files add only their own extras. */
 .guide {
   background: var(--blue-light);
-  border: 1px solid var(--blue-mid);
+  /* Rutgers Blue, not Mid Blue: this border is the only thing that marks
+     the panel's edge (the Light Blue fill is 1.09:1 against the page
+     background), and Mid Blue is 1.90:1 against it - under the 3:1 that
+     WCAG 1.4.11 asks of a UI boundary. Same reason input underlines use
+     --blue; see the note on the token in base.css. */
+  border: 1px solid var(--blue);
   border-radius: 8px;
   padding: 10px 16px;
   margin-bottom: 16px;
-  font-size: 15px;
+  /* Matches body text. This is the densest prose on the page and was
+     previously set a step smaller than everything around it. */
+  font-size: 16px;
 }
 
 .guide summary {
   cursor: pointer;
   font-weight: bold;
   color: #000;
+  /* Lifts the click/tap target clear of the 24px WCAG 2.5.8 minimum;
+     a bare line of text came to 23.25px and passed only on the
+     spacing exception. */
+  padding: 3px 0;
 }
 
 /* The summary text is wrapped in a heading so that guidance panels are

@@ -86,7 +86,8 @@ input[type="number"]:focus, select:focus { background: var(--blue-light); }
 /* ---- collapsible methodology panels ---- */
 
 details { margin-top: .75rem; font-size: .85rem; }
-summary { cursor: pointer; color: var(--blue); }
+/* padding: clears the 24px WCAG 2.5.8 target minimum at this type size. */
+summary { cursor: pointer; color: var(--blue); padding: 3px 0; }
 
 /* Summary text is wrapped in a heading so these panels are reachable by
    heading navigation. Inline so it stays on the disclosure marker's line
