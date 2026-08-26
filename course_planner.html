@@ -153,55 +153,7 @@
       </section>
 
       <section class="step" aria-labelledby="step3Head">
-        <h2 id="step3Head"><span class="step-num" aria-hidden="true">3</span>Choose a structure and teaching strategy
-          (optional)</h2>
-        <p class="step-lead">Now decide how the essential topics will unfold
-          across the course, and what mix of activities will move students from
-          where they start to your objectives.</p>
-
-        <details class="guide">
-          <summary><h3>Ways to organize a course (and how to pick)</h3></summary>
-          <p>There is no single right structure &mdash; the right one is whichever
-            best supports your objectives. Whatever you choose, a course should build:
-            start with foundational pieces, and progress toward synthesis and
-            integration, so students can connect each new idea to the ones before
-            it. Think of the course as a narrative: an <em>introduction</em> that
-            frames the key questions, a <em>development</em> that explores them,
-            and a <em>conclusion</em> where threads converge or new questions
-            emerge.</p>
-          <p>To choose a teaching strategy, work backward: What must students be
-            able to do at the end? What skills and knowledge does that require?
-            Then ask what activities give them enough <em>practice</em> in those
-            skills, and how to sequence the activities so skills build. Online,
-            a reliable weekly pattern works well &mdash; for example: absorb (short
-            videos or readings) &rarr; interact (discussion or group work) &rarr;
-            produce (an assignment or quiz), repeated with rising complexity.</p>
-        </details>
-
-        <p><label for="principle">Organizing principle</label></p>
-        <select id="principle">
-          <option value="">&mdash; choose one &mdash;</option>
-          <option>Chronological</option>
-          <option>Concrete to abstract</option>
-          <option>Abstract to concrete</option>
-          <option>Theory to application</option>
-          <option>Application to theory</option>
-          <option>Question-centered</option>
-          <option>Problem- or case-based</option>
-          <option>Disciplinary categories</option>
-        </select>
-        <div id="principleNote" role="status"></div>
-
-        <p style="margin-top:18px;"><label for="strategy">Teaching strategy sketch</label></p>
-        <p class="step-lead" style="margin-top:0;">In a sentence or two: what
-          weekly mix of activities will students do, and how will the work grow
-          more complex as the course proceeds?</p>
-        <textarea id="strategy" rows="3"
-          placeholder="e.g., Each module: short lecture videos introduce a theory, a discussion board critiques it, and a case write-up applies it. Cases grow from single-issue to multi-issue, ending in a full project."></textarea>
-      </section>
-
-      <section class="step" aria-labelledby="step4Head">
-        <h2 id="step4Head"><span class="step-num" aria-hidden="true">4</span>Map it onto your modules</h2>
+        <h2 id="step3Head"><span class="step-num" aria-hidden="true">3</span>Map it onto your modules</h2>
         <p class="step-lead">Distribute your essential topics, activities, and
           assessments across the modules (weeks). Rearrange until the workload feels
           realistic for students &mdash; and for you.</p>
@@ -318,43 +270,9 @@
         moduleCount: 16,
         goals: [],   // {id, text, evidence (assessment)}
         topics: [],  // {id, text, priority}
-        principle: "",
-        strategy: "",
         // {topic, objectives: [{text, align:[goalId]}], materials, activities,
         // assessments} per module
         modules: []
-      };
-
-      // Descriptions shown when an organizing principle is chosen
-      const PRINCIPLES = {
-        "Chronological":
-          "Content unfolds in time order — historical development, life cycles, " +
-          "or process sequences. Works well when later events only make sense " +
-          "in light of earlier ones.",
-        "Concrete to abstract":
-          "Start with familiar examples and cases, then draw out the general " +
-          "concepts behind them. Good for students new to the discipline.",
-        "Abstract to concrete":
-          "Establish concepts and frameworks first, then apply them to specific " +
-          "examples. Suits students with some grounding in the field.",
-        "Theory to application":
-          "Introduce theories, then practice applying them to problems or " +
-          "settings. Make sure application gets real practice time, not just a " +
-          "mention at the end.",
-        "Application to theory":
-          "Begin with practical problems, letting the need for theory emerge " +
-          "from them. Strong for motivation; plan carefully so the theory still " +
-          "gets built systematically.",
-        "Question-centered":
-          "Each module answers a driving question. Questions make great weekly " +
-          "discussion anchors in online courses.",
-        "Problem- or case-based":
-          "Modules are organized around problems or cases rather than topics. " +
-          "Skills and concepts are introduced when the case demands them.",
-        "Disciplinary categories":
-          "Follow the standard subfield divisions of your discipline. Familiar " +
-          "and easy to map to textbooks — just make sure the sequence still " +
-          "builds toward your objectives rather than staying a list of silos."
       };
 
       const $ = id => document.getElementById(id);
@@ -378,6 +296,10 @@
           const saved = JSON.parse(raw);
           Object.assign(state, saved);
           // Work saved before the activities step existed lacks the field
+          // The structure/teaching-strategy step was removed; discard any
+          // saved organizing principle and strategy sketch
+          delete state.principle;
+          delete state.strategy;
           // Per-goal activities were dropped; activities now live on the
           // module cards
           state.goals.forEach(g => { delete g.activities; });
@@ -843,23 +765,6 @@
         }
         text.push("");
 
-        // Structure and strategy
-        html.push("<h3>Organization &amp; teaching strategy</h3>");
-        text.push("ORGANIZATION & TEACHING STRATEGY");
-        if (state.principle) {
-          html.push("<p><strong>Organizing principle:</strong> " + esc(state.principle) + "</p>");
-          text.push("Organizing principle: " + state.principle);
-        }
-        if (state.strategy.trim()) {
-          html.push("<p><strong>Strategy:</strong> " + esc(state.strategy.trim()) + "</p>");
-          text.push("Strategy: " + state.strategy.trim());
-        }
-        if (!state.principle && !state.strategy.trim()) {
-          html.push('<p class="muted">Not chosen yet.</p>');
-          text.push("(not chosen yet)");
-        }
-        text.push("");
-
         // Module schedule
         html.push("<h3>Module schedule</h3>");
         text.push("MODULE SCHEDULE");
@@ -956,20 +861,6 @@
         inputs[inputs.length - 1].focus();
       });
 
-      const principleSel = $("principle");
-      principleSel.addEventListener("change", () => {
-        state.principle = principleSel.value;
-        const note = $("principleNote");
-        if (PRINCIPLES[state.principle]) {
-          note.textContent = PRINCIPLES[state.principle];
-          note.style.display = "block";
-        } else {
-          note.style.display = "none";
-        }
-        save();
-      });
-      $("strategy").addEventListener("input", e => { state.strategy = e.target.value; save(); });
-
       $("resetBtn").addEventListener("click", () => {
         if (!confirm("Clear everything and start over?")) return;
         try { localStorage.removeItem(STORAGE_KEY); } catch (e) { }
@@ -980,12 +871,6 @@
       load();
       $("courseTitle").value = state.course;
       $("moduleCount").value = state.moduleCount;
-      $("strategy").value = state.strategy;
-      principleSel.value = state.principle;
-      if (PRINCIPLES[state.principle]) {
-        $("principleNote").textContent = PRINCIPLES[state.principle];
-        $("principleNote").style.display = "block";
-      }
       if (!state.goals.length) state.goals.push({ id: seq++, text: "", evidence: "" });
       if (!state.topics.length) {
         state.topics.push({ id: seq++, text: "", priority: "Essential" });

@@ -246,17 +246,6 @@ button {
   color: var(--surface);
 }
 
-/* The organizing-principle description box */
-#principleNote {
-  background: var(--blue-light);
-  border-radius: 6px;
-  padding: 10px 14px;
-  font-size: 15px;
-  line-height: 1.5;
-  margin-top: 10px;
-  display: none;
-}
-
 /* ---- module schedule cards ---- */
 
 .grid-caption {

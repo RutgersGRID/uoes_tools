@@ -29,18 +29,18 @@ const ok = (name, cond, extra) => {
   ok("title marks v2", (await page.title()) === "Course Content Planner (v2)");
 
   const h2s = await page.$$eval("section.step h2", ns => ns.map(n => n.textContent.replace(/\s+/g, " ").trim()));
-  ok("five section headings (basics + 4 steps)", h2s.length === 5, JSON.stringify(h2s));
+  ok("four section headings (basics + 3 steps)", h2s.length === 4, JSON.stringify(h2s));
   ok("step 1 heading reworded",
     h2s[1] === "1Decide what your students will take away from your course", h2s[1]);
   ok("step 2 heading reworded",
     h2s[2] === "2Decide how you'll assess each course objective", h2s[2]);
-  ok("step 3 is structure/strategy",
-    h2s[3] === "3Choose a structure and teaching strategy (optional)", h2s[3]);
-  ok("step 4 is module mapping",
-    h2s[4] === "4Map it onto your modules", h2s[4]);
+  ok("step 3 is module mapping",
+    h2s[3] === "3Map it onto your modules", h2s[3]);
+  ok("the structure/teaching-strategy step is gone",
+    !h2s.some(h => /structure and teaching strategy/i.test(h)), JSON.stringify(h2s));
 
   const nums = await page.$$eval("section.step .step-num", ns => ns.map(n => n.textContent.trim()));
-  ok("step badges are 1-4 with no 5", JSON.stringify(nums) === JSON.stringify(["✎", "1", "2", "3", "4"]), JSON.stringify(nums));
+  ok("step badges are 1-3 with no 4", JSON.stringify(nums) === JSON.stringify(["✎", "1", "2", "3"]), JSON.stringify(nums));
 
   const step1 = await page.$eval("section[aria-labelledby='step1Head']", n => n.innerHTML);
   ok("step 1 has no Learning Objective Builder link", !/learning_objectives\.html/.test(step1));
@@ -49,8 +49,8 @@ const ok = (name, cond, extra) => {
   ok("goals lead-in updated",
     goalLead === "What should students be able to do by the end of the course.", goalLead);
 
-  const step4 = await page.$eval("section[aria-labelledby='step4Head']", n => n.innerHTML);
-  ok("step 4 has the Learning Objective Builder link", /learning_objectives\.html/.test(step4));
+  const modStep = await page.$eval("section[aria-labelledby='step3Head']", n => n.innerHTML);
+  ok("the module step has the Learning Objective Builder link", /learning_objectives\.html/.test(modStep));
   const lobCount = await page.$$eval("a[href='learning_objectives.html']", ns => ns.length);
   ok("exactly one LOB link on the page", lobCount === 1, "count=" + lobCount);
 
@@ -60,13 +60,15 @@ const ok = (name, cond, extra) => {
   ok("no leftover 'Assessed by:' rows outside Step 2",
     !/Assessed by:/.test(await page.evaluate(() => document.body.innerText)));
   ok("the goal key still sits above the module cards", await page.evaluate(() => {
-    const s = document.querySelector("section[aria-labelledby='step4Head']");
+    const s = document.querySelector("section[aria-labelledby='step3Head']");
     const a = s.querySelector("#goalLegend"), m = s.querySelector("#moduleCards");
     return !!(a && m) &&
       !!(a.compareDocumentPosition(m) & Node.DOCUMENT_POSITION_FOLLOWING);
   }));
-  ok("old step-3 section id is gone (renumbered, not duplicated)",
-    !/id="step5Head"/.test(await page.content()));
+  ok("no orphaned step section ids (renumbered, not duplicated)",
+    !/id="step(4|5)Head"/.test(await page.content()));
+  ok("the organizing-principle and strategy controls are gone",
+    (await page.$$eval("#principle, #strategy, #principleNote", ns => ns.length)) === 0);
 
   // ---- module cards ----
   const cardOrder = await page.$eval("#moduleCards .mod-card:first-child .card-body", n =>
@@ -135,8 +137,6 @@ const ok = (name, cond, extra) => {
   await page.fill("#mod0-materials", "Chapter 3; food-web dataset");
   await page.fill("#mod0-activities", "Watch intro video; discussion post");
   await page.fill("#mod0-assessments", "Practice quiz");
-  await page.selectOption("#principle", "Concrete to abstract");
-  await page.fill("#strategy", "Videos, then discussion, then a case.");
   await page.waitForTimeout(700);
 
   // ---- localStorage under the v2 key only ----
@@ -145,6 +145,8 @@ const ok = (name, cond, extra) => {
   ok("does not touch the v1 key", !keys.includes("uoes-course-planner"), JSON.stringify(keys));
   const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-course-planner-v2")));
   ok("saved module has no duedates field", !("duedates" in saved.modules[0]), JSON.stringify(saved.modules[0]));
+  ok("saved state carries no principle or strategy",
+    !("principle" in saved) && !("strategy" in saved), JSON.stringify(Object.keys(saved)));
   ok("saved module keeps materials", saved.modules[0].materials === "Chapter 3; food-web dataset");
   ok("saved objectives are a list of {text, align}",
     Array.isArray(saved.modules[0].objectives) &&
@@ -165,7 +167,6 @@ const ok = (name, cond, extra) => {
     (await page.inputValue("#mod0-obj0")) === "Identify trophic levels");
   ok("alignment checkbox round-trips",
     await page.isChecked('#moduleCards .mod-card:first-child .obj-row:first-child .align-chip input'));
-  ok("principle round-trips", (await page.inputValue("#principle")) === "Concrete to abstract");
 
   // ---- migration: a v1-shaped save (with duedates) loaded under the v2 key ----
   await page.evaluate(() => {
@@ -197,6 +198,9 @@ const ok = (name, cond, extra) => {
   await page.waitForTimeout(700);
   const migrated = await page.evaluate(
     () => JSON.parse(localStorage.getItem("uoes-course-planner-v2")));
+  ok("migration: a legacy principle and strategy are discarded",
+    !("principle" in migrated) && !("strategy" in migrated),
+    JSON.stringify(Object.keys(migrated)));
   ok("migration: duedates dropped from saved state",
     !("duedates" in migrated.modules[0]), JSON.stringify(migrated.modules[0]));
   ok("migration: objectives saved back as a list",
