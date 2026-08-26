@@ -19,10 +19,9 @@ that no longer exist; trust this list.
 - `index.html` — landing page listing the tools. Add a `<li>` to the
   tool list whenever a new tool page is added. It lists one entry per
   tool. `blooms_verbs.html` is deliberately not listed — see below.
-- `learning_objectives.html` — Learning Objective Builder **v2**, the live
-  one (page `<title>` still says "v2"; the on-page heading does not).
-  Out with instructional designers for feedback; a final version will be
-  chosen after field testing.
+- `learning_objectives.html` — Learning Objective Builder. Out with
+    instructional designers for feedback; a final version will be chosen
+    after field testing.
 - `blooms_verbs.html` — Bloom's Taxonomy Verbs, a standalone reference
   sheet linked from the objective builder (see below). Not listed on
   index.html, on purpose.
@@ -263,17 +262,43 @@ describes the live one:
 ## Course Content Planner v2 notes
 
 `course_planner.html` (then named `course_planner_v2.html`), created
-July 29, 2026 from instructional
-designer feedback on v1. v1 stays in the repo unchanged so the two can be
-compared side by side. The page `<title>` reads "Course Content Planner
-(v2)"; the on-page `<h1>` does not — same convention as the objective
-builders.
+July 29, 2026 from instructional designer feedback on the original
+planner, which was deleted August 26, 2026. Neither page carries a
+version in its `<title>` any more — both were dropped on August 26, when
+the v1 pages went and the suffix stopped meaning anything.
 
 **Storage is deliberately separate.** The planner saves to
 `uoes-course-planner-v2`, never the v1 key `uoes-course-planner`. That
 mattered when both pages existed; it still matters now that v1 is
 deleted, because a v1-shaped save may survive in a user's browser and
 the module shapes differ.
+
+### Collapsible steps
+
+The whole page read as one long form and was intimidating on arrival, so
+**each step's body sits in a `<details class="step-body">` whose
+`<summary>` is that step's own `<h2>`** (August 26, 2026). A step
+collapses to its heading.
+
+- **Course basics and Step 1 carry `open` in the markup; Steps 2 and 3
+  start closed.** On load the page is ~1700px tall instead of ~8600px.
+- All four are collapsible, not just the later two, so a step can be
+  folded away once it is done.
+- The open/closed state is **not persisted** — a reload returns to the
+  default. Content is saved as always; only the disclosure state resets.
+- This is the same arrangement as the `.guide` panels: a real
+  `<details>`/`<summary>` so the button role, `aria-expanded` and
+  keyboard activation come for free, with the heading inline inside the
+  summary. Heading navigation still reaches every step and each
+  section's `aria-labelledby` still resolves. See **Accessibility
+  conventions**.
+- The plan generator reads `state`, not the DOM, so **"Create My Course
+  Plan" works with every step collapsed** — there is a check for this.
+
+**This matters for the harness.** Anything that drives a control inside
+Step 2 or Step 3 must open the step first, or Playwright times out
+waiting for visibility — and the steps revert to the default on every
+reload, so `openSteps()` is called after each one.
 
 ### The three steps
 
@@ -645,8 +670,11 @@ saves, "Start over", report and copy text, print-PDF non-blankness,
 label/aria coverage, computed focus outlines, the design tokens, and the
 Mid-Blue-underline prohibition.
 
-For the course planner, `test/verify_course_planner_v2.js` runs 94
-checks: the three step headings and badge numbers, the reworded Step 1 and
+For the course planner, `test/verify_course_planner_v2.js` runs 99
+checks: the three step headings and badge numbers, the collapsible-step
+defaults (all four are `<details>`, basics and Step 1 open, 2 and 3
+closed, a closed step really hides its body, clicking a heading toggles
+it), the reworded Step 1 and
 Step 2 text, the Learning Objective Builder link appearing exactly once and
 only in the module step, the absence of the old per-objective activities
 list, module
@@ -671,7 +699,7 @@ of a v1-shaped save (string `objectives` → one row, `duedates` and goal
 G-number tags and field ordering, print-PDF non-blankness and print-CSS
 visibility.
 
-For the stylesheets, `test/verify_css_extraction.js` runs 149 checks: each
+For the stylesheets, `test/verify_css_extraction.js` runs 153 checks: each
 converted page links exactly the expected sheets in the expected order
 with `base.css` first, every sheet actually parses (a 404 or a typo'd
 `href` yields zero rules and fails), no inline `<style>` block survives,
@@ -713,11 +741,8 @@ rather than counted as a parse failure.
   directory — Maka's call; the side-by-side field test against v1 is no
   longer something to protect. Recoverable from git history. The
   harnesses lost their frozen-page and v1-untouched guards with them.
-  **Loose end:** both live pages still carry "v2" in their `<title>`
-  ("Course Content Planner (v2)", "Learning Objective Builder v2"), which
-  now names a distinction that no longer exists. The planner harness
-  asserts that title, so changing it means changing the check too.
-  Left alone pending Maka.
+  The "v2" suffix was dropped from both page `<title>`s the same day, once
+  it named a distinction that no longer existed.
 - **The planner dropped to three steps, August 26, 2026.** "Choose a
   structure and teaching strategy (optional)" was removed at Maka's
   request and the module step renumbered 4 → 3. See **The three steps**.
