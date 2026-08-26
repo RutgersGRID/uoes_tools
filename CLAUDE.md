@@ -240,7 +240,9 @@ describes the live one:
 
 - **Module cards, not a table.** Header bar with "Module N" + topic
   input, then the fields. Default 16 modules, min 1 / max 20; resizing
-  preserves entered text. Stacks to one column under 640px.
+  preserves entered text. Stacks to one column under 640px. The header
+  bar is also the card's disclosure control — see **Collapsible module
+  cards**.
 - **Terminology is `assessment`, not "evidence", in all UI text** — the
   internal state field is still `evidence`, for saved-data
   compatibility. Same split as the goals/objectives rename; see **Course
@@ -369,6 +371,54 @@ Activities**.
   **repeatable list**, added and removed the same way course objectives are
   ("+ Add an objective" plus a × on each row). A module always keeps at
   least one row — removing the last one re-adds a blank.
+
+### Collapsible module cards
+
+Sixteen expanded cards was a wall of form, so **"Module N" in each card
+header is a disclosure button** over that card's body (August 26, 2026).
+Module 1 starts open; the rest start closed.
+
+- **The topic input stays outside the collapsing region**, in the header
+  bar beside the button, so a whole course's topics can be typed straight
+  down the collapsed list. Only the body — objectives, materials,
+  assessments, activities — collapses.
+- **This is why the card uses a `<button aria-expanded aria-controls>`
+  rather than a `<details>`/`<summary>` like the steps and guide panels.**
+  A click on an input inside a `<summary>` toggles the panel, so the topic
+  field could not live there. Do not "harmonise" this into a `<details>`
+  without moving the topic field inside it and accepting that cost.
+- The triangle is a CSS `::before` on the button, swapped by the
+  `[aria-expanded="true"]` attribute selector, so it always matches the
+  real state.
+- **Open state lives in a `Set` outside `state`**, keyed by module index.
+  It survives a re-render — and `renderModules()` runs whenever a course
+  objective is added or removed, so this matters — but not a reload. Same
+  choice the collapsible steps make.
+
+### The module count is editable in two places
+
+Course basics has the original `#moduleCount`; Step 3 has
+`#moduleCountCards` sitting directly above the cards, because that is
+where you notice the number is wrong. **Both read and write the one
+`state.moduleCount`** through `setModuleCount()`, which also writes the
+clamped result back into both boxes — typing 50 used to leave 50 in the
+field while only 20 cards appeared.
+
+`setModuleCount()` **returns early when the number has not actually
+moved.** Two inputs feed it and a change event can arrive carrying a
+value the state already holds; rebuilding then discards and recreates
+every card and every listener on it for nothing. There is a check for
+this, and it fails if the guard is removed.
+
+The Step 3 label repeats the visible text of the basics one, so it
+carries an `.sr-only` qualifier to keep the two accessible names
+distinct — see **Accessibility conventions**.
+
+**Harness note:** set a count by filling the field and then *blurring*
+it, never by dispatching `change` by hand. A manual dispatch leaves the
+field focused, and the browser fires its own `change` on the next focus
+move — which lands in the middle of whatever you do next and rebuilds
+the cards under it.
 
 ### Course objective alignment
 
@@ -670,7 +720,7 @@ saves, "Start over", report and copy text, print-PDF non-blankness,
 label/aria coverage, computed focus outlines, the design tokens, and the
 Mid-Blue-underline prohibition.
 
-For the course planner, `test/verify_course_planner_v2.js` runs 99
+For the course planner, `test/verify_course_planner_v2.js` runs 112
 checks: the three step headings and badge numbers, the collapsible-step
 defaults (all four are `<details>`, basics and Step 1 open, 2 and 3
 closed, a closed step really hides its body, clicking a heading toggles
@@ -743,6 +793,12 @@ rather than counted as a parse failure.
   harnesses lost their frozen-page and v1-untouched guards with them.
   The "v2" suffix was dropped from both page `<title>`s the same day, once
   it named a distinction that no longer existed.
+- **Module cards collapse too, August 26, 2026**, and the module count
+  gained a second field beside them in Step 3. See **Collapsible module
+  cards** and **The module count is editable in two places** — including
+  why the cards use a button rather than a `<details>`, and the harness
+  note about setting a count by blurring rather than dispatching
+  `change`.
 - **The planner dropped to three steps, August 26, 2026.** "Choose a
   structure and teaching strategy (optional)" was removed at Maka's
   request and the module step renumbered 4 → 3. See **The three steps**.
