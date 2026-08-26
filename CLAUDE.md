@@ -4,37 +4,30 @@ A collection of single-file HTML tools helping faculty and staff (mostly
 instructional designers) plan and build courses, with a focus on online
 courses. Repo: `themaka/uoes_tools`. Each tool is one .html file with its
 JS inline — no build step, no external dependencies, no framework. CSS
-lives in `css/` and is linked (see **Stylesheets** below); the two frozen
-v1 pages keep their CSS inline.
+lives in `css/` and is linked (see **Stylesheets** below).
 
 ## Files
 
-**Naming convention:** the live version of a tool has the plain name;
-the superseded one gets a `_v1` suffix. Both planners and both objective
-builders were renamed to this scheme on August 12, 2026 — before that,
-`learning_objectives.html` meant v1 and `learning_objectives2.html` meant
-v2, which is the opposite of what it means now. Older notes in this file
-that name a file may predate the rename; trust this list.
+**Naming convention:** each tool is a single plain-named file. There was
+a `_v1` scheme for a while, holding the superseded version of the planner
+and the objective builder alongside the live one; **both v1 pages were
+deleted on August 26, 2026** and the `obsolete/` directory with them, so
+every file below is live. They are recoverable from git history if a
+comparison is ever wanted again. Older notes in this file may name files
+that no longer exist; trust this list.
 
 - `index.html` — landing page listing the tools. Add a `<li>` to the
   tool list whenever a new tool page is added. It lists one entry per
-  tool, pointing at the live version — the frozen `_v1` pages are not
-  linked.
+  tool. `blooms_verbs.html` is deliberately not listed — see below.
 - `learning_objectives.html` — Learning Objective Builder **v2**, the live
   one (page `<title>` still says "v2"; the on-page heading does not).
   Out with instructional designers for feedback; a final version will be
   chosen after field testing.
-- `obsolete/learning_objectives_v1.html` — Learning Objective Builder
-  **v1**. Frozen: do not modify. Field-tested side by side against v2.
-  (Both v1 pages moved into `obsolete/` after the August 12 rename.)
 - `blooms_verbs.html` — Bloom's Taxonomy Verbs, a standalone reference
   sheet linked from the objective builder (see below). Not listed on
   index.html, on purpose.
 - `course_planner.html` — Course Content Planner **v2**, the live one: a
   4-step revision built from instructional designer feedback (see below).
-- `obsolete/course_planner_v1.html` — Course Content Planner **v1**, a
-  5-step backwards design walkthrough (see below). Frozen while v2 is
-  compared against it.
 - `workload_estimator.html` — Course Workload Estimator, a JS port of an
   R/Shiny app (see below).
 - `credit_hour_planner.html` — Credit Hour Planner, a JS port of a
@@ -78,11 +71,6 @@ Rules of thumb when editing:
   A page may add a background wash on `:focus`, nothing more.
 - Never write a brand hex code outside `base.css`; use the token.
   `test/verify_css_extraction.js` fails the build if you do.
-
-**`learning_objectives_v1.html` and `course_planner_v1.html` still carry
-inline CSS on purpose.** They are the frozen field-testing baselines, and
-they must keep rendering exactly as designers saw them however `css/`
-changes underneath. Do not convert them while the comparisons are live.
 
 ## Design system
 
@@ -161,13 +149,14 @@ any new rule.
 
 ## Learning Objective Builder notes
 
-Both versions build an ABCD-model objective (Audience, Behavior,
+The builder builds an ABCD-model objective (Audience, Behavior,
 Condition, Degree) from a template string in the JS: `{placeholder}`
 becomes an inline blank; `{label:Choice1|Choice2}` becomes a dropdown.
 Blanks auto-grow while typing. Output is rendered with underlined,
 labeled parts plus a plain-text copy button.
 
-v2 differences (from instructional designer feedback):
+Shaped by instructional designer feedback on the original version
+(deleted August 26, 2026), which differed as follows:
 - The Opener is no longer a separate field — the condition blank carries
   it (e.g. "Given a blank map of the US"). The word "opener" is
   deliberately absent from all guide/tooltip text; examples like
@@ -240,34 +229,30 @@ position and the lead paragraph states it in words for everyone else. The
 two callouts intentionally echo the calculators: `.avoid` is the red
 `.warn` treatment, `.note` its Light Blue counterpart.
 
-## Course Content Planner notes (v1)
+## Course Content Planner: behaviours to preserve
 
 Content adapted for online/asynchronous delivery from CMU Eberly Center's
 "Course Content & Schedule" guide (credited in the page footer), reframed
-around backwards design. Five steps in v1:
+around backwards design.
 
-1. Decide where students should end up — course goals (links to the
-   Learning Objective Builder) + "topic triage" (Essential / Supporting /
-   Trim, with "coverage is the enemy" guidance).
-2. Decide how you'll assess each goal — goals sync live from Step 1.
-   Terminology is **assessment**, not "evidence", in all UI text — but the
-   internal state field is still `evidence` for saved-data compatibility.
-3. Design the learning activities — per goal, shows the goal + its
-   assessment ("Assessed by: …", live-synced) and a blank for activities.
-   Guidance: absorb / interact / produce mix, low-stakes practice first.
-4. Choose a structure and teaching strategy — organizing-principle
-   dropdown (each choice shows a description) + strategy textarea.
-5. Map it onto your modules — one **card per module** (not a table):
-   header bar with "Module N" + topic input; optional Objectives line;
-   three-column grid Activities / Assessments / Due dates (stacks to one
-   column under 640px); Materials at the bottom. Default 16 modules,
-   min 1 / max 20; resizing preserves entered text.
+These conventions predate v2 and still hold. They were written up when
+there were two planners; the v1 page is gone, but every item here
+describes the live one:
 
-Other behaviors to preserve:
-- Auto-save to `localStorage` under key `uoes-course-planner`
-  (debounced ~400ms, try/catch-wrapped). `load()` migrates older saves:
-  goals gain `activities`; modules gain `objectives`, `assessments`,
-  `duedates`. Never rename existing state fields without a migration.
+- **Module cards, not a table.** Header bar with "Module N" + topic
+  input, then the fields. Default 16 modules, min 1 / max 20; resizing
+  preserves entered text. Stacks to one column under 640px.
+- **Terminology is `assessment`, not "evidence", in all UI text** — the
+  internal state field is still `evidence`, for saved-data
+  compatibility. Same split as the goals/objectives rename; see **Course
+  objective alignment**.
+- Auto-save to `localStorage` (debounced ~400ms, try/catch-wrapped).
+  **Never rename an existing state field without a migration in
+  `load()`.**
+- The **v1 storage key `uoes-course-planner` is still avoided**, and
+  `load()` still migrates a v1-shaped save. The v1 page is deleted but
+  anyone who used it may still have that data in their browser, so both
+  behaviours stay and the harness still checks them.
 - "Create My Course Plan" renders the plan (only filled-in fields; empty
   modules show "(not planned yet)"), with Copy-as-text and Print buttons.
 - Print CSS shows only the generated plan. The hide rule must target
@@ -284,10 +269,11 @@ compared side by side. The page `<title>` reads "Course Content Planner
 (v2)"; the on-page `<h1>` does not — same convention as the objective
 builders.
 
-**Storage is deliberately separate.** v2 saves to
-`uoes-course-planner-v2`, so an instructor can fill in both tools without
-one clobbering the other. This matters because v2's module shape differs
-from v1's.
+**Storage is deliberately separate.** The planner saves to
+`uoes-course-planner-v2`, never the v1 key `uoes-course-planner`. That
+mattered when both pages existed; it still matters now that v1 is
+deleted, because a v1-shaped save may survive in a user's browser and
+the module shapes differ.
 
 ### The three steps
 
@@ -659,7 +645,7 @@ saves, "Start over", report and copy text, print-PDF non-blankness,
 label/aria coverage, computed focus outlines, the design tokens, and the
 Mid-Blue-underline prohibition.
 
-For the course planner v2, `test/verify_course_planner_v2.js` runs 98
+For the course planner, `test/verify_course_planner_v2.js` runs 94
 checks: the three step headings and badge numbers, the reworded Step 1 and
 Step 2 text, the Learning Objective Builder link appearing exactly once and
 only in the module step, the absence of the old per-objective activities
@@ -683,18 +669,16 @@ Plus: saving under the v2 key and *not* the v1 key, round-trip, migration
 of a v1-shaped save (string `objectives` → one row, `duedates` and goal
 `activities` dropped), corrupt-save recovery, plan generation with
 G-number tags and field ordering, print-PDF non-blankness and print-CSS
-visibility, and a guard that `course_planner_v1.html` is still untouched
-(5 steps, due dates, single objectives field, v1 storage key).
+visibility.
 
-For the stylesheets, `test/verify_css_extraction.js` runs 157 checks: each
+For the stylesheets, `test/verify_css_extraction.js` runs 149 checks: each
 converted page links exactly the expected sheets in the expected order
 with `base.css` first, every sheet actually parses (a 404 or a typo'd
 `href` yields zero rules and fails), no inline `<style>` block survives,
 all eight design tokens resolve on every page, every *visible* focusable
 control resolves the 2px Rutgers Blue outline, `.sr-only` is still clipped
-to 1×1, each print sheet still hides `main > :not(#…Wrap)`, the two frozen
-v1 pages still have inline CSS and no `css/` link, and no page-level sheet
-contains a raw brand hex code. Re-run it after touching anything in `css/`.
+to 1×1, each print sheet still hides `main > :not(#…Wrap)`, and no
+page-level sheet contains a raw brand hex code. Re-run it after touching anything in `css/`.
 
 36 of those checks cover the collapsible panels specifically, on every
 converted page: exactly one heading inside each `<summary>`, no two
@@ -725,16 +709,24 @@ rather than counted as a parse failure.
 
 ## Current status (August 2026)
 
+- **Both v1 pages deleted, August 26, 2026**, along with the `obsolete/`
+  directory — Maka's call; the side-by-side field test against v1 is no
+  longer something to protect. Recoverable from git history. The
+  harnesses lost their frozen-page and v1-untouched guards with them.
+  **Loose end:** both live pages still carry "v2" in their `<title>`
+  ("Course Content Planner (v2)", "Learning Objective Builder v2"), which
+  now names a distinction that no longer exists. The planner harness
+  asserts that title, so changing it means changing the check too.
+  Left alone pending Maka.
 - **The planner dropped to three steps, August 26, 2026.** "Choose a
   structure and teaching strategy (optional)" was removed at Maka's
   request and the module step renumbered 4 → 3. See **The three steps**.
-  Worth flagging to the designers comparing v2 against v1: v1 still has
-  its own five-step shape, so the two now differ by two steps, and any
-  v2 feedback about the organizing-principle dropdown is moot.
+  Any feedback already collected about the organizing-principle dropdown
+  is moot.
 - **Disclosure panel accessibility pass, August 26, 2026.** The
   collapsible guidance panels were sound in their bones — real
   `<details>/<summary>`, default marker intact, focus ring covered by
-  `base.css` — but had five gaps, now fixed across every non-frozen page:
+  `base.css` — but had five gaps, now fixed across every page:
   summaries are headings, duplicate accessible names carry `.sr-only`
   qualifiers, the `.guide` border moved off Mid Blue, `summary` clears the
   24px target minimum, and `.guide` text is no longer a step smaller than
@@ -745,8 +737,7 @@ rather than counted as a parse failure.
   backwards design vocabulary — Maka's call. UI text only: `state.goals`,
   `#goalsList`, `#goalLegend`, `numberedGoals()` and `data-goal-check`
   keep their names so saved plans still load. Alignment chips went from
-  G1/G2 to **CO1/CO2**. v1 in `obsolete/` still says "goals" and stays
-  that way — it is the frozen comparison baseline.
+  G1/G2 to **CO1/CO2**.
 - **The test harnesses were repaired the same day** and had drifted badly:
   two of the three could not run at all (stale `course_planner_v2.html`
   paths, a hardcoded Linux Chromium path, and a hard crash on the
@@ -755,9 +746,9 @@ rather than counted as a parse failure.
   predating this work, from the site header — those are fixed, and it
   gained 36 checks covering the panel fixes above.
 - **Files renamed to the live/`_v1` scheme on August 12, 2026** (see
-  **Files**), and index.html trimmed to one link per tool. Anything
-  written before that date and not since corrected may still use the old
-  names.
+  **Files**), and index.html trimmed to one link per tool. That scheme is
+  itself gone now — the `_v1` pages were deleted August 26 — but notes
+  written before August 12 may still use the pre-rename names.
 - **Bloom's Taxonomy Verbs moved to its own page**, `blooms_verbs.html`
   (August 12, 2026). It was briefly a second panel inside the objective
   builder; the builder now links to it from the Behavior guidance. Two
@@ -779,12 +770,9 @@ rather than counted as a parse failure.
   other page. Visible only while an element has focus. **Mention this to
   the designers currently field-testing v2** if any of them report the
   page looking different.
-- v2 objective builder is in field testing; more feedback expected.
-- course_planner_v1.html has the module-card Step 5 and is now frozen
-  while v2 is field-tested against it.
-- course_planner.html (v2) added July 29, 2026 and linked from index.html
-  as "Course Content Planner (updated v2)". Out for instructional designer
-  comparison against v1. Things to confirm with Maka rather than change on
+- The objective builder is in field testing; more feedback expected.
+- course_planner.html added July 29, 2026 and linked from index.html.
+  Out for instructional designer review. Things to confirm with Maka rather than change on
   a hunch: the Step 1 objectives lead-in is punctuated as a statement
   ("…by the end of the course."); the alignment chips are abbreviated to
   CO1/CO2 by design, with the key carrying the full text; and the "What makes a
