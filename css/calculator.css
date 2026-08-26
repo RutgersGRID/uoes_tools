@@ -87,6 +87,17 @@ input[type="number"]:focus, select:focus { background: var(--blue-light); }
 
 details { margin-top: .75rem; font-size: .85rem; }
 summary { cursor: pointer; color: var(--blue); }
+
+/* Summary text is wrapped in a heading so these panels are reachable by
+   heading navigation. Inline so it stays on the disclosure marker's line
+   and keeps the summary's own type size. Mirrors the rule in document.css. */
+summary > :is(h2, h3, h4, h5, h6) {
+  display: inline;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  margin: 0;
+}
 details .body {
   background: var(--blue-light);
   border-radius: 6px;

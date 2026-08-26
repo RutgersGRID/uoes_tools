@@ -44,6 +44,18 @@ h1 { text-align: center; }
   color: #000;
 }
 
+/* The summary text is wrapped in a heading so that guidance panels are
+   reachable by heading navigation (they were previously invisible to it).
+   The heading is purely semantic: it must render inline so it stays on the
+   disclosure marker's line and keeps the summary's own type size. */
+.guide summary > :is(h2, h3, h4, h5, h6) {
+  display: inline;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  margin: 0;
+}
+
 .guide dt {
   font-weight: bold;
   margin-top: 10px;
