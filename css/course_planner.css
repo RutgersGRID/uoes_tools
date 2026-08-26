@@ -269,6 +269,23 @@ button {
 
 /* ---- module schedule cards ---- */
 
+/* Second home for the module count, beside the cards it controls. The
+   first is in Course basics; both edit the same value. */
+.module-count {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 340px;
+  margin: 0 0 16px 0;
+}
+
+.module-count .hint {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+  font-style: italic;
+}
+
 .grid-caption {
   font-style: italic;
   color: var(--muted);
@@ -294,6 +311,35 @@ button {
 .mod-card header input {
   flex: 1;
   font-size: 15px;
+}
+
+/* "Module N" is a real <button> disclosure rather than a <summary>: the
+   topic field has to stay outside the collapsing region and clickable,
+   which <summary> cannot do (a click on an input inside a summary toggles
+   the panel). aria-expanded/aria-controls are set in the JS. */
+.mod-toggle {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: bold;
+  color: inherit;
+  background: none;
+  border: 0;
+  border-radius: 4px;
+  /* padding keeps the target clear of the 24px WCAG 2.5.8 minimum */
+  padding: 4px 6px;
+  margin-left: -6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.mod-toggle::before {
+  content: "\25B8"; /* right-pointing triangle, matching a closed <summary> */
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.mod-toggle[aria-expanded="true"]::before {
+  content: "\25BE"; /* down-pointing when open */
 }
 
 .mod-card .card-body {

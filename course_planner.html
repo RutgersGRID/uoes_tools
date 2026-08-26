@@ -239,9 +239,17 @@
 
         <h3 style="margin-top:28px;">Module cards</h3>
 
+        <div class="module-count">
+          <label for="moduleCountCards">Number of modules (usually weeks)<span
+            class="sr-only"> &mdash; same setting as in Course basics</span></label>
+          <input type="number" id="moduleCountCards" min="1" max="20" value="16">
+          <p class="hint">Changing this adds or removes cards below. Anything you
+            have already typed is kept.</p>
+        </div>
 
         <p class="grid-caption">One card per module: what it's about, what students do, and what they'll need.
-          Give each module its own objectives, and tick the course objectives each one serves.</p>
+          Give each module its own objectives, and tick the course objectives each one serves.
+          Click a module's name to open or close it.</p>
         <div id="goalLegend" aria-label="Course objective key"></div>
         <div id="moduleCards"></div>
         </details>
@@ -674,6 +682,12 @@
         });
       }
 
+      // Which module cards are expanded. Module 1 starts open so the shape
+      // of a card is visible without a click. Held here rather than in
+      // `state` so it survives a re-render but not a reload — the same
+      // choice the collapsible steps make.
+      const openModules = new Set([0]);
+
       function renderModules() {
         const n = Math.max(1, Math.min(20, state.moduleCount || 1));
         // Grow or shrink the saved modules to match, keeping existing text
@@ -688,7 +702,18 @@
           card.setAttribute("aria-label", "Module " + (i + 1));
 
           const head = document.createElement("header");
-          head.appendChild(document.createTextNode("Module " + (i + 1)));
+          // "Module N" is the disclosure control. The topic field stays
+          // outside it and visible even when the card is closed, so a whole
+          // course's topics can still be typed straight down the list.
+          const isOpen = openModules.has(i);
+          const bodyId = "mod" + i + "-body";
+          const toggle = document.createElement("button");
+          toggle.type = "button";
+          toggle.className = "mod-toggle";
+          toggle.textContent = "Module " + (i + 1);
+          toggle.setAttribute("aria-controls", bodyId);
+          toggle.setAttribute("aria-expanded", String(isOpen));
+          head.appendChild(toggle);
           const topic = document.createElement("input");
           topic.type = "text";
           topic.autocomplete = "off";
@@ -701,6 +726,15 @@
 
           const body = document.createElement("div");
           body.className = "card-body";
+          body.id = bodyId;
+          body.hidden = !isOpen;
+
+          toggle.addEventListener("click", () => {
+            const nowOpen = body.hidden;
+            body.hidden = !nowOpen;
+            toggle.setAttribute("aria-expanded", String(nowOpen));
+            if (nowOpen) openModules.add(i); else openModules.delete(i);
+          });
 
           body.appendChild(buildObjectivesBlock(m, i));
 
@@ -852,10 +886,27 @@
       // Top-level fields, add buttons, reset, and initial render
       // ---------------------------------------------------------------
       $("courseTitle").addEventListener("input", e => { state.course = e.target.value; save(); });
-      $("moduleCount").addEventListener("change", e => {
-        state.moduleCount = parseInt(e.target.value, 10) || 1;
+      // The module count is editable in Course basics and again beside the
+      // cards in Step 3. Both inputs read and write the one value, and both
+      // show the clamped result — typing 50 used to leave 50 in the box
+      // while only 20 cards appeared.
+      const countInputs = [$("moduleCount"), $("moduleCountCards")];
+      function setModuleCount(raw) {
+        const next = Math.max(1, Math.min(20, parseInt(raw, 10) || 1));
+        const changed = next !== state.moduleCount;
+        state.moduleCount = next;
+        countInputs.forEach(inp => {
+          if (inp.value !== String(state.moduleCount)) inp.value = state.moduleCount;
+        });
+        // Only rebuild when the number actually moved. Two inputs now feed
+        // this, and a change event can arrive carrying a value the state
+        // already holds; rebuilding then would throw away and recreate every
+        // card (and every listener on it) for nothing.
+        if (!changed) return;
         renderModules(); save();
-      });
+      }
+      countInputs.forEach(inp =>
+        inp.addEventListener("change", e => setModuleCount(e.target.value)));
 
       $("addGoalBtn").addEventListener("click", () => {
         state.goals.push({ id: seq++, text: "", evidence: "" });
@@ -880,7 +931,7 @@
       // Restore any saved work, then draw the page
       load();
       $("courseTitle").value = state.course;
-      $("moduleCount").value = state.moduleCount;
+      countInputs.forEach(inp => { inp.value = state.moduleCount; });
       if (!state.goals.length) state.goals.push({ id: seq++, text: "", evidence: "" });
       if (!state.topics.length) {
         state.topics.push({ id: seq++, text: "", priority: "Essential" });

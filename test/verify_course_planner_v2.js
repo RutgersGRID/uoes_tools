@@ -48,13 +48,112 @@ const ok = (name, cond, extra) => {
     return vis && !(await page.isVisible("#evidenceList"));
   })());
 
-  // Everything below drives the form, so open every step and keep them
-  // open after each reload. openSteps() is called wherever the page is
-  // reloaded; it is not part of what is being asserted.
+  // Everything below drives the form, so open every step and every module
+  // card and keep them open after each reload. These helpers are plumbing,
+  // not assertions - a closed step or module hides its controls and
+  // Playwright times out waiting for them to be visible.
   const openSteps = () =>
     page.evaluate(() => document.querySelectorAll(".step-body")
       .forEach(d => { d.open = true; }));
+  // clicked rather than set, so the real handler updates aria-expanded
+  const openModules = () =>
+    page.evaluate(() => document.querySelectorAll(".mod-toggle[aria-expanded='false']")
+      .forEach(b => b.click()));
+  const openAll = async () => { await openSteps(); await openModules(); };
+  // Set a module count the way a person does: type, then leave the field.
+  // Blur is what fires the native change event - dispatching change by
+  // hand leaves the field focused and it fires a second time later.
+  const setCount = async (sel, v) => {
+    await page.fill(sel, v);
+    await page.locator(sel).blur();
+    await page.waitForTimeout(150);
+  };
   await openSteps();
+
+  // ---- module cards collapse; module 1 is the only one open on load ----
+  const modState = () => page.$$eval(".mod-toggle",
+    ns => ns.map(n => n.getAttribute("aria-expanded")));
+  ok("every module card has a disclosure button",
+    (await page.$$eval(".mod-toggle", ns => ns.length)) === 16);
+  ok("module 1 opens on load, the rest are closed",
+    (await modState()).join(",") === ["true"].concat(Array(15).fill("false")).join(","),
+    (await modState()).join(","));
+  ok("each toggle points at its own card body", await page.evaluate(() =>
+    [...document.querySelectorAll(".mod-toggle")].every((t, i) => {
+      const body = document.getElementById(t.getAttribute("aria-controls"));
+      return body && body.id === "mod" + i + "-body" &&
+        body.hidden === (t.getAttribute("aria-expanded") === "false");
+    })));
+  ok("a closed module hides its fields but keeps its topic input visible",
+    !(await page.isVisible("#mod1-materials")) &&
+    (await page.isVisible(".mod-card:nth-child(2) header input")));
+  ok("clicking a module name toggles it", await (async () => {
+    await page.click(".mod-card:nth-child(2) .mod-toggle");
+    const opened = await page.isVisible("#mod1-materials");
+    await page.click(".mod-card:nth-child(2) .mod-toggle");
+    return opened && !(await page.isVisible("#mod1-materials"));
+  })());
+  ok("module open state survives a re-render", await (async () => {
+    await page.click(".mod-card:nth-child(3) .mod-toggle");   // open module 3
+    await page.click("#addGoalBtn");                          // forces renderModules
+    await page.waitForTimeout(100);
+    const st = await modState();
+    return st[2] === "true" && st[1] === "false" && st[0] === "true";
+  })());
+
+  // ---- the module count is editable in Course basics and in Step 3 ----
+  ok("Step 3 has its own module-count field",
+    (await page.$$eval("#moduleCountCards", ns => ns.length)) === 1);
+  ok("Step 3's count field label carries the visible text",
+    (await page.$eval("label[for='moduleCountCards']",
+      n => n.textContent.replace(/\s+/g, " ").trim()))
+      .startsWith("Number of modules (usually weeks)"));
+  ok("editing the Step 3 count updates the basics field and the cards",
+    await (async () => {
+      await setCount("#moduleCountCards", "4");
+      return (await page.inputValue("#moduleCount")) === "4" &&
+        (await page.$$eval(".mod-card", ns => ns.length)) === 4;
+    })());
+  ok("editing the basics count updates the Step 3 field and the cards",
+    await (async () => {
+      await setCount("#moduleCount", "6");
+      return (await page.inputValue("#moduleCountCards")) === "6" &&
+        (await page.$$eval(".mod-card", ns => ns.length)) === 6;
+    })());
+  ok("an out-of-range count is clamped in both fields",
+    await (async () => {
+      await setCount("#moduleCountCards", "50");
+      return (await page.inputValue("#moduleCountCards")) === "20" &&
+        (await page.inputValue("#moduleCount")) === "20" &&
+        (await page.$$eval(".mod-card", ns => ns.length)) === 20;
+    })());
+  ok("typed module text survives a count change", await (async () => {
+    await openModules();
+    await page.fill("#mod0-materials", "Chapter 3");
+    await setCount("#moduleCount", "3");
+    await openModules();
+    return (await page.inputValue("#mod0-materials")) === "Chapter 3";
+  })());
+
+  // Two inputs feed the module count, so a change event can arrive carrying
+  // a number the state already holds. Rebuilding then would discard and
+  // recreate every card for nothing.
+  ok("a change event with an unchanged count does not rebuild the cards",
+    await (async () => {
+      await openModules();
+      await page.fill("#mod0-activities", "Intro video");
+      await page.$eval("#mod0-activities", n => { n.dataset.mark = "1"; });
+      await page.dispatchEvent("#moduleCount", "change");
+      await page.waitForTimeout(150);
+      // the very same DOM node must still be there, mark and text intact
+      return (await page.$eval("#mod0-activities", n => n.dataset.mark === "1")) &&
+        (await page.inputValue("#mod0-activities")) === "Intro video";
+    })());
+
+  // put the page back the way the rest of the harness expects it
+  await page.evaluate(() => localStorage.removeItem("uoes-course-planner-v2"));
+  await page.reload();
+  await openAll();
 
   const h2s = await page.$$eval("section.step h2", ns => ns.map(n => n.textContent.replace(/\s+/g, " ").trim()));
   ok("four section headings (basics + 3 steps)", h2s.length === 4, JSON.stringify(h2s));
@@ -186,7 +285,7 @@ const ok = (name, cond, extra) => {
 
   // round-trip
   await page.reload();
-  await openSteps();
+  await openAll();
   await page.waitForTimeout(200);
   ok("course title round-trips", (await page.inputValue("#courseTitle")) === "Intro to Ecology");
   ok("goal round-trips", (await page.inputValue("#goal-first")) === "Analyze a food web");
@@ -208,7 +307,7 @@ const ok = (name, cond, extra) => {
     }));
   });
   await page.reload();
-  await openSteps();
+  await openAll();
   await page.waitForTimeout(200);
   ok("migration: no JS errors", errors.length === 0, errors.join(" | "));
   ok("migration: a legacy goal's activities field is dropped", await page.evaluate(() => {
@@ -241,7 +340,7 @@ const ok = (name, cond, extra) => {
   // corrupt save
   await page.evaluate(() => localStorage.setItem("uoes-course-planner-v2", "{not json"));
   await page.reload();
-  await openSteps();
+  await openAll();
   await page.waitForTimeout(200);
   ok("corrupt save starts fresh without erroring", errors.length === 0, errors.join(" | "));
   ok("corrupt save still renders module cards",
@@ -251,7 +350,7 @@ const ok = (name, cond, extra) => {
   // ---- multiple objectives per module + goal alignment ----
   await page.evaluate(() => localStorage.clear());
   await page.reload();
-  await openSteps();
+  await openAll();
   await page.waitForTimeout(200);
 
   const legendEmpty = await page.$eval("#goalLegend", n => n.innerText);
@@ -399,7 +498,7 @@ const ok = (name, cond, extra) => {
   // ---- plan generation ----
   await page.evaluate(() => localStorage.clear());
   await page.reload();
-  await openSteps();
+  await openAll();
   await page.waitForTimeout(200);
   await page.fill("#courseTitle", "Intro to Ecology");
   await page.fill("#goal-first", "Analyze a food web");
