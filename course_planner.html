@@ -88,14 +88,14 @@
           course</h2>
         <p class="step-lead">Backwards design starts with your objectives for the course. Before
           choosing readings or lectures, name what students will be able to <em>do</em> when the course is over &mdash; then cut your topic list down to
-          what serves those goals.
+          what serves those objectives.
         </p>
 
         <details class="guide">
           <summary><h3>Why start at the end? (and why less is more)</h3></summary>
           <p>The three core elements of a course &mdash; learning objectives,
             assessments, and instructional strategies &mdash; only work when they
-            point at the same destination. Starting from goals keeps everything
+            point at the same destination. Starting from objectives keeps everything
             aligned.</p>
           <p>When choosing topics, distinguish between <em>covering</em> material
             and students actually <em>learning</em> it. Cramming in too many topics
@@ -120,7 +120,7 @@
 
         <h3 style="margin-top:24px;">Course Topics (optional)</h3>
         <p class="step-lead">List every topic you might want to cover, then review them. 
-          Be ruthless: You have limited time and space, so mark only the ones your goals truly depend on as
+          Be ruthless: You have limited time and space, so mark only the ones your objectives truly depend on as
           <strong>Essential</strong> and trim the rest.
         </p>
         <ul class="row-list" id="topicsList" aria-label="Course topics"></ul>
@@ -128,28 +128,28 @@
       </section>
 
       <section class="step" aria-labelledby="step2Head">
-        <h2 id="step2Head"><span class="step-num" aria-hidden="true">2</span>Decide how you'll assess each course goal
+        <h2 id="step2Head"><span class="step-num" aria-hidden="true">2</span>Decide how you'll assess each course objective
         </h2>
         <p class="step-lead">Before planning any activities, decide how you will
-          <em>assess</em> the goals you chose in Step 1. They appear below &mdash;
+          <em>assess</em> the objectives you chose in Step 1. They appear below &mdash;
           plan at least one assessment for each.
         </p>
 
         <details class="guide">
           <summary><h3>What makes a good assessment online?<span class="sr-only"> &mdash; course objectives</span></h3></summary>
-          <p>An assessment is any student work you can evaluate against a goal.
+          <p>An assessment is any student work you can evaluate against an objective.
             Common options in online courses include auto-graded quizzes (recall
             and concept checks), discussion posts and peer replies (critique and
             application), papers and problem sets, projects and portfolios,
             recorded presentations or demonstrations, and reflective journals.</p>
-          <p>Match the assessment to the verb in your goal: if students should
+          <p>Match the assessment to the verb in your objective: if students should
             <em>analyze</em>, a multiple-choice quiz alone won't show it. And keep
             your own grading load in mind &mdash; every assessment you assign is
             something you (or an autograder) must respond to.
           </p>
         </details>
 
-        <ul class="ev-list" id="evidenceList" aria-label="Assessments for each goal"></ul>
+        <ul class="ev-list" id="evidenceList" aria-label="Assessments for each course objective"></ul>
       </section>
 
       <section class="step" aria-labelledby="step3Head">
@@ -157,12 +157,12 @@
           (optional)</h2>
         <p class="step-lead">Now decide how the essential topics will unfold
           across the course, and what mix of activities will move students from
-          where they start to your goals.</p>
+          where they start to your objectives.</p>
 
         <details class="guide">
           <summary><h3>Ways to organize a course (and how to pick)</h3></summary>
           <p>There is no single right structure &mdash; the right one is whichever
-            best supports your goals. Whatever you choose, a course should build:
+            best supports your objectives. Whatever you choose, a course should build:
             start with foundational pieces, and progress toward synthesis and
             integration, so students can connect each new idea to the ones before
             it. Think of the course as a narrative: an <em>introduction</em> that
@@ -241,12 +241,12 @@
         <h3>Decide how you will assess each module's learning objectives.</h3>
         <details class="guide">
           <summary><h4>What makes a good assessment online?<span class="sr-only"> &mdash; module objectives</span></h4></summary>
-          <p>An assessment is any student work you can evaluate against a goal.
+          <p>An assessment is any student work you can evaluate against an objective.
             Common options in online courses include auto-graded quizzes (recall
             and concept checks), discussion posts and peer replies (critique and
             application), papers and problem sets, projects and portfolios,
             recorded presentations or demonstrations, and reflective journals.</p>
-          <p>Match the assessment to the verb in your goal: if students should
+          <p>Match the assessment to the verb in your objective: if students should
             <em>analyze</em>, a multiple-choice quiz alone won't show it. And keep
             your own grading load in mind &mdash; every assessment you assign is
             something you (or an autograder) must respond to.
@@ -257,7 +257,7 @@
           module.</p>
 
         <h3>Create Activities for each learning objective.</h3>
-        <p class="step-lead">First, plan the practice. For each goal, design
+        <p class="step-lead">First, plan the practice. For each objective, design
           activities that build the skills and knowledge its assessment will
           measure &mdash; so nothing on an assessment comes as a surprise. Then
           distribute those activities across the module cards below.</p>
@@ -272,7 +272,7 @@
             videos, readings, worked examples), <em>interact</em> (discussions,
             group work, peer review), and <em>produce</em> (practice quizzes,
             drafts, problem sets, simulations). Match the practice to the verb in
-            your goal: if the assessment asks students to analyze a case, they
+            your objective: if the assessment asks students to analyze a case, they
             need practice analyzing cases &mdash; not just watching you do it.</p>
         </details>
 
@@ -280,8 +280,8 @@
 
 
         <p class="grid-caption">One card per module: what it's about, what students do, and what they'll need.
-          Give each module its own objectives, and tick the course goals each one serves.</p>
-        <div id="goalLegend" aria-label="Course goal key"></div>
+          Give each module its own objectives, and tick the course objectives each one serves.</p>
+        <div id="goalLegend" aria-label="Course objective key"></div>
         <div id="moduleCards"></div>
       </section>
 
@@ -354,7 +354,7 @@
         "Disciplinary categories":
           "Follow the standard subfield divisions of your discipline. Familiar " +
           "and easy to map to textbooks — just make sure the sequence still " +
-          "builds toward your goals rather than staying a list of silos."
+          "builds toward your objectives rather than staying a list of silos."
       };
 
       const $ = id => document.getElementById(id);
@@ -413,15 +413,15 @@
       // ---------------------------------------------------------------
       // Goals (Step 1) and their evidence rows (Step 2)
       // ---------------------------------------------------------------
-      function goalLabel(i) { return "Goal " + (i + 1); }
+      function goalLabel(i) { return "Course objective " + (i + 1); }
 
-      // Goals that have actually been written, numbered G1, G2, … These are
+      // Course objectives that have actually been written, numbered CO1, CO2, … These are
       // what the module-objective alignment checkboxes offer.
       function numberedGoals() {
         const out = [];
         state.goals.forEach(g => {
           const t = g.text.trim();
-          if (t) out.push({ id: g.id, num: "G" + (out.length + 1), text: t });
+          if (t) out.push({ id: g.id, num: "CO" + (out.length + 1), text: t });
         });
         return out;
       }
@@ -436,7 +436,7 @@
         });
       }
 
-      // The G1/G2 key printed above the module cards
+      // The CO1/CO2 key printed above the module cards
       function renderGoalLegend() {
         const el = $("goalLegend");
         el.innerHTML = "";
@@ -444,13 +444,13 @@
         if (!gs.length) {
           const s = document.createElement("span");
           s.className = "muted";
-          s.textContent = "Write your course goals in Step 1 and they will appear " +
+          s.textContent = "Write your course objectives in Step 1 and they will appear " +
             "here, ready to align your module objectives against.";
           el.appendChild(s);
           return;
         }
         const lead = document.createElement("strong");
-        lead.textContent = "Course goals: ";
+        lead.textContent = "Course objectives: ";
         el.appendChild(lead);
         gs.forEach((g, i) => {
           const span = document.createElement("span");
@@ -525,7 +525,7 @@
           const li = document.createElement("li");
           li.className = "muted";
           li.style.borderLeft = "none";
-          li.textContent = "Add course goals in Step 1 and they will appear here.";
+          li.textContent = "Add course objectives in Step 1 and they will appear here.";
           list.appendChild(li);
           return;
         }
@@ -693,7 +693,7 @@
           const box = document.createElement("div");
           box.className = "align-box";
           box.setAttribute("role", "group");
-          box.setAttribute("aria-label", "Course goals that objective " + (j + 1) +
+          box.setAttribute("aria-label", "Course objectives that objective " + (j + 1) +
             " of module " + (i + 1) + " aligns with");
           const mini = document.createElement("span");
           mini.className = "align-mini";
@@ -703,7 +703,7 @@
           if (!goals.length) {
             const none = document.createElement("span");
             none.className = "muted align-none";
-            none.textContent = "no goals yet";
+            none.textContent = "no objectives yet";
             box.appendChild(none);
           } else {
             goals.forEach(g => {
@@ -799,9 +799,9 @@
 
         text.push(title + " — Course Plan", "");
 
-        // Goals and their assessments. Goals are numbered G1, G2, … so the
+        // Course objectives and their assessments, numbered CO1, CO2, … so the
         // module objectives can point back at them.
-        html.push("<h3>Course goals &amp; assessments</h3>");
+        html.push("<h3>Course objectives &amp; assessments</h3>");
         const numbered = numberedGoals();
         const numOf = id => {
           const e = numbered.filter(x => x.id === id)[0];
@@ -810,7 +810,7 @@
         const goals = state.goals.filter(g => g.text.trim());
         if (goals.length) {
           html.push("<ul>");
-          text.push("COURSE GOALS & ASSESSMENTS");
+          text.push("COURSE OBJECTIVES & ASSESSMENTS");
           goals.forEach(g => {
             const ev = g.evidence.trim();
             const tag = numOf(g.id) ? numOf(g.id) + " — " : "";
@@ -823,7 +823,7 @@
           html.push("</ul>");
           text.push("");
         } else {
-          html.push('<p class="muted">No goals written yet.</p>');
+          html.push('<p class="muted">No objectives written yet.</p>');
         }
 
         // Topics by priority

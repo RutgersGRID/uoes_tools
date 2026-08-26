@@ -322,7 +322,7 @@ button {
   font-style: italic;
 }
 
-/* Course-goal key shown above the module cards, so the G1/G2
+/* Course-objective key shown above the module cards, so the CO1/CO2
    alignment checkboxes inside each card can be read at a glance */
 #goalLegend {
   background: var(--blue-light);
