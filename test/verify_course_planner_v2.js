@@ -2,9 +2,10 @@
 const { chromium } = require("playwright-core");
 const path = require("path");
 
-const EXEC = "/opt/pw-browsers/chromium-1194/chrome-linux/chrome";
-const URL = "file://" + path.resolve(__dirname, "course_planner_v2.html");
-const V1URL = "file://" + path.resolve(__dirname, "course_planner.html");
+const { chromePath } = require("./_chrome.js");
+const EXEC = chromePath();
+const URL = "file://" + path.resolve(__dirname, "..", "course_planner.html");
+const V1URL = "file://" + path.resolve(__dirname, "..", "obsolete", "course_planner_v1.html");
 
 let pass = 0, fail = 0;
 const ok = (name, cond, extra) => {
@@ -32,7 +33,7 @@ const ok = (name, cond, extra) => {
   ok("step 1 heading reworded",
     h2s[1] === "1Decide what your students will take away from your course", h2s[1]);
   ok("step 2 heading reworded",
-    h2s[2] === "2Decide how you'll assess each course goal", h2s[2]);
+    h2s[2] === "2Decide how you'll assess each course objective", h2s[2]);
   ok("step 3 is structure/strategy",
     h2s[3] === "3Choose a structure and teaching strategy (optional)", h2s[3]);
   ok("step 4 is module mapping",
@@ -123,8 +124,8 @@ const ok = (name, cond, extra) => {
   await page.waitForTimeout(50);
   const ev2 = await page.$eval("#evidenceList .ev-goal", n => n.textContent);
   ok("goal text syncs into step 2", ev2 === "Analyze a food web", ev2);
-  ok("goal text syncs into the step 4 goal key",
-    /G1 — Analyze a food web/.test(await page.$eval("#goalLegend", n => n.innerText)));
+  ok("objective text syncs into the step 4 course-objective key",
+    /CO1 — Analyze a food web/.test(await page.$eval("#goalLegend", n => n.innerText)));
 
   await page.fill("#evidenceList input", "Case-analysis paper in Module 6");
   await page.waitForTimeout(50);
@@ -218,8 +219,8 @@ const ok = (name, cond, extra) => {
   await page.waitForTimeout(200);
 
   const legendEmpty = await page.$eval("#goalLegend", n => n.innerText);
-  ok("goal key prompts for goals when none are written",
-    /Write your course goals in Step 1/.test(legendEmpty), legendEmpty);
+  ok("objective key prompts for objectives when none are written",
+    /Write your course objectives in Step 1/.test(legendEmpty), legendEmpty);
   ok("alignment shows 'no goals yet' before any goal is written",
     (await page.$$eval("#moduleCards .align-none", ns => ns.length)) === 16);
   ok("each module starts with exactly one objective row",
@@ -239,33 +240,33 @@ const ok = (name, cond, extra) => {
 
   const legend = await page.$eval("#goalLegend", n => n.innerText.replace(/\s+/g, " ").trim());
   ok("goal key numbers and lists both goals",
-    legend === "Course goals: G1 — Analyze a food web · G2 — Model energy transfer", legend);
+    legend === "Course objectives: CO1 — Analyze a food web · CO2 — Model energy transfer", legend);
 
   const chipText = await page.$$eval("#moduleCards .mod-card:first-child .align-chip",
     ns => ns.map(n => n.textContent.trim()));
-  ok("checkbox chips are labelled G1, G2",
-    JSON.stringify(chipText) === JSON.stringify(["G1", "G2"]), JSON.stringify(chipText));
+  ok("checkbox chips are labelled CO1, CO2",
+    JSON.stringify(chipText) === JSON.stringify(["CO1", "CO2"]), JSON.stringify(chipText));
   const chipNames = await page.$$eval("#moduleCards .mod-card:first-child .align-chip input",
     ns => ns.map(n => n.getAttribute("aria-label")));
   ok("each checkbox's accessible name carries the goal text and contains its visible label",
     JSON.stringify(chipNames) ===
-    JSON.stringify(["G1: Analyze a food web", "G2: Model energy transfer"]),
+    JSON.stringify(["CO1: Analyze a food web", "CO2: Model energy transfer"]),
     JSON.stringify(chipNames));
   const chipTitles = await page.$$eval("#moduleCards .mod-card:first-child .align-chip",
     ns => ns.map(n => n.title));
-  ok("hovering a chip shows the full goal", chipTitles[1] === "G2: Model energy transfer");
+  ok("hovering a chip shows the full objective", chipTitles[1] === "CO2: Model energy transfer");
   const groupName = await page.$eval("#moduleCards .align-box", n => n.getAttribute("aria-label"));
   ok("the alignment cluster is a labelled group",
-    groupName === "Course goals that objective 1 of module 1 aligns with", groupName);
+    groupName === "Course objectives that objective 1 of module 1 aligns with", groupName);
 
   // rewording a goal relabels the checkboxes without a rebuild
   await page.fill("#goal-first", "Analyze a freshwater food web");
   await page.waitForTimeout(80);
   ok("rewording a goal updates the checkbox labels live",
     (await page.$eval("#moduleCards .mod-card:first-child .align-chip input",
-      n => n.getAttribute("aria-label"))) === "G1: Analyze a freshwater food web");
+      n => n.getAttribute("aria-label"))) === "CO1: Analyze a freshwater food web");
   ok("rewording a goal updates the key",
-    /G1 — Analyze a freshwater food web/.test(await page.$eval("#goalLegend", n => n.innerText)));
+    /CO1 — Analyze a freshwater food web/.test(await page.$eval("#goalLegend", n => n.innerText)));
 
   // add objectives to module 1
   const addObj = await page.$("#moduleCards .mod-card:first-child .obj-block .add-btn");
@@ -285,7 +286,7 @@ const ok = (name, cond, extra) => {
       ["Objective 1 for module 1", "Objective 2 for module 1", "Objective 3 for module 1"]),
     JSON.stringify(objNames));
 
-  // tick alignments: obj1 -> G1, obj2 -> G1+G2, obj3 -> G2
+  // tick alignments: obj1 -> CO1, obj2 -> CO1+CO2, obj3 -> CO2
   const boxes = i => "#moduleCards .mod-card:first-child .obj-row:nth-child(" + i + ") .align-chip input";
   await page.check(boxes(1) + ":nth-of-type(1)");
   await page.locator(boxes(2)).nth(0).check();
@@ -317,8 +318,8 @@ const ok = (name, cond, extra) => {
     JSON.stringify(st3.modules[0].objectives.map(o => o.align)) ===
     JSON.stringify([[], [gIds[1]], [gIds[1]]]),
     JSON.stringify(st3.modules[0].objectives.map(o => o.align)));
-  ok("the surviving goal renumbers to G1",
-    /Course goals: G1 — Model energy transfer/.test(
+  ok("the surviving objective renumbers to CO1",
+    /Course objectives: CO1 — Model energy transfer/.test(
       (await page.$eval("#goalLegend", n => n.innerText)).replace(/\s+/g, " ")));
   ok("only one checkbox per row after the delete",
     (await page.$$eval("#moduleCards .mod-card:first-child .obj-row:first-child .align-chip",
@@ -356,7 +357,7 @@ const ok = (name, cond, extra) => {
   await page.waitForTimeout(200);
   const planAlign = await page.$eval("#plan", n => n.innerText);
   ok("plan lists both objectives with their alignment tags",
-    /Objectives: Trace energy through a web \[aligns with G1\]; Predict effects of a removal \[aligns with G1\]/
+    /Objectives: Trace energy through a web \[aligns with CO1\]; Predict effects of a removal \[aligns with CO1\]/
       .test(planAlign), planAlign.slice(0, 600));
 
   // ---- plan generation ----
@@ -375,18 +376,18 @@ const ok = (name, cond, extra) => {
   await page.click("#generateBtn");
   await page.waitForTimeout(200);
   const planText = await page.$eval("#plan", n => n.innerText);
-  ok("plan shows goal, numbered G1", /G1 — Analyze a food web/.test(planText));
+  ok("plan shows objective, numbered CO1", /CO1 — Analyze a food web/.test(planText));
   ok("plan shows assessment", /Case-analysis paper/.test(planText));
   const goalItems = await page.$$eval("#plan ul li", ns => ns.map(n => n.innerText));
   ok("plan goal entries show only the assessment, no activities line",
     goalItems.length === 1 && /Assessment: Case-analysis paper/.test(goalItems[0]) &&
     !/Activities/.test(goalItems[0]), JSON.stringify(goalItems));
   ok("plan goals heading drops activities",
-    /Course goals & assessments/i.test(planText) ||
+    /Course objectives & assessments/i.test(planText) ||
     !/goals, assessments & activities/i.test(planText));
   ok("plan shows topic", /Trophic levels/.test(planText));
   ok("plan module order is Objectives, Materials, Assessments, Activities",
-    /Objectives: Identify trophic levels \[aligns with G1\][\s\S]*Materials: Chapter 3[\s\S]*Assessments: Quiz 1[\s\S]*Activities: Intro video/.test(planText),
+    /Objectives: Identify trophic levels \[aligns with CO1\][\s\S]*Materials: Chapter 3[\s\S]*Assessments: Quiz 1[\s\S]*Activities: Intro video/.test(planText),
     planText.slice(0, 400));
   ok("plan has no due dates row", !/Due dates/i.test(planText));
   ok("empty modules marked not planned", /\(not planned yet\)/.test(planText));

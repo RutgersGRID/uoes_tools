@@ -7,6 +7,7 @@
  */
 const { chromium } = require("playwright-core");
 const path = require("path");
+const { chromePath } = require("./_chrome.js");
 
 let pass = 0, fail = 0;
 const failures = [];
@@ -68,7 +69,7 @@ function excelOnline(weeks, credits, study) {
   // files under css/, and Chromium otherwise refuses to expose cssRules for
   // a file:// stylesheet, which the print-CSS check below reads.
   const browser = await chromium.launch({
-    executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome",
+    executablePath: chromePath(),
     args: ["--allow-file-access-from-files"]
   });
   const page = await browser.newPage();
@@ -76,7 +77,7 @@ function excelOnline(weeks, credits, study) {
   page.on("pageerror", e => consoleErrors.push(String(e)));
   page.on("console", m => { if (m.type() === "error") consoleErrors.push(m.text()); });
 
-  const file = "file://" + path.resolve(__dirname, "credit_hour_planner.html");
+  const file = "file://" + path.resolve(__dirname, "..", "credit_hour_planner.html");
   await page.goto(file);
 
   const setup = async (o) => page.evaluate((o) => {
@@ -536,7 +537,9 @@ function excelOnline(weeks, credits, study) {
     // which is not necessarily the first sheet the page links.
     const printRule = await page.evaluate(() =>
       Array.from(document.styleSheets)
-        .flatMap(s => Array.from(s.cssRules))
+        // Cross-origin sheets (the Google Fonts link in the site header)
+        // throw on .cssRules however the browser is launched; skip them.
+        .flatMap(s => { try { return Array.from(s.cssRules); } catch (e) { return []; } })
         .filter(r => r.media)
         .some(r => Array.from(r.cssRules)
           .some(x => x.selectorText === "main > :not(#reportWrap)")));

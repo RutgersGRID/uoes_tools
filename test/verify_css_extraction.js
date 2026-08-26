@@ -14,10 +14,17 @@ const { chromium } = require("playwright-core");
 const path = require("path");
 const fs = require("fs");
 
-const EXEC = "/opt/pw-browsers/chromium-1194/chrome-linux/chrome";
+const { chromePath } = require("./_chrome.js");
+const EXEC = chromePath();
 const ROOT = path.resolve(__dirname, "..");
 
-// Pages converted to external CSS, with the sheets each must link in order.
+// Appended to every page by the shared site header. FONTS is cross-origin,
+// so its rules are unreadable from file:// however the browser is launched.
+const FONTS = "https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap";
+const HEADER = [FONTS, "css/site_header.css"];
+
+// Pages converted to external CSS, with the page's own sheets in order; the
+// shared header sheets are appended to each below.
 const CONVERTED = {
   "index.html": ["css/base.css", "css/index.css"],
   "learning_objectives.html": ["css/base.css", "css/document.css", "css/learning_objectives.css"],
@@ -26,10 +33,11 @@ const CONVERTED = {
   "credit_hour_planner.html": ["css/base.css", "css/calculator.css", "css/credit_hour_planner.css"],
   "workload_estimator.html": ["css/base.css", "css/calculator.css", "css/workload_estimator.css"],
 };
+for (const k of Object.keys(CONVERTED)) CONVERTED[k] = CONVERTED[k].concat(HEADER);
 
 // Frozen field-testing baselines: these must keep their inline CSS so they
 // render exactly as the designers saw them, whatever css/ later becomes.
-const FROZEN = ["learning_objectives_v1.html", "course_planner_v1.html"];
+const FROZEN = ["obsolete/learning_objectives_v1.html", "obsolete/course_planner_v1.html"];
 
 // The tokens every page must resolve, and the values they must resolve to.
 const TOKENS = {
@@ -90,7 +98,9 @@ const ok = (label, cond, detail) => {
       String(info.links[0]));
     ok(file + ": every linked sheet loaded and parsed",
       info.ruleCounts.length === sheets.length &&
-      info.ruleCounts.every((n) => n > 0),
+      // -1 means cssRules threw, which is the expected and only possible
+      // result for the cross-origin Google Fonts sheet.
+      info.ruleCounts.every((n, i) => (sheets[i] === FONTS ? n === -1 : n > 0)),
       info.ruleCounts.join(","));
     ok(file + ": no page errors", errors.length === 0, errors.join(" | "));
 
@@ -195,7 +205,7 @@ const ok = (label, cond, detail) => {
   {
     const dir = path.join(ROOT, "css");
     const files = fs.readdirSync(dir).filter((f) => f.endsWith(".css"));
-    ok("css/ holds the expected sheets", files.length === 9, files.join(" "));
+    ok("css/ holds the expected sheets", files.length === 10, files.join(" "));
 
     // Brand colours belong in base.css as tokens; nowhere else as raw hex.
     const BRAND = /#(CC0033|A30029|007FAC|DEF0F9|7DBFD6|f4f7f9)/gi;
@@ -212,6 +222,93 @@ const ok = (label, cond, detail) => {
     const base = fs.readFileSync(path.join(dir, "base.css"), "utf8");
     for (const name of Object.keys(TOKENS)) {
       ok("css/base.css defines " + name, base.includes(name + ":"));
+    }
+  }
+
+  /* ===== 4. Disclosure panel accessibility =====
+     Guards the fixes made to the collapsible guidance panels: summaries
+     must be headings (so heading navigation reaches them), accessible
+     names must be unique on the page, the panel border must clear the
+     3:1 non-text contrast ratio, the summary must clear the 24px target
+     minimum, and the calculators' blue summary text must clear 4.5:1. */
+  {
+    // Relative luminance / contrast ratio, straight from the WCAG definition.
+    const REL = (c) => {
+      const v = c / 255;
+      return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    };
+    const lum = (p) => 0.2126 * REL(p[0]) + 0.7152 * REL(p[1]) + 0.0722 * REL(p[2]);
+    const ratio = (a, b) => {
+      const la = lum(a), lb = lum(b);
+      return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+    };
+    const rgb = (str) => (str.match(/\d+(\.\d+)?/g) || []).slice(0, 3).map(Number);
+
+    for (const file of Object.keys(CONVERTED)) {
+      const page = await browser.newPage();
+      await page.goto("file://" + path.join(ROOT, file));
+      await page.waitForTimeout(150);
+
+      const data = await page.evaluate(() => ({
+        bodyBg: getComputedStyle(document.body).backgroundColor,
+        bodyFontSize: getComputedStyle(document.body).fontSize,
+        items: Array.from(document.querySelectorAll("details > summary")).map((sm) => {
+          const cs = getComputedStyle(sm);
+          const heads = Array.from(sm.children).filter((k) => /^H[1-6]$/.test(k.tagName));
+          const panel = getComputedStyle(sm.parentElement);
+          return {
+            // innerText skips the .sr-only qualifier, textContent keeps it.
+            visible: (sm.innerText || "").replace(/\s+/g, " ").trim(),
+            accName: (sm.textContent || "").replace(/\s+/g, " ").trim(),
+            headingCount: heads.length,
+            height: sm.getBoundingClientRect().height,
+            color: cs.color,
+            fontSize: cs.fontSize,
+            panelBorder: panel.borderTopColor,
+            isGuide: sm.parentElement.classList.contains("guide"),
+          };
+        }),
+      }));
+
+      if (!data.items.length) { await page.close(); continue; }
+
+      ok(file + ": every summary wraps its text in exactly one heading",
+        data.items.every((i) => i.headingCount === 1),
+        data.items.map((i) => i.headingCount).join(","));
+
+      const names = data.items.map((i) => i.accName);
+      ok(file + ": no two disclosures share an accessible name",
+        new Set(names).size === names.length, names.join(" | "));
+
+      // WCAG 2.5.3: the visible label must be contained in the accessible name.
+      ok(file + ": each summary's visible label is inside its accessible name",
+        data.items.every((i) => i.accName.indexOf(i.visible) !== -1),
+        data.items.map((i) => i.visible + " !< " + i.accName).join(" | "));
+
+      // WCAG 2.5.8.
+      ok(file + ": every summary clears the 24px target minimum",
+        data.items.every((i) => i.height >= 24),
+        data.items.map((i) => Math.round(i.height)).join(","));
+
+      for (const i of data.items) {
+        if (i.isGuide) {
+          // The border marks the panel's edge; the Light Blue fill is only
+          // ~1.09:1 against the page background and cannot carry that alone.
+          const r = ratio(rgb(i.panelBorder), rgb(data.bodyBg));
+          ok(file + ": .guide border clears 3:1 against the page background",
+            r >= 3, r.toFixed(2) + " for " + i.panelBorder);
+          ok(file + ": .guide text is not smaller than body text",
+            parseFloat(i.fontSize) >= parseFloat(data.bodyFontSize),
+            i.fontSize + " vs " + data.bodyFontSize);
+        } else {
+          // Calculator panels: blue summary text on a white card, 4.53:1.
+          // Passes AA by a hair, so pin it rather than let it drift under.
+          const r = ratio(rgb(i.color), [255, 255, 255]);
+          ok(file + ": summary text clears 4.5:1 on the card",
+            r >= 4.5, r.toFixed(2) + " for " + i.color);
+        }
+      }
+      await page.close();
     }
   }
 
