@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Content Planner (v2)</title>
+    <title>Course Content Planner</title>
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/document.css">
     <link rel="stylesheet" href="css/course_planner.css">
@@ -66,10 +66,13 @@
         decide where students should end up, plan the assessments that will verify
         they got there, decide what content you will use and build your course and schedule module-by-module.</p>
         <p>Your work will be saved automatically as you go.</p>
+      <p>Click a step heading to open or close it &mdash; later steps start
+        closed, so you can work through them one at a time.</p>
       <p>Click into the text boxes with an arrow for additional guidance.</p>
 
       <section class="step" aria-labelledby="basicsHead">
-        <h2 id="basicsHead"><span class="step-num" aria-hidden="true">&#9998;</span>Course basics</h2>
+        <details class="step-body" open>
+          <summary><h2 id="basicsHead"><span class="step-num" aria-hidden="true">&#9998;</span>Course basics</h2></summary>
         <div class="basics">
           <div class="field">
             <label for="courseTitle">Course title</label>
@@ -80,12 +83,14 @@
             <input type="number" id="moduleCount" min="1" max="20" value="16">
           </div>
         </div>
+        </details>
       </section>
 
       <section class="step" aria-labelledby="step1Head">
-        <h2 id="step1Head"><span class="step-num" aria-hidden="true">1</span>Decide what your students will take away
+        <details class="step-body" open>
+          <summary><h2 id="step1Head"><span class="step-num" aria-hidden="true">1</span>Decide what your students will take away
           from your
-          course</h2>
+          course</h2></summary>
         <p class="step-lead">Backwards design starts with your objectives for the course. Before
           choosing readings or lectures, name what students will be able to <em>do</em> when the course is over &mdash; then cut your topic list down to
           what serves those objectives.
@@ -125,11 +130,13 @@
         </p>
         <ul class="row-list" id="topicsList" aria-label="Course topics"></ul>
         <button type="button" class="add-btn" id="addTopicBtn">+ Add a topic</button>
+        </details>
       </section>
 
       <section class="step" aria-labelledby="step2Head">
-        <h2 id="step2Head"><span class="step-num" aria-hidden="true">2</span>Decide how you'll assess each course objective
-        </h2>
+        <details class="step-body">
+          <summary><h2 id="step2Head"><span class="step-num" aria-hidden="true">2</span>Decide how you'll assess each course objective
+        </h2></summary>
         <p class="step-lead">Before planning any activities, decide how you will
           <em>assess</em> the objectives you chose in Step 1. They appear below &mdash;
           plan at least one assessment for each.
@@ -150,10 +157,12 @@
         </details>
 
         <ul class="ev-list" id="evidenceList" aria-label="Assessments for each course objective"></ul>
+        </details>
       </section>
 
       <section class="step" aria-labelledby="step3Head">
-        <h2 id="step3Head"><span class="step-num" aria-hidden="true">3</span>Map it onto your modules</h2>
+        <details class="step-body">
+          <summary><h2 id="step3Head"><span class="step-num" aria-hidden="true">3</span>Map it onto your modules</h2></summary>
         <p class="step-lead">Distribute your essential topics, activities, and
           assessments across the modules (weeks). Rearrange until the workload feels
           realistic for students &mdash; and for you.</p>
@@ -235,6 +244,7 @@
           Give each module its own objectives, and tick the course objectives each one serves.</p>
         <div id="goalLegend" aria-label="Course objective key"></div>
         <div id="moduleCards"></div>
+        </details>
       </section>
 
       <button type="button" class="primary-btn" id="generateBtn">Create My Course Plan</button>

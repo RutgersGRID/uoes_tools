@@ -1,5 +1,5 @@
 /* ============================================================
-   Course Content Planner (v2) — page-specific styles
+   Course Content Planner — page-specific styles
    Loaded after base.css and document.css.
    ============================================================ */
 
@@ -19,13 +19,34 @@ section.step {
   background: var(--surface);
   border: 2px solid var(--blue);
   border-radius: 8px;
-  padding: 20px 24px 24px 24px;
+  padding: 20px 24px;
   margin-bottom: 24px;
 }
 
 section.step h2 {
   margin: 0 0 4px 0;
   font-size: 22px;
+}
+
+/* ---- collapsible steps ----
+   Each step's body sits in a <details> so the page opens as a short list
+   of headings rather than one long form. Course basics and Step 1 carry
+   `open` in the markup; the later steps start closed. The heading is the
+   <summary>, inline so it stays on the disclosure marker's line — the
+   same arrangement as the .guide panels, see document.css. */
+
+.step-body > summary {
+  cursor: pointer;
+}
+
+.step-body > summary > h2 {
+  display: inline;
+}
+
+/* Breathing room under the heading only when the step is open; a closed
+   step is just its heading and needs none. */
+.step-body[open] > summary {
+  margin-bottom: 10px;
 }
 
 .step-num {

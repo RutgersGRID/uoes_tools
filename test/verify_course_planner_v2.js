@@ -25,7 +25,36 @@ const ok = (name, cond, extra) => {
 
   // ---- structural / wording ----
   ok("no JS errors on load", errors.length === 0, errors.join(" | "));
-  ok("title marks v2", (await page.title()) === "Course Content Planner (v2)");
+  ok("title has no version suffix", (await page.title()) === "Course Content Planner",
+    await page.title());
+
+  // ---- steps collapse; basics and step 1 are the only ones open on load ----
+  const openState = () => page.$$eval(".step-body", ns => ns.map(n => n.open));
+  ok("every step is a collapsible <details>",
+    (await page.$$eval("section.step > details.step-body", ns => ns.length)) === 4);
+  ok("basics and step 1 open on load, steps 2 and 3 closed",
+    JSON.stringify(await openState()) === JSON.stringify([true, true, false, false]),
+    JSON.stringify(await openState()));
+  ok("each step heading is the summary of its own step",
+    (await page.$$eval("section.step > details.step-body > summary > h2",
+      ns => ns.map(n => n.id))).join(",") ===
+      "basicsHead,step1Head,step2Head,step3Head");
+  ok("a closed step really hides its body",
+    !(await page.isVisible("#evidenceList")) && !(await page.isVisible("#moduleCards")));
+  ok("clicking a closed step heading opens it", await (async () => {
+    await page.click("summary:has(> #step2Head)");
+    const vis = await page.isVisible("#evidenceList");
+    await page.click("summary:has(> #step2Head)");
+    return vis && !(await page.isVisible("#evidenceList"));
+  })());
+
+  // Everything below drives the form, so open every step and keep them
+  // open after each reload. openSteps() is called wherever the page is
+  // reloaded; it is not part of what is being asserted.
+  const openSteps = () =>
+    page.evaluate(() => document.querySelectorAll(".step-body")
+      .forEach(d => { d.open = true; }));
+  await openSteps();
 
   const h2s = await page.$$eval("section.step h2", ns => ns.map(n => n.textContent.replace(/\s+/g, " ").trim()));
   ok("four section headings (basics + 3 steps)", h2s.length === 4, JSON.stringify(h2s));
@@ -157,6 +186,7 @@ const ok = (name, cond, extra) => {
 
   // round-trip
   await page.reload();
+  await openSteps();
   await page.waitForTimeout(200);
   ok("course title round-trips", (await page.inputValue("#courseTitle")) === "Intro to Ecology");
   ok("goal round-trips", (await page.inputValue("#goal-first")) === "Analyze a food web");
@@ -178,6 +208,7 @@ const ok = (name, cond, extra) => {
     }));
   });
   await page.reload();
+  await openSteps();
   await page.waitForTimeout(200);
   ok("migration: no JS errors", errors.length === 0, errors.join(" | "));
   ok("migration: a legacy goal's activities field is dropped", await page.evaluate(() => {
@@ -210,6 +241,7 @@ const ok = (name, cond, extra) => {
   // corrupt save
   await page.evaluate(() => localStorage.setItem("uoes-course-planner-v2", "{not json"));
   await page.reload();
+  await openSteps();
   await page.waitForTimeout(200);
   ok("corrupt save starts fresh without erroring", errors.length === 0, errors.join(" | "));
   ok("corrupt save still renders module cards",
@@ -219,6 +251,7 @@ const ok = (name, cond, extra) => {
   // ---- multiple objectives per module + goal alignment ----
   await page.evaluate(() => localStorage.clear());
   await page.reload();
+  await openSteps();
   await page.waitForTimeout(200);
 
   const legendEmpty = await page.$eval("#goalLegend", n => n.innerText);
@@ -366,6 +399,7 @@ const ok = (name, cond, extra) => {
   // ---- plan generation ----
   await page.evaluate(() => localStorage.clear());
   await page.reload();
+  await openSteps();
   await page.waitForTimeout(200);
   await page.fill("#courseTitle", "Intro to Ecology");
   await page.fill("#goal-first", "Analyze a food web");

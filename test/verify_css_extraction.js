@@ -283,8 +283,9 @@ const ok = (label, cond, detail) => {
             parseFloat(i.fontSize) >= parseFloat(data.bodyFontSize),
             i.fontSize + " vs " + data.bodyFontSize);
         } else {
-          // Calculator panels: blue summary text on a white card, 4.53:1.
-          // Passes AA by a hair, so pin it rather than let it drift under.
+          // Any non-.guide summary: the calculators' blue methodology
+          // panels (4.53:1 on white - passes AA by a hair, so pin it rather
+          // than let it drift under) and the planner's collapsible steps.
           const r = ratio(rgb(i.color), [255, 255, 255]);
           ok(file + ": summary text clears 4.5:1 on the card",
             r >= 4.5, r.toFixed(2) + " for " + i.color);
