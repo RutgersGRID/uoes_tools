@@ -435,16 +435,60 @@ identifiers alone unless you write a migration.
 
 - Course objectives are numbered **CO1, CO2, …** in Step 1 order, counting
   only ones that actually have text. `numberedGoals()` is the single
-  source of that numbering — the key, the chip labels, the `title`/`aria`
+  source of that numbering — the key, the chip labels, the tooltip/`aria`
   text and the printed tags all derive from it, so the prefix is changed
   in exactly one place.
 - Checkbox chips show just "CO1"/"CO2" because the column is deliberately
   narrow (`150px` against `minmax(0, 1fr)` for the objective field). The
-  full objective text rides along in the `title` and the `aria-label`,
-  which reads "CO1: <course objective text>" — the visible label is a
-  substring of the accessible name, which is what WCAG label-in-name
-  requires. The cluster is a `role="group"` labelled "Course objectives
-  that objective N of module M aligns with".
+  full objective text rides along in the hover tooltip and the
+  `aria-label`, which reads "CO1: <course objective text>" — the visible
+  label is a substring of the accessible name, which is what WCAG
+  label-in-name requires. The cluster is a `role="group"` labelled
+  "Course objectives that objective N of module M aligns with".
+
+### The alignment chip tooltip
+
+The hover popup on a CO1/CO2 chip was a native `title` attribute until
+**August 27, 2026**, when Maka asked for its type to be 20% larger. A
+native tooltip's font is the browser's, not the page's, so it had to
+become a real element (`.align-tip`) to be sized at all. Things that
+followed from that, none of them optional:
+
+- **Type is `font-size: 1.2em`** — 15.6px against the chip's 13px, i.e.
+  the requested 20%, expressed as a ratio so it tracks the chip.
+- **It opens to the *left* of the chip, not below it.** Dropped below, it
+  lands on the next chip down — the chips wrap to several lines inside
+  that 150px column — and swallows clicks meant for it. This was a real
+  bug, caught by the harness, not a theoretical one.
+- **On a narrow screen the row stacks and the chips move to the left
+  edge**, so leftward would run out through the card's `overflow: hidden`
+  edge. Under 640px the tooltip hangs off `.align-box` instead and drops
+  underneath the whole (already wrapped) chip line.
+- **The tooltip is a sibling of the `<label>`, not a child**, so hovering
+  or clicking it cannot toggle the checkbox. This is why each chip is
+  wrapped in `.align-chip-wrap`. Being inside the hovered wrapper is also
+  what makes it *hoverable* under WCAG 2.1 1.4.13 — `pointer-events: none`
+  would fail that.
+- **It carries `aria-hidden="true"`.** The checkbox's `aria-label` already
+  says "CO1: <text>"; without this a screen reader would meet the same
+  sentence twice on every chip, sixteen modules deep.
+- **Shown on `:hover` and on `:has(input:focus-visible)`**, in two
+  separate rules — `:focus-within` would leave a tooltip standing over the
+  objective field after a mouse click, and splitting the rules means a
+  browser without `:has()` still gets hover. Keyboard focus showing it at
+  all is new; the native `title` never did.
+- **Escape dismisses it** (1.4.13, Dismissible), via a `keydown` listener
+  that puts `tips-off` on `<body>`; the next `pointermove` or `focusin`
+  clears it. Both show rules are **gated on `body:not(.tips-off)`** rather
+  than being overridden by a later `display: none`. An override has to
+  out-specify every show rule, and losing that race fails silently —
+  Escape just stops dismissing, with nothing wrong-looking in the
+  stylesheet. A new show rule wants the same prefix.
+
+The harness covers all of it: tooltip text and `aria-hidden`, no leftover
+`title`, the 1.2 ratio measured from computed styles, hidden-until-hovered,
+zero overlap with any other chip, staying inside the card at 390px, and
+Escape dismissing while the pointer is still on the chip.
 - A **course-objective key** (`#goalLegend`) sits between the "Module
   cards" heading and the cards, listing "CO1 — <text> · CO2 — <text> …".
   Keep it: the chips are unreadable without it.
@@ -720,7 +764,7 @@ saves, "Start over", report and copy text, print-PDF non-blankness,
 label/aria coverage, computed focus outlines, the design tokens, and the
 Mid-Blue-underline prohibition.
 
-For the course planner, `test/verify_course_planner_v2.js` runs 112
+For the course planner, `test/verify_course_planner_v2.js` runs 121
 checks: the three step headings and badge numbers, the collapsible-step
 defaults (all four are `<details>`, basics and Step 1 open, 2 and 3
 closed, a closed step really hides its body, clicking a heading toggles
@@ -787,6 +831,13 @@ rather than counted as a parse failure.
 
 ## Current status (August 2026)
 
+- **The alignment chip tooltip is a real element, August 27, 2026.** Maka
+  asked for 20% larger type on the CO1/CO2 hover popup, which a native
+  `title` attribute cannot give — the browser owns that font. Replacing it
+  brought the keyboard and Escape behaviour a `title` never had, and a
+  placement constraint worth knowing before touching it. See **The
+  alignment chip tooltip**. Worth mentioning to anyone field testing: the
+  popup now looks like part of the page rather than an OS tooltip.
 - **Both v1 pages deleted, August 26, 2026**, along with the `obsolete/`
   directory — Maka's call; the side-by-side field test against v1 is no
   longer something to protect. Recoverable from git history. The

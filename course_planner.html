@@ -441,7 +441,9 @@
                   '#moduleCards input[data-goal-check="' + g.id + '"]'
                 ).forEach(cb => {
                   cb.setAttribute("aria-label", name);
-                  if (cb.parentElement) cb.parentElement.title = name;
+                  const wrap = cb.closest(".align-chip-wrap");
+                  const tip = wrap && wrap.querySelector(".align-tip");
+                  if (tip) tip.textContent = name;
                 });
               }
             }
@@ -648,9 +650,23 @@
           } else {
             goals.forEach(g => {
               const name = g.num + ": " + g.text;
+              // The chip's own text is just "CO1"; the full course
+              // objective rides in the checkbox's accessible name and in
+              // this tooltip. It is a real element rather than a `title`
+              // attribute because the browser sizes a native tooltip and
+              // we cannot — see .align-tip in the stylesheet. It sits
+              // beside the label, not inside it, so a click on the
+              // tooltip cannot toggle the checkbox, and aria-hidden keeps
+              // a screen reader from reading text it already has from the
+              // checkbox's aria-label.
+              const wrap = document.createElement("span");
+              wrap.className = "align-chip-wrap";
+              const tip = document.createElement("span");
+              tip.className = "align-tip";
+              tip.setAttribute("aria-hidden", "true");
+              tip.textContent = name;
               const lab = document.createElement("label");
               lab.className = "align-chip";
-              lab.title = name;
               const cb = document.createElement("input");
               cb.type = "checkbox";
               cb.checked = o.align.indexOf(g.id) !== -1;
@@ -665,7 +681,8 @@
                 save();
               });
               lab.append(cb, document.createTextNode(" " + g.num));
-              box.appendChild(lab);
+              wrap.append(lab, tip);
+              box.appendChild(wrap);
             });
           }
 
@@ -927,6 +944,19 @@
         try { localStorage.removeItem(STORAGE_KEY); } catch (e) { }
         location.reload();
       });
+
+      // WCAG 2.1 1.4.13 (Content on Hover or Focus) wants hover/focus
+      // content to be dismissible without moving the pointer or focus.
+      // Escape suppresses the alignment tooltips until the pointer moves
+      // or focus lands somewhere new. Hoverable and persistent come free
+      // from the CSS: the tooltip sits inside the hovered wrapper, and
+      // nothing hides it on a timer.
+      document.addEventListener("keydown", e => {
+        if (e.key === "Escape") document.body.classList.add("tips-off");
+      });
+      const tipsBackOn = () => document.body.classList.remove("tips-off");
+      document.addEventListener("pointermove", tipsBackOn);
+      document.addEventListener("focusin", tipsBackOn);
 
       // Restore any saved work, then draw the page
       load();

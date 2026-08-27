@@ -387,9 +387,76 @@ const ok = (name, cond, extra) => {
     JSON.stringify(chipNames) ===
     JSON.stringify(["CO1: Analyze a food web", "CO2: Model energy transfer"]),
     JSON.stringify(chipNames));
-  const chipTitles = await page.$$eval("#moduleCards .mod-card:first-child .align-chip",
-    ns => ns.map(n => n.title));
-  ok("hovering a chip shows the full objective", chipTitles[1] === "CO2: Model energy transfer");
+  // The full objective rides in a real tooltip element, not a `title`
+  // attribute: the browser owns the type size of a native tooltip and the
+  // page cannot enlarge it.
+  const tipText = await page.$$eval("#moduleCards .mod-card:first-child .align-tip",
+    ns => ns.map(n => n.textContent));
+  ok("hovering a chip shows the full objective",
+    tipText[1] === "CO2: Model energy transfer", JSON.stringify(tipText));
+  ok("no leftover title attribute doubling the tooltip",
+    (await page.$$eval("#moduleCards .align-chip, #moduleCards .align-chip-wrap",
+      ns => ns.filter(n => n.getAttribute("title")).length)) === 0);
+  ok("the tooltip is hidden from screen readers, which have it in the checkbox's name",
+    (await page.$$eval("#moduleCards .align-tip",
+      ns => ns.every(n => n.getAttribute("aria-hidden") === "true"))));
+
+  // 20% larger than the chip label it explains
+  const tipSize = await page.$eval("#moduleCards .mod-card:first-child .align-chip-wrap",
+    w => {
+      const px = el => parseFloat(getComputedStyle(el).fontSize);
+      return { chip: px(w.querySelector(".align-chip")), tip: px(w.querySelector(".align-tip")) };
+    });
+  ok("tooltip text is 20% larger than the chip label",
+    Math.abs(tipSize.tip / tipSize.chip - 1.2) < 0.01,
+    JSON.stringify(tipSize));
+
+  const wrap1 = page.locator("#moduleCards .mod-card:first-child .align-chip-wrap").first();
+  const tip1 = wrap1.locator(".align-tip");
+  const tipDisplay = () => tip1.evaluate(n => getComputedStyle(n).display);
+  ok("the tooltip is hidden until hovered", (await tipDisplay()) === "none");
+
+  await wrap1.hover();
+  await page.waitForTimeout(60);
+  ok("hovering the chip shows the tooltip", (await tipDisplay()) === "block");
+
+  // It opens leftward for a reason: dropped below, it lands on top of the
+  // next chip down and swallows clicks meant for it.
+  const overlaps = await tip1.evaluate(tip => {
+    const t = tip.getBoundingClientRect();
+    return [...document.querySelectorAll("#moduleCards .align-chip")].filter(c => {
+      const r = c.getBoundingClientRect();
+      return t.left < r.right && r.left < t.right && t.top < r.bottom && r.top < t.bottom;
+    }).length;
+  });
+  ok("the open tooltip covers no alignment chip", overlaps === 0, "overlaps " + overlaps);
+
+  // Stacked, the row puts the chips at the left edge, so the tooltip has to
+  // flip out from under the whole alignment box or the card clips it.
+  ok("the tooltip stays inside the card on a narrow screen", await (async () => {
+    const before = page.viewportSize();
+    await page.setViewportSize({ width: 390, height: 900 });
+    await wrap1.hover();
+    await page.waitForTimeout(80);
+    const fits = await tip1.evaluate(t => {
+      const r = t.getBoundingClientRect();
+      const c = t.closest(".mod-card").getBoundingClientRect();
+      return r.width > 0 && r.left >= c.left && r.right <= c.right;
+    });
+    await page.setViewportSize(before);
+    await wrap1.hover();
+    await page.waitForTimeout(80);
+    return fits;
+  })());
+
+  // WCAG 2.1 1.4.13: dismissible without moving the pointer
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(60);
+  ok("Escape dismisses the tooltip while still hovered", (await tipDisplay()) === "none");
+  await page.mouse.move(2, 2);
+  await page.waitForTimeout(60);
+  ok("moving the pointer re-arms the tooltips",
+    (await page.$eval("body", b => b.classList.contains("tips-off"))) === false);
   const groupName = await page.$eval("#moduleCards .align-box", n => n.getAttribute("aria-label"));
   ok("the alignment cluster is a labelled group",
     groupName === "Course objectives that objective 1 of module 1 aligns with", groupName);
