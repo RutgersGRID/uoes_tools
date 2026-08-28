@@ -250,10 +250,11 @@ describes the live one:
 - Auto-save to `localStorage` (debounced ~400ms, try/catch-wrapped).
   **Never rename an existing state field without a migration in
   `load()`.**
-- The **v1 storage key `uoes-course-planner` is still avoided**, and
-  `load()` still migrates a v1-shaped save. The v1 page is deleted but
-  anyone who used it may still have that data in their browser, so both
-  behaviours stay and the harness still checks them.
+- **The storage key is `uoes-course-planner`**, matching
+  `uoes-workload-estimator` and `uoes-credit-hour-planner`. It was
+  `uoes-course-planner-v2` until August 27, 2026 — see **Storage key**
+  below. `load()` still migrates a v1-shaped save, and the harness still
+  checks that.
 - "Create My Course Plan" renders the plan (only filled-in fields; empty
   modules show "(not planned yet)"), with Copy-as-text and Print buttons.
 - Print CSS shows only the generated plan. The hide rule must target
@@ -269,11 +270,31 @@ planner, which was deleted August 26, 2026. Neither page carries a
 version in its `<title>` any more — both were dropped on August 26, when
 the v1 pages went and the suffix stopped meaning anything.
 
-**Storage is deliberately separate.** The planner saves to
-`uoes-course-planner-v2`, never the v1 key `uoes-course-planner`. That
-mattered when both pages existed; it still matters now that v1 is
-deleted, because a v1-shaped save may survive in a user's browser and
-the module shapes differ.
+### Storage key
+
+The planner saves to **`uoes-course-planner`**. It used
+`uoes-course-planner-v2` from July 29 to **August 27, 2026**: while both
+planners existed the keys had to be separate, and the suffix outlived
+that reason by a day short of a month. Maka's call to rename it, on the
+grounds that nobody had saved work in it yet.
+
+**The rename was a clean break — there is no read-fallback to the old
+key.** Anything saved under `uoes-course-planner-v2` is simply invisible
+now. That was the accepted cost; do not add a shim for it later without
+asking, because a fallback that reads a key nothing writes is
+indistinguishable from dead code within a month.
+
+What did *not* change: `load()` still migrates a **v1-shaped** save
+found under this key (string `objectives`, `duedates`, `principle`,
+`strategy`). Shape migration and key naming are separate concerns, and
+`test/load_rock_test.html` seeds a deliberately v1-shaped payload so
+that path stays exercised by hand as well as by the harness.
+
+The rule that has not moved: **never rename an existing state field
+without a migration in `load()`.** `state.goals`, `evidence` and friends
+still carry their original names for exactly that reason — see **Course
+objective alignment**. Renaming the key was safe only because no saved
+data needed to survive it.
 
 ### Collapsible steps
 
@@ -495,6 +516,17 @@ Escape dismissing while the pointer is still on the chip.
 - State: `module.objectives` is `[{text, align: [goalId, …]}]`. Alignments
   store **ids, not numbers**, so renumbering after a deletion cannot
   corrupt them.
+- **A row with alignments but no objective text still prints**, as
+  `(objective not written yet) [aligns with CO1]`. It printed nothing at
+  all until August 27, 2026: `moduleObjectiveList()` filtered on the text,
+  so every tick on an unwritten row was thrown away silently by both the
+  plan and the Word export. Ticking the chips is the quicker half of
+  filling a row in, so the state is easy to arrive at — the Rock 'n' Roll
+  fixture lands in it for eleven of its thirteen modules, which is how it
+  surfaced. The row-worth-printing test is `text || tags.length`, and the
+  tags are computed against `numberedGoals()` rather than from
+  `o.align.length`, so a stale id cannot revive an otherwise empty row.
+  A row with neither text nor alignment is still left out.
 - `pruneAlignments()` drops ids for deleted course objectives — called on
   removal and on `load()`.
 - Re-render rules, which matter for not stealing focus mid-keystroke:
@@ -518,13 +550,86 @@ Escape dismissing while the pointer is still on the chip.
   activities line any more.
 - Course objectives are printed with their numbers: "CO1 — Analyze a food
   web".
-- Module objectives print as one line, semicolon-separated, each tagged:
+- Module objectives print as one line, semicolon-separated, each tagged;
+  an unwritten one that carries alignments prints as the `UNWRITTEN`
+  placeholder rather than vanishing:
   `Objectives: Identify trophic levels [aligns with CO1]; Trace energy
   through a web [aligns with CO1, CO2]`. Tags are emitted in course
   objective order, not click order.
 - Module fields print in the same order as the card: Objectives,
   Materials, Assessments, Activities. Keep the two in step if either
   changes.
+
+### Word export
+
+"Download as Word" sits beside Copy-as-text and Print inside `#planWrap`,
+added August 27, 2026 at Maka's request: the plan wanted to leave the page
+as a Word table with **one row per module (week)**, editable, pasteable
+into a syllabus, and circulable for comment. Print is unchanged and still
+prints the on-page plan.
+
+**It writes the `.docx` by hand — file format and archive both.** A .docx
+is a ZIP of XML parts, and this repo has no build step and no
+dependencies, so `zipStore()` emits a **store-only** (uncompressed) ZIP —
+a CRC-32 table, a local header, a central directory entry and an
+end-of-central-directory record — and `docxParts()` emits the five parts
+Word needs:
+
+    [Content_Types].xml
+    _rels/.rels
+    word/_rels/document.xml.rels
+    word/styles.xml
+    word/document.xml
+
+Why a real `.docx` rather than the much shorter trick of serving HTML with
+a `.doc` extension: recent Word versions raise a "file format and
+extension don't match" prompt on those, which is exactly the wrong thing
+to put in front of a faculty member. The ZIP writer is ~40 lines and buys
+a file that opens silently.
+
+Things worth knowing before touching it:
+
+- **The ZIP timestamp is a fixed 1980-01-01.** The same plan therefore
+  exports byte-identically, which makes a diff meaningful; nothing in Word
+  reads it.
+- **Brand colours are read back out of the design tokens** via
+  `token("--red", …)` on the document element, not written again as hex.
+  Same rule as the stylesheets, honoured in JS — see **Design system**.
+  Each has a fallback in case the token ever disappears.
+- **The document is landscape Letter with 1in margins**, which leaves
+  12960 twips of content width. `DOCX_COLS` holds the six column widths
+  and they must keep summing to `DOCX_TABLE_W` — there is a check.
+- **OOXML element order is not free.** `w:pPr` wants `pStyle` before
+  `spacing`; `w:rPr` wants `b`, `i`, `color`, `sz` in that order; `w:tcPr`
+  wants `tcW` before `shd`; `w:tblPr` wants `tblW`, `tblBorders`,
+  `tblCellMar`. Word rejects the whole file if these are shuffled, so
+  reorder nothing when adding a property.
+- **A paragraph must follow a table that ends the body** — hence the bare
+  `<w:p/>` before `<w:sectPr>`. Removing it produces a file Word will not
+  open.
+- `xesc()` escapes the double quote as well as `&`/`<`/`>` and strips
+  control characters, because one pasted from elsewhere makes the XML
+  invalid and Word refuses the file rather than skipping the character.
+- Newlines inside a textarea become `<w:br/>` inside the one paragraph, so
+  a multi-line Materials field stays one cell.
+- The header row carries `<w:tblHeader/>` so it repeats when the table
+  runs past a page.
+
+**The table columns are Module, Topic, Objectives, Materials, Assessments,
+Activities** — the same order the module card and the on-page plan use.
+Keep all three in step if any of them changes. Module objectives are one
+paragraph each inside the cell, tagged `[aligns with CO1, CO2]` exactly as
+the on-page plan tags them: `moduleObjectiveList()` was factored out of
+`buildPlan()` so the two cannot drift.
+
+**An unplanned module keeps its row with empty cells** rather than saying
+"(not planned yet)" the way the on-page plan does. That is deliberate — an
+empty row in Word is a week you have not planned *and* somewhere to type,
+so the export doubles as a template. If a designer reads a blank row as a
+bug, this is the note to revisit.
+
+The filename is `<course title> - Course Plan.docx`, with characters
+Windows and macOS reject stripped and the title capped at 80 characters.
 
 ### Migration
 
@@ -764,7 +869,7 @@ saves, "Start over", report and copy text, print-PDF non-blankness,
 label/aria coverage, computed focus outlines, the design tokens, and the
 Mid-Blue-underline prohibition.
 
-For the course planner, `test/verify_course_planner_v2.js` runs 121
+For the course planner, `test/verify_course_planner_v2.js` runs 152
 checks: the three step headings and badge numbers, the collapsible-step
 defaults (all four are `<details>`, basics and Step 1 open, 2 and 3
 closed, a closed step really hides its body, clicking a heading toggles
@@ -777,6 +882,22 @@ Activities), the absence of any due-date control, label/aria coverage, the
 focus outline, and live sync of course objective text into Step 2 and the
 course-objective key.
 
+The Word export has 25 of those checks. The harness reads the archive
+back with its own ZIP parser rather than trusting the writer: every entry
+stored, every CRC recomputed, the five parts present, both XML parts
+parsed with `DOMParser`. Then the content — one row per module plus a
+header, six `gridCol`s summing to 12960, a repeating header row, the six
+column names, landscape orientation, a module row carrying every field,
+alignment tags and CO numbering preserved, colours matching the tokens, a
+course title full of XML metacharacters escaped and still parsing, the
+filename sanitised, and the button hidden in print.
+
+Six more cover the unwritten-objective regression: the tick reaching
+state, the placeholder reaching both the plan and the export, the module
+no longer being called unplanned once it carries one, a row with neither
+text nor alignment still being left out, and a stale alignment id not
+reviving an empty row.
+
 Alignment is covered specifically: the key's empty and populated
 states, checkboxes appearing the moment a course objective is first
 written and disappearing when it is cleared, chip text being exactly
@@ -787,8 +908,8 @@ objective rows, per-objective alignment saved as ids, unticking, pruning
 and renumbering after one is deleted (surviving ticks must stay ticked), and
 the guarantee that a module never drops to zero objective rows.
 
-Plus: saving under the v2 key and *not* the v1 key, round-trip, migration
-of a v1-shaped save (string `objectives` → one row, `duedates` and goal
+Plus: saving under `uoes-course-planner` and leaving no stale `-v2` key,
+round-trip, migration of a v1-shaped save (string `objectives` → one row, `duedates` and goal
 `activities` dropped), corrupt-save recovery, plan generation with
 G-number tags and field ordering, print-PDF non-blankness and print-CSS
 visibility.
@@ -831,6 +952,27 @@ rather than counted as a parse failure.
 
 ## Current status (August 2026)
 
+- **Alignment ticks on an unwritten module objective used to vanish from
+  the output, fixed August 27, 2026.** Maka hit it in the Rock 'n' Roll
+  fixture, whose modules 3–13 have no objective text — the ticks saved
+  fine and then neither the plan nor the Word export printed them. The
+  filter now keeps any row with text *or* alignments and marks the gap.
+  Predates the Word export; the export only inherited it. See **Course
+  objective alignment**.
+- **The course plan exports to Word, August 27, 2026.** “Download as
+  Word” joins Copy-as-text and Print on the generated plan and produces a
+  real `.docx` whose module schedule is a table with **one row per
+  module** — Maka’s ask. Written by hand, ZIP and OOXML both, because
+  there is no build step here; see **Word export** for the constraints
+  that come with that. Print is untouched. Worth putting in front of the
+  designers currently field testing, since the table is the form most of
+  them will actually circulate.
+- **The storage key lost its `-v2` suffix, August 27, 2026** — it is now
+  `uoes-course-planner`, matching the other two tools. Maka's call, on
+  the grounds that no one has saved work in the planner yet. A clean
+  break with no read-fallback: see **Storage key**. Also fixed the same
+  day, `test/load_rock_test.html` was seeding the *v1* key and so opened
+  an empty planner; it now writes the planner's actual key.
 - **The alignment chip tooltip is a real element, August 27, 2026.** Maka
   asked for 20% larger type on the CO1/CO2 hover popup, which a native
   `title` attribute cannot give — the browser owns that font. Replacing it
