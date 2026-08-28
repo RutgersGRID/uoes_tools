@@ -12,6 +12,66 @@ const ok = (name, cond, extra) => {
   else { fail++; console.log("FAIL: " + name + (extra ? "  -> " + extra : "")); }
 };
 
+// The Word export writes its own store-only ZIP, so the harness reads one
+// back independently rather than trusting the writer's arithmetic. Anything
+// wrong with an offset, a length or a CRC shows up here rather than as a
+// "Word cannot open this file" a designer reports three weeks later.
+function crc32(bytes) {
+  const table = crc32.table || (crc32.table = (() => {
+    const t = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) {
+      let c = n;
+      for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      t[n] = c >>> 0;
+    }
+    return t;
+  })());
+  let c = 0xFFFFFFFF;
+  for (let i = 0; i < bytes.length; i++) c = table[(c ^ bytes[i]) & 255] ^ (c >>> 8);
+  return (c ^ 0xFFFFFFFF) >>> 0;
+}
+
+// Reads the central directory, then each local header, and returns
+// { name: text } plus whatever went wrong along the way.
+function readZip(buf) {
+  const problems = [];
+  const files = {};
+  let eocd = -1;
+  for (let i = buf.length - 22; i >= 0; i--) {
+    if (buf.readUInt32LE(i) === 0x06054b50) { eocd = i; break; }
+  }
+  if (eocd < 0) return { files, problems: ["no end-of-central-directory record"] };
+  const count = buf.readUInt16LE(eocd + 10);
+  let at = buf.readUInt32LE(eocd + 16);
+  for (let n = 0; n < count; n++) {
+    if (buf.readUInt32LE(at) !== 0x02014b50) {
+      problems.push("bad central header at entry " + n);
+      break;
+    }
+    const method = buf.readUInt16LE(at + 10);
+    const crc = buf.readUInt32LE(at + 16);
+    const size = buf.readUInt32LE(at + 24);
+    const nameLen = buf.readUInt16LE(at + 28);
+    const extraLen = buf.readUInt16LE(at + 30);
+    const cmtLen = buf.readUInt16LE(at + 32);
+    const offset = buf.readUInt32LE(at + 42);
+    const name = buf.slice(at + 46, at + 46 + nameLen).toString("utf8");
+    if (method !== 0) problems.push(name + ": not stored (method " + method + ")");
+    if (buf.readUInt32LE(offset) !== 0x04034b50) {
+      problems.push(name + ": local header missing at " + offset);
+    } else {
+      const lNameLen = buf.readUInt16LE(offset + 26);
+      const lExtraLen = buf.readUInt16LE(offset + 28);
+      const start = offset + 30 + lNameLen + lExtraLen;
+      const data = buf.slice(start, start + size);
+      if (crc32(data) !== crc) problems.push(name + ": CRC mismatch");
+      files[name] = data.toString("utf8");
+    }
+    at += 46 + nameLen + extraLen + cmtLen;
+  }
+  return { files, problems };
+}
+
 (async () => {
   const browser = await chromium.launch({ executablePath: EXEC });
   const ctx = await browser.newContext();
@@ -151,7 +211,7 @@ const ok = (name, cond, extra) => {
     })());
 
   // put the page back the way the rest of the harness expects it
-  await page.evaluate(() => localStorage.removeItem("uoes-course-planner-v2"));
+  await page.evaluate(() => localStorage.removeItem("uoes-course-planner"));
   await page.reload();
   await openAll();
 
@@ -266,11 +326,14 @@ const ok = (name, cond, extra) => {
   await page.fill("#mod0-assessments", "Practice quiz");
   await page.waitForTimeout(700);
 
-  // ---- localStorage under the v2 key only ----
+  // ---- localStorage under the one planner key ----
   const keys = await page.evaluate(() => Object.keys(localStorage));
-  ok("saves under uoes-course-planner-v2", keys.includes("uoes-course-planner-v2"), JSON.stringify(keys));
-  ok("does not touch the v1 key", !keys.includes("uoes-course-planner"), JSON.stringify(keys));
-  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-course-planner-v2")));
+  ok("saves under uoes-course-planner", keys.includes("uoes-course-planner"), JSON.stringify(keys));
+  // Guards a half-finished rename: the planner must not still be writing,
+  // or leaving behind, the old -v2 key.
+  ok("leaves no stale -v2 key behind",
+    !keys.includes("uoes-course-planner-v2"), JSON.stringify(keys));
+  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-course-planner")));
   ok("saved module has no duedates field", !("duedates" in saved.modules[0]), JSON.stringify(saved.modules[0]));
   ok("saved state carries no principle or strategy",
     !("principle" in saved) && !("strategy" in saved), JSON.stringify(Object.keys(saved)));
@@ -296,9 +359,9 @@ const ok = (name, cond, extra) => {
   ok("alignment checkbox round-trips",
     await page.isChecked('#moduleCards .mod-card:first-child .obj-row:first-child .align-chip input'));
 
-  // ---- migration: a v1-shaped save (with duedates) loaded under the v2 key ----
+  // ---- migration: a v1-shaped save (with duedates) loaded under the planner key ----
   await page.evaluate(() => {
-    localStorage.setItem("uoes-course-planner-v2", JSON.stringify({
+    localStorage.setItem("uoes-course-planner", JSON.stringify({
       course: "Legacy", moduleCount: 2,
       goals: [{ id: 0, text: "Old goal", evidence: "Old exam" }],
       topics: [], principle: "", strategy: "",
@@ -326,7 +389,7 @@ const ok = (name, cond, extra) => {
   await page.fill("#courseTitle", "Legacy edited");
   await page.waitForTimeout(700);
   const migrated = await page.evaluate(
-    () => JSON.parse(localStorage.getItem("uoes-course-planner-v2")));
+    () => JSON.parse(localStorage.getItem("uoes-course-planner")));
   ok("migration: a legacy principle and strategy are discarded",
     !("principle" in migrated) && !("strategy" in migrated),
     JSON.stringify(Object.keys(migrated)));
@@ -338,7 +401,7 @@ const ok = (name, cond, extra) => {
     JSON.stringify(migrated.modules[0].objectives));
 
   // corrupt save
-  await page.evaluate(() => localStorage.setItem("uoes-course-planner-v2", "{not json"));
+  await page.evaluate(() => localStorage.setItem("uoes-course-planner", "{not json"));
   await page.reload();
   await openAll();
   await page.waitForTimeout(200);
@@ -495,9 +558,9 @@ const ok = (name, cond, extra) => {
   await page.locator(boxes(2)).nth(1).check();
   await page.locator(boxes(3)).nth(1).check();
   await page.waitForTimeout(700);
-  const st = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-course-planner-v2")));
+  const st = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-course-planner")));
   const gIds = await page.evaluate(() =>
-    JSON.parse(localStorage.getItem("uoes-course-planner-v2")).goals.map(g => g.id));
+    JSON.parse(localStorage.getItem("uoes-course-planner")).goals.map(g => g.id));
   ok("alignments saved per objective",
     JSON.stringify(st.modules[0].objectives.map(o => o.align)) ===
     JSON.stringify([[gIds[0]], [gIds[0], gIds[1]], [gIds[1]]]),
@@ -506,7 +569,7 @@ const ok = (name, cond, extra) => {
   // unticking removes it
   await page.locator(boxes(2)).nth(0).uncheck();
   await page.waitForTimeout(700);
-  const st2 = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-course-planner-v2")));
+  const st2 = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-course-planner")));
   ok("unticking removes the alignment",
     JSON.stringify(st2.modules[0].objectives[1].align) === JSON.stringify([gIds[1]]),
     JSON.stringify(st2.modules[0].objectives[1].align));
@@ -515,7 +578,7 @@ const ok = (name, cond, extra) => {
   // deleting a goal prunes stale alignments and renumbers
   await page.click("#goalsList li:first-child .remove-btn");
   await page.waitForTimeout(700);
-  const st3 = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-course-planner-v2")));
+  const st3 = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-course-planner")));
   ok("deleting a goal drops its id from every objective",
     JSON.stringify(st3.modules[0].objectives.map(o => o.align)) ===
     JSON.stringify([[], [gIds[1]], [gIds[1]]]),
@@ -537,7 +600,7 @@ const ok = (name, cond, extra) => {
   ok("removing an objective leaves the others intact",
     (await page.inputValue("#mod0-obj0")) === "Trace energy through a web" &&
     (await page.$$eval("#moduleCards .mod-card:first-child .obj-row", ns => ns.length)) === 2);
-  const st4 = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-course-planner-v2")));
+  const st4 = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-course-planner")));
   ok("removing an objective keeps the remaining alignments",
     JSON.stringify(st4.modules[0].objectives.map(o => o.align)) ===
     JSON.stringify([[gIds[1]], [gIds[1]]]),
@@ -596,6 +659,147 @@ const ok = (name, cond, extra) => {
   ok("empty modules marked not planned", /\(not planned yet\)/.test(planText));
   ok("plan heading carries the course title",
     (await page.$eval("#planHead", n => n.textContent)) === "Intro to Ecology — Course Plan");
+
+
+  // ---- Word export --------------------------------------------------
+  // The plan generated just above is still on screen, so the export runs
+  // against exactly the state those checks describe.
+  ok("a Download as Word button sits with the other plan buttons",
+    (await page.$$eval("#planWrap button.small-btn", ns => ns.map(n => n.id)))
+      .indexOf("wordBtn") !== -1);
+  ok("the Word button is named for what it produces",
+    /word/i.test(await page.$eval("#wordBtn", n => n.textContent)),
+    await page.$eval("#wordBtn", n => n.textContent));
+
+  // The module cards have no topic yet; the export reads state, so filling
+  // it here is enough without regenerating the on-page plan.
+  await page.fill("[aria-label=\"Topic or theme for module 1\"]", "Food webs");
+  await page.waitForTimeout(120);
+
+  const docxBytes = Buffer.from(await page.evaluate(async () => {
+    const buf = await zipStore(docxParts()).arrayBuffer();
+    return Array.from(new Uint8Array(buf));
+  }));
+  ok("export starts with a local file header",
+    docxBytes.slice(0, 4).toString("hex") === "504b0304",
+    docxBytes.slice(0, 4).toString("hex"));
+  const zip = readZip(docxBytes);
+  ok("the archive reads back cleanly", zip.problems.length === 0,
+    zip.problems.join(" | "));
+  ok("archive holds the five parts a .docx needs",
+    ["[Content_Types].xml", "_rels/.rels", "word/_rels/document.xml.rels",
+      "word/styles.xml", "word/document.xml"]
+      .every(n => typeof zip.files[n] === "string"),
+    Object.keys(zip.files).join(", "));
+  ok("the blob is typed as a Word document",
+    (await page.evaluate(() => zipStore(docxParts()).type)) ===
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+
+  const docXml = zip.files["word/document.xml"] || "";
+  ok("document.xml parses as XML", await page.evaluate(xml => {
+    const d = new DOMParser().parseFromString(xml, "application/xml");
+    return !d.getElementsByTagName("parsererror").length;
+  }, docXml));
+  ok("styles.xml parses as XML", await page.evaluate(xml => {
+    const d = new DOMParser().parseFromString(xml, "application/xml");
+    return !d.getElementsByTagName("parsererror").length;
+  }, zip.files["word/styles.xml"] || ""));
+
+  // The whole point of the export: one table row per module.
+  const rowCount = (docXml.match(/<w:tr>|<w:tr [^>]*>/g) || []).length;
+  const modCount = await page.evaluate(() => state.modules.length);
+  ok("exactly one table row per module, plus a header row",
+    rowCount === modCount + 1, "rows=" + rowCount + " modules=" + modCount);
+  ok("the table declares six columns",
+    (docXml.match(/<w:gridCol /g) || []).length === 6);
+  ok("column widths add up to the landscape content width",
+    (docXml.match(/<w:gridCol w:w="(\d+)"/g) || [])
+      .reduce((n, s) => n + parseInt(s.match(/\d+/)[0], 10), 0) === 12960);
+  ok("the header row repeats across pages", /<w:tblHeader\/>/.test(docXml));
+  ok("header cells name the module fields",
+    ["Module", "Topic", "Objectives", "Materials", "Assessments", "Activities"]
+      .every(h => docXml.indexOf(">" + h + "</w:t>") !== -1));
+  ok("the page is landscape", /w:orient="landscape"/.test(docXml));
+  ok("a module row carries its topic and every field",
+    ["Food webs", "Chapter 3", "Quiz 1", "Intro video"]
+      .every(v => docXml.indexOf(">" + v + "</w:t>") !== -1));
+  ok("module objectives keep their alignment tags",
+    docXml.indexOf("Identify trophic levels [aligns with CO1]") !== -1);
+  ok("course objectives are numbered in the export",
+    docXml.indexOf("CO1 — Analyze a food web") !== -1);
+  ok("the export carries the course title",
+    docXml.indexOf("Intro to Ecology — Course Plan") !== -1);
+  ok("headings come through as styled paragraphs",
+    /w:val="Heading1"/.test(docXml) && /w:val="Title"/.test(docXml));
+  ok("brand colour is read from the design token, not hardcoded twice",
+    (zip.files["word/styles.xml"] || "").indexOf('w:color w:val="CC0033"') !== -1);
+  ok("the header band uses the Light Blue token",
+    /w:fill="DEF0F9"/.test(docXml));
+
+  // A course title with XML metacharacters must not produce a broken part.
+  await page.fill("#courseTitle", 'Ecology & <Field> "Methods"');
+  await page.waitForTimeout(120);
+  const escaped = await page.evaluate(() =>
+    docxParts().filter(p => p.name === "word/document.xml")[0].text);
+  ok("XML metacharacters in the course title are escaped",
+    escaped.indexOf("Ecology &amp; &lt;Field&gt; &quot;Methods&quot;") !== -1);
+  ok("the escaped document still parses", await page.evaluate(xml => {
+    const d = new DOMParser().parseFromString(xml, "application/xml");
+    return !d.getElementsByTagName("parsererror").length;
+  }, escaped));
+  ok("the filename drops characters a filesystem rejects",
+    (await page.evaluate(() => docxFilename())) ===
+    "Ecology & Field Methods - Course Plan.docx",
+    await page.evaluate(() => docxFilename()));
+  await page.fill("#courseTitle", "Intro to Ecology");
+  await page.waitForTimeout(120);
+
+  await page.emulateMedia({ media: "print" });
+  ok("the Word button is hidden when printing",
+    !(await page.isVisible("#wordBtn")));
+  await page.emulateMedia({ media: "screen" });
+
+
+  // ---- alignment ticks on a row whose objective is still unwritten ----
+  // Ticking the chips is the quicker half of filling a row in, so a row with
+  // alignments and no text is easy to arrive at. It used to be dropped from
+  // the plan and the export without a word. Module 2 is used here because
+  // module 1 already has text from the checks above.
+  await page.check(
+    "#moduleCards .mod-card:nth-child(2) .obj-row:first-child .align-chip input");
+  await page.waitForTimeout(150);
+  const mod2Objs = await page.evaluate(() => ({
+    objectives: state.modules[1].objectives, firstGoal: state.goals[0].id }));
+  ok("a tick on an unwritten objective is stored",
+    mod2Objs.objectives.length === 1 && mod2Objs.objectives[0].text === "" &&
+    JSON.stringify(mod2Objs.objectives[0].align) ===
+      JSON.stringify([mod2Objs.firstGoal]),
+    JSON.stringify(mod2Objs));
+  await page.click("#generateBtn");
+  await page.waitForTimeout(200);
+  const gapPlan = await page.$eval("#plan", n => n.innerText);
+  const mod2Block = gapPlan.split(/\n(?=Module )/)
+    .filter(s => /^Module 2\b/.test(s))[0] || "";
+  ok("the plan keeps the row and marks the missing objective",
+    /Objectives: \(objective not written yet\) \[aligns with CO1\]/.test(mod2Block),
+    JSON.stringify(mod2Block));
+  ok("a module with an alignment is no longer called unplanned",
+    !/\(not planned yet\)/.test(mod2Block), JSON.stringify(mod2Block));
+  const gapDocx = await page.evaluate(() =>
+    docxParts().filter(p => p.name === "word/document.xml")[0].text);
+  ok("the Word export keeps it too",
+    gapDocx.indexOf("(objective not written yet) [aligns with CO1]") !== -1);
+  ok("a row with neither text nor alignment is still left out",
+    (await page.evaluate(() => moduleObjectiveList(
+      { objectives: [{ text: "", align: [] }] }, numberedGoals()).length)) === 0);
+  ok("an alignment left pointing at a deleted course objective does not revive a row",
+    (await page.evaluate(() => moduleObjectiveList(
+      { objectives: [{ text: "", align: [9999] }] }, numberedGoals()).length)) === 0);
+  // put module 2 back as it was, so the checks below see the original fixture
+  await page.uncheck(
+    "#moduleCards .mod-card:nth-child(2) .obj-row:first-child .align-chip input");
+  await page.click("#generateBtn");
+  await page.waitForTimeout(200);
 
   // print output is not blank
   const pdf = await page.pdf({ format: "Letter" });

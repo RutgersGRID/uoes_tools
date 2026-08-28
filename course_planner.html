@@ -262,6 +262,7 @@
         <div id="plan"></div>
         <button type="button" class="small-btn" id="copyBtn">Copy as text</button>
         <button type="button" class="small-btn" id="printBtn">Print</button>
+        <button type="button" class="small-btn" id="wordBtn">Download as Word</button>
         <span id="copyStatus" role="status" class="sr-only"></span>
       </section>
 
@@ -280,7 +281,7 @@
       // State: one object holds everything the instructor types, so it
       // can be saved to this browser and rebuilt into the plan.
       // ---------------------------------------------------------------
-      const STORAGE_KEY = "uoes-course-planner-v2";
+      const STORAGE_KEY = "uoes-course-planner";
       let seq = 0; // id counter for goal and topic rows
 
       const state = {
@@ -775,6 +776,33 @@
       // ---------------------------------------------------------------
       const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+      // Each module objective worth printing, tagged with the course
+      // objectives it aligns with. Shared by the on-page plan and the Word
+      // export, so the two can never drift apart on how an alignment reads.
+      //
+      // A row counts as worth printing if it has text OR any alignment. It
+      // used to need text, which silently threw away every tick made on a
+      // row whose objective had not been written yet — easy to hit, because
+      // ticking the chips is the quicker half of filling a row in. The
+      // placeholder keeps the tick visible and says what is still missing.
+      // Alignment is tested against `numbered` rather than against
+      // `o.align.length`, so an id left over from a deleted course objective
+      // cannot resurrect an otherwise empty row.
+      const UNWRITTEN = "(objective not written yet)";
+
+      function moduleObjectiveList(m, numbered) {
+        const tagsFor = o => numbered
+          .filter(x => (o.align || []).indexOf(x.id) !== -1)
+          .map(x => x.num);
+        return (m.objectives || [])
+          .filter(o => (o.text || "").trim() || tagsFor(o).length)
+          .map(o => {
+            const tags = tagsFor(o);
+            return ((o.text || "").trim() || UNWRITTEN) +
+              (tags.length ? " [aligns with " + tags.join(", ") + "]" : "");
+          });
+      }
+
       function buildPlan() {
         const title = state.course.trim() || "Untitled course";
         const html = [];
@@ -831,17 +859,7 @@
         text.push("MODULE SCHEDULE");
         state.modules.forEach((m, i) => {
           const title = "Module " + (i + 1) + (m.topic.trim() ? ": " + m.topic.trim() : "");
-          // Each written objective, tagged with the goals it aligns with
-          const objText = (m.objectives || [])
-            .filter(o => (o.text || "").trim())
-            .map(o => {
-              const tags = numbered
-                .filter(x => (o.align || []).indexOf(x.id) !== -1)
-                .map(x => x.num);
-              return o.text.trim() +
-                (tags.length ? " [aligns with " + tags.join(", ") + "]" : "");
-            })
-            .join("; ");
+          const objText = moduleObjectiveList(m, numbered).join("; ");
           const fields = [
             ["Objectives", objText],
             ["Materials", m.materials],
@@ -898,6 +916,282 @@
       });
 
       $("printBtn").addEventListener("click", () => window.print());
+
+      // ---------------------------------------------------------------
+      // Word export
+      //
+      // A .docx is a ZIP of XML parts, so this writes both by hand: there is
+      // no build step in this repo and nothing to import. Entries are stored
+      // uncompressed, which Word accepts and which keeps the archive writer
+      // down to a CRC and three record headers.
+      //
+      // The point of the export is the module table: one row per module, so
+      // the plan lands in Word as a week-by-week grid an instructor can edit,
+      // paste into a syllabus, or hand round for comment.
+      // ---------------------------------------------------------------
+      const DOCX_MIME =
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+      const XML_HEAD = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+      const utf8 = s => new TextEncoder().encode(s);
+
+      let crcTable = null;
+      function crc32(bytes) {
+        if (!crcTable) {
+          crcTable = new Uint32Array(256);
+          for (let n = 0; n < 256; n++) {
+            let c = n;
+            for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+            crcTable[n] = c >>> 0;
+          }
+        }
+        let c = 0xFFFFFFFF;
+        for (let i = 0; i < bytes.length; i++) c = crcTable[(c ^ bytes[i]) & 255] ^ (c >>> 8);
+        return (c ^ 0xFFFFFFFF) >>> 0;
+      }
+
+      // files: [{name, text}] -> a Blob holding a store-only ZIP archive.
+      function zipStore(files) {
+        const u16 = n => [n & 255, (n >>> 8) & 255];
+        const u32 = n => [n & 255, (n >>> 8) & 255, (n >>> 16) & 255, (n >>> 24) & 255];
+        const join = arrs => {
+          let len = 0;
+          arrs.forEach(a => { len += a.length; });
+          const out = new Uint8Array(len);
+          let at = 0;
+          arrs.forEach(a => { out.set(a, at); at += a.length; });
+          return out;
+        };
+        const parts = [];   // local headers + names + data, in archive order
+        const dir = [];     // central directory entries
+        let offset = 0;
+        files.forEach(f => {
+          const name = utf8(f.name);
+          const data = utf8(f.text);
+          const crc = crc32(data);
+          // 0x0800 flags the name as UTF-8. The timestamp is a fixed
+          // 1980-01-01, so the same plan always exports byte-identically —
+          // easier to compare, and nothing in Word reads it.
+          const local = new Uint8Array([].concat(
+            u32(0x04034b50), u16(20), u16(0x0800), u16(0), u16(0), u16(0x21),
+            u32(crc), u32(data.length), u32(data.length),
+            u16(name.length), u16(0)));
+          parts.push(local, name, data);
+          dir.push(join([
+            new Uint8Array([].concat(
+              u32(0x02014b50), u16(20), u16(20), u16(0x0800), u16(0), u16(0), u16(0x21),
+              u32(crc), u32(data.length), u32(data.length),
+              u16(name.length), u16(0), u16(0), u16(0), u16(0), u32(0), u32(offset))),
+            name]));
+          offset += local.length + name.length + data.length;
+        });
+        let dirSize = 0;
+        dir.forEach(d => { dirSize += d.length; });
+        const end = new Uint8Array([].concat(
+          u32(0x06054b50), u16(0), u16(0), u16(files.length), u16(files.length),
+          u32(dirSize), u32(offset), u16(0)));
+        return new Blob(parts.concat(dir, [end]), { type: DOCX_MIME });
+      }
+
+      // XML wants the quote escaped too, and a stray control character from a
+      // paste would make Word refuse the whole file.
+      const xesc = s => String(s)
+        .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "")
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+
+      // A textarea's newlines become real line breaks inside the one paragraph.
+      function runs(text, rPr) {
+        return String(text).split(/\r?\n/).map((line, i) =>
+          "<w:r>" + rPr + (i ? "<w:br/>" : "") +
+          '<w:t xml:space="preserve">' + xesc(line) + "</w:t></w:r>").join("");
+      }
+
+      function para(text, opts) {
+        const o = opts || {};
+        const pPr = "<w:pPr>" +
+          (o.style ? '<w:pStyle w:val="' + o.style + '"/>' : "") +
+          '<w:spacing w:before="0" w:after="' + (o.after == null ? 80 : o.after) + '"/>' +
+          "</w:pPr>";
+        const bits = (o.bold ? "<w:b/>" : "") + (o.italic ? "<w:i/>" : "") +
+          (o.color ? '<w:color w:val="' + o.color + '"/>' : "");
+        return "<w:p>" + pPr + runs(text, bits ? "<w:rPr>" + bits + "</w:rPr>" : "") + "</w:p>";
+      }
+
+      function cell(width, paras, fill) {
+        return "<w:tc><w:tcPr>" +
+          '<w:tcW w:w="' + width + '" w:type="dxa"/>' +
+          (fill ? '<w:shd w:val="clear" w:color="auto" w:fill="' + fill + '"/>' : "") +
+          "</w:tcPr>" + (paras.length ? paras.join("") : "<w:p/>") + "</w:tc>";
+      }
+
+      // Brand colours are read back out of the design tokens rather than
+      // written again here — base.css stays the one place they live.
+      function token(name, fallback) {
+        const v = getComputedStyle(document.documentElement)
+          .getPropertyValue(name).trim().replace(/^#/, "");
+        return /^[0-9a-fA-F]{6}$/.test(v) ? v.toUpperCase() : fallback;
+      }
+
+      // Landscape Letter with 1in margins leaves 12960 twips of content width,
+      // which is what these six columns add up to.
+      const DOCX_COLS = [
+        ["Module", 1100],
+        ["Topic", 2000],
+        ["Objectives", 2860],
+        ["Materials", 2300],
+        ["Assessments", 2350],
+        ["Activities", 2350]
+      ];
+      const DOCX_TABLE_W = 12960;
+
+      function docxParts() {
+        const red = token("--red", "CC0033");
+        const band = token("--blue-light", "DEF0F9");
+        const rule = token("--blue-mid", "7DBFD6");
+        const muted = token("--muted", "666666");
+        const title = state.course.trim() || "Untitled course";
+        const numbered = numberedGoals();
+        const body = [];
+
+        body.push(para(title + " — Course Plan", { style: "Title" }));
+
+        // Course objectives and their assessments, numbered CO1, CO2, … so the
+        // module rows below can point back at them.
+        body.push(para("Course objectives & assessments", { style: "Heading1" }));
+        const goals = state.goals.filter(g => g.text.trim());
+        if (goals.length) {
+          goals.forEach(g => {
+            const e = numbered.filter(x => x.id === g.id)[0];
+            body.push(para((e ? e.num + " — " : "") + g.text.trim(),
+              { bold: true, after: 20 }));
+            body.push(para("Assessment: " + (g.evidence.trim() || "(none planned yet)"),
+              { after: 140 }));
+          });
+        } else {
+          body.push(para("No objectives written yet.", { italic: true, color: muted }));
+        }
+
+        // Topics by priority
+        body.push(para("Topics", { style: "Heading1" }));
+        let anyTopic = false;
+        PRIORITIES.forEach(p => {
+          const items = state.topics.filter(t => t.priority === p && t.text.trim());
+          if (!items.length) return;
+          anyTopic = true;
+          const label = p === "Trim" ? "Trimmed (enrichment / further reading)" : p;
+          body.push(para(label + ": " + items.map(t => t.text.trim()).join("; ")));
+        });
+        if (!anyTopic) {
+          body.push(para("No topics listed yet.", { italic: true, color: muted }));
+        }
+
+        // Module schedule: one row per module. An unplanned module keeps its
+        // row with the cells left empty, so the table doubles as something to
+        // finish filling in inside Word.
+        body.push(para("Module schedule", { style: "Heading1" }));
+        const rows = [
+          "<w:tr><w:trPr><w:tblHeader/></w:trPr>" +
+          DOCX_COLS.map(c => cell(c[1], [para(c[0], { bold: true, after: 0 })], band)).join("") +
+          "</w:tr>"
+        ];
+        state.modules.forEach((m, i) => {
+          const objs = moduleObjectiveList(m, numbered);
+          rows.push("<w:tr>" + [
+            cell(DOCX_COLS[0][1], [para("Module " + (i + 1), { bold: true, after: 0 })]),
+            cell(DOCX_COLS[1][1], [para(m.topic.trim(), { after: 0 })]),
+            cell(DOCX_COLS[2][1], objs.map((o, n) =>
+              para(o, { after: n === objs.length - 1 ? 0 : 60 }))),
+            cell(DOCX_COLS[3][1], [para(m.materials.trim(), { after: 0 })]),
+            cell(DOCX_COLS[4][1], [para(m.assessments.trim(), { after: 0 })]),
+            cell(DOCX_COLS[5][1], [para(m.activities.trim(), { after: 0 })])
+          ].join("") + "</w:tr>");
+        });
+        const borders = ["top", "left", "bottom", "right", "insideH", "insideV"]
+          .map(side => "<w:" + side + ' w:val="single" w:sz="6" w:space="0" w:color="' +
+            rule + '"/>').join("");
+        body.push("<w:tbl><w:tblPr>" +
+          '<w:tblW w:w="' + DOCX_TABLE_W + '" w:type="dxa"/>' +
+          "<w:tblBorders>" + borders + "</w:tblBorders>" +
+          '<w:tblCellMar><w:top w:w="60" w:type="dxa"/><w:left w:w="90" w:type="dxa"/>' +
+          '<w:bottom w:w="60" w:type="dxa"/><w:right w:w="90" w:type="dxa"/></w:tblCellMar>' +
+          "</w:tblPr><w:tblGrid>" +
+          DOCX_COLS.map(c => '<w:gridCol w:w="' + c[1] + '"/>').join("") +
+          "</w:tblGrid>" + rows.join("") + "</w:tbl>");
+        // Word wants a paragraph after a table that ends the document body.
+        body.push("<w:p/>");
+
+        const sect = "<w:sectPr>" +
+          '<w:pgSz w:w="15840" w:h="12240" w:orient="landscape"/>' +
+          '<w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"' +
+          ' w:header="720" w:footer="720" w:gutter="0"/></w:sectPr>';
+
+        const W = ' xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"';
+        const PKG = "http://schemas.openxmlformats.org/package/2006/relationships";
+        const OFC = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+        return [
+          {
+            name: "[Content_Types].xml", text: XML_HEAD +
+              '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+              '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+              '<Default Extension="xml" ContentType="application/xml"/>' +
+              '<Override PartName="/word/document.xml" ContentType="' + DOCX_MIME + '.main+xml"/>' +
+              '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>' +
+              "</Types>"
+          },
+          {
+            name: "_rels/.rels", text: XML_HEAD +
+              '<Relationships xmlns="' + PKG + '">' +
+              '<Relationship Id="rId1" Type="' + OFC + '/officeDocument" Target="word/document.xml"/>' +
+              "</Relationships>"
+          },
+          {
+            name: "word/_rels/document.xml.rels", text: XML_HEAD +
+              '<Relationships xmlns="' + PKG + '">' +
+              '<Relationship Id="rId1" Type="' + OFC + '/styles" Target="styles.xml"/>' +
+              "</Relationships>"
+          },
+          {
+            name: "word/styles.xml", text: XML_HEAD + "<w:styles" + W + ">" +
+              "<w:docDefaults><w:rPrDefault><w:rPr>" +
+              '<w:rFonts w:ascii="Georgia" w:hAnsi="Georgia" w:cs="Georgia"/>' +
+              '<w:sz w:val="21"/><w:szCs w:val="21"/>' +
+              "</w:rPr></w:rPrDefault></w:docDefaults>" +
+              '<w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/>' +
+              '<w:pPr><w:spacing w:after="240"/></w:pPr>' +
+              '<w:rPr><w:b/><w:color w:val="' + red + '"/><w:sz w:val="40"/></w:rPr></w:style>' +
+              '<w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/>' +
+              '<w:pPr><w:spacing w:before="320" w:after="120"/><w:outlineLvl w:val="0"/></w:pPr>' +
+              '<w:rPr><w:b/><w:color w:val="' + red + '"/><w:sz w:val="28"/></w:rPr></w:style>' +
+              "</w:styles>"
+          },
+          {
+            name: "word/document.xml", text: XML_HEAD + "<w:document" + W + "><w:body>" +
+              body.join("") + sect + "</w:body></w:document>"
+          }
+        ];
+      }
+
+      // Windows and macOS both reject these characters in a filename, and a
+      // very long course title makes an unwieldy one.
+      function docxFilename() {
+        const base = (state.course.trim() || "Untitled course")
+          .replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 80).trim();
+        return (base || "Untitled course") + " - Course Plan.docx";
+      }
+
+      $("wordBtn").addEventListener("click", () => {
+        const url = URL.createObjectURL(zipStore(docxParts()));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = docxFilename();
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+        $("copyStatus").textContent = "Word document downloaded";
+        setTimeout(() => { $("copyStatus").textContent = ""; }, 2000);
+      });
+
 
       // ---------------------------------------------------------------
       // Top-level fields, add buttons, reset, and initial render
