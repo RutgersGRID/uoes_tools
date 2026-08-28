@@ -62,6 +62,11 @@
   </div>
 
   <script>
+    // Must match STORAGE_KEY in course_planner.html — seeding any other
+    // key just opens an empty planner. The SEED below is deliberately
+    // v1-*shaped* (string `objectives`, `duedates`, `principle`,
+    // `strategy`); load() migrates it on the way in, the same path
+    // verify_course_planner_v2.js exercises.
     const KEY = "uoes-course-planner";
     const SEED = {
   "course": "Rock 'n' Roll: Origins to Present (07:700:235)",
