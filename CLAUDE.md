@@ -397,8 +397,8 @@ in three sub-sections with a guidance panel each. Its order is:
 - lead paragraph ("Break down your course content into manageable
   chunks…")
 - **"Why break content into modules?"** panel — replaces "Scheduling tips
-  for online courses"; links out to a *not yet released*
-  `scheduling_tips.html`
+  for online courses". Its link is a **placeholder**: see **The
+  scheduling tips link** below
 - **"Plan Your Modules"** heading, then "For each module, you should:"
   over an `<ol>`: create learning objectives, decide how you will assess
   them, select activities that build toward the assessment, list
@@ -551,6 +551,30 @@ identifiers alone unless you write a migration.
   label is a substring of the accessible name, which is what WCAG
   label-in-name requires. The cluster is a `role="group"` labelled
   "Course objectives that objective N of module M aligns with".
+
+### The scheduling tips link
+
+The "Why break content into modules?" panel ends with "For tips on
+structuring and scheduling your modules, see the (not yet released)
+Structure and Scheduling Tips resource from UOES", pointing at
+`scheduling_tips.html`. **That file does not exist and is not going to.**
+The resource is being written as a page on the UOES Drupal site, and the
+link will become a `https://uoes.rutgers.edu/node/<id>` URL — **probably
+`node/197`**, following the three already linked from Step 3's "Resources
+for planning" panel (194 objectives, 195 activities, 196 assessments).
+Maka will confirm the number when that Drupal section goes live.
+
+Until then the link is knowingly dead and the "(not yet released)" text
+carries the apology. Two things follow:
+
+- **Do not create a local `scheduling_tips.html`** to satisfy it. The
+  destination is Drupal, and a stub page here would have to be found and
+  deleted later.
+- **Do not quietly drop the link either.** It is a placeholder with a
+  known replacement, not an oversight.
+
+Anyone field testing before the Drupal page lands will hit a 404 from
+that link; it is the one known dead end on the page.
 
 ### Why the key is collapsed, not deleted
 
@@ -1111,9 +1135,9 @@ rather than counted as a parse failure.
   - The **course-objective key collapsed into a closed panel** rather than
     being replaced by a hover instruction — see **Why the key is
     collapsed, not deleted** for the touch finding that decided it.
-  Two loose ends left deliberately: `scheduling_tips.html` is linked but
-  **not yet released**, and `.grid-caption` is now dead CSS (its
-  paragraph above the module cards was cut).
+  One loose end left deliberately: the scheduling-tips link is a
+  placeholder (see **The scheduling tips link**). `.grid-caption` went
+  with the paragraph that used it.
   Worth telling the designers field testing: the page is much shorter,
   the builder link moved, and topic triage is gone.
 

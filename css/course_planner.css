@@ -275,12 +275,6 @@ button {
   font-style: italic;
 }
 
-.grid-caption {
-  font-style: italic;
-  color: var(--muted);
-  margin: 12px 0 8px 0;
-}
-
 .mod-card {
   border: 1px solid var(--blue-mid);
   border-radius: 8px;
