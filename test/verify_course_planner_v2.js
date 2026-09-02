@@ -108,12 +108,46 @@ function readZip(buf) {
     return vis && !(await page.isVisible("#evidenceList"));
   })());
 
+  // ---- the course-objective key is a closed panel, not a standing block ----
+  // Screen readers never needed it (every chip's aria-label carries
+  // "CO1: <full text>"), but a touch user cannot read the chip tooltip
+  // without ticking the box, so the key has to stay reachable by click.
+  ok("the course-objective key sits inside a .guide panel",
+    (await page.$$eval(".legend-panel > #goalLegend", ns => ns.length)) === 1 &&
+    (await page.$$eval("details.legend-panel.guide", ns => ns.length)) === 1);
+  ok("the key panel is closed on load", await (async () => {
+    await page.evaluate(() => { document.querySelector("#step3Head")
+      .closest("details").open = true; });
+    return !(await page.isVisible("#goalLegend"));
+  })());
+  ok("clicking the key panel reveals the key", await (async () => {
+    await page.click(".legend-panel > summary");
+    const vis = await page.isVisible("#goalLegend");
+    await page.click(".legend-panel > summary");
+    return vis && !(await page.isVisible("#goalLegend"));
+  })());
+  ok("the key still updates while it is collapsed", await (async () => {
+    await page.fill("#goal-first", "Analyze a food web");
+    await page.waitForTimeout(150);
+    // written with the panel shut; it must be right the moment it opens
+    const hidden = await page.$eval("#goalLegend", n => n.textContent);
+    await page.click(".legend-panel > summary");
+    const shown = await page.$eval("#goalLegend", n => n.innerText);
+    await page.click(".legend-panel > summary");
+    await page.fill("#goal-first", "");
+    await page.waitForTimeout(150);
+    return /CO1 — Analyze a food web/.test(hidden) &&
+      /CO1 — Analyze a food web/.test(shown);
+  })());
+
   // Everything below drives the form, so open every step and every module
   // card and keep them open after each reload. These helpers are plumbing,
   // not assertions - a closed step or module hides its controls and
   // Playwright times out waiting for them to be visible.
+  // The course-objective key is a closed .guide panel too, and several
+  // checks read it with innerText, which is empty while it is hidden.
   const openSteps = () =>
-    page.evaluate(() => document.querySelectorAll(".step-body")
+    page.evaluate(() => document.querySelectorAll(".step-body, .legend-panel")
       .forEach(d => { d.open = true; }));
   // clicked rather than set, so the real handler updates aria-expanded
   const openModules = () =>
@@ -164,10 +198,48 @@ function readZip(buf) {
   // ---- the module count is editable in Course basics and in Step 3 ----
   ok("Step 3 has its own module-count field",
     (await page.$$eval("#moduleCountCards", ns => ns.length)) === 1);
-  ok("Step 3's count field label carries the visible text",
-    (await page.$eval("label[for='moduleCountCards']",
-      n => n.textContent.replace(/\s+/g, " ").trim()))
-      .startsWith("Number of modules (usually weeks)"));
+  // Two module-count fields on one page. Each label's accessible name must
+  // start with its own *visible* text (WCAG 2.5.3 Label in Name, so "click
+  // Number of modules" works by voice), and the two names must differ from
+  // each other (so a screen reader's form-field list can tell them apart).
+  // The Step 3 label manages both by appending an .sr-only qualifier.
+  const countLabels = await page.$$eval(
+    "label[for='moduleCount'], label[for='moduleCountCards']",
+    ns => ns.map(n => {
+      const acc = n.textContent.replace(/\s+/g, " ").trim();
+      const vis = Array.from(n.childNodes)
+        .filter(c => !(c.nodeType === 1 && c.classList.contains("sr-only")))
+        .map(c => c.textContent).join("").replace(/\s+/g, " ").trim();
+      return { acc, vis };
+    }));
+  ok("both module-count labels exist", countLabels.length === 2,
+    JSON.stringify(countLabels));
+  ok("each module-count label's accessible name starts with its visible text",
+    countLabels.every(l => l.vis.length > 0 && l.acc.startsWith(l.vis)),
+    JSON.stringify(countLabels));
+  ok("the two module-count labels have distinct accessible names",
+    countLabels[0].acc !== countLabels[1].acc, JSON.stringify(countLabels));
+  ok("both module-count labels read the same on screen",
+    countLabels[0].vis === countLabels[1].vis, JSON.stringify(countLabels));
+  ok("each module-count label carries an .sr-only qualifier",
+    (await page.$$eval(
+      "label[for='moduleCount'] .sr-only, label[for='moduleCountCards'] .sr-only",
+      ns => ns.length)) === 2);
+
+  // Step 3's count block is one row at reading width: label, box and hint
+  // all sit on the same line. It stacks only when the row runs out of
+  // width, which is checked with the rest of the narrow-screen layout.
+  ok("Step 3's count label, field and hint share one row", await page.evaluate(() => {
+    const mid = el => {
+      const r = el.getBoundingClientRect();
+      return r.y + r.height / 2;
+    };
+    const block = document.querySelector(".module-count");
+    const l = mid(block.querySelector("label"));
+    const i = mid(block.querySelector("input"));
+    const h = mid(block.querySelector(".hint"));
+    return Math.abs(l - i) < 6 && Math.abs(l - h) < 8;
+  }));
   ok("editing the Step 3 count updates the basics field and the cards",
     await (async () => {
       await setCount("#moduleCountCards", "4");
@@ -222,7 +294,7 @@ function readZip(buf) {
   ok("step 2 heading reworded",
     h2s[2] === "2Decide how you'll assess each course objective", h2s[2]);
   ok("step 3 is module mapping",
-    h2s[3] === "3Map it onto your modules", h2s[3]);
+    h2s[3] === "3Organize your course content into modules", h2s[3]);
   ok("the structure/teaching-strategy step is gone",
     !h2s.some(h => /structure and teaching strategy/i.test(h)), JSON.stringify(h2s));
 
@@ -230,16 +302,26 @@ function readZip(buf) {
   ok("step badges are 1-3 with no 4", JSON.stringify(nums) === JSON.stringify(["✎", "1", "2", "3"]), JSON.stringify(nums));
 
   const step1 = await page.$eval("section[aria-labelledby='step1Head']", n => n.innerHTML);
-  ok("step 1 has no Learning Objective Builder link", !/learning_objectives\.html/.test(step1));
+  // The Learning Objective Builder link now lives in Step 1's guidance
+  // panel. It sat in the module step until September 2026, and was off the
+  // page entirely for part of that day.
+  ok("step 1's guide panel carries the Learning Objective Builder link",
+    await page.$$eval("section[aria-labelledby='step1Head'] details.guide a[href='learning_objectives.html']",
+      ns => ns.length) === 1);
   const goalLead = await page.$eval("section[aria-labelledby='step1Head'] h3 + p.step-lead",
     n => n.textContent.replace(/\s+/g, " ").trim());
   ok("goals lead-in updated",
     goalLead === "What should students be able to do by the end of the course.", goalLead);
 
-  const modStep = await page.$eval("section[aria-labelledby='step3Head']", n => n.innerHTML);
-  ok("the module step has the Learning Objective Builder link", /learning_objectives\.html/.test(modStep));
   const lobCount = await page.$$eval("a[href='learning_objectives.html']", ns => ns.length);
-  ok("exactly one LOB link on the page", lobCount === 1, "count=" + lobCount);
+  ok("exactly one Learning Objective Builder link on the page", lobCount === 1,
+    "count=" + lobCount);
+  ok("the builder link opens in a new tab, safely",
+    await page.$eval("a[href='learning_objectives.html']",
+      n => n.target === "_blank" && /noopener/.test(n.rel)));
+  ok("the module step no longer carries the builder link",
+    await page.$$eval("section[aria-labelledby='step3Head'] a[href='learning_objectives.html']",
+      ns => ns.length) === 0);
 
   // the per-goal activities list is gone; activities live on the module cards
   ok("per-goal activities list removed",
@@ -256,6 +338,11 @@ function readZip(buf) {
     !/id="step(4|5)Head"/.test(await page.content()));
   ok("the organizing-principle and strategy controls are gone",
     (await page.$$eval("#principle, #strategy, #principleNote", ns => ns.length)) === 0);
+  // the course-topic triage list was removed from Step 1
+  ok("the course-topic controls are gone",
+    (await page.$$eval("#topicsList, #addTopicBtn", ns => ns.length)) === 0);
+  ok("no Course Topics heading in Step 1",
+    !/course topics/i.test(step1), step1.slice(0, 200));
 
   // ---- module cards ----
   const cardOrder = await page.$eval("#moduleCards .mod-card:first-child .card-body", n =>
@@ -337,6 +424,7 @@ function readZip(buf) {
   ok("saved module has no duedates field", !("duedates" in saved.modules[0]), JSON.stringify(saved.modules[0]));
   ok("saved state carries no principle or strategy",
     !("principle" in saved) && !("strategy" in saved), JSON.stringify(Object.keys(saved)));
+  ok("saved state carries no topics", !("topics" in saved), JSON.stringify(Object.keys(saved)));
   ok("saved module keeps materials", saved.modules[0].materials === "Chapter 3; food-web dataset");
   ok("saved objectives are a list of {text, align}",
     Array.isArray(saved.modules[0].objectives) &&
@@ -364,7 +452,8 @@ function readZip(buf) {
     localStorage.setItem("uoes-course-planner", JSON.stringify({
       course: "Legacy", moduleCount: 2,
       goals: [{ id: 0, text: "Old goal", evidence: "Old exam" }],
-      topics: [], principle: "", strategy: "",
+      topics: [{ id: 1, text: "Old topic", priority: "Essential" }],
+      principle: "", strategy: "",
       modules: [{ topic: "Wk1", objectives: "Old objective", activities: "A", duedates: "Friday" },
       { topic: "Wk2" }]
     }));
@@ -393,6 +482,8 @@ function readZip(buf) {
   ok("migration: a legacy principle and strategy are discarded",
     !("principle" in migrated) && !("strategy" in migrated),
     JSON.stringify(Object.keys(migrated)));
+  ok("migration: a legacy topic list is discarded",
+    !("topics" in migrated), JSON.stringify(Object.keys(migrated)));
   ok("migration: duedates dropped from saved state",
     !("duedates" in migrated.modules[0]), JSON.stringify(migrated.modules[0]));
   ok("migration: objectives saved back as a list",
@@ -633,7 +724,6 @@ function readZip(buf) {
   await page.fill("#courseTitle", "Intro to Ecology");
   await page.fill("#goal-first", "Analyze a food web");
   await page.fill("#evidenceList input", "Case-analysis paper");
-  await page.fill("#topicsList input", "Trophic levels");
   await page.fill("#mod0-obj0", "Identify trophic levels");
   await page.check('#moduleCards .mod-card:first-child .obj-row:first-child .align-chip input');
   await page.fill("#mod0-materials", "Chapter 3");
@@ -651,11 +741,11 @@ function readZip(buf) {
   ok("plan goals heading drops activities",
     /Course objectives & assessments/i.test(planText) ||
     !/goals, assessments & activities/i.test(planText));
-  ok("plan shows topic", /Trophic levels/.test(planText));
   ok("plan module order is Objectives, Materials, Assessments, Activities",
     /Objectives: Identify trophic levels \[aligns with CO1\][\s\S]*Materials: Chapter 3[\s\S]*Assessments: Quiz 1[\s\S]*Activities: Intro video/.test(planText),
     planText.slice(0, 400));
   ok("plan has no due dates row", !/Due dates/i.test(planText));
+  ok("plan has no Topics section", !/^\s*Topics\s*$/m.test(planText), planText.slice(0, 400));
   ok("empty modules marked not planned", /\(not planned yet\)/.test(planText));
   ok("plan heading carries the course title",
     (await page.$eval("#planHead", n => n.textContent)) === "Intro to Ecology — Course Plan");
@@ -720,6 +810,7 @@ function readZip(buf) {
     ["Module", "Topic", "Objectives", "Materials", "Assessments", "Activities"]
       .every(h => docXml.indexOf(">" + h + "</w:t>") !== -1));
   ok("the page is landscape", /w:orient="landscape"/.test(docXml));
+  ok("the export has no Topics section", docXml.indexOf(">Topics</w:t>") === -1);
   ok("a module row carries its topic and every field",
     ["Food webs", "Chapter 3", "Quiz 1", "Intro video"]
       .every(v => docXml.indexOf(">" + v + "</w:t>") !== -1));

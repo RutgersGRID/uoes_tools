@@ -146,10 +146,6 @@ textarea {
   min-width: 240px;
 }
 
-.row-list select {
-  flex: 0 0 auto;
-}
-
 /* Evidence rows: goal text shown above its evidence blank.
    (The UI says "assessment"; the state field is still `evidence`
    for saved-data compatibility, and these class names follow it.) */
@@ -189,16 +185,6 @@ textarea {
 
 .ev-list input[type="text"] {
   width: 100%;
-}
-
-/* Priority coloring on the topic triage dropdowns */
-select.pri-essential {
-  border-color: var(--red);
-  font-weight: bold;
-}
-
-select.pri-trim {
-  color: var(--muted);
 }
 
 /* ---- buttons ---- */
@@ -271,15 +257,18 @@ button {
 
 /* Second home for the module count, beside the cards it controls. The
    first is in Course basics; both edit the same value. */
+/* Label, box and hint share one line; the hint drops below only when the
+   row runs out of width. */
 .module-count {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-width: 340px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
   margin: 0 0 16px 0;
 }
 
 .module-count .hint {
+  flex: 1 1 240px;
   margin: 0;
   font-size: 14px;
   color: var(--muted);
@@ -380,13 +369,12 @@ button {
 
 /* Course-objective key shown above the module cards, so the CO1/CO2
    alignment checkboxes inside each card can be read at a glance */
+/* The key lives inside a .guide panel, which supplies the fill, border
+   and padding - and its 16px type, so the key is not a step smaller than
+   the guidance around it (the August 26, 2026 rule). */
 #goalLegend {
-  background: var(--blue-light);
-  border-radius: 6px;
-  padding: 10px 14px;
-  font-size: 14px;
   line-height: 1.7;
-  margin: 10px 0 14px 0;
+  margin: 6px 0 0 0;
 }
 
 #goalLegend .legend-goal {

@@ -66,8 +66,7 @@
         decide where students should end up, plan the assessments that will verify
         they got there, decide what content you will use and build your course and schedule module-by-module.</p>
         <p>Your work will be saved automatically as you go.</p>
-      <p>Click a step heading to open or close it &mdash; later steps start
-        closed, so you can work through them one at a time.</p>
+      <p>Click a section heading to expand or collapse that section.</p>
       <p>Click into the text boxes with an arrow for additional guidance.</p>
 
       <section class="step" aria-labelledby="basicsHead">
@@ -79,7 +78,8 @@
             <input type="text" id="courseTitle" autocomplete="off" placeholder="e.g., Introduction to Ecology">
           </div>
           <div class="field">
-            <label for="moduleCount">Number of modules (usually weeks)</label>
+            <label for="moduleCount">Number of modules<span
+              class="sr-only"> &mdash; same setting as in Step 3</span></label>
             <input type="number" id="moduleCount" min="1" max="20" value="16">
           </div>
         </div>
@@ -92,28 +92,19 @@
           from your
           course</h2></summary>
         <p class="step-lead">Backwards design starts with your objectives for the course. Before
-          choosing readings or lectures, name what students will be able to <em>do</em> when the course is over &mdash; then cut your topic list down to
-          what serves those objectives.
+          choosing readings or lectures, name what students will be able to <em>do</em> when the course is over.
         </p>
 
         <details class="guide">
-          <summary><h3>Why start at the end? (and why less is more)</h3></summary>
-          <p>The three core elements of a course &mdash; learning objectives,
-            assessments, and instructional strategies &mdash; only work when they
-            point at the same destination. Starting from objectives keeps everything
+          <summary><h3>Why start at the end?</h3></summary>
+          <p>The three core elements of a course &mdash; Learning Objectives,
+            assessments, and activities &mdash; only work when they
+            point at the same destination. Starting from <a href="https://uoes.rutgers.edu/node/194">Learning Objectives</a> keeps everything
             aligned.</p>
-          <p>When choosing topics, distinguish between <em>covering</em> material
-            and students actually <em>learning</em> it. Cramming in too many topics
-            crowds out the practice and feedback that make essential content
-            stick &mdash; as physicist and Nobel laureate Carl Wieman put it,
-            <strong>&ldquo;coverage is the enemy.&rdquo;</strong> This matters even more online,
-            where each module has a fixed weekly footprint and there is no
-            lecture period to stretch.
-          </p>
-          <p>A practical approach: list every topic you <em>could</em> cover, then
-            cut the list drastically. Build the course around the essentials, and
-            let trimmed topics become optional enrichment or a further-reading
-            list.</p>
+          <p>Use the <a href="learning_objectives.html" target="_blank"
+            rel="noopener noreferrer">Learning Objective Builder</a> if you want
+            help writing an objective, then paste the result into the list
+            below.</p>
         </details>
 
         <h3><label for="goal-first" style="font-size:24px;">Course objectives</label></h3>
@@ -122,14 +113,6 @@
         </p>
         <ul class="row-list" id="goalsList" aria-label="Course objectives"></ul>
         <button type="button" class="add-btn" id="addGoalBtn">+ Add an objective</button>
-
-        <h3 style="margin-top:24px;">Course Topics (optional)</h3>
-        <p class="step-lead">List every topic you might want to cover, then review them. 
-          Be ruthless: You have limited time and space, so mark only the ones your objectives truly depend on as
-          <strong>Essential</strong> and trim the rest.
-        </p>
-        <ul class="row-list" id="topicsList" aria-label="Course topics"></ul>
-        <button type="button" class="add-btn" id="addTopicBtn">+ Add a topic</button>
         </details>
       </section>
 
@@ -162,95 +145,59 @@
 
       <section class="step" aria-labelledby="step3Head">
         <details class="step-body">
-          <summary><h2 id="step3Head"><span class="step-num" aria-hidden="true">3</span>Map it onto your modules</h2></summary>
-        <p class="step-lead">Distribute your essential topics, activities, and
-          assessments across the modules (weeks). Rearrange until the workload feels
-          realistic for students &mdash; and for you.</p>
+          <summary><h2 id="step3Head"><span class="step-num" aria-hidden="true">3</span>Organize your course content into modules</h2></summary>
+        <p class="step-lead">Break down your course content into manageable chunks. Distribute your learning materials, activities, and assessments across the modules. </p>
 
         <details class="guide">
-          <summary><h3>Scheduling tips for online courses</h3></summary>
-          <ul>
-            <li><strong>Keep a steady rhythm.</strong> Use the same due days every
-              week (e.g., initial posts Wednesday, replies and assignments
-              Sunday). Predictability is what replaces the structure of class
-              meetings.</li>
-            <li><strong>Spread the workload.</strong> Stagger major deadlines so
-              students aren't slammed in one module &mdash; and so your grading
-              doesn't pile up either.</li>
-            <li><strong>Leave room for feedback.</strong> If one assignment builds
-              on another, schedule enough time between them for students to
-              receive and use your feedback.</li>
-            <li><strong>Check the calendar.</strong> Note religious holidays,
-              breaks, and campus events. Avoid splitting tightly connected
-              activities (e.g., a case and its discussion) across a break.</li>
-            <li><strong>Build in slack.</strong> Keep one module lighter than the
-              rest &mdash; for catch-up, an unexpected opportunity, or an activity
-              that runs long.</li>
-            <li><strong>Expect to iterate.</strong> A good schedule usually takes
-              several passes before topics, assessments, and workload all line
-              up.</li>
-          </ul>
+          <summary><h3>Why break content into modules?</h3></summary>
+          <p>Helps students avoid feeling overwhelmed by too much information at once. </p>
+                  <p>Modules may be organized by topic, by week, or by any other logical grouping that makes sense for your course.</p>
+
+          <p>For tips on structuring and scheduling your modules, see the (not yet released) <a href="scheduling_tips.html">Structure and Scheduling Tips</a> resource from UOES.</p>
+
         </details>
 
-        <h3>Create Learning Objectives for each module.</h3>
-        <p class="step-lead">Create Learning Objectives for each module. If you
-          need help wording an objective? Use the
-          <a href="learning_objectives.html">Learning Objective Builder</a>, then
-          paste the result into the module it belongs to.
-        </p>
-
-        <h3>Decide how you will assess each module's learning objectives.</h3>
-        <details class="guide">
-          <summary><h4>What makes a good assessment online?<span class="sr-only"> &mdash; module objectives</span></h4></summary>
-          <p>An assessment is any student work you can evaluate against an objective.
-            Common options in online courses include auto-graded quizzes (recall
-            and concept checks), discussion posts and peer replies (critique and
-            application), papers and problem sets, projects and portfolios,
-            recorded presentations or demonstrations, and reflective journals.</p>
-          <p>Match the assessment to the verb in your objective: if students should
-            <em>analyze</em>, a multiple-choice quiz alone won't show it. And keep
-            your own grading load in mind &mdash; every assessment you assign is
-            something you (or an autograder) must respond to.
-          </p>
-        </details>
-
-        <p class="step-lead">Before planning any activities, decide how you will assess the learning objectives for each
-          module.</p>
-
-        <h3>Create Activities for each learning objective.</h3>
-        <p class="step-lead">First, plan the practice. For each objective, design
-          activities that build the skills and knowledge its assessment will
-          measure &mdash; so nothing on an assessment comes as a surprise. Then
-          distribute those activities across the module cards below.</p>
+        <h3>Plan Your Modules</h3>
+        <p>For each module, you should:</p>
+                <span><ol>
+                  <li>Create Learning Objectives that represent student expectations.</li>
+                  
+                  <li>Decide how you will assess student success.</li>
+                  <li>Select Learning Activities that build the skills and knowledge its assessment will measure.</li>
+                  <li>List any materials & resources needed for the module.</li>
+                </ol>
+</span>
 
         <details class="guide">
-          <summary><h4>Choosing activities that prepare students</h4></summary>
-          <p>Work backward from each assessment: what skills and knowledge does
-            it demand, and what practice will build them? Students should get
-            low-stakes practice &mdash; with feedback &mdash; in every skill before it
-            counts toward a grade.</p>
-          <p>Online, activities usually mix three moves: <em>absorb</em> (short
-            videos, readings, worked examples), <em>interact</em> (discussions,
-            group work, peer review), and <em>produce</em> (practice quizzes,
-            drafts, problem sets, simulations). Match the practice to the verb in
-            your objective: if the assessment asks students to analyze a case, they
-            need practice analyzing cases &mdash; not just watching you do it.</p>
+          <summary><h3>Resources for planning</h3></summary>
+          <p>Visit the UOES Resource Library for a refresher on  <a href="https://uoes.rutgers.edu/node/194">Learning Objectives</a>,  <a href="https://uoes.rutgers.edu/node/196">Assessments</a>, and <a href="https://uoes.rutgers.edu/node/195">Learning Activities</a>.</p>
+<dd>For a list of some possible activities, see the Learning Activities section of the <a href="https://apps.uoes.rutgers.edu/credit_hour_planner.html">Credit Hour Planner</a>.</dd>
+                  
+
         </details>
 
-        <h3 style="margin-top:28px;">Module cards</h3>
+
+                  
+
+        <!-- <h3 style="margin-top:28px;">Module cards</h3> -->
 
         <div class="module-count">
-          <label for="moduleCountCards">Number of modules (usually weeks)<span
+          <label for="moduleCountCards">Number of modules<span
             class="sr-only"> &mdash; same setting as in Course basics</span></label>
           <input type="number" id="moduleCountCards" min="1" max="20" value="16">
           <p class="hint">Changing this adds or removes cards below. Anything you
             have already typed is kept.</p>
         </div>
 
-        <p class="grid-caption">One card per module: what it's about, what students do, and what they'll need.
-          Give each module its own objectives, and tick the course objectives each one serves.
-          Click a module's name to open or close it.</p>
-        <div id="goalLegend" aria-label="Course objective key"></div>
+        <!-- The key is a closed panel, not a standing block. Every chip's
+             aria-label already carries "CO1: <full text>", so a screen
+             reader never needed the key; a touch user cannot read the chip
+             tooltip without ticking the box, so they still do. Collapsed
+             keeps it one line for everyone and one click from anybody. -->
+        <details class="guide legend-panel">
+          <summary><h3>What CO1, CO2&hellip; stand for</h3></summary>
+          <div id="goalLegend" aria-label="Course objective key"></div>
+        </details>
         <div id="moduleCards"></div>
         </details>
       </section>
@@ -282,13 +229,12 @@
       // can be saved to this browser and rebuilt into the plan.
       // ---------------------------------------------------------------
       const STORAGE_KEY = "uoes-course-planner";
-      let seq = 0; // id counter for goal and topic rows
+      let seq = 0; // id counter for course objective rows
 
       const state = {
         course: "",
         moduleCount: 16,
         goals: [],   // {id, text, evidence (assessment)}
-        topics: [],  // {id, text, priority}
         // {topic, objectives: [{text, align:[goalId]}], materials, activities,
         // assessments} per module
         modules: []
@@ -319,6 +265,9 @@
           // saved organizing principle and strategy sketch
           delete state.principle;
           delete state.strategy;
+          // The course-topic triage list was removed; discard any saved
+          // topics rather than carrying them forward
+          delete state.topics;
           // Per-goal activities were dropped; activities now live on the
           // module cards
           state.goals.forEach(g => { delete g.activities; });
@@ -346,7 +295,7 @@
           // Drop alignments pointing at goals that no longer exist
           pruneAlignments();
           // Re-derive the id counter so new rows never collide with saved ones
-          const ids = [...state.goals, ...state.topics].map(x => x.id);
+          const ids = state.goals.map(x => x.id);
           seq = ids.length ? Math.max(...ids) + 1 : 0;
         } catch (e) { /* corrupted or unavailable — start fresh */ }
       }
@@ -486,49 +435,6 @@
           input.placeholder = "How will you assess this? e.g., case-analysis paper in Module 6";
           input.addEventListener("input", () => { g.evidence = input.value; save(); });
           li.append(span, input);
-          list.appendChild(li);
-        });
-      }
-
-      // ---------------------------------------------------------------
-      // Topic triage (Step 1)
-      // ---------------------------------------------------------------
-      const PRIORITIES = ["Essential", "Supporting", "Trim"];
-
-      function renderTopics() {
-        const list = $("topicsList");
-        list.innerHTML = "";
-        state.topics.forEach((t, i) => {
-          const li = document.createElement("li");
-          const input = document.createElement("input");
-          input.type = "text";
-          input.autocomplete = "off";
-          input.value = t.text;
-          input.setAttribute("aria-label", "Topic " + (i + 1));
-          input.placeholder = "A topic you could cover";
-          input.addEventListener("input", () => { t.text = input.value; save(); });
-
-          const sel = document.createElement("select");
-          sel.setAttribute("aria-label", "Priority for topic " + (i + 1));
-          PRIORITIES.forEach(p => {
-            const o = document.createElement("option");
-            o.value = p;
-            o.textContent = p === "Trim" ? "Trim (cut it)" : p;
-            sel.appendChild(o);
-          });
-          sel.value = t.priority;
-          const paint = () => {
-            sel.className = t.priority === "Essential" ? "pri-essential"
-              : t.priority === "Trim" ? "pri-trim" : "";
-          };
-          paint();
-          sel.addEventListener("change", () => { t.priority = sel.value; paint(); save(); });
-
-          const rm = removeBtn("Remove topic " + (i + 1), () => {
-            state.topics = state.topics.filter(x => x.id !== t.id);
-            renderTopics(); save();
-          });
-          li.append(input, sel, rm);
           list.appendChild(li);
         });
       }
@@ -837,23 +743,6 @@
           html.push('<p class="muted">No objectives written yet.</p>');
         }
 
-        // Topics by priority
-        html.push("<h3>Topics</h3>");
-        text.push("TOPICS");
-        PRIORITIES.forEach(p => {
-          const items = state.topics.filter(t => t.priority === p && t.text.trim());
-          if (!items.length) return;
-          const label = p === "Trim" ? "Trimmed (enrichment / further reading)" : p;
-          html.push("<p><strong>" + label + ":</strong> " +
-            items.map(t => esc(t.text.trim())).join("; ") + "</p>");
-          text.push(label + ": " + items.map(t => t.text.trim()).join("; "));
-        });
-        if (!state.topics.some(t => t.text.trim())) {
-          html.push('<p class="muted">No topics listed yet.</p>');
-          text.push("(none listed yet)");
-        }
-        text.push("");
-
         // Module schedule
         html.push("<h3>Module schedule</h3>");
         text.push("MODULE SCHEDULE");
@@ -1071,20 +960,6 @@
           body.push(para("No objectives written yet.", { italic: true, color: muted }));
         }
 
-        // Topics by priority
-        body.push(para("Topics", { style: "Heading1" }));
-        let anyTopic = false;
-        PRIORITIES.forEach(p => {
-          const items = state.topics.filter(t => t.priority === p && t.text.trim());
-          if (!items.length) return;
-          anyTopic = true;
-          const label = p === "Trim" ? "Trimmed (enrichment / further reading)" : p;
-          body.push(para(label + ": " + items.map(t => t.text.trim()).join("; ")));
-        });
-        if (!anyTopic) {
-          body.push(para("No topics listed yet.", { italic: true, color: muted }));
-        }
-
         // Module schedule: one row per module. An unplanned module keeps its
         // row with the cells left empty, so the table doubles as something to
         // finish filling in inside Word.
@@ -1226,12 +1101,6 @@
         const inputs = document.querySelectorAll("#goalsList input");
         inputs[inputs.length - 1].focus();
       });
-      $("addTopicBtn").addEventListener("click", () => {
-        state.topics.push({ id: seq++, text: "", priority: "Essential" });
-        renderTopics(); save();
-        const inputs = document.querySelectorAll("#topicsList input");
-        inputs[inputs.length - 1].focus();
-      });
 
       $("resetBtn").addEventListener("click", () => {
         if (!confirm("Clear everything and start over?")) return;
@@ -1257,13 +1126,8 @@
       $("courseTitle").value = state.course;
       countInputs.forEach(inp => { inp.value = state.moduleCount; });
       if (!state.goals.length) state.goals.push({ id: seq++, text: "", evidence: "" });
-      if (!state.topics.length) {
-        state.topics.push({ id: seq++, text: "", priority: "Essential" });
-        state.topics.push({ id: seq++, text: "", priority: "Essential" });
-      }
       renderGoals();
       renderEvidence();
-      renderTopics();
       renderGoalLegend();
       renderModules();
     </script>

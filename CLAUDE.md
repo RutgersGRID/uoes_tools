@@ -139,10 +139,15 @@ any new rule.
   `calculator.css` render the heading `display: inline` so it stays on the
   disclosure marker's line; do not give it its own size or weight.
 - **No two disclosures on a page may share an accessible name.** Where a
-  panel is deliberately repeated (see the assessment panel in the planner,
-  and the three "Where these numbers come from" panels in the workload
-  estimator), append an `.sr-only` qualifier *inside the heading*, so the
-  visible text stays a substring of the accessible name.
+  panel is deliberately repeated (the three "Where these numbers come
+  from" panels in the workload estimator), append an `.sr-only` qualifier
+  *inside the heading*, so the visible text stays a substring of the
+  accessible name. The planner had a repeated assessment panel until the
+  September 2026 consolidation; its Step 2 copy still carries its
+  qualifier ("— course objectives"), harmless now that it is the only
+  one, and a reminder of the rule if a panel is ever repeated again.
+  The same rule covers the two module-count labels — see **The module
+  count is editable in two places**.
 - Click and tap targets clear 24px (WCAG 2.5.8). `summary` carries 3px of
   vertical padding for this; a bare line of text fell just under.
 
@@ -329,11 +334,47 @@ reload, so `openSteps()` is called after each one.
    "Decide where students should end up"). The Learning Objective Builder
    link was removed from this step; the objectives lead-in reads "What
    should students be able to do by the end of the course." — punctuated
-   as a statement, per Maka's wording, and set at 24px. Topic triage
-   unchanged.
+   as a statement, per Maka's wording, and set at 24px. The step is now
+   the course objectives list and nothing else — see **The course topic
+   list is gone**.
 2. **Decide how you'll assess each course objective** (was "…each goal").
    Still the per-objective assessment list, live-synced from Step 1.
-3. **Map it onto your modules** (v1's Step 5).
+3. **Organize your course content into modules** (v1's Step 5; called
+   "Map it onto your modules" until September 2026).
+
+### The course topic list is gone
+
+Step 1 carried a **Course Topics (optional)** triage list — repeatable
+topic rows, each with an Essential / Supporting / Trim dropdown, printed
+in the plan and the Word export under a "Topics" heading grouped by
+priority. **Removed on September 2, 2026** at Maka's request, from the
+step and from both outputs.
+
+Gone with it: `state.topics`, the `PRIORITIES` array, `renderTopics()`,
+`#topicsList`/`#addTopicBtn`, the two blank rows the page seeded on first
+load, the "Topics" block in `buildPlan()` and in `docxParts()`, and the
+`select.pri-essential`/`select.pri-trim` rules (plus `.row-list select`,
+which nothing else used — the planner now has no `<select>` on it at
+all).
+
+`load()` **deletes `topics` from saved work**, the same way it drops
+`duedates`, `principle` and `strategy`; the id counter is re-derived from
+`state.goals` alone. The harness guards the whole removal: no
+`#topicsList`/`#addTopicBtn`, no "Course Topics" heading in Step 1, no
+`topics` key saved, a legacy topic list discarded on load, and no Topics
+section in either the plan or the `.docx`.
+
+**Step 1's guidance prose lost its topic references too**, the same day:
+the lead no longer ends "— then cut your topic list down to what serves
+those objectives", and the "Why start at the end?" panel lost its "list
+every topic you could cover, then cut the list drastically" paragraph.
+The panel's summary was "Why start at the end? (and why less is more)"
+until that paragraph went — less-is-more was the paragraph's whole point,
+so the parenthetical came out with it.
+
+**Step 3 still says "Distribute your essential topics…"** and the module
+cards still carry a topic field. Left alone on purpose: that is about
+module topics, which still exist. Ask Maka before rewording it.
 
 **v2 started with four steps.** The third — "Choose a structure and
 teaching strategy (optional)", carrying an organizing-principle dropdown
@@ -348,24 +389,45 @@ dropped. The harness guards it staying gone — no such heading, no
 `step4Head`/`step5Head` ids.
 
 **The big shift in v2 is that the module is where the work happens.**
-Step 3 walks through objectives → assessments → activities *at the module
-level*, then presents the module cards. Its order is:
+Step 3 still walks through objectives → assessments → activities *at the
+module level*, then presents the module cards — but since the September
+2026 consolidation it says so in a **four-item ordered list** rather than
+in three sub-sections with a guidance panel each. Its order is:
 
-- lead paragraph ("across the modules (weeks)")
-- "Scheduling tips for online courses" panel
-- **Create Learning Objectives for each module.** — carries the Learning
-  Objective Builder link, pointed at the module Objectives fields
-- **Decide how you will assess each module's learning objectives.** —
-  with a copy of the "What makes a good assessment online?" panel
-- **Create Activities for each learning objective.** — with the
-  "Choosing activities that prepare students" panel
-- **Module cards** — the course-objective key, then the cards
+- lead paragraph ("Break down your course content into manageable
+  chunks…")
+- **"Why break content into modules?"** panel — replaces "Scheduling tips
+  for online courses"; links out to a *not yet released*
+  `scheduling_tips.html`
+- **"Plan Your Modules"** heading, then "For each module, you should:"
+  over an `<ol>`: create learning objectives, decide how you will assess
+  them, select activities that build toward the assessment, list
+  materials & resources. **This one list replaced three headed
+  sub-sections** ("Create Learning Objectives for each module.", "Decide
+  how you will assess…", "Create Activities…") and the two guidance
+  panels that hung off them
+- **"Resources for planning"** panel — UOES Resource Library links for
+  objectives, assessments and activities, plus the Credit Hour Planner's
+  activity list
+- the module-count row
+- **Module cards** — the course-objective key, then the cards. Its
+  `<h3>Module cards</h3>` is commented out, not deleted
 
-The "What makes a good assessment online?" panel appears **twice on
-purpose**: once in Step 2 for course objectives, once in Step 3 for
-module objectives. Do not dedupe it. Their accessible names are
-distinguished by an `.sr-only` qualifier — see **Accessibility
-conventions**.
+The Learning Objective Builder link used to sit in the first of those
+sub-sections. It now lives in **Step 1's "Why start at the end?" panel**
+("Use the Learning Objective Builder if you want help writing an
+objective, then paste the result into the list below."), opening in a new
+tab with `rel="noopener noreferrer"`, the same way the objective builder
+links to the Bloom's page. The harness pins it there: exactly one such
+link on the page, inside that panel, and none in the module step.
+
+**The "What makes a good assessment online?" panel is no longer
+repeated.** It appeared in both Step 2 and Step 3 by design until
+September 2026, when the module-step copy went as part of the length
+reduction — the `<ol>` above now carries the same instruction in a line.
+Only the Step 2 copy remains. This reverses a long-standing "do not
+dedupe it" note; if a module-level copy is ever wanted back, it needs its
+`.sr-only` qualifier again (see **Accessibility conventions**).
 
 v1's Step 3 (Design the learning activities) is gone entirely — both the
 standalone step and, as of the same day, the per-objective activities list
@@ -431,9 +493,32 @@ value the state already holds; rebuilding then discards and recreates
 every card and every listener on it for nothing. There is a check for
 this, and it fails if the guard is removed.
 
-The Step 3 label repeats the visible text of the basics one, so it
-carries an `.sr-only` qualifier to keep the two accessible names
-distinct — see **Accessibility conventions**.
+**Both labels read exactly "Number of modules" on screen**, so each
+carries an `.sr-only` qualifier naming the other location — " — same
+setting as in Step 3" in basics, " — same setting as in Course basics" in
+Step 3. Basics said "Number of modules (usually weeks)" until September
+2026; when that came off, the two visible labels became identical and the
+basics label needed a qualifier of its own.
+
+Two separate rules are at work, and the qualifier has to satisfy both:
+
+- **Distinct accessible names**, so a screen reader's form-field list can
+  tell the two boxes apart. Identical names would give two
+  indistinguishable entries.
+- **WCAG 2.5.3 Label in Name**: the accessible name must *contain* the
+  visible text, so a voice-control user saying "click Number of modules"
+  still matches. This is why the qualifier is **appended** — prepending it
+  or rewording the label would break the match.
+
+Four checks pin it: both visible labels are identical, each accessible
+name starts with its own visible text, the two names differ, and both
+labels still have an `.sr-only` span.
+
+Layout: the Step 3 block is a wrapping flex row holding **label, box and
+hint all on one line** (the hint is `flex: 1 1 240px`, so it drops below
+only when the row runs out of width — on a phone). A check asserts the
+three share a row at the harness's default 1280px. The basics field still
+stacks its label above the box, matching Course title beside it.
 
 **Harness note:** set a count by filling the field and then *blurring*
 it, never by dispatching `change` by hand. A manual dispatch leaves the
@@ -466,6 +551,47 @@ identifiers alone unless you write a migration.
   label is a substring of the accessible name, which is what WCAG
   label-in-name requires. The cluster is a `role="group"` labelled
   "Course objectives that objective N of module M aligns with".
+
+### Why the key is collapsed, not deleted
+
+Maka asked (September 2026) whether the key could be replaced outright by
+an instruction to hover a chip, as part of the length reduction. It was
+collapsed instead, because **the hover path is not equivalent for every
+input**. Measured before deciding:
+
+- **Screen readers never needed the key.** Every chip's `aria-label`
+  already reads "CO1: <full objective text>", inside a `role="group"`
+  labelled "Course objectives that objective N of module M aligns with".
+  Removing the key would have cost them nothing — which is the trap: the
+  users an audit checks are the ones this change is safe for.
+- **Keyboard reaches the tooltip.** `:has(input:focus-visible)` fires on
+  tab, confirmed.
+- **Touch cannot, without side effects.** In a touch context a tap does
+  surface the tooltip — *and ticks the checkbox*. A tablet user has to
+  claim an alignment to find out what CO1 means, then tap again to undo.
+  That is the finding that settled it.
+- **Nothing fails WCAG either way.** 1.4.13 governs the tooltip's
+  behaviour and it already conforms (hoverable, dismissible, persistent);
+  no criterion says information may not live only in hover content. This
+  was a usability call, not a conformance one — do not "fix" it back by
+  citing a success criterion.
+- **The key was never the length problem.** With four objectives it was
+  91px of a 3847px page (2.4%), and 210px at 390px — biggest exactly
+  where touch makes hover cost the most. Collapsed it is 53px, and the
+  module cards remain the bulk of the page.
+
+If an instruction is ever added alongside it, **do not word it "hover"** —
+naming one modality excludes the others. "Select a CO tag to see the full
+objective" covers hover, focus and tap.
+
+The panel styling comes from `.guide`, so the key inherits its 16px type
+rather than the 14px it used to set (the August 26, 2026 rule that guide
+text is not a step smaller than body text). `#goalLegend` keeps only its
+line-height and top margin; the fill, border and padding are the panel's.
+
+**Harness note:** `openSteps()` opens `.legend-panel` along with the four
+`.step-body` panels, because several checks read the key with `innerText`,
+which is empty while it is hidden.
 
 ### The alignment chip tooltip
 
@@ -510,9 +636,12 @@ The harness covers all of it: tooltip text and `aria-hidden`, no leftover
 `title`, the 1.2 ratio measured from computed styles, hidden-until-hovered,
 zero overlap with any other chip, staying inside the card at 390px, and
 Escape dismissing while the pointer is still on the chip.
-- A **course-objective key** (`#goalLegend`) sits between the "Module
-  cards" heading and the cards, listing "CO1 — <text> · CO2 — <text> …".
-  Keep it: the chips are unreadable without it.
+- A **course-objective key** (`#goalLegend`) sits above the module cards,
+  listing "CO1 — <text> · CO2 — <text> …". Since September 2026 it lives
+  **inside a `<details class="guide legend-panel">` that is closed on
+  load** — summary "What CO1, CO2… stand for". See **Why the key is
+  collapsed, not deleted**. Keep the key itself: the chips are unreadable
+  without it.
 - State: `module.objectives` is `[{text, align: [goalId, …]}]`. Alignments
   store **ids, not numbers**, so renumbering after a deletion cannot
   corrupt them.
@@ -638,8 +767,9 @@ one-row list, a missing or non-array `objectives` becomes a single blank
 row, string rows become `{text, align: []}`, `duedates` is deleted, and a
 course objective's `activities` field is deleted, and `principle` and
 `strategy` are deleted. Everything else — auto-save debounce, print CSS,
-copy-as-text, "Start over", topic triage, the CMU Eberly Center footer
-credit — is unchanged from v1.
+copy-as-text, "Start over", the CMU Eberly Center footer credit — is
+unchanged from v1. A saved `topics` array is deleted too, the same way
+`duedates`, `principle` and `strategy` are.
 
 ## Workload Estimator notes
 
@@ -869,16 +999,20 @@ saves, "Start over", report and copy text, print-PDF non-blankness,
 label/aria coverage, computed focus outlines, the design tokens, and the
 Mid-Blue-underline prohibition.
 
-For the course planner, `test/verify_course_planner_v2.js` runs 152
-checks: the three step headings and badge numbers, the collapsible-step
+For the course planner, `test/verify_course_planner_v2.js` runs 167
+checks (the count moves with almost every planner change; treat a
+mismatch as a stale note, not a failure): the three step headings and badge numbers, the collapsible-step
 defaults (all four are `<details>`, basics and Step 1 open, 2 and 3
 closed, a closed step really hides its body, clicking a heading toggles
 it), the reworded Step 1 and
-Step 2 text, the Learning Objective Builder link appearing exactly once and
-only in the module step, the absence of the old per-objective activities
-list, module
+Step 2 text, the Learning Objective Builder link appearing exactly once
+and only in Step 1's guidance panel, the two module-count labels (same
+visible text, each accessible name starting with it, the two names
+differing, both carrying an `.sr-only` qualifier) and their one-row
+layout, the absence of the old per-objective activities list, module
 card row order (Objectives, Materials, then Assessments left of
-Activities), the absence of any due-date control, label/aria coverage, the
+Activities), the absence of any due-date control and of any course-topic
+control, label/aria coverage, the
 focus outline, and live sync of course objective text into Step 2 and the
 course-objective key.
 
@@ -951,6 +1085,44 @@ tolerate the **cross-origin Google Fonts sheet** the site header links:
 rather than counted as a parse failure.
 
 ## Current status (August 2026)
+
+- **Length-reduction pass on the planner, September 2026** — Maka's,
+  edited directly on the page. **The goal was to make the page
+  dramatically shorter without losing functionality**, by consolidating
+  guidance and cutting extra headings; nothing a designer could *do* was
+  removed. That is the reason behind several changes that look like
+  losses on their own, and the reason the "do not dedupe the assessment
+  panel" rule was reversed: the module-step copy is gone because the new
+  "Plan Your Modules" list already says it in a line. What changed:
+  - Step 3 is now **"Organize your course content into modules"**, and
+    its three headed sub-sections collapsed into one four-item ordered
+    list under "Plan Your Modules". See **The three steps**.
+  - The **Learning Objective Builder link moved to Step 1's "Why start at
+    the end?" panel** and opens in a new tab. It was briefly off the page
+    altogether during the pass.
+  - The **Course Topics triage list** went from Step 1, with its "Topics"
+    section in the plan and the Word export. See **The course topic list
+    is gone**.
+  - **Both module-count labels now read "Number of modules"** — basics
+    dropped "(usually weeks)" — so both carry `.sr-only` qualifiers, and
+    the Step 3 block is one row (label, box, hint).
+  - Guidance panels were rewritten around **UOES Resource Library links**
+    rather than in-page prose.
+  - The **course-objective key collapsed into a closed panel** rather than
+    being replaced by a hover instruction — see **Why the key is
+    collapsed, not deleted** for the touch finding that decided it.
+  Two loose ends left deliberately: `scheduling_tips.html` is linked but
+  **not yet released**, and `.grid-caption` is now dead CSS (its
+  paragraph above the module cards was cut).
+  Worth telling the designers field testing: the page is much shorter,
+  the builder link moved, and topic triage is gone.
+
+- **The Course Topics list was removed from Step 1, September 2, 2026** —
+  Maka's call. It is gone from the step and from both the on-page plan and
+  the Word export, and `load()` discards a saved `topics` array. See **The
+  course topic list is gone**, including why the surrounding guidance
+  prose still mentions topics. Worth telling the designers currently field
+  testing: any topic triage they had typed in is not carried forward.
 
 - **Alignment ticks on an unwritten module objective used to vanish from
   the output, fixed August 27, 2026.** Maka hit it in the Rock 'n' Roll
