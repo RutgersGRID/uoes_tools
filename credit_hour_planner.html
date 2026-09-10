@@ -79,29 +79,32 @@
             <fieldset>
               <legend class="sr-only">Choose a course format</legend>
               <div class="choice">
-                <input type="radio" name="format" id="fmt-online" value="online" checked>
+                <input type="radio" name="format" id="fmt-sync" value="sync" checked>
                 <div>
-                  <label for="fmt-online">Fully online or traditional</label>
-                  <p class="hint">All instructional time happens in one place &mdash; either
-                    fully online, or fully in a classroom.</p>
+                  <label for="fmt-sync">Synchronous</label>
+                  <p class="hint">All instructional time happens in scheduled meetings &mdash;
+                    in a classroom, live online, or both.</p>
                 </div>
               </div>
               <div class="choice">
                 <input type="radio" name="format" id="fmt-blended" value="blended">
                 <div>
                   <label for="fmt-blended">Blended / hybrid</label>
-                  <p class="hint">Some scheduled face-to-face meetings, with the rest of the
-                    instructional time online.</p>
+                  <p class="hint">Some scheduled meetings, with the rest of the instructional
+                    time self-paced.</p>
+                </div>
+              </div>
+              <div class="choice">
+                <input type="radio" name="format" id="fmt-async" value="async">
+                <div>
+                  <label for="fmt-async">Asynchronous</label>
+                  <p class="hint">No scheduled meetings. Students work through the instructional
+                    time on their own.</p>
                 </div>
               </div>
             </fieldset>
-
-            <div class="field" id="wrap-f2f" hidden style="margin-top:.9rem;">
-              <label for="f2f">Face-to-face meeting hours per week</label>
-              <input type="number" id="f2f" min="0" step="0.5" value="0">
-              <p class="hint">Counted in 50-minute academic hours, the way credit hours are.
-                One 80-minute class meeting is about 1.6.</p>
-            </div>
+            <p class="hint" style="margin-top:.9rem;">Choosing a format fills in the meeting hours
+              beside it. You can always change that number afterwards.</p>
           </section>
 
           <section class="card" aria-labelledby="s-basics">
@@ -113,8 +116,16 @@
                 total hours into fewer weeks.</p>
             </div>
             <div class="field">
-              <label for="credits">Carnegie course credits</label>
+              <label for="credits">Course credits</label>
               <input type="number" id="credits" min="0" step="0.5" value="3">
+            </div>
+            <div class="field">
+              <label for="f2f">Scheduled meeting hours per week</label>
+              <input type="number" id="f2f" min="0" step="0.5" value="3">
+              <p class="hint">Counted in 50-minute academic hours, the way credit hours are, and
+                counting live online meetings as well as in-person ones. One 80-minute meeting is
+                about 1.6. Labs, studios and clinicals may meet for more hours than the course
+                carries credits &mdash; that is allowed.</p>
             </div>
             <div class="field">
               <label for="study">Study time per credit hour</label>
@@ -129,32 +140,38 @@
               One credit hour means one 50-minute period of instruction plus the study time you
               set above, each week, for a 15-week semester.</p>
             <details open>
-              <summary><h4>What counts as instructional time</h4></summary>
+              <summary>
+                <h4>What counts as instructional time</h4>
+              </summary>
               <div class="body">
-                <p>The instructional row is <strong>seat time</strong> &mdash; the 50-minute
-                  period per credit hour a course meets for. A 3-credit course owes 150 minutes
-                  a week.</p>
-                <p>In a traditional course that is literally class meeting time. In a fully
-                  online course there is no room, so it is the asynchronous equivalent:
-                  instructor-directed content &mdash; recorded lectures, guided activities,
-                  anything standing in for a class meeting.</p>
-                <p>In a blended course it splits. The face-to-face row is what you actually
-                  meet for; the online instructional row is the seat time your meetings do not
-                  cover.</p>
+                <p>The instructional rows are <strong>seat time</strong> &mdash; the 50-minute
+                  period per credit hour a course owes each week. A 3-credit course owes 150
+                  minutes.</p>
+                <p>Scheduled meetings cover it directly, and a live online meeting counts the same
+                  as one in a room. Whatever the meetings do not cover is self-paced: the
+                  asynchronous equivalent of a class meeting &mdash; recorded lectures, guided
+                  activities, instructor-directed content students work through on their own
+                  time.</p>
+                <p>Meeting for more hours than the course carries credits is fine. Labs, studios
+                  and clinicals routinely do, and the federal definition sets the credit hour as a
+                  minimum rather than a ceiling. The self-paced instructional row simply drops to
+                  zero.</p>
                 <p>It is <em>not</em> homework. Out-of-class work is the studying row.</p>
               </div>
             </details>
             <details>
-              <summary><h4>The acceleration rate</h4></summary>
+              <summary>
+                <h4>The acceleration rate</h4>
+              </summary>
               <div class="body">
                 <p>A course worth the same credits has to deliver the same total hours no matter
                   how long the term runs. The <strong>acceleration rate</strong> is
                   15 &divide; your semester length.</p>
                 <p>A 15-week term has a rate of 1.0. A 7-week term has a rate of about 2.14,
                   so every week carries roughly twice the work.</p>
-                <p>Face-to-face meetings are the exception: they stay at their actual scheduled
-                  length. In an accelerated blended course the extra instructional time that the
-                  meetings do not cover is pushed into the online instructional total.</p>
+                <p>Scheduled meetings are the exception: they stay at their actual scheduled
+                  length. In an accelerated course the extra instructional time that the meetings
+                  do not cover is pushed into the self-paced instructional total.</p>
               </div>
             </details>
           </section>
@@ -175,15 +192,15 @@
             </p>
             <p class="total" id="tile-f2f" hidden>
               <span class="num" id="out-f2f">0.00</span>
-              <span class="lab">Face-to-face</span>
+              <span class="lab">Scheduled meetings</span>
               <span class="sub">hours per week</span>
-              <span class="desc">scheduled class meetings</span>
+              <span class="desc">in person or live online</span>
             </p>
             <p class="total">
               <span class="num" id="out-instr">0.00</span>
               <span class="lab" id="lab-instr">Instructional activities</span>
               <span class="sub">hours per week</span>
-              <span class="desc" id="desc-instr">class time, or its online equivalent</span>
+              <span class="desc" id="desc-instr">meeting time, or its self-paced equivalent</span>
             </p>
             <p class="total">
               <span class="num" id="out-study">0.00</span>
@@ -192,8 +209,9 @@
             </p>
             <p class="total" id="tile-online" hidden>
               <span class="num" id="out-online">0.00</span>
-              <span class="lab">Online total</span>
+              <span class="lab">Self-paced total</span>
               <span class="sub">hours per week</span>
+              <span class="desc">the budget a module works with</span>
             </p>
             <p class="total">
               <span class="num" id="out-semester">0.00</span>
@@ -228,8 +246,8 @@
         <h2 id="h-module">3. Module time planner</h2>
 
         <p class="lede">Now plan one module. Enter the time you expect students to spend on each
-          activity, and this checks the total against the online hours your credit budget allows for
-          a week. A module here is one week&rsquo;s worth of time.</p>
+          activity, and this checks the total against the self-paced hours your credit budget
+          allows for a week. A module here is one week&rsquo;s worth of time.</p>
 
         <div class="note">
           <p><strong>Reading and writing:</strong> estimate those two with the
@@ -261,7 +279,9 @@
               <p class="hint">Hours per week from the workload estimator, writing only.</p>
             </div>
             <details>
-              <summary><h4>A note on these two numbers</h4></summary>
+              <summary>
+                <h4>A note on these two numbers</h4>
+              </summary>
               <div class="body">
                 <p>The original spreadsheet multiplied both of these by 50/60 before adding them
                   in, which quietly shrank them by 17%. Everything else on that sheet is entered in
@@ -302,7 +322,7 @@
         <div class="totals">
           <p class="total">
             <span class="num" id="out-budget">0.00</span>
-            <span class="lab">Weekly online hours available</span>
+            <span class="lab">Weekly self-paced hours available</span>
             <span class="sub">from your credit budget</span>
           </p>
           <p class="total">
@@ -481,8 +501,21 @@
           return isFinite(v) ? v : 0;
         }
 
+        /* Three formats, on the synchronous/asynchronous axis rather than the
+           online/in-person one: a live online class is scheduled meeting time
+           just as a classroom is. Older saves used "online" for the merged
+           fully-online-or-traditional block, which computed no meeting time at
+           all; load() migrates it to "async". */
+        var FORMAT_NAMES = {
+          sync: "Synchronous",
+          blended: "Blended / hybrid",
+          async: "Asynchronous"
+        };
+
         function format() {
-          return $("fmt-blended").checked ? "blended" : "online";
+          if ($("fmt-blended").checked) return "blended";
+          if ($("fmt-async").checked) return "async";
+          return "sync";
         }
 
         function fmt(n) {
@@ -498,12 +531,13 @@
 
         function calcWeek() {
           var warnings = [];
+          var notes = [];
 
           var weeks = num("weeks");
           var credits = num("credits");
           var study = num("study");
-          var blended = format() === "blended";
-          var f2f = blended ? num("f2f") : 0;
+          var fmtVal = format();
+          var f2f = num("f2f");
 
           if (credits < 0) { credits = 0; }
           if (study < 0) { study = 0; }
@@ -520,23 +554,29 @@
             accel = STANDARD_WEEKS / weeks;
           }
 
-          /* The original let face-to-face hours exceed the course's credit hours,
-             which produced a negative online instructional total. Clamp and warn. */
-          if (blended && f2f > credits) {
-            warnings.push("Face-to-face meeting hours (" + fmt1(f2f) + ") are more than the course's " +
-              fmt1(credits) + " credit hours. Capped at the credit hours — lower the meeting " +
-              "hours or raise the credits.");
-            f2f = credits;
+          /* Meeting for more hours than the course carries credits is legitimate —
+             34 CFR 600.2 defines the credit hour as a minimum, not a ceiling, and
+             labs, studios and clinicals routinely exceed it. The original workbook
+             turned that into a negative online instructional total; earlier versions
+             of this port clamped the meeting hours instead, which capped a 3-credit
+             course at three meeting hours a week. Now the self-paced instructional
+             row floors at zero and the total simply runs above the minimum. */
+          if (f2f > credits) {
+            notes.push("Scheduled meetings (" + fmt1(f2f) + " hours a week) come to more than the " +
+              fmt1(credits) + " credit hours of instructional time this course owes. That is fine — " +
+              "labs, studios and clinicals routinely meet longer. The meetings cover all of the " +
+              "instructional time, so none of it is left to be self-paced, and the weekly total " +
+              "runs above the credit-hour minimum.");
           }
 
           var M = MINUTES_PER_CREDIT_HOUR;
 
-          /* Face-to-face meetings run at their actual scheduled length, so they
-             are never accelerated (rate is always 1). */
+          /* Scheduled meetings run at their actual length, so they are never
+             accelerated (rate is always 1). */
           var f2fMin = accel > 0 ? M * f2f : 0;
 
-          /* Remaining credit hours online, plus whatever accelerated instructional
-             time the face-to-face meetings do not cover. */
+          /* Remaining credit hours self-paced, plus whatever accelerated
+             instructional time the meetings do not cover. */
           var instrMin = M * accel * (credits - f2f) + (M * accel * f2f - f2fMin);
           if (!isFinite(instrMin) || instrMin < 0) instrMin = 0;
 
@@ -544,9 +584,12 @@
           if (!isFinite(studyMin) || studyMin < 0) studyMin = 0;
 
           var rows = [];
-          if (blended) {
-            rows.push({ name: "Face-to-face", accel: 1, credits: f2f, min: f2fMin });
-            rows.push({ name: "Online instructional", accel: accel, credits: credits - f2f, min: instrMin });
+          if (f2f > 0) {
+            rows.push({ name: "Scheduled meetings", accel: 1, credits: f2f, min: f2fMin });
+            rows.push({
+              name: "Self-paced instructional", accel: accel,
+              credits: Math.max(0, credits - f2f), min: instrMin
+            });
           } else {
             rows.push({ name: "Instructional", accel: accel, credits: credits, min: instrMin });
           }
@@ -561,17 +604,18 @@
           var totalMin = rows.reduce(function (s, r) { return s + r.min; }, 0);
 
           return {
-            blended: blended,
+            format: fmtVal,
             weeks: weeks,
             accel: accel,
             rows: rows,
             f2fHours: f2fMin / 60,
             instrHours: instrMin / 60,
             studyHours: studyMin / 60,
-            onlineHours: (instrMin + studyMin) / 60,   /* the module budget */
+            selfPacedHours: (instrMin + studyMin) / 60,   /* the module budget */
             totalHours: totalMin / 60,
             semesterHours: totalMin * weeks / 60,
-            warnings: warnings
+            warnings: warnings,
+            notes: notes
           };
         }
 
@@ -608,18 +652,45 @@
 
         /* ---------------- rendering ---------------- */
 
+        /* The meeting-hours field is always visible now, so the tiles key off the
+           number rather than the format: with no meetings there is nothing to split
+           and the self-paced total would just repeat the weekly total. */
         function syncVisibility() {
-          var blended = format() === "blended";
-          $("wrap-f2f").hidden = !blended;
-          $("tile-f2f").hidden = !blended;
-          $("tile-online").hidden = !blended;
-          $("lab-instr").textContent = blended ? "Online instructional" : "Instructional activities";
-          $("desc-instr").textContent = blended
+          var meets = num("f2f") > 0;
+          $("tile-f2f").hidden = !meets;
+          $("tile-online").hidden = !meets;
+          $("lab-instr").textContent = meets ? "Self-paced instructional" : "Instructional activities";
+          $("desc-instr").textContent = meets
             ? "the seat time your meetings don’t cover"
-            : "class time, or its online equivalent";
+            : "meeting time, or its self-paced equivalent";
+        }
+
+        /* Picking a format fills the meeting-hours field in: a synchronous course
+           meets for all of its seat time, an asynchronous one for none of it, and
+           blended keeps whatever number is already there. The field stays editable
+           in every format — a synchronous lab may well meet for longer than its
+           credit hours. */
+        function applyFormatPreset() {
+          var f = format();
+          if (f === "sync") { $("f2f").value = String(num("credits")); }
+          else if (f === "async") { $("f2f").value = "0"; }
+          lastCredits = num("credits");
+        }
+
+        /* While the course is synchronous and the meeting hours still match the
+           credit hours, changing the credits carries the meetings along; once the
+           number has been changed by hand it is left alone. */
+        var lastCredits = null;
+        function trackCredits() {
+          var c = num("credits");
+          if (format() === "sync" && lastCredits !== null && num("f2f") === lastCredits) {
+            $("f2f").value = String(c);
+          }
+          lastCredits = c;
         }
 
         function render() {
+          trackCredits();
           syncVisibility();
 
           var w = calcWeek();
@@ -630,7 +701,7 @@
           $("out-f2f").textContent = fmt(w.f2fHours);
           $("out-instr").textContent = fmt(w.instrHours);
           $("out-study").textContent = fmt(w.studyHours);
-          $("out-online").textContent = fmt(w.onlineHours);
+          $("out-online").textContent = fmt(w.selfPacedHours);
           $("out-semester").textContent = fmt(w.semesterHours);
 
           /* --- weekly table --- */
@@ -652,15 +723,11 @@
           tr.firstChild.style.borderTop = "2px solid #007FAC";
           body.appendChild(tr);
 
-          /* --- warnings --- */
+          /* --- warnings and notes --- */
           var wbox = $("warnings");
           wbox.innerHTML = "";
-          w.warnings.forEach(function (msg) {
-            var p = document.createElement("p");
-            p.className = "warn";
-            p.textContent = msg;
-            wbox.appendChild(p);
-          });
+          w.warnings.forEach(function (msg) { wbox.appendChild(noteEl("warn", msg)); });
+          w.notes.forEach(function (msg) { wbox.appendChild(noteEl("note", msg)); });
 
           $("live-week").textContent =
             "Weekly budget " + fmt(w.totalHours) + " hours, " +
@@ -674,8 +741,8 @@
           $("out-assess").textContent = fmt(m.assess);
 
           /* --- balance --- */
-          var diff = w.onlineHours - m.planned;
-          $("out-budget").textContent = fmt(w.onlineHours);
+          var diff = w.selfPacedHours - m.planned;
+          $("out-budget").textContent = fmt(w.selfPacedHours);
           $("out-planned").textContent = fmt(m.planned);
           $("out-diff").textContent = fmt(diff);
 
@@ -702,7 +769,7 @@
 
           $("live-balance").textContent =
             "Planned " + fmt(m.planned) + " hours against a budget of " +
-            fmt(w.onlineHours) + " hours. " +
+            fmt(w.selfPacedHours) + " hours. " +
             (diff < -0.005 ? fmt(-diff) + " hours over." : fmt(diff) + " hours remaining.");
 
           save();
@@ -746,27 +813,28 @@
         function asText() {
           var w = calcWeek();
           var m = calcModule();
-          var diff = w.onlineHours - m.planned;
+          var diff = w.selfPacedHours - m.planned;
           var lines = [];
 
           lines.push("CREDIT HOUR PLAN");
           lines.push("");
           lines.push("COURSE");
-          lines.push("  Format:            " + (w.blended ? "Blended / hybrid" : "Fully online or traditional"));
+          lines.push("  Format:            " + FORMAT_NAMES[w.format]);
           lines.push("  Semester length:   " + num("weeks") + " weeks");
           lines.push("  Credits:           " + num("credits"));
           lines.push("  Study per credit:  " + num("study") + " hours");
-          if (w.blended) lines.push("  Face-to-face:      " + num("f2f") + " hours per week");
+          lines.push("  Meeting hours:     " + num("f2f") + " per week");
           lines.push("  Acceleration rate: " + w.accel.toFixed(2));
           lines.push("");
 
+          var meets = w.f2fHours > 0;
           lines.push("WEEKLY TIME BUDGET");
-          if (w.blended) lines.push("  Face-to-face          " + fmt(w.f2fHours) + " hrs/wk");
-          lines.push("  " + pad(w.blended ? "Online instructional" : "Instructional", 22) + fmt(w.instrHours) + " hrs/wk");
-          lines.push("  " + pad("Homework / study", 22) + fmt(w.studyHours) + " hrs/wk");
-          if (w.blended) lines.push("  " + pad("Online total", 22) + fmt(w.onlineHours) + " hrs/wk");
-          lines.push("  " + pad("TOTAL", 22) + fmt(w.totalHours) + " hrs/wk");
-          lines.push("  " + pad("Semester total", 22) + fmt(w.semesterHours) + " hrs");
+          if (meets) lines.push("  " + pad("Scheduled meetings", 26) + fmt(w.f2fHours) + " hrs/wk");
+          lines.push("  " + pad(meets ? "Self-paced instructional" : "Instructional", 26) + fmt(w.instrHours) + " hrs/wk");
+          lines.push("  " + pad("Homework / study", 26) + fmt(w.studyHours) + " hrs/wk");
+          if (meets) lines.push("  " + pad("Self-paced total", 26) + fmt(w.selfPacedHours) + " hrs/wk");
+          lines.push("  " + pad("TOTAL", 26) + fmt(w.totalHours) + " hrs/wk");
+          lines.push("  " + pad("Semester total", 26) + fmt(w.semesterHours) + " hrs");
           lines.push("");
 
           lines.push("MODULE PLAN");
@@ -788,15 +856,21 @@
           lines.push("");
 
           lines.push("DOES IT FIT?");
-          lines.push("  " + pad("Weekly online hours available", 32) + fmt(w.onlineHours) + " hrs");
-          lines.push("  " + pad("Module hours planned", 32) + fmt(m.planned) + " hrs");
-          lines.push("  " + pad(diff < -0.005 ? "OVER BUDGET BY" : "Hours remaining", 32) +
+          lines.push("  " + pad("Weekly self-paced hours available", 35) + fmt(w.selfPacedHours) + " hrs");
+          lines.push("  " + pad("Module hours planned", 35) + fmt(m.planned) + " hrs");
+          lines.push("  " + pad(diff < -0.005 ? "OVER BUDGET BY" : "Hours remaining", 35) +
             fmt(Math.abs(diff)) + " hrs");
 
           if (w.warnings.length) {
             lines.push("");
             lines.push("WARNINGS");
             w.warnings.forEach(function (x) { lines.push("  - " + x); });
+          }
+
+          if (w.notes.length) {
+            lines.push("");
+            lines.push("NOTES");
+            w.notes.forEach(function (x) { lines.push("  - " + x); });
           }
 
           lines.push("");
@@ -849,13 +923,21 @@
             var raw = localStorage.getItem(STORAGE_KEY);
             if (!raw) return;
             var data = JSON.parse(raw);
+            /* "online" was the old merged fully-online-or-traditional format, which
+               ignored the meeting-hours field entirely and computed none. It becomes
+               asynchronous, and any meeting hours left over from a spell in blended
+               are dropped rather than silently switched on. */
+            var wasMergedOnline = data.format === "online";
             if (data.format === "blended") $("fmt-blended").checked = true;
-            else if (data.format === "online") $("fmt-online").checked = true;
+            else if (wasMergedOnline || data.format === "async") $("fmt-async").checked = true;
+            else if (data.format === "sync") $("fmt-sync").checked = true;
             ALL_FIELDS.forEach(function (id) {
               if (!(id in data)) return;          // migration: new fields keep defaults
               var e = $(id);
               if (e) e.value = data[id];
             });
+            if (wasMergedOnline) $("f2f").value = "0";
+            lastCredits = num("credits");
           } catch (err) { /* corrupt or unavailable; ignore */ }
         }
 
@@ -863,6 +945,15 @@
 
         $("f").addEventListener("input", render);
         $("f").addEventListener("change", render);
+
+        /* Listeners on the radios themselves, so the preset lands before the
+           form-level render sees the new value. */
+        Array.prototype.forEach.call(
+          document.querySelectorAll('input[name="format"]'),
+          function (r) {
+            r.addEventListener("input", applyFormatPreset);
+            r.addEventListener("change", applyFormatPreset);
+          });
 
         /* There is deliberately no "fill everything with suggested times" control.
            In the original workbook these were per-cell Excel input-message tooltips
@@ -919,6 +1010,7 @@
         window.__calcModule = calcModule;
         window.__asText = asText;
 
+        lastCredits = num("credits");
         load();
         render();
       })();

@@ -44,7 +44,7 @@ function excelWeek(weeks, credits, study, f2f) {
     accel,
     f2fMin: H20, instrMin: H21, studyMin: H22,
     f2fHours: H20 / 60, instrHours: H21 / 60, studyHours: H22 / 60,
-    onlineHours: (H21 + H22) / 60,
+    selfPacedHours: (H21 + H22) / 60,
     totalHours: (H20 + H21 + H22) / 60,
     semesterHours: (H20 + H21 + H22) * weeks / 60
   };
@@ -58,7 +58,7 @@ function excelOnline(weeks, credits, study) {
   return {
     accel, instrMin: H11, studyMin: H12,
     instrHours: H11 / 60, studyHours: H12 / 60,
-    onlineHours: (H11 + H12) / 60,
+    selfPacedHours: (H11 + H12) / 60,
     totalHours: (H11 + H12) / 60,
     semesterHours: (H11 + H12) * weeks / 60
   };
@@ -80,28 +80,35 @@ function excelOnline(weeks, credits, study) {
   const file = "file://" + path.resolve(__dirname, "..", "credit_hour_planner.html");
   await page.goto(file);
 
+  /* o.format is "sync" | "blended" | "async"; the older boolean o.blended is
+     still accepted, and false maps to "async" — the merged fully-online block
+     it used to mean computed no meeting time at all.
+
+     Note the ordering: choosing a format fills the meeting-hours field, so f2f
+     is set last and only when the case names it. */
   const setup = async (o) => page.evaluate((o) => {
     const set = (id, v) => {
       const e = document.getElementById(id);
       e.value = String(v);
       e.dispatchEvent(new Event("input", { bubbles: true }));
     };
-    const fmt = document.getElementById(o.blended ? "fmt-blended" : "fmt-online");
+    const fmt = document.getElementById(
+      { sync: "fmt-sync", blended: "fmt-blended", async: "fmt-async" }[o.format]);
     fmt.checked = true;
     fmt.dispatchEvent(new Event("change", { bubbles: true }));
     set("weeks", o.weeks); set("credits", o.credits); set("study", o.study);
-    set("f2f", o.f2f === undefined ? 0 : o.f2f);
+    if (o.f2f !== undefined) set("f2f", o.f2f);
     if (o.reading !== undefined) set("rw_reading", o.reading);
     if (o.writing !== undefined) set("rw_writing", o.writing);
     if (o.activities) {
       Object.keys(o.activities).forEach(k => set(k, o.activities[k]));
     }
-  }, o);
+  }, { ...o, format: o.format || (o.blended ? "blended" : "async") });
 
   const week = () => page.evaluate(() => window.__calcWeek());
   const mod  = () => page.evaluate(() => window.__calcModule());
 
-  /* ================= 1. Fully online / traditional ================= */
+  /* ================= 1. Asynchronous (the old fully-online block) ================= */
 
   const onlineCases = [
     { weeks: 15, credits: 3, study: 2 },
@@ -120,15 +127,15 @@ function excelOnline(weeks, credits, study) {
     await setup({ ...c, blended: false });
     const got = await week();
     const exp = excelOnline(c.weeks, c.credits, c.study);
-    const tag = `online w${c.weeks} c${c.credits} s${c.study}`;
+    const tag = `async w${c.weeks} c${c.credits} s${c.study}`;
     near(tag + " accel",      got.accel,         exp.accel,         1e-9);
     near(tag + " instr hrs",  got.instrHours,    exp.instrHours,    1e-9);
     near(tag + " study hrs",  got.studyHours,    exp.studyHours,    1e-9);
     near(tag + " total hrs",  got.totalHours,    exp.totalHours,    1e-9);
     near(tag + " sem hrs",    got.semesterHours, exp.semesterHours, 1e-9);
-    near(tag + " online hrs", got.onlineHours,   exp.onlineHours,   1e-9);
-    // Carnegie invariant: semester hours = 12.5 * credits * (1 + study)
-    near(tag + " carnegie invariant", got.semesterHours,
+    near(tag + " self-paced hrs", got.selfPacedHours, exp.selfPacedHours, 1e-9);
+    // Credit-hour invariant: semester hours = 12.5 * credits * (1 + study)
+    near(tag + " credit-hour invariant", got.semesterHours,
       12.5 * c.credits * (1 + c.study), 1e-9);
     // parts add to whole
     near(tag + " parts sum to total",
@@ -159,12 +166,13 @@ function excelOnline(weeks, credits, study) {
     near(tag + " study hrs",  got.studyHours,    exp.studyHours,    1e-9);
     near(tag + " total hrs",  got.totalHours,    exp.totalHours,    1e-9);
     near(tag + " sem hrs",    got.semesterHours, exp.semesterHours, 1e-9);
-    near(tag + " online hrs", got.onlineHours,   exp.onlineHours,   1e-9);
-    near(tag + " carnegie invariant", got.semesterHours,
+    near(tag + " self-paced hrs", got.selfPacedHours, exp.selfPacedHours, 1e-9);
+    near(tag + " credit-hour invariant", got.semesterHours,
       12.5 * c.credits * (1 + c.study), 1e-9);
     near(tag + " parts sum to total",
       got.f2fHours + got.instrHours + got.studyHours, got.totalHours, 1e-9);
     ok(tag + " no warnings", got.warnings.length === 0, got.warnings.join("; "));
+    ok(tag + " no notes", got.notes.length === 0, got.notes.join("; "));
   }
 
   /* ===== 3. Blended with f2f = 0 must equal the fully-online block ===== */
@@ -174,18 +182,18 @@ function excelOnline(weeks, credits, study) {
     await setup({ ...c, blended: false });
     const o = await week();
     near(`f2f=0 equivalence w${c.weeks} total`, b.totalHours, o.totalHours, 1e-9);
-    near(`f2f=0 equivalence w${c.weeks} online budget`, b.onlineHours, o.onlineHours, 1e-9);
+    near(`f2f=0 equivalence w${c.weeks} self-paced budget`, b.selfPacedHours, o.selfPacedHours, 1e-9);
     near(`f2f=0 equivalence w${c.weeks} study`, b.studyHours, o.studyHours, 1e-9);
   }
 
-  /* ===== 4. Face-to-face never accelerates; the shortfall moves online ===== */
+  /* ===== 4. Meetings never accelerate; the shortfall moves to self-paced ===== */
   {
     await setup({ blended: true, weeks: 7, credits: 3, study: 2, f2f: 1 });
     const g = await week();
     near("f2f stays at 50 min/wk in a 7-week term", g.f2fHours, 50 / 60, 1e-9);
     // accelerated instructional requirement minus what the meeting covers
     const accel = 15 / 7;
-    near("shortfall pushed to online instructional", g.instrHours,
+    near("shortfall pushed to self-paced instructional", g.instrHours,
       (50 * accel * 2 + (50 * accel * 1 - 50)) / 60, 1e-9);
   }
 
@@ -201,13 +209,34 @@ function excelOnline(weeks, credits, study) {
     const warnShown = await page.$$eval(".warn", els => els.length);
     ok("weeks 0 renders an inline warning", warnShown >= 1, "count " + warnShown);
   }
+  /* Meetings above the credit hours: legitimate, not an error.
+     34 CFR 600.2 makes the credit hour a minimum, and a lab or studio routinely
+     meets for longer. This used to clamp the meeting hours to the credit hours,
+     which put a hard 3-hour ceiling on a 3-credit course. Regression guard. */
   {
-    await setup({ blended: true, weeks: 15, credits: 3, study: 2, f2f: 5 });
+    await setup({ format: "blended", weeks: 15, credits: 3, study: 2, f2f: 5 });
     const g = await week();
-    ok("f2f > credits warns", g.warnings.length === 1, JSON.stringify(g.warnings));
-    ok("f2f clamped, no negative instructional", g.instrHours >= 0, "got " + g.instrHours);
-    near("f2f clamped to credit hours", g.f2fHours, 50 * 3 / 60, 1e-9);
-    near("clamped total still Carnegie", g.semesterHours, 12.5 * 3 * 3, 1e-9);
+    ok("meetings above the credit hours are not a warning",
+      g.warnings.length === 0, JSON.stringify(g.warnings));
+    ok("meetings above the credit hours carry a note",
+      g.notes.length === 1, JSON.stringify(g.notes));
+    near("meeting hours are not capped", g.f2fHours, 50 * 5 / 60, 1e-9);
+    near("self-paced instructional floors at zero", g.instrHours, 0, 1e-9);
+    near("study time still follows the credits", g.studyHours, 50 * 3 * 2 / 60, 1e-9);
+    near("weekly total = meetings + study", g.totalHours, (50 * 5 + 50 * 3 * 2) / 60, 1e-9);
+    near("semester total = weekly total x weeks",
+      g.semesterHours, (50 * 5 + 50 * 3 * 2) / 60 * 15, 1e-9);
+    ok("semester hours clear the credit-hour minimum",
+      g.semesterHours > 12.5 * 3 * 3, "got " + g.semesterHours);
+
+    const shown = await page.evaluate(() => ({
+      notes: document.querySelectorAll("#warnings .note").length,
+      warns: document.querySelectorAll("#warnings .warn").length,
+      max: document.getElementById("f2f").getAttribute("max")
+    }));
+    ok("the note renders inline", shown.notes === 1, "count " + shown.notes);
+    ok("no red warning for a lab-length week", shown.warns === 0, "count " + shown.warns);
+    ok("the meeting-hours field carries no maximum", shown.max === null, shown.max);
   }
   {
     await setup({ blended: false, weeks: 15, credits: -2, study: -1 });
@@ -234,7 +263,7 @@ function excelOnline(weeks, credits, study) {
     near("planned = learn + assess", m.planned, m.learn + m.assess, 1e-9);
 
     const w = await week();
-    near("module budget = instructional + study", m.planned > 0 ? w.onlineHours : -1,
+    near("module budget = instructional + study", m.planned > 0 ? w.selfPacedHours : -1,
       w.instrHours + w.studyHours, 1e-9);
 
     const shown = await page.evaluate(() => ({
@@ -244,10 +273,10 @@ function excelOnline(weeks, credits, study) {
       readingsRow: document.getElementById("l_readings").textContent,
       writingRow: document.getElementById("a_writing").textContent
     }));
-    ok("budget tile matches calc", shown.budget === w.onlineHours.toFixed(2), shown.budget);
+    ok("budget tile matches calc", shown.budget === w.selfPacedHours.toFixed(2), shown.budget);
     ok("planned tile matches calc", shown.planned === m.planned.toFixed(2), shown.planned);
     ok("difference tile correct",
-      shown.diff === (w.onlineHours - m.planned).toFixed(2), shown.diff);
+      shown.diff === (w.selfPacedHours - m.planned).toFixed(2), shown.diff);
     ok("derived readings row mirrors input", shown.readingsRow === "3.00", shown.readingsRow);
     ok("derived writing row mirrors input", shown.writingRow === "2.00", shown.writingRow);
   }
@@ -283,41 +312,64 @@ function excelOnline(weeks, credits, study) {
     ok("under-budget shows a note", noted === 1, "count " + noted);
   }
 
-  /* ===== 8. Conditional visibility ===== */
+  /* ===== 8. Where the meeting-hours field lives, and what the tiles show =====
+     The field moved out of the format card (where it appeared only for a
+     blended course) into Course basics, below the course credits, and is now
+     always visible. The tiles key off the number instead of the format. */
   {
-    await setup({ blended: false, weeks: 15, credits: 3, study: 2 });
-    let v = await page.evaluate(() => ({
-      f2fField: document.getElementById("wrap-f2f").hidden,
-      f2fTile: document.getElementById("tile-f2f").hidden,
-      onlineTile: document.getElementById("tile-online").hidden,
-      label: document.getElementById("lab-instr").textContent
-    }));
-    ok("online: f2f field hidden", v.f2fField === true);
-    ok("online: f2f tile hidden", v.f2fTile === true);
-    ok("online: online-total tile hidden", v.onlineTile === true);
-    ok("online: instructional label", v.label === "Instructional activities", v.label);
-    let d = await page.evaluate(() => document.getElementById("desc-instr").textContent);
-    ok("online: instructional described as class time or its equivalent",
-      /class time, or its online equivalent/.test(d), d);
+    await setup({ format: "async", weeks: 15, credits: 3, study: 2 });
+    const place = await page.evaluate(() => {
+      const credits = document.getElementById("credits");
+      const f2f = document.getElementById("f2f");
+      const card = f2f.closest("section");
+      return {
+        oldWrapper: !!document.getElementById("wrap-f2f"),
+        visible: !!f2f.offsetParent,
+        sameCard: card === credits.closest("section"),
+        heading: card.querySelector("h3").textContent,
+        creditsFirst: !!(credits.compareDocumentPosition(f2f) &
+          Node.DOCUMENT_POSITION_FOLLOWING),
+        label: document.querySelector('label[for="f2f"]').textContent
+      };
+    });
+    ok("the blended-only wrapper is gone", place.oldWrapper === false);
+    ok("meeting hours are visible in an asynchronous course", place.visible === true);
+    ok("meeting hours sit in the Course basics card",
+      place.sameCard && /Course basics/.test(place.heading), place.heading);
+    ok("meeting hours sit below the course credits", place.creditsFirst === true);
+    ok("meeting hours are not labelled face-to-face",
+      !/face-to-face/i.test(place.label), place.label);
+    ok("meeting-hours label says scheduled meetings",
+      /scheduled meeting/i.test(place.label), place.label);
 
-    await setup({ blended: true, weeks: 15, credits: 3, study: 2, f2f: 1 });
-    v = await page.evaluate(() => ({
-      f2fField: document.getElementById("wrap-f2f").hidden,
+    let v = await page.evaluate(() => ({
       f2fTile: document.getElementById("tile-f2f").hidden,
       onlineTile: document.getElementById("tile-online").hidden,
       label: document.getElementById("lab-instr").textContent
     }));
-    ok("blended: f2f field shown", v.f2fField === false);
-    ok("blended: f2f tile shown", v.f2fTile === false);
-    ok("blended: online-total tile shown", v.onlineTile === false);
-    ok("blended: label switches", v.label === "Online instructional", v.label);
+    ok("no meetings: meetings tile hidden", v.f2fTile === true);
+    ok("no meetings: self-paced-total tile hidden", v.onlineTile === true);
+    ok("no meetings: instructional label", v.label === "Instructional activities", v.label);
+    let d = await page.evaluate(() => document.getElementById("desc-instr").textContent);
+    ok("no meetings: instructional described as meeting time or its equivalent",
+      /meeting time, or its self-paced equivalent/.test(d), d);
+
+    await setup({ format: "blended", weeks: 15, credits: 3, study: 2, f2f: 1 });
+    v = await page.evaluate(() => ({
+      f2fTile: document.getElementById("tile-f2f").hidden,
+      onlineTile: document.getElementById("tile-online").hidden,
+      label: document.getElementById("lab-instr").textContent
+    }));
+    ok("meetings: meetings tile shown", v.f2fTile === false);
+    ok("meetings: self-paced-total tile shown", v.onlineTile === false);
+    ok("meetings: label switches", v.label === "Self-paced instructional", v.label);
     d = await page.evaluate(() => document.getElementById("desc-instr").textContent);
-    ok("blended: instructional described as uncovered seat time",
+    ok("meetings: instructional described as uncovered seat time",
       /seat time your meetings/.test(d), d);
     const f2fDesc = await page.evaluate(() =>
       document.querySelector("#tile-f2f .desc").textContent);
-    ok("blended: face-to-face described as scheduled meetings",
-      /scheduled class meetings/.test(f2fDesc), f2fDesc);
+    ok("meetings tile counts live online meetings too",
+      /in person or live online/.test(f2fDesc), f2fDesc);
 
     // the explainer card must say what instructional time is, and that it isn't homework
     const card = await page.evaluate(() => {
@@ -331,14 +383,66 @@ function excelOnline(weeks, credits, study) {
     // instructional row means seat time — but whether it starts open is a
     // presentation choice, so this no longer asserts a state.
     ok("explainer says seat time", card && /seat time/.test(card.text));
-    ok("explainer covers the online case", card && /asynchronous equivalent/.test(card.text));
-    ok("explainer covers the blended split", card && /face-to-face row is what you actually meet for/.test(card.text));
+    ok("explainer covers the self-paced case", card && /asynchronous equivalent/.test(card.text));
+    ok("explainer says meetings cover seat time directly",
+      card && /Scheduled meetings cover it directly/.test(card.text));
+    ok("explainer counts a live online meeting the same as a room",
+      card && /live online meeting counts the same/.test(card.text));
+    ok("explainer says the credit hour is a minimum, not a ceiling",
+      card && /minimum rather than a ceiling/.test(card.text));
     ok("explainer rules out homework", card && /not.{0,3} homework/.test(card.text), card && card.text.slice(-90));
 
     const rowNames = await page.$$eval("#weekrows tr td:first-child", e => e.map(x => x.textContent));
     ok("blended table has 4 rows incl. total", rowNames.length === 4, rowNames.join("|"));
-    ok("blended table lists face-to-face", rowNames[0] === "Face-to-face", rowNames[0]);
+    ok("blended table lists the meetings row",
+      rowNames[0] === "Scheduled meetings", rowNames[0]);
+    ok("blended table lists the self-paced row",
+      rowNames[1] === "Self-paced instructional", rowNames[1]);
     ok("blended table ends with Total", rowNames[3] === "Total", rowNames[3]);
+  }
+
+  /* ===== 8b. Choosing a format fills the meeting hours ===== */
+  {
+    await page.evaluate(() => localStorage.removeItem("uoes-credit-hour-planner"));
+    await page.reload();
+    const d = await page.evaluate(() => ({
+      sync: document.getElementById("fmt-sync").checked,
+      f2f: document.getElementById("f2f").value,
+      credits: document.getElementById("credits").value,
+      options: Array.from(document.querySelectorAll('input[name="format"]')).map(r => r.value)
+    }));
+    ok("three formats on the synchronous axis",
+      d.options.join(",") === "sync,blended,async", d.options.join(","));
+    ok("default format is synchronous", d.sync === true);
+    ok("meeting hours default to the credit hours", d.f2f === d.credits,
+      d.f2f + " vs " + d.credits);
+
+    const pick = (id) => page.evaluate((id) => {
+      const r = document.getElementById(id);
+      r.checked = true;
+      r.dispatchEvent(new Event("change", { bubbles: true }));
+      return document.getElementById("f2f").value;
+    }, id);
+    const type = (id, v) => page.evaluate(([id, v]) => {
+      const e = document.getElementById(id);
+      e.value = v;
+      e.dispatchEvent(new Event("input", { bubbles: true }));
+      return document.getElementById("f2f").value;
+    }, [id, v]);
+
+    ok("asynchronous zeroes the meeting hours", (await pick("fmt-async")) === "0");
+    const kept = await pick("fmt-blended");
+    ok("blended keeps the number already there", kept === "0", kept);
+    const refilled = await pick("fmt-sync");
+    ok("synchronous refills to the credit hours", refilled === "3", refilled);
+
+    const followed = await type("credits", "4");
+    ok("meeting hours follow the credits while untouched", followed === "4", followed);
+    await type("f2f", "6");
+    const left = await type("credits", "5");
+    ok("a hand-set meeting number is left alone", left === "6", left);
+    const g = await week();
+    near("a 5-credit course can meet for 6 hours", g.f2fHours, 50 * 6 / 60, 1e-9);
   }
 
   /* ===== 9. Suggested times are per-activity guidance, never bulk-applied =====
@@ -415,11 +519,30 @@ function excelOnline(weeks, credits, study) {
     const partial = await page.evaluate(() => ({
       weeks: document.getElementById("weeks").value,
       study: document.getElementById("study").value,
-      blended: document.getElementById("fmt-blended").checked
+      blended: document.getElementById("fmt-blended").checked,
+      sync: document.getElementById("fmt-sync").checked
     }));
     ok("partial save loads", partial.weeks === "12", partial.weeks);
     ok("missing fields keep defaults", partial.study === "2", partial.study);
-    ok("missing format defaults to online", partial.blended === false);
+    ok("missing format defaults to synchronous", partial.sync === true && partial.blended === false);
+
+    // migration: "online" was the merged fully-online-or-traditional format,
+    // which computed no meeting time at all. It becomes asynchronous, and any
+    // meeting hours left over from a spell in blended are dropped rather than
+    // silently switched on.
+    await page.evaluate(() => {
+      localStorage.setItem("uoes-credit-hour-planner",
+        JSON.stringify({ format: "online", weeks: "15", credits: "3", study: "2", f2f: "2" }));
+    });
+    await page.reload();
+    const migrated = await page.evaluate(() => ({
+      async: document.getElementById("fmt-async").checked,
+      f2f: document.getElementById("f2f").value
+    }));
+    ok("an old fully-online save becomes asynchronous", migrated.async === true);
+    ok("its leftover meeting hours are dropped", migrated.f2f === "0", migrated.f2f);
+    const mg = await week();
+    near("the migrated save keeps its old numbers", mg.totalHours, 7.5, 1e-9);
 
     // corrupt save must not throw
     await page.evaluate(() => localStorage.setItem("uoes-credit-hour-planner", "{not json"));
@@ -459,6 +582,10 @@ function excelOnline(weeks, credits, study) {
     ok("report becomes visible", rep.hidden === false);
     ok("report is not empty", rep.text.length > 300, "len " + rep.text.length);
     ok("report names the format", /Blended \/ hybrid/.test(rep.text));
+    ok("report states the meeting hours", /Meeting hours: +1 per week/.test(rep.text));
+    ok("report labels the meetings row", /Scheduled meetings/.test(rep.text));
+    ok("report labels the self-paced budget",
+      /Weekly self-paced hours available/.test(rep.text));
     ok("report shows the acceleration rate", /Acceleration rate: 2\.14/.test(rep.text));
     ok("report lists an entered activity", /Blog/.test(rep.text));
     ok("report lists readings from the reading input", /Readings/.test(rep.text));

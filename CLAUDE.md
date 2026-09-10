@@ -887,11 +887,65 @@ Both sheets were password-protected (`Rutgers`); irrelevant in the port.
 
 ### Sheet 1 → "Weekly time budget"
 
-Three inputs (semester weeks, Carnegie credits, study hours per credit)
-drive one calculation. The original had two parallel blocks —
-fully-online/traditional and blended/hybrid — computed side by side. The
-port makes it a **course-format choice at the top of the page** instead,
-which also disambiguates the module budget.
+Four inputs (semester weeks, course credits, scheduled meeting hours per
+week, study hours per credit) drive one calculation. The original had two
+parallel blocks — fully-online/traditional and blended/hybrid — computed
+side by side. The port makes it a **course-format choice at the top of the
+page** instead, which also disambiguates the module budget.
+
+### The format axis is synchronous, not online
+
+**The three formats are Synchronous / Blended-hybrid / Asynchronous**
+(August 29, 2026, Maka's framing). They were "Fully online or traditional"
+and "Blended / hybrid" until then, and that pair stopped working the moment
+the meeting-hours field became universal: it merged exactly the two cases
+the field distinguishes. Maka's point was that both a fully online and an
+in-person course can be scheduled meetings plus out-of-class work, so the
+axis that actually drives the math is **synchronous vs. asynchronous, not
+online vs. in a room**. A live online class is meeting time; the page says
+so in the field hint, the tile sub-label ("in person or live online") and
+the explainer.
+
+Everything named for that old axis was renamed with it — user-visible text
+only, since the state field names had to survive saved work:
+
+| Was | Is |
+| --- | --- |
+| "Face-to-face meeting hours per week" | "Scheduled meeting hours per week" |
+| "Face-to-face" tile / table row | "Scheduled meetings" |
+| "Online instructional" | "Self-paced instructional" |
+| "Online total" tile | "Self-paced total" |
+| "Weekly online hours available" | "Weekly self-paced hours available" |
+
+- **The input id is still `f2f`** and so is the saved field. Renaming it
+  would strand saved work for nothing; same reasoning as `evidence` and
+  `state.goals` in the course planner. `w.onlineHours` did become
+  `w.selfPacedHours` — that one is a local return value, not persisted.
+- **Stored format values are `sync` / `blended` / `async`.** `load()`
+  migrates the old `"online"` to `async` — the merged block computed no
+  meeting time at all — **and zeroes `f2f` when it does**, because a save
+  written after a spell in blended can carry meeting hours that the old
+  fully-online format ignored and the new asynchronous one would not.
+- **Choosing a format fills the meeting-hours field**: synchronous sets it
+  to the credit hours, asynchronous to 0, blended leaves it alone. The
+  field stays editable in every format. While the course is synchronous
+  *and* the number still matches the credits, editing the credits carries
+  the meetings along (`trackCredits()`); once it has been set by hand it is
+  left alone.
+- **The field is always visible, in Course basics, directly below Course
+  credits** — Maka's placement. It used to sit in the format card and
+  appear only for a blended course.
+- **The tiles key off the number, not the format.** With no meetings there
+  is nothing to split, so the meetings tile and the self-paced total are
+  hidden (the latter would just repeat the weekly total) and the
+  instructional tile reads "Instructional activities" rather than
+  "Self-paced instructional".
+- The default format is **synchronous**, so the page opens with meeting
+  hours equal to the credits. That is a change of default — the old page
+  opened on the merged fully-online option, i.e. no meeting time. **Watch
+  this in field testing**: the audience here mostly builds online courses,
+  and an asynchronous designer who does not notice the format will plan
+  against a module budget missing the instructional third.
 
 The math, from the blended block (rows 19–23), generalizes to both:
 
@@ -899,42 +953,58 @@ The math, from the blended block (rows 19–23), generalizes to both:
   however long the term runs, so a 7-week term has a rate of ~2.14.
 - `MINUTES_PER_CREDIT_HOUR = 50`; one credit hour = one 50-minute period
   of instruction per week.
-- Face-to-face minutes = `50 × f2f`, **never accelerated** (the original
+- Meeting minutes = `50 × f2f`, **never accelerated** (the original
   hardcodes `F20 = 1`) — meetings run at their scheduled length.
-- Online instructional = `50 × accel × (credits − f2f) + (50 × accel × f2f
-  − f2fMinutes)`. The second term pushes the accelerated instructional
-  time the meetings don't cover into the online total.
+- Self-paced instructional = `50 × accel × (credits − f2f) + (50 × accel ×
+  f2f − meetingMinutes)`. The second term pushes the accelerated
+  instructional time the meetings don't cover into the self-paced total.
+  **Floored at zero**, which is what makes meeting hours above the credit
+  hours legal; see departure 2.
 - Studying = `50 × accel × credits × study`.
 
 **The instructional row is seat time, and users do not infer that.** Maka
-asked whether it meant face-to-face class time — it does, in a traditional
-course (3 credits = 150 min/wk = three 50-minute periods); in a fully
-online course it is the asynchronous equivalent, and in a blended course it
-is the seat time the meetings don't cover. That ambiguity is inherent: the
-original merged "traditional" and "fully online" into one block precisely
-because the math is identical and only the delivery differs. Two things now
-carry the explanation and should be kept: an italic sub-label on each tile
-(`#desc-instr`, swapped by format, plus a static one on the face-to-face
-tile) and a `<details>` panel, "What counts as instructional time", in the
-*How this is calculated* card. The harness asserts both exist.
+asked whether it meant class meeting time — it does, in a synchronous
+course (3 credits = 150 min/wk = three 50-minute periods); with no meetings
+it is the asynchronous equivalent, and in between it is the seat time the
+meetings don't cover. The original merged "traditional" and "fully online"
+into one block precisely because the math is identical and only the
+delivery differs — which is why the port could keep one code path when it
+re-cut the formats. Two things carry the explanation and should be kept: an
+italic sub-label on each tile (`#desc-instr`, swapped by whether there are
+meetings, plus a static one on the meetings tile) and a `<details>` panel,
+"What counts as instructional time", in the *How this is calculated* card.
+The harness asserts both exist.
 
 The panel was `<details open>` at first; **Maka collapsed it on August 12,
 2026**, so the tile sub-labels now carry the explanation on first read and
 the panel is there for anyone who wants the detail. The harness no longer
 asserts an open/closed state — only that the panel exists. If this turns
-out to leave people reading the instructional row as face-to-face class
-time, reopening it is the cheap fix.
+out to leave people reading the instructional row as class meeting time,
+reopening it is the cheap fix.
 
-Setting `f2f = 0` makes the blended block identical to the fully-online
-block, so the port uses **one code path** for both formats. Invariant worth
-keeping: semester hours always equal `12.5 × credits × (1 + study)`,
-independent of weeks and format. The harness asserts this on every case.
+Setting `f2f = 0` reduces the blended block to the fully-online one, so the
+port uses **one code path** for all three formats — the format now only
+picks the field's preset and the tile labels. Invariant worth keeping:
+semester hours equal `12.5 × credits × (1 + study)` independent of weeks
+and format, **as long as the meetings fit inside the credit hours**; past
+that they exceed it, since the self-paced row cannot go negative. The
+harness asserts equality on every in-budget case.
+
+**The word "Carnegie" does not appear on the page.** The credits field was
+labelled "Carnegie course credits" until August 28, 2026; Maka asked for the
+reference to go. The label is now plain **"Course credits"** — the Carnegie
+unit is still exactly what the math implements (the 50-minute period, the
+`12.5 × credits × (1 + study)` invariant), it just is not named in the UI or
+in the harness's check names. Do not reintroduce the term when editing
+labels or hint text.
 
 ### Sheet 2 → "Module time planner"
 
 A module is one week. The budget it compares against is
-`online instructional + studying` (sheet 2's `B3` = `B23 + B24`), which
-excludes face-to-face time — correct for both formats.
+`self-paced instructional + studying` (sheet 2's `B3` = `B23 + B24`), which
+excludes scheduled meeting time — correct for all three formats. It is
+`w.selfPacedHours` in the JS (called `onlineHours` before August 29, 2026)
+and the page labels it "Weekly self-paced hours available".
 
 15 learning activities and 10 assessment activities, each with a suggested
 time. Those suggestions lived in Excel **data-validation input messages** —
@@ -957,9 +1027,29 @@ contrast anyway).
    workload estimator reports clock hours, so the port adds them at face
    value. Confirmed with Maka before changing. A `<details>` panel on the
    Reading & writing card explains it.
-2. **Face-to-face hours are clamped to the course's credit hours.** The
-   original let `f2f > credits` produce a negative online instructional
-   total. The port clamps and shows an inline warning.
+2. **Meeting hours may exceed the course's credit hours.** The original
+   let `f2f > credits` produce a negative online instructional total. This
+   port clamped the meeting hours to the credit hours instead — until
+   **August 29, 2026**, when Maka pointed out that put a hard ceiling of
+   three meeting hours a week on a 3-credit course, which
+   [34 CFR 600.2](https://www.ecfr.gov/current/title-34/subtitle-B/chapter-VI/part-600/subpart-A/section-600.2)
+   does not support: the credit hour is defined as *not less than* an hour
+   of instruction plus two of out-of-class work, a **minimum, not a
+   ceiling**. Labs, studios and clinicals routinely meet longer.
+
+   Now the self-paced instructional row floors at zero, the weekly total
+   runs above the credit-hour minimum, and the page says so in a **blue
+   `.note`, not a red `.warn`** — it is a legitimate course shape, not a
+   mistake. The `credits` column of the breakdown table can now total more
+   than the course's credits; it always could (the studying row counts
+   toward it), because that column is 50-minute units per row, not course
+   credits.
+
+   **The invariant weakens accordingly.** Semester hours equal
+   `12.5 × credits × (1 + study)` exactly while meetings fit inside the
+   credit hours, and are **greater** once they do not. The harness asserts
+   equality for every in-budget case and the exact larger figure for the
+   over case.
 3. **`weeks < 1` warns instead of failing silently.** The original wrapped
    the acceleration rate in `IFERROR(15/B4, 0)`, which quietly produced a
    zero-hour course.
@@ -1016,16 +1106,34 @@ Contact, divide-by-zero guards, conditional panel visibility,
 localStorage round-trip and migration, report generation, print-PDF
 non-blankness, and label/aria coverage. Re-run it after any math change.
 
-For the credit hour planner, `test/verify_credit_hour_planner.js` runs 291
+For the credit hour planner, `test/verify_credit_hour_planner.js` runs 328
 checks: 18 scenarios against an independent transcription of the workbook's
-cell formulas, the Carnegie invariant, blended-with-zero-f2f equivalence,
-the non-accelerating face-to-face rule, all three guards, module totals and
-the budget comparison, over/under-budget styling, conditional visibility,
-the no-bulk-suggestions regression guard, the instructional-time explainer,
+cell formulas, the credit-hour invariant, blended-with-zero-f2f equivalence,
+the non-accelerating meetings rule, all three guards, module totals and
+the budget comparison, over/under-budget styling, the no-bulk-suggestions
+regression guard, the instructional-time explainer,
 localStorage round-trip and partial/corrupt
 saves, "Start over", report and copy text, print-PDF non-blankness,
 label/aria coverage, computed focus outlines, the design tokens, and the
 Mid-Blue-underline prohibition.
+
+The August 29, 2026 format change added 37 of those. The uncapped meeting
+hours are a **regression guard**: a 3-credit course meeting five hours a
+week must produce a note rather than a warning, uncapped meeting hours, a
+self-paced row floored at zero, a semester total above the credit-hour
+minimum, and no `max` attribute on the field. Alongside them: the three
+format values and the synchronous default, each format's preset (credits /
+untouched / 0), the meetings number following the credits while untouched
+and being left alone once set by hand, the field living in the Course
+basics card *below* the credits input and never being called face-to-face,
+the tiles keying off the number rather than the format, the renamed table
+rows, the explainer's live-online and minimum-not-a-ceiling sentences, and
+the `"online"` → `async` save migration zeroing leftover meeting hours.
+
+`setup()` in that harness takes `format: "sync" | "blended" | "async"`; the
+older `blended: true/false` still works, with `false` mapping to `async`.
+It sets the meeting hours **last and only when the case names one**,
+because choosing a format overwrites the field.
 
 For the course planner, `test/verify_course_planner_v2.js` runs 168
 checks (the count moves with almost every planner change; treat a
@@ -1151,6 +1259,20 @@ rather than counted as a parse failure.
   course topic list is gone**, including why the surrounding guidance
   prose still mentions topics. Worth telling the designers currently field
   testing: any topic triage they had typed in is not carried forward.
+
+- **The credit hour planner's format choice is now synchronous / blended /
+  asynchronous, and meeting hours moved into Course basics, August 29,
+  2026.** Maka noticed the page would not let a 3-credit course meet for
+  more than three hours a week and cited 34 CFR 600.2, where the credit
+  hour is a floor rather than a ceiling; the clamp is gone. Moving the
+  field out of the blended-only format card and making it universal then
+  broke the merged "Fully online or traditional" option, and Maka's fix was
+  to re-cut the axis as synchronous vs. asynchronous — a live online class
+  is scheduled meeting time. See **The format axis is synchronous, not
+  online** and departure 2. **Two things to watch in field testing:** the
+  default format is now synchronous rather than the old fully-online
+  option, and "online instructional" is called "self-paced instructional"
+  throughout.
 
 - **Alignment ticks on an unwritten module objective used to vanish from
   the output, fixed August 27, 2026.** Maka hit it in the Rock 'n' Roll
