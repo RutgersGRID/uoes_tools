@@ -529,7 +529,17 @@ function readZip(buf) {
 
   const legend = await page.$eval("#goalLegend", n => n.innerText.replace(/\s+/g, " ").trim());
   ok("goal key numbers and lists both goals",
-    legend === "Course objectives: CO1 — Analyze a food web · CO2 — Model energy transfer", legend);
+    legend === "Course objectives: CO1 — Analyze a food web CO2 — Model energy transfer", legend);
+  ok("goal key puts each course objective on its own line",
+    (await page.$$eval("#goalLegend ul.legend-list > li.legend-goal", ns => ns.length)) === 2 &&
+    (await page.$$eval("#goalLegend li.legend-goal", ns => {
+      // The key's panel may be closed here; measure with it open.
+      const panel = ns[0].closest("details"), was = panel.open;
+      panel.open = true;
+      const tops = ns.map(n => n.getBoundingClientRect().top);
+      panel.open = was;
+      return tops[1] > tops[0] + 10;
+    })));
 
   const chipText = await page.$$eval("#moduleCards .mod-card:first-child .align-chip",
     ns => ns.map(n => n.textContent.trim()));

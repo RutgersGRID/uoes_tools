@@ -371,6 +371,15 @@ button {
   margin: 6px 0 0 0;
 }
 
+/* One course objective per line (September 10, 2026): the run-on
+   "CO1 - ... · CO2 - ..." string read as a wall of text once the
+   objectives were more than a few words each. */
+#goalLegend .legend-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 #goalLegend .legend-goal {
   white-space: normal;
 }

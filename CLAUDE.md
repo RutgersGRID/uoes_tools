@@ -661,7 +661,11 @@ The harness covers all of it: tooltip text and `aria-hidden`, no leftover
 zero overlap with any other chip, staying inside the card at 390px, and
 Escape dismissing while the pointer is still on the chip.
 - A **course-objective key** (`#goalLegend`) sits above the module cards,
-  listing "CO1 — <text> · CO2 — <text> …". Since September 2026 it lives
+  listing the course objectives **one per line** — a plain `<ul>` under a
+  "Course objectives:" lead, each row "CO1 — <text>". It was one run-on
+  string separated by " · " until September 10, 2026, when Maka found it
+  read as a wall of text with the Rock 'n' Roll fixture's four long
+  objectives; the harness checks the rows stack. Since September 2026 it lives
   **inside a `<details class="guide legend-panel">` that is closed on
   load** — summary "What CO1, CO2… stand for". See **Why the key is
   collapsed, not deleted**. Keep the key itself: the chips are unreadable
@@ -1023,7 +1027,7 @@ saves, "Start over", report and copy text, print-PDF non-blankness,
 label/aria coverage, computed focus outlines, the design tokens, and the
 Mid-Blue-underline prohibition.
 
-For the course planner, `test/verify_course_planner_v2.js` runs 167
+For the course planner, `test/verify_course_planner_v2.js` runs 168
 checks (the count moves with almost every planner change; treat a
 mismatch as a stale note, not a failure): the three step headings and badge numbers, the collapsible-step
 defaults (all four are `<details>`, basics and Step 1 open, 2 and 3
