@@ -120,12 +120,12 @@
               <input type="number" id="credits" min="0" step="0.5" value="3">
             </div>
             <div class="field">
-              <label for="f2f">Scheduled meeting hours per week</label>
-              <input type="number" id="f2f" min="0" step="0.5" value="3">
-              <p class="hint">Counted in 50-minute academic hours, the way credit hours are, and
-                counting live online meetings as well as in-person ones. One 80-minute meeting is
-                about 1.6. Labs, studios and clinicals may meet for more hours than the course
-                carries credits &mdash; that is allowed.</p>
+              <label for="f2f">Scheduled meeting minutes per week</label>
+              <input type="number" id="f2f" min="0" step="5" value="150">
+              <p class="hint" id="f2f-hours">= 2.50 hours a week, or 3.0 fifty-minute periods</p>
+              <p class="hint">Add up the week's meetings: two 80-minute classes are 160. Live online
+                meetings count as well as in-person ones. Labs, studios and clinicals may meet for
+                more minutes than their credit hours cover &mdash; that is allowed.</p>
             </div>
             <div class="field">
               <label for="study">Study time per credit hour (per week)</label>
@@ -194,7 +194,7 @@
               <span class="num" id="out-f2f">0.00</span>
               <span class="lab">Scheduled meetings</span>
               <span class="sub">hours per week</span>
-              <span class="desc">in person or live online</span>
+              <span class="desc" id="desc-f2f">in person or live online</span>
             </p>
             <p class="total">
               <span class="num" id="out-instr">0.00</span>
@@ -537,11 +537,14 @@
           var credits = num("credits");
           var study = num("study");
           var fmtVal = format();
-          var f2f = num("f2f");
+          /* The field takes minutes per week (since September 10, 2026); the
+             math runs in 50-minute credit-hour periods, so convert once here. */
+          var f2fMinutes = num("f2f");
 
           if (credits < 0) { credits = 0; }
           if (study < 0) { study = 0; }
-          if (f2f < 0) { f2f = 0; }
+          if (f2fMinutes < 0) { f2fMinutes = 0; }
+          var f2f = f2fMinutes / MINUTES_PER_CREDIT_HOUR;
 
           /* The original used IFERROR(15/weeks, 0), which silently produced a
              zero-hour course. Warn instead of failing quietly. */
@@ -562,8 +565,9 @@
              course at three meeting hours a week. Now the self-paced instructional
              row floors at zero and the total simply runs above the minimum. */
           if (f2f > credits) {
-            notes.push("Scheduled meetings (" + fmt1(f2f) + " hours a week) come to more than the " +
-              fmt1(credits) + " credit hours of instructional time this course owes. That is fine — " +
+            notes.push("Scheduled meetings (" + f2fMinutes + " minutes a week) come to more than the " +
+              (MINUTES_PER_CREDIT_HOUR * credits) + " minutes of instructional time a " + fmt1(credits) +
+              "-credit course owes. That is fine — " +
               "labs, studios and clinicals routinely meet longer. The meetings cover all of the " +
               "instructional time, so none of it is left to be self-paced, and the weekly total " +
               "runs above the credit-hour minimum.");
@@ -573,7 +577,7 @@
 
           /* Scheduled meetings run at their actual length, so they are never
              accelerated (rate is always 1). */
-          var f2fMin = accel > 0 ? M * f2f : 0;
+          var f2fMin = accel > 0 ? f2fMinutes : 0;
 
           /* Remaining credit hours self-paced, plus whatever accelerated
              instructional time the meetings do not cover. */
@@ -672,7 +676,7 @@
            credit hours. */
         function applyFormatPreset() {
           var f = format();
-          if (f === "sync") { $("f2f").value = String(num("credits")); }
+          if (f === "sync") { $("f2f").value = String(num("credits") * MINUTES_PER_CREDIT_HOUR); }
           else if (f === "async") { $("f2f").value = "0"; }
           lastCredits = num("credits");
         }
@@ -683,8 +687,9 @@
         var lastCredits = null;
         function trackCredits() {
           var c = num("credits");
-          if (format() === "sync" && lastCredits !== null && num("f2f") === lastCredits) {
-            $("f2f").value = String(c);
+          if (format() === "sync" && lastCredits !== null &&
+              num("f2f") === lastCredits * MINUTES_PER_CREDIT_HOUR) {
+            $("f2f").value = String(c * MINUTES_PER_CREDIT_HOUR);
           }
           lastCredits = c;
         }
@@ -695,6 +700,13 @@
 
           var w = calcWeek();
           var m = calcModule();
+
+          /* --- the field's own echo: minutes in, hours out, so the number
+                 under the field matches the number on the tile --- */
+          var mins = Math.max(0, num("f2f"));
+          $("f2f-hours").textContent = "= " + fmt(mins / 60) + " hours a week, or " +
+            fmt1(mins / MINUTES_PER_CREDIT_HOUR) + " fifty-minute periods";
+          $("desc-f2f").textContent = mins + " minutes a week, in person or live online";
 
           /* --- weekly tiles --- */
           $("out-total").textContent = fmt(w.totalHours);
@@ -823,7 +835,7 @@
           lines.push("  Semester length:   " + num("weeks") + " weeks");
           lines.push("  Credits:           " + num("credits"));
           lines.push("  Study per credit:  " + num("study") + " hours");
-          lines.push("  Meeting hours:     " + num("f2f") + " per week");
+          lines.push("  Meeting minutes:   " + num("f2f") + " per week (" + fmt(num("f2f") / 60) + " hours)");
           lines.push("  Acceleration rate: " + w.accel.toFixed(2));
           lines.push("");
 
@@ -908,7 +920,9 @@
           clearTimeout(saveTimer);
           saveTimer = setTimeout(function () {
             try {
-              var data = { format: format() };
+              /* f2fUnit marks that f2f is in minutes; a save without it is
+                 the pre-September-10-2026 shape, in 50-minute academic hours. */
+              var data = { format: format(), f2fUnit: "min" };
               ALL_FIELDS.forEach(function (id) {
                 var e = $(id);
                 if (e) data[id] = e.value;
@@ -936,6 +950,14 @@
               var e = $(id);
               if (e) e.value = data[id];
             });
+            /* Until September 10, 2026 the meeting field took 50-minute academic
+               hours; it now takes minutes. A save without the unit marker is the
+               old shape, so scale it up. */
+            if (("f2f" in data) && data.f2fUnit !== "min") {
+              var oldF2f = parseFloat(data.f2f);
+              $("f2f").value = isFinite(oldF2f)
+                ? String(Math.round(oldF2f * MINUTES_PER_CREDIT_HOUR)) : "0";
+            }
             if (wasMergedOnline) $("f2f").value = "0";
             lastCredits = num("credits");
           } catch (err) { /* corrupt or unavailable; ignore */ }

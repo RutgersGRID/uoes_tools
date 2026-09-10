@@ -85,7 +85,11 @@ function excelOnline(weeks, credits, study) {
      it used to mean computed no meeting time at all.
 
      Note the ordering: choosing a format fills the meeting-hours field, so f2f
-     is set last and only when the case names it. */
+     is set last and only when the case names it.
+
+     Cases give f2f in 50-minute academic hours, matching the workbook's cell
+     formulas. The field itself takes minutes per week (September 10, 2026), so
+     setup() scales it. */
   const setup = async (o) => page.evaluate((o) => {
     const set = (id, v) => {
       const e = document.getElementById(id);
@@ -97,7 +101,7 @@ function excelOnline(weeks, credits, study) {
     fmt.checked = true;
     fmt.dispatchEvent(new Event("change", { bubbles: true }));
     set("weeks", o.weeks); set("credits", o.credits); set("study", o.study);
-    if (o.f2f !== undefined) set("f2f", o.f2f);
+    if (o.f2f !== undefined) set("f2f", o.f2f * 50);
     if (o.reading !== undefined) set("rw_reading", o.reading);
     if (o.writing !== undefined) set("rw_writing", o.writing);
     if (o.activities) {
@@ -220,6 +224,9 @@ function excelOnline(weeks, credits, study) {
       g.warnings.length === 0, JSON.stringify(g.warnings));
     ok("meetings above the credit hours carry a note",
       g.notes.length === 1, JSON.stringify(g.notes));
+    ok("the note counts the meetings in minutes",
+      /250 minutes a week/.test(g.notes[0]) && /150 minutes of instructional time/.test(g.notes[0]),
+      g.notes[0]);
     near("meeting hours are not capped", g.f2fHours, 50 * 5 / 60, 1e-9);
     near("self-paced instructional floors at zero", g.instrHours, 0, 1e-9);
     near("study time still follows the credits", g.studyHours, 50 * 3 * 2 / 60, 1e-9);
@@ -339,6 +346,22 @@ function excelOnline(weeks, credits, study) {
     ok("meeting hours sit below the course credits", place.creditsFirst === true);
     ok("meeting hours are not labelled face-to-face",
       !/face-to-face/i.test(place.label), place.label);
+    ok("the meeting field is labelled in minutes",
+      /minutes per week/.test(place.label), place.label);
+    await setup({ format: "blended", weeks: 15, credits: 3, study: 2, f2f: 3 });
+    const echo = await page.evaluate(() => ({
+      line: document.getElementById("f2f-hours").textContent,
+      field: document.getElementById("f2f").value,
+      tile: document.querySelector("#tile-f2f .desc").textContent
+    }));
+    ok("150 minutes echo as 2.50 hours under the field",
+      echo.field === "150" && /= 2\.50 hours a week/.test(echo.line), JSON.stringify(echo));
+    ok("the echo also counts fifty-minute periods", /3\.0 fifty-minute periods/.test(echo.line), echo.line);
+    ok("the meetings tile repeats the minutes", /150 minutes a week/.test(echo.tile), echo.tile);
+    await setup({ format: "blended", weeks: 15, credits: 3, study: 2, f2f: 160 / 50 });
+    const echo2 = await page.evaluate(() => document.getElementById("f2f-hours").textContent);
+    ok("two 80-minute classes echo as 2.67 hours", /= 2\.67 hours a week, or 3\.2 fifty-minute/.test(echo2), echo2);
+    await setup({ format: "async", weeks: 15, credits: 3, study: 2 });
     ok("meeting-hours label says scheduled meetings",
       /scheduled meeting/i.test(place.label), place.label);
 
@@ -414,7 +437,7 @@ function excelOnline(weeks, credits, study) {
     ok("three formats on the synchronous axis",
       d.options.join(",") === "sync,blended,async", d.options.join(","));
     ok("default format is synchronous", d.sync === true);
-    ok("meeting hours default to the credit hours", d.f2f === d.credits,
+    ok("meeting minutes default to the credit hours x 50", d.f2f === String(Number(d.credits) * 50),
       d.f2f + " vs " + d.credits);
 
     const pick = (id) => page.evaluate((id) => {
@@ -434,13 +457,13 @@ function excelOnline(weeks, credits, study) {
     const kept = await pick("fmt-blended");
     ok("blended keeps the number already there", kept === "0", kept);
     const refilled = await pick("fmt-sync");
-    ok("synchronous refills to the credit hours", refilled === "3", refilled);
+    ok("synchronous refills to the credit hours x 50", refilled === "150", refilled);
 
     const followed = await type("credits", "4");
-    ok("meeting hours follow the credits while untouched", followed === "4", followed);
-    await type("f2f", "6");
+    ok("meeting minutes follow the credits while untouched", followed === "200", followed);
+    await type("f2f", "300");
     const left = await type("credits", "5");
-    ok("a hand-set meeting number is left alone", left === "6", left);
+    ok("a hand-set meeting number is left alone", left === "300", left);
     const g = await week();
     near("a 5-credit course can meet for 6 hours", g.f2fHours, 50 * 6 / 60, 1e-9);
   }
@@ -492,7 +515,8 @@ function excelOnline(weeks, credits, study) {
     ok("saves to the documented key", !!stored);
     const parsed = JSON.parse(stored);
     ok("stores the format choice", parsed.format === "blended", parsed.format);
-    ok("stores f2f", parsed.f2f === "2", parsed.f2f);
+    ok("stores f2f in minutes", parsed.f2f === "100", parsed.f2f);
+    ok("stores the unit marker", parsed.f2fUnit === "min", parsed.f2fUnit);
     ok("stores activity rows", parsed.l_wiki === "2" && parsed.a_test === "1");
 
     const before = await week();
@@ -506,7 +530,7 @@ function excelOnline(weeks, credits, study) {
       reading: document.getElementById("rw_reading").value
     }));
     ok("format restored", restored.blended === true);
-    ok("f2f restored", restored.f2f === "2", restored.f2f);
+    ok("f2f restored", restored.f2f === "100", restored.f2f);
     ok("activity restored", restored.wiki === "2", restored.wiki);
     ok("reading restored", restored.reading === "1.5", restored.reading);
 
@@ -540,6 +564,30 @@ function excelOnline(weeks, credits, study) {
       f2f: document.getElementById("f2f").value
     }));
     ok("an old fully-online save becomes asynchronous", migrated.async === true);
+
+    // migration: before September 10, 2026 f2f was saved in 50-minute academic
+    // hours with no unit marker. Such a save is scaled to minutes on load; one
+    // that already carries f2fUnit "min" is left exactly as saved.
+    await page.evaluate(() => {
+      localStorage.setItem("uoes-credit-hour-planner",
+        JSON.stringify({ format: "blended", weeks: "15", credits: "3", study: "2", f2f: "1.6" }));
+    });
+    await page.reload();
+    const scaled = await page.evaluate(() => document.getElementById("f2f").value);
+    ok("an hours-based save is scaled to minutes", scaled === "80", scaled);
+    near("and computes the same meeting time it always did", (await week()).f2fHours, 80 / 60, 1e-9);
+    await page.evaluate(() => {
+      localStorage.setItem("uoes-credit-hour-planner",
+        JSON.stringify({ format: "blended", f2fUnit: "min", weeks: "15", credits: "3", study: "2", f2f: "160" }));
+    });
+    await page.reload();
+    const kept = await page.evaluate(() => document.getElementById("f2f").value);
+    ok("a minutes-based save is left alone", kept === "160", kept);
+    await page.evaluate(() => {
+      localStorage.setItem("uoes-credit-hour-planner",
+        JSON.stringify({ format: "online", weeks: "15", credits: "3", study: "2", f2f: "2" }));
+    });
+    await page.reload();
     ok("its leftover meeting hours are dropped", migrated.f2f === "0", migrated.f2f);
     const mg = await week();
     near("the migrated save keeps its old numbers", mg.totalHours, 7.5, 1e-9);
@@ -582,7 +630,7 @@ function excelOnline(weeks, credits, study) {
     ok("report becomes visible", rep.hidden === false);
     ok("report is not empty", rep.text.length > 300, "len " + rep.text.length);
     ok("report names the format", /Blended \/ hybrid/.test(rep.text));
-    ok("report states the meeting hours", /Meeting hours: +1 per week/.test(rep.text));
+    ok("report states the meeting minutes and hours", /Meeting minutes: +50 per week \(0\.83 hours\)/.test(rep.text));
     ok("report labels the meetings row", /Scheduled meetings/.test(rep.text));
     ok("report labels the self-paced budget",
       /Weekly self-paced hours available/.test(rep.text));

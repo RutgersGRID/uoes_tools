@@ -911,7 +911,7 @@ only, since the state field names had to survive saved work:
 
 | Was | Is |
 | --- | --- |
-| "Face-to-face meeting hours per week" | "Scheduled meeting hours per week" |
+| "Face-to-face meeting hours per week" | "Scheduled meeting hours per week", then "Scheduled meeting minutes per week" from September 10, 2026 |
 | "Face-to-face" tile / table row | "Scheduled meetings" |
 | "Online instructional" | "Self-paced instructional" |
 | "Online total" tile | "Self-paced total" |
@@ -926,10 +926,10 @@ only, since the state field names had to survive saved work:
   meeting time at all — **and zeroes `f2f` when it does**, because a save
   written after a spell in blended can carry meeting hours that the old
   fully-online format ignored and the new asynchronous one would not.
-- **Choosing a format fills the meeting-hours field**: synchronous sets it
-  to the credit hours, asynchronous to 0, blended leaves it alone. The
+- **Choosing a format fills the meeting field**: synchronous sets it to
+  `credits × 50` minutes, asynchronous to 0, blended leaves it alone. The
   field stays editable in every format. While the course is synchronous
-  *and* the number still matches the credits, editing the credits carries
+  *and* the number still equals `credits × 50`, editing the credits carries
   the meetings along (`trackCredits()`); once it has been set by hand it is
   left alone.
 - **The field is always visible, in Course basics, directly below Course
@@ -998,37 +998,57 @@ unit is still exactly what the math implements (the 50-minute period, the
 in the harness's check names. Do not reintroduce the term when editing
 labels or hint text.
 
-### Open question — the meeting-hours field is in academic hours
+### The meeting field takes minutes, not academic hours
 
-**Undecided as of September 10, 2026. Maka is holding this until the
-instructional designer colleagues have weighed in; do not change the
-field's unit on a hunch.**
+**Provisional, September 10, 2026.** Maka is leaning this way but wants
+the instructional designer colleagues' view before calling it settled;
+it was built now so that it can be shown to them and reverted with one
+`git revert` if they disagree. Do not build further on it until then.
 
-The problem Maka spotted: type 3 into "Scheduled meeting hours per week"
-and the Scheduled meetings tile reads 2.5. The field takes 50-minute
-academic hours, because that is how credits are counted, but every tile
-and table row reports clock hours, and the only bridge is the field's
-hint — which has to teach a conversion ("one 80-minute meeting is about
-1.6"), itself a sign the input unit is wrong. Options weighed:
+The problem: type 3 into "Scheduled meeting hours per week" and the
+Scheduled meetings tile read 2.5. The field took 50-minute academic
+hours, because that is how credits are counted, but every tile and table
+row reports clock hours, and the only bridge was a hint that had to teach
+a conversion ("one 80-minute meeting is about 1.6") — itself the sign the
+input unit was wrong.
 
-1. **Echo the conversion under the field** ("= 150 minutes, 2.5 clock
-   hours a week"). Smallest change; math and saved data untouched. Still
-   asks people to think in a unit nobody schedules in.
-2. **Take the input in minutes per week** — recommended at the time.
-   Instructors know their meeting pattern in minutes (two 80-minute
-   meetings is 160), so the conversion hint goes away and the tile shows
-   what was typed. Synchronous would preset to `credits × 50`, the
-   credits-tracking rule becomes "equals credits × 50", and `load()`
-   would need to multiply old saves by 50. The over-budget note would
-   speak in minutes.
-3. **Take the input in clock hours.** Consistent with the outputs, but
-   the synchronous preset for a 3-credit course becomes 2.5, which looks
-   like a bug on first load and moves the confusion one field earlier.
+Options weighed, for the record: (1) keep academic hours and echo the
+conversion under the field — smallest change, still asks people to think
+in a unit nobody schedules in; (2) **take minutes per week** — chosen;
+(3) take clock hours — the synchronous preset for a 3-credit course
+becomes 2.5, which looks like a bug on first load.
 
-Whichever is chosen, the Scheduled meetings tile could carry a sub-label
-like "150 min, three 50-minute periods" so the credit-hour logic stays
-visible. The `f2f` field name and id stay regardless — see **The format
-axis is synchronous, not online**.
+What (2) looks like:
+
+- The label is **"Scheduled meeting minutes per week"**, `step="5"`,
+  default 150. Under it a live line, `#f2f-hours`, reads
+  "= 2.50 hours a week, or 3.0 fifty-minute periods", so the number under
+  the field matches the number on the tile and the credit-hour logic stays
+  visible. The tile's sub-label repeats the minutes ("150 minutes a week,
+  in person or live online").
+- The hint no longer teaches a conversion: "Add up the week's meetings:
+  two 80-minute classes are 160."
+- `calcWeek()` converts once — `f2f = minutes / 50` — and the rest of the
+  math is untouched, still in 50-minute periods. The breakdown table's
+  credits column therefore still reads 3.0 for 150 minutes.
+- The over-the-credit-hours note speaks in minutes ("250 minutes a week …
+  more than the 150 minutes … a 3.0-credit course owes"). The text report
+  line is "Meeting minutes: 150 per week (2.50 hours)".
+- **Saves carry `f2fUnit: "min"`.** A save without that marker is the
+  pre-September-10 shape, in academic hours, and `load()` multiplies its
+  `f2f` by 50 (rounded) before the `"online"` migration zeroes it if it
+  applies. So a designer's saved 1.6 becomes 80 and computes exactly what
+  it always did. The field id and saved name are still `f2f`.
+- **The harness cases still speak in academic hours**, matching the
+  workbook's cell formulas; `setup()` multiplies by 50 on the way into
+  the field. Ten checks cover the label, the echo line (150 and 160), the
+  tile's minutes, the note's wording, presets in minutes (150, 200, 300),
+  the unit marker, and both migration directions.
+
+If it is reverted, the `f2fUnit` marker is the thing to keep in mind:
+saves written in the meantime carry minutes, and a reverted page would
+read them as academic hours fifty times too large. A revert needs its own
+migration, dividing by 50 when the marker is present.
 
 ### Sheet 2 → "Module time planner"
 
@@ -1138,7 +1158,7 @@ Contact, divide-by-zero guards, conditional panel visibility,
 localStorage round-trip and migration, report generation, print-PDF
 non-blankness, and label/aria coverage. Re-run it after any math change.
 
-For the credit hour planner, `test/verify_credit_hour_planner.js` runs 328
+For the credit hour planner, `test/verify_credit_hour_planner.js` runs 338
 checks: 18 scenarios against an independent transcription of the workbook's
 cell formulas, the credit-hour invariant, blended-with-zero-f2f equivalence,
 the non-accelerating meetings rule, all three guards, module totals and
@@ -1165,7 +1185,10 @@ the `"online"` → `async` save migration zeroing leftover meeting hours.
 `setup()` in that harness takes `format: "sync" | "blended" | "async"`; the
 older `blended: true/false` still works, with `false` mapping to `async`.
 It sets the meeting hours **last and only when the case names one**,
-because choosing a format overwrites the field.
+because choosing a format overwrites the field — and it takes them in
+academic hours, multiplying by 50 for the minutes field (ten checks cover
+that unit change; see **The meeting field takes minutes, not academic
+hours**).
 
 For the course planner, `test/verify_course_planner_v2.js` runs 168
 checks (the count moves with almost every planner change; treat a
@@ -1292,6 +1315,12 @@ rather than counted as a parse failure.
   prose still mentions topics. Worth telling the designers currently field
   testing: any topic triage they had typed in is not carried forward.
 
+- **The meeting field takes minutes per week, September 10, 2026 —
+  provisional.** Maka found that typing 3 hours and reading 2.5 on the
+  tile was confusing at a glance, weighed three fixes, and is leaning
+  towards minutes but wants the instructional designers' view first. Built
+  so it can be shown and reverted; see **The meeting field takes minutes,
+  not academic hours**, including the revert caveat about saves.
 - **The credit hour planner's format choice is now synchronous / blended /
   asynchronous, and meeting hours moved into Course basics, August 29,
   2026.** Maka noticed the page would not let a 3-credit course meet for
