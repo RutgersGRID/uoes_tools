@@ -998,6 +998,38 @@ unit is still exactly what the math implements (the 50-minute period, the
 in the harness's check names. Do not reintroduce the term when editing
 labels or hint text.
 
+### Open question — the meeting-hours field is in academic hours
+
+**Undecided as of September 10, 2026. Maka is holding this until the
+instructional designer colleagues have weighed in; do not change the
+field's unit on a hunch.**
+
+The problem Maka spotted: type 3 into "Scheduled meeting hours per week"
+and the Scheduled meetings tile reads 2.5. The field takes 50-minute
+academic hours, because that is how credits are counted, but every tile
+and table row reports clock hours, and the only bridge is the field's
+hint — which has to teach a conversion ("one 80-minute meeting is about
+1.6"), itself a sign the input unit is wrong. Options weighed:
+
+1. **Echo the conversion under the field** ("= 150 minutes, 2.5 clock
+   hours a week"). Smallest change; math and saved data untouched. Still
+   asks people to think in a unit nobody schedules in.
+2. **Take the input in minutes per week** — recommended at the time.
+   Instructors know their meeting pattern in minutes (two 80-minute
+   meetings is 160), so the conversion hint goes away and the tile shows
+   what was typed. Synchronous would preset to `credits × 50`, the
+   credits-tracking rule becomes "equals credits × 50", and `load()`
+   would need to multiply old saves by 50. The over-budget note would
+   speak in minutes.
+3. **Take the input in clock hours.** Consistent with the outputs, but
+   the synchronous preset for a 3-credit course becomes 2.5, which looks
+   like a bug on first load and moves the confusion one field earlier.
+
+Whichever is chosen, the Scheduled meetings tile could carry a sub-label
+like "150 min, three 50-minute periods" so the credit-hour logic stays
+visible. The `f2f` field name and id stay regardless — see **The format
+axis is synchronous, not online**.
+
 ### Sheet 2 → "Module time planner"
 
 A module is one week. The budget it compares against is
