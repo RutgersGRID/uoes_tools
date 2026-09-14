@@ -33,7 +33,7 @@ const CONVERTED = {
   "course_planner.html": ["css/base.css", "css/document.css", "css/course_planner.css"],
   "credit_hour_planner.html": ["css/base.css", "css/document.css", "css/credit_hour_planner.css"],
   // Both calculators restyled to the single-column document shell (were calculator.css).
-  "workload_estimator.html": ["css/base.css", "css/document.css", "css/workload_estimator.css"],
+  "learning_activity_estimator.html": ["css/base.css", "css/document.css", "css/learning_activity_estimator.css"],
 };
 for (const k of Object.keys(CONVERTED)) CONVERTED[k] = CONVERTED[k].concat(HEADER);
 
@@ -53,7 +53,7 @@ const TOKENS = {
 const PRINT_TARGET = {
   "course_planner.html": "main > :not(#planWrap)",
   "credit_hour_planner.html": "main > :not(#reportWrap)",
-  "workload_estimator.html": "main > :not(#reportWrap)",
+  "learning_activity_estimator.html": "main > :not(#reportWrap)",
 };
 
 let pass = 0, fail = 0;

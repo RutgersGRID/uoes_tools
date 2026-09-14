@@ -27,8 +27,12 @@ that no longer exist; trust this list.
   index.html, on purpose.
 - `course_planner.html` — Course Content Planner **v2**, the live one: a
   4-step revision built from instructional designer feedback (see below).
-- `workload_estimator.html` — Course Workload Estimator, a JS port of an
-  R/Shiny app (see below).
+- `learning_activity_estimator.html` — Learning Activity Estimator: how
+  long one learning activity takes a student. It was
+  `workload_estimator.html`, the Course Workload Estimator (a JS port of
+  an R/Shiny app), until September 14, 2026, when it was scoped down —
+  see **Learning Activity Estimator notes**. The rate tables and the
+  CC BY-NC-SA credit are the port's.
 - `credit_hour_planner.html` — Credit Hour Planner, a JS port of a
   two-sheet Excel workbook (see below).
 
@@ -44,7 +48,7 @@ sheets in cascade order, most general first:
 | `blooms_verbs.html` | `base` + `document` + `blooms_verbs` |
 | `course_planner.html` | `base` + `document` + `course_planner` |
 | `credit_hour_planner.html` | `base` + `document` + `credit_hour_planner` |
-| `workload_estimator.html` | `base` + `document` + `workload_estimator` |
+| `learning_activity_estimator.html` | `base` + `document` + `learning_activity_estimator` |
 
 - **`css/base.css`** — the `:root` design tokens, the `.sr-only` helper,
   `[hidden]`, and the one focus-visibility rule. Loaded by every page and
@@ -112,9 +116,10 @@ any new rule.
   `--red-tint` `#ffe3ea` (the "contact time" tag), `--red-pale` `#ffdbe4`
   (sub-label on a solid red tile).
 - Content max-width: 750px on the objective builders and index page,
-  900px on the planner and both calculators (the workload estimator was
-  1080px, as a wide multi-column calculator, until September 14, 2026).
-  On the `document.css` pages this is the `--content-width` token.
+  900px on the planner, the credit hour planner and the activity
+  estimator (the estimator was 1080px, as a wide multi-column
+  calculator, until September 14, 2026). On the `document.css` pages
+  this is the `--content-width` token.
 
 ## Accessibility conventions
 
@@ -149,7 +154,7 @@ any new rule.
   disclosure marker's line; do not give it its own size or weight.
 - **No two disclosures on a page may share an accessible name.** Where a
   panel is deliberately repeated (the three "Where these numbers come
-  from" panels in the workload estimator), append an `.sr-only` qualifier
+  from" panels in the activity estimator), append an `.sr-only` qualifier
   *inside the heading*, so the visible text stays a substring of the
   accessible name. The planner had a repeated assessment panel until the
   September 2026 consolidation; its Step 2 copy still carries its
@@ -808,53 +813,97 @@ copy-as-text, "Start over", the CMU Eberly Center footer credit — is
 unchanged from v1. A saved `topics` array is deleted too, the same way
 `duedates`, `principle` and `strategy` are.
 
-## Workload Estimator notes
+## Learning Activity Estimator notes
 
-Port of the **Enhanced Course Workload Estimator** by Betsy Barre, Allen
-Brown, and Justin Esarey (Wake Forest CAT / Rice CTE), originally an
-R/Shiny app (`ui.R` + `server.R`). **Licensed CC BY-NC-SA 4.0** — this
-port is a derivative work, so the footer must keep the author credits,
-the link to the methodology page, and the same license. Non-commercial
-only.
+`learning_activity_estimator.html`. **Until September 14, 2026 this was
+the Course Workload Estimator** (`workload_estimator.html`), a port of
+the **Enhanced Course Workload Estimator** by Betsy Barre, Allen Brown,
+and Justin Esarey (Wake Forest CAT / Rice CTE), originally an R/Shiny app
+(`ui.R` + `server.R`). **Licensed CC BY-NC-SA 4.0** — the page is a
+derivative work, so the footer must keep the author credits, the link to
+the methodology page, and the same license. Non-commercial only. The
+footer wording is still the one awaiting institutional sign-off (see
+**Current status**); the rescope did not touch it.
 
-Why JS was the right call: the app is pure arithmetic over form values —
-no R statistics, no server-side data — so it collapses into one static
-HTML file with no Shiny server to host.
+### Why it was scoped down
 
-### The estimator takes the planner's layout too
+The Course Workload Estimator summed a whole course into hours per week
+(independent vs. contact), which is what the Credit Hour Planner's weekly
+time budget and module planner already do. **Maka's call, September 14,
+2026:** stop reproducing that and make the page do the one thing the
+Credit Hour Planner cannot — estimate how long a *specific* activity
+takes a student, so the number can be typed into the module planner.
+The ask, in order: rename it Learning Activity Estimator, remove every
+reference to hours per week for the course, make it clearly about
+individual activities, drop the Course info section, and **give every
+activity on the Credit Hour Planner's lists a home**, grouped where the
+estimation logic is the same ("reading from texts is not unlike reading a
+blog or journal entry").
 
-**September 14, 2026, Maka's, on the `course-planner-simplification`
-branch** (the commit is "Restyle workload estimator to the course
-planner's layout"). The wide multi-column grid became a single 900px
-column of collapsible `section.step` cards, one per activity category;
-Course info opens by default and the rest start closed. **Each closed
-heading shows that category's hours per week** — the JS writes it into
-`data-sum` on the `<summary>` and the sheet draws it as `::after`
-generated content. That is deliberate, not a shortcut: as a real
-`<span>` inside the summary it failed WCAG 2.5.3 (the float put a space
-in the visible label that the accessible name lacked) and
-`verify_css_extraction.js` caught it. The math is unchanged; the commit
-verified `calculate()` across 16 scenarios.
+What went: the Course info section (class weeks), the per-week division
+everywhere, the Total / Independent / Contact tiles, the share bar and
+the independent/contact tag in the table, the Exams (per semester), Other
+assignments (number × hours slider) and Class meetings sections. The
+harness guards that none of it is back: no `#classweeks`, no per-week
+wording anywhere on the page or in the report, no independent/contact
+split.
 
-The restyle carried its own copy of the step-card block to avoid
-touching the planner mid-field-test. It merged into the credit hour
-planner's layout branch on September 14, which had promoted the same
-rules into `document.css` with a byte-identical planner screenshot, so
-the copy was dropped and the estimator now shares them (the estimator's
-own screenshot was byte-identical across that removal too). With
-neither calculator on `calculator.css`, that file was deleted.
+### The six sections
+
+Each estimates **one activity at a time** and its heading carries the
+result as a readout ("0.45 hrs") so a collapsed section still shows what
+it holds. Reading opens by default; the rest start closed. The lead
+paragraph of each names the Credit Hour Planner activities it covers —
+that mapping is the design, so here it is in one place:
+
+| Section | Planner activities it covers | Model |
+| --- | --- | --- |
+| Reading | Readings, Supplemental materials, a case study *to read*, blog and journal entries written by others | pages ÷ rate table (density × difficulty × purpose), or a manual rate |
+| Writing | Writing assignments, Blog, Journal posts, Wiki, the written report of a project | pages × rate table (genre × drafting × density), or a manual rate. **Length may be given in words**, converted at the chosen density (250 or 500 words a page) |
+| Discussion & peer feedback | Discussion posts, Peer review, comments on classmates' blogs/journals/wikis | posts × words ÷ 250 per hour, or A/V minutes ÷ 3 per hour, or manual hours |
+| Media & live sessions | Mini-lecture video, Other videos, Podcast, Webinar session, Simulation / eLearning tutorial | items × running time. Counted at running time; the hint says to add task time separately |
+| Quizzes & tests | Quiz, Test, Pre-assessment, Assessment preparation time | time limit ÷ 60 + preparation hours (default 0; the hint cites the planner's 3-hour suggestion) |
+| Projects & other activities | Case study, Experiential learning, Research activities, Individual assignment, Group assignment, Project / presentation, "Something else" | **no model** — choosing an activity fills in the Credit Hour Planner's typical time (2, 2, 2, 2, 4, 1 hours; 0 for Something else) and the hours stay editable |
+
+The last row is honest about itself: the page says there is no
+research-based rate for those and that the figure is a starting point.
+The typical times are the planner's `sug` values, carried as
+`data-sug` on the `<option>`s; **keep the two lists in step** if the
+planner's suggestions ever change. The fill happens in a `change`
+listener on the select itself, which runs before the form's handler
+renders.
+
+The results block is a single Total tile, a table (Activity / Based on /
+Hours) listing only the sections with hours, and a hint pointing at the
+Credit Hour Planner's module planner. The "Based on" column repeats each
+section's inputs in words ("30 pages at 67 pages per hour", "1000 words,
+about 4.00 pages, at 2 hours per page") so the copy text and the report
+carry their assumptions.
+
+### Storage
+
+**A new key, `uoes-activity-estimator`, and no migration.** The old
+`uoes-workload-estimator` saves hold a different set of fields whose
+per-week figures mean nothing here; `load()` never reads that key and
+the harness checks that an old save is ignored. Same reasoning as the
+planner's key rename: nothing worth carrying forward. New fields keep
+their defaults when a save lacks them; a corrupt save falls back to
+defaults.
 
 ### Lookup tables
 
 Two R arrays, transcribed into nested JS objects. R fills arrays
 **column-major**, which is why the flat data vectors in `server.R` look
 scrambled; the JS transcription was verified programmatically against an
-independent column-major decode of the original vectors (45 checks).
+independent column-major decode of the original vectors (45 checks) when
+the port was made. The rescope did not touch them.
 
 - `PAGES_PER_HOUR[density][difficulty][purpose]` — 27 values, 67 down to 5
   pages/hour. R's dim order was `[difficulty, purpose, density]`.
 - `HOURS_PER_PAGE[genre][drafting][density]` — 18 values, 0.75 to 10
   hours/page. R's dim order was `[density, drafting, genre]`.
+- `WORDS_PER_PAGE` — 250 / 500 by writing density, new with the rescope,
+  for the words-to-pages conversion.
 - Discussion constants (from the code, not published anywhere): text posts
   at 250 words/hour; audio-video at 3 finished minutes/hour (i.e. 20 min
   of student work per finished minute).
@@ -867,43 +916,41 @@ independent column-major decode of the original vectors (45 checks).
    + Contact for A/V discussions. The port uses `x/3` everywhere. This is
    the *only* number that differs from the original, and only in A/V
    scenarios (~4% lower).
-2. **"Independent" checkbox replaced with a two-option select.** In the R
-   code, the checkbox labeled "Independent" put Other Assignments into the
-   *contact* bucket when checked and *independent* when unchecked — the
-   label read backwards. Replaced by an explicit
-   "Independent work / Contact time with instructor" dropdown, defaulting
-   to Independent, which preserves the original default behavior while
-   fixing the label.
-3. **Divide-by-zero guards.** `classweeks` < 1 or a manual reading rate of
-   0 produced `Inf`/`NaN` in R. The port clamps these to 0 and shows an
-   inline warning.
-4. **Reading purpose label** is "Understand" in the UI (matching the
+2. **Divide-by-zero guard.** A manual reading rate of 0 produced `Inf` in
+   R; the page counts reading as 0 and shows an inline warning. (The
+   `classweeks < 1` guard went with the field.)
+3. **Reading purpose label** is "Understand" in the UI (matching the
    original dropdown) even though the R array dimname said "Learn".
-
-### Added features (not in the original)
-
-- Per-category breakdown table with hours, share of total, and bar,
-  tagged Independent vs. Contact.
-- Auto-save to `localStorage` key `uoes-workload-estimator` (debounced
-  400ms, try/catch-wrapped). `load()` tolerates missing keys and migrates
-  an older `other_engage` boolean to the `other_bucket` select.
-- "Create printable summary" / "Copy as text" / "Print" / "Start over".
-  Print CSS uses the `main > :not(#reportWrap)` pattern (same lesson as
-  the planner).
-- Collapsible `<details>` methodology panels under Reading, Writing, and
-  Discussion, summarizing the published rationale (Rayner's ~300 wpm
-  reading synthesis; Torrance et al.'s 493-student essay study, which the
-  original authors themselves flag as speculative). The discussion panel
-  states plainly that those assumptions come from the code, not the
-  published methodology page.
+4. **Per activity, not per week** — the whole rescope. The original's
+   "Independent" checkbox on Other assignments, which the port had turned
+   into a two-option select, is gone with that section.
 
 ### Methodology sources
 
 The published details page
 (<https://cat.wfu.edu/resources/workload/estimationdetails/>) covers
 **reading and writing only**. There is no public write-up for discussion
-posts, videos, exams, other assignments, or synchronous meetings — those
-were reverse-engineered from `server.R`.
+posts — those constants were reverse-engineered from `server.R`, and the
+page's discussion panel says so. The media, quiz and project sections are
+arithmetic on the user's own numbers, plus the Credit Hour Planner's
+typical times; nothing there claims a source.
+
+### Layout
+
+The page took the course planner's layout on September 14, 2026, on
+Maka's `course-planner-simplification` branch (the commit is "Restyle
+workload estimator to the course planner's layout"), a few hours before
+the rescope: a single 900px column of collapsible `section.step` cards.
+**Each closed heading shows that section's hours** — the JS writes them
+into `data-sum` on the `<summary>` and the sheet draws it as `::after`
+generated content. That is deliberate, not a shortcut: as a real
+`<span>` inside the summary it failed WCAG 2.5.3 (the float put a space
+in the visible label that the accessible name lacked) and
+`verify_css_extraction.js` caught it. The restyle carried its own copy
+of the step-card block to avoid touching the planner mid-field-test; it
+merged into the credit hour planner's layout branch the same day, which
+had promoted the same rules into `document.css`, so the copy was
+dropped and `calculator.css` deleted.
 
 ## Credit Hour Planner notes
 
@@ -1161,7 +1208,7 @@ contrast anyway).
 1. **The 50/60 scaling on reading and writing is gone.** Sheet 2 computed
    `(B9 × 50) / 60` for readings and the same for writing, which shrank
    both by 17%. Everything else on that sheet is plain clock hours and the
-   workload estimator reports clock hours, so the port adds them at face
+   activity estimator reports clock hours, so the port adds them at face
    value. Confirmed with Maka before changing. A `<details>` panel on the
    Reading & writing card explains it.
 2. **Meeting hours may exceed the course's credit hours.** The original
@@ -1223,10 +1270,13 @@ filled. Nothing here is decided.
 ### Cross-links
 
 Sheet 2 had a red button to <https://cte.rice.edu/workload> for estimating
-reading and writing time — the same tool `workload_estimator.html` ports.
-The page links to the **local port as primary**, with the Rice original
+reading and writing time — the tool the Learning Activity Estimator's
+reading and writing sections come from. The page links to
+**`learning_activity_estimator.html` as primary** (since September 14,
+2026 the note reads "Not sure how long an activity takes?" and covers
+every activity, not just reading and writing), with the Rice original
 credited alongside. Note this means `credit_hour_planner.html` depends on
-`workload_estimator.html`, which is not yet cleared for publishing.
+the estimator page, which is not yet cleared for publishing.
 
 ## Testing
 
@@ -1235,16 +1285,26 @@ form rendering, live sync between steps, plan generation, localStorage
 persistence/migration, and print-to-PDF output. Worth repeating for
 anything touching the planner's state handling or print CSS.
 
-For the workload estimator specifically, a `verify.js` harness runs 123
-checks: all 45 lookup-table cells against an independent decode of the R
-arrays, 11 scenarios compared against a faithful line-by-line
-reimplementation of the original `server.R` math, Total = Independent +
-Contact, divide-by-zero guards, conditional panel visibility,
-localStorage round-trip and migration, report generation, print-PDF
-non-blankness, and label/aria coverage. Re-run it after any math change.
+For the Learning Activity Estimator, `test/verify_activity_estimator.js`
+runs 111 checks (new with the September 14, 2026 rescope — the old
+estimator's `verify.js`, 123 checks against the R math, was never in the
+repo and its per-week scenarios no longer apply): identity and scope
+(title, no Course info, no course-level fields, no per-week wording, no
+independent/contact split, six collapsible sections with Reading open,
+every Credit Hour Planner activity named on the page), the corners and
+monotonicity of the reading table and the corners of the writing table
+through the UI, each section's arithmetic, the manual overrides and their
+warning, the words-to-pages conversion at both densities, the
+typical-time fill and refill in Projects & other, the total and table
+and heading readouts (including the `::after` content), persistence
+under `uoes-activity-estimator` with the old key ignored, corrupt and
+partial saves, "Start over", the report text and its credit line,
+print-PDF non-blankness, the print-CSS pattern, label/aria coverage,
+unique disclosure names, the focus outline, and the cross-links.
 
 For the credit hour planner, `test/verify_credit_hour_planner.js` runs 344
-checks: 18 scenarios against an independent transcription of the workbook's
+checks (its "links to the local Learning Activity Estimator" check expects
+`learning_activity_estimator.html`): 18 scenarios against an independent transcription of the workbook's
 cell formulas, the credit-hour invariant, blended-with-zero-f2f equivalence,
 the non-accelerating meetings rule, all three guards, module totals and
 the budget comparison, over/under-budget styling, the no-bulk-suggestions
@@ -1327,7 +1387,7 @@ round-trip, migration of a v1-shaped save (string `objectives` → one row, `due
 G-number tags and field ordering, print-PDF non-blankness and print-CSS
 visibility.
 
-For the stylesheets, `test/verify_css_extraction.js` runs 170 checks: each
+For the stylesheets, `test/verify_css_extraction.js` runs 168 checks: each
 converted page links exactly the expected sheets in the expected order
 with `base.css` first, every sheet actually parses (a 404 or a typo'd
 `href` yields zero rules and fails), no inline `<style>` block survives,
@@ -1364,6 +1424,21 @@ tolerate the **cross-origin Google Fonts sheet** the site header links:
 rather than counted as a parse failure.
 
 ## Current status (August 2026)
+
+- **The Course Workload Estimator became the Learning Activity Estimator,
+  September 14, 2026** — Maka's call, on realising the estimator's
+  per-week course totals reproduced the Credit Hour Planner. It now
+  estimates one activity at a time and covers every activity on the
+  planner's lists, grouped by how each is estimated; the file is
+  `learning_activity_estimator.html`, the storage key is new, and the
+  index entry and the credit hour planner's cross-links follow. See
+  **Learning Activity Estimator notes** for the section-to-activity
+  mapping. **Worth telling anyone field testing:** the old page's saved
+  entries are not carried over, the credit hour planner now points at it
+  for *every* activity rather than reading and writing only, and the
+  "Projects & other activities" section fills in the planner's typical
+  times rather than estimating anything. The CC BY-NC-SA footer is
+  unchanged and still awaits sign-off.
 
 - **Both calculators took the course planner's layout, September 11
   and 14, 2026, and `calculator.css` is deleted.** The credit hour
@@ -1539,7 +1614,8 @@ rather than counted as a parse failure.
   CO1/CO2 by design, with the key carrying the full text; and the "What makes a
   good assessment online?" panel appears in both Step 2 and Step 3
   deliberately.
-- workload_estimator.html added July 27, 2026 and linked from index.html.
+- The estimator page (now `learning_activity_estimator.html`) was added
+  as workload_estimator.html on July 27, 2026 and linked from index.html.
   **Not cleared for publishing yet.** The CC BY-NC-SA footer wording reads
   fine to Maka but is awaiting sign-off from institutional stakeholders.
   Do not push it live, and do not change the credit/license wording in the
@@ -1549,6 +1625,6 @@ rather than counted as a parse failure.
   Footer credit settled: "Adapted from the Planning Time Calculator,
   initially developed by Ruth Ronan at Rutgers University."
   **Still not cleared for publishing**, for one remaining reason: it links
-  to workload_estimator.html as its reading/writing tool, so publishing it
-  first would expose that page before its CC BY-NC-SA sign-off lands. Ship
-  the two together.
+  to learning_activity_estimator.html as its activity-time tool, so
+  publishing it first would expose that page before its CC BY-NC-SA
+  sign-off lands. Ship the two together.

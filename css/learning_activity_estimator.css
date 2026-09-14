@@ -1,26 +1,21 @@
 /* ============================================================
-   Course Workload Estimator — page-specific styles
+   Learning Activity Estimator — page-specific styles
    Loaded after base.css and document.css.
    ------------------------------------------------------------
-   Restyled on September 14, 2026 from the wide two-column
-   calculator shell to the single-column, collapsible document shell
-   used by the Course Content Planner.
+   This page was the Course Workload Estimator until September 14,
+   2026, when it was scoped down from a per-week course workload
+   calculator to an estimator for individual learning activities
+   (see CLAUDE.md, "Learning Activity Estimator notes"). The
+   stylesheet is the estimator's restyle of the same day, with the
+   course-level pieces (the independent/contact tag, the share bar,
+   the slider) removed.
 
-   Load order is now:  base.css -> document.css -> this -> site_header.css
-   (it was base.css -> calculator.css -> this -> site_header.css).
+   Load order:  base.css -> document.css -> this -> site_header.css
 
    The step cards (section.step, .step-body, .step-num, .step-lead)
    come from document.css, where they are shared with the planner and
-   the credit hour planner. The restyle first carried its own copy of
-   that block, to keep the planner untouched during field testing;
-   the credit hour planner's restyle (September 11) promoted the same
-   rules into document.css with a byte-identical planner screenshot
-   to show for it, so the copy went when the two branches merged.
-   Only the summary readout (::after, below) is this page's own.
-
-   The results tiles, breakdown table, .warn callout, buttons, footer
-   and print rules below came from calculator.css, which was deleted
-   once neither calculator loaded it.
+   the credit hour planner. Only the summary readout (::after, below)
+   is this page's own.
    ============================================================ */
 
 :root {
@@ -51,9 +46,8 @@ a:focus { color: var(--red-dark); }
    ============================================================ */
 
 /* A short right-aligned readout on the summary line, so a collapsed section
-   still says what it is contributing to the weekly total. Written by the JS
-   into `data-sum` on the <summary> and drawn as generated content, NOT as a
-   child element.
+   still says what it estimates. Written by the JS into `data-sum` on the
+   <summary> and drawn as generated content, NOT as a child element.
 
    That is deliberate. As a real <span> inside the <summary> it broke
    WCAG 2.5.3 (label in name): the float puts a space between the readout
@@ -64,7 +58,7 @@ a:focus { color: var(--red-dark); }
    readout is outside textContent entirely, and Chrome folds it into both
    the visible label and the accessible name identically.
 
-   Empty string when the section contributes nothing, so an untouched
+   Empty string when the section has nothing in it, so an untouched
    section's label is just its heading. */
 .step-body > summary::after {
   content: attr(data-sum);
@@ -84,8 +78,8 @@ a:focus { color: var(--red-dark); }
 .guide p:first-of-type { margin-top: 4px; }
 
 /* ============================================================
-   Form controls — the planner's treatment, not the calculator's
-   underline. Bordered boxes on white, bold labels.
+   Form controls — the planner's treatment: bordered boxes on
+   white, bold labels.
    ============================================================ */
 
 label {
@@ -136,11 +130,6 @@ select:focus { background: var(--blue-light); }
   min-width: 0;
 }
 
-/* A field that should take the whole row on its own */
-.field.wide {
-  flex: 1 1 100%;
-}
-
 .hint {
   font-size: 14px;
   color: var(--muted);
@@ -169,20 +158,13 @@ select:focus { background: var(--blue-light); }
   font-weight: normal;
 }
 
-input[type="range"] {
-  width: 100%;
-  max-width: 320px;
-  accent-color: var(--blue);
-}
-
-/* The computed pages-per-hour / hours-per-page readout under a section's
-   inputs. Now a row rather than a centred tile, since the section is the
-   full width of the page. */
+/* The readout row under a section's inputs: the looked-up rate (where
+   there is one) and the section's estimate in hours. */
 .rate {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 4px 10px;
+  gap: 4px 18px;
   background: var(--blue-light);
   border-radius: 6px;
   padding: .55rem .8rem;
@@ -195,8 +177,12 @@ input[type="range"] {
   color: var(--red-dark);
 }
 
+.rate .est {
+  margin-left: auto;
+}
+
 /* ============================================================
-   Results  (this page's copy of the old calculator.css tiles)
+   Results
    ============================================================ */
 
 #h-est {
@@ -239,32 +225,12 @@ input[type="range"] {
 
 table { width: 100%; border-collapse: collapse; font-size: 15px; }
 caption { text-align: left; font-size: 15px; color: var(--muted); padding-bottom: .4rem; }
-th, td { padding: .4rem .45rem; text-align: left; border-bottom: 1px solid var(--blue-mid); }
+th, td { padding: .4rem .45rem; text-align: left; border-bottom: 1px solid var(--blue-mid); vertical-align: top; }
 thead th { background: var(--blue-light); color: var(--text); }
-td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.detail { color: var(--text-soft); font-size: 14px; }
+td.empty { color: var(--muted); font-style: italic; }
 tfoot td { font-weight: bold; border-top: 2px solid var(--blue); border-bottom: none; }
-
-.bar {
-  display: block;
-  height: 8px;
-  background: var(--blue);
-  border-radius: 4px;
-  min-width: 1px;
-}
-
-.bar-cell { width: 22%; }
-
-.tag {
-  display: inline-block;
-  font-size: .72rem;
-  padding: .1rem .4rem;
-  border-radius: 10px;
-  background: var(--blue-light);
-  color: var(--text);
-  white-space: nowrap;
-}
-
-.tag.contact { background: var(--red-tint); }
 
 /* ---- callouts ---- */
 
@@ -324,6 +290,13 @@ button {
 
 #reportWrap h2 { margin-top: 0; }
 
+#reportWrap pre {
+  font-family: inherit;
+  white-space: pre-wrap;
+  margin: 0;
+  line-height: 1.5;
+}
+
 footer {
   margin-top: 2.5rem;
   padding-top: 1rem;
@@ -363,4 +336,5 @@ footer a { color: var(--blue); }
   section.step { padding: 16px 14px; }
   .fields > .field { flex: 1 1 100%; }
   select, input[type="number"] { width: 100%; }
+  .rate .est { margin-left: 0; }
 }

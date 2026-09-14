@@ -800,8 +800,8 @@ function excelOnline(weeks, credits, study) {
   /* ===== 16. Links out ===== */
   {
     const links = await page.$$eval("a[href]", els => els.map(e => e.getAttribute("href")));
-    ok("links to the local workload estimator",
-      links.includes("workload_estimator.html"), links.join(" "));
+    ok("links to the local Learning Activity Estimator",
+      links.includes("learning_activity_estimator.html"), links.join(" "));
     ok("credits the Rice original",
       links.some(h => /cte\.rice\.edu\/workload/.test(h)), links.join(" "));
     ok("links the CC licence",

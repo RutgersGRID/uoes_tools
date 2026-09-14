@@ -4,10 +4,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Course Workload Estimator</title>
+    <title>Learning Activity Estimator</title>
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/document.css">
-    <link rel="stylesheet" href="css/workload_estimator.css">
+    <link rel="stylesheet" href="css/learning_activity_estimator.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -47,7 +47,7 @@
       <a href="index.html" class="active">Home</a>
       <a href="learning_objectives.html">Learning Objectives</a>
       <a href="course_planner.html">Course Planner</a>
-      <a href="workload_estimator.html">Workload Estimator</a>
+      <a href="learning_activity_estimator.html">Learning Activity Estimator</a>
       <a href="credit_hour_planner.html">Credit Hour Planner</a>
       <a href="blooms_verbs.html">Bloom&rsquo;s Verbs</a>
     </nav> -->
@@ -61,10 +61,11 @@
 
     <main>
 
-      <h1>Course Workload Estimator</h1>
-      <p class="subtitle">Estimate how many hours per week your course asks of students. Fill in
-        what you know and leave the rest at zero &mdash; every field updates the estimate
-        immediately.</p>
+      <h1>Learning Activity Estimator</h1>
+      <p class="subtitle">Estimate how long a learning activity will take your students. Describe
+        the activity in the section that fits it and read off the hours &mdash; then enter them in
+        the <a href="credit_hour_planner.html">Credit Hour Planner</a> to check a module against
+        its time budget.</p>
       <p class="lede">Your entries will be saved automatically as you go.</p>
       <p class="lede">Click a section heading to expand or collapse that section.</p>
       <p class="lede">Click the panels with an arrow for background on where the numbers come
@@ -72,30 +73,18 @@
 
       <form id="f" autocomplete="off">
 
-        <!-- COURSE INFO -->
-        <section class="step" aria-labelledby="s-course">
-          <details class="step-body" open>
-            <summary><h2 id="s-course">Course info</h2></summary>
-            <div class="fields">
-              <div class="field">
-                <label for="classweeks">Class duration (weeks)</label>
-                <input type="number" id="classweeks" min="1" step="1" value="15">
-              </div>
-            </div>
-            <p class="hint">Semester-long totals are divided by this number.</p>
-          </details>
-        </section>
-
         <!-- READING -->
         <section class="step" aria-labelledby="s-reading">
-          <details class="step-body">
-            <summary id="sum-reading" data-sum=""><h2 id="s-reading">Reading assignments</h2></summary>
-            <p class="step-lead">Pages assigned each week, and how hard they are to read.</p>
+          <details class="step-body" open>
+            <summary id="sum-reading" data-sum=""><h2 id="s-reading">Reading</h2></summary>
+            <p class="step-lead">Assigned readings, supplemental materials, a case study to read,
+              or blog and journal entries written by someone else. Describe one reading
+              assignment: how long it is and how hard it is to read.</p>
 
             <div class="fields">
               <div class="field">
-                <label for="weeklypages">Pages per week</label>
-                <input type="number" id="weeklypages" min="0" step="1" value="0">
+                <label for="pages">Pages</label>
+                <input type="number" id="pages" min="0" step="1" value="0">
               </div>
               <div class="field">
                 <label for="readingdensity">Page density</label>
@@ -122,8 +111,11 @@
                 </select>
               </div>
             </div>
+            <p class="hint">A blog post or journal entry is usually a page or two at the 450-word
+              density.</p>
 
-            <p class="rate">Estimated reading rate <strong id="out-readrate">&nbsp;</strong></p>
+            <p class="rate">Estimated reading rate <strong id="out-readrate">&nbsp;</strong>
+              <span class="est">About <strong id="out-reading">0.00</strong> hours</span></p>
 
             <div class="check">
               <input type="checkbox" id="setreadingrate">
@@ -137,8 +129,8 @@
             </div>
 
             <details class="guide">
-              <summary><h3>Where these numbers come from<span class="sr-only"> &mdash; reading
-                    assignments</span></h3></summary>
+              <summary><h3>Where these numbers come from<span class="sr-only"> &mdash;
+                    reading</span></h3></summary>
               <p>Reading rate depends on page density, text difficulty, and reading purpose.
                 The table is built from Keith Rayner&rsquo;s synthesis of reading science: a
                 skilled adult reader&rsquo;s optimal rate is about 300 words per minute, with
@@ -155,14 +147,22 @@
         <!-- WRITING -->
         <section class="step" aria-labelledby="s-writing">
           <details class="step-body">
-            <summary id="sum-writing" data-sum=""><h2 id="s-writing">Writing assignments</h2></summary>
-            <p class="step-lead">Total pages written across the whole term, and what kind of
-              writing they are.</p>
+            <summary id="sum-writing" data-sum=""><h2 id="s-writing">Writing</h2></summary>
+            <p class="step-lead">Papers and writing assignments, blog posts, journal entries, wiki
+              contributions, and the written report for a project. Describe one piece of writing:
+              how long it is and what kind of writing it is.</p>
 
             <div class="fields">
               <div class="field">
-                <label for="semesterpages">Pages per semester</label>
-                <input type="number" id="semesterpages" min="0" step="1" value="0">
+                <label for="length">Length</label>
+                <input type="number" id="length" min="0" step="1" value="0">
+              </div>
+              <div class="field">
+                <label for="lengthunit">Measured in</label>
+                <select id="lengthunit">
+                  <option value="pages">Pages</option>
+                  <option value="words">Words</option>
+                </select>
               </div>
               <div class="field">
                 <label for="writtendensity">Page density</label>
@@ -188,8 +188,12 @@
                 </select>
               </div>
             </div>
+            <p class="hint">Blog posts, journal entries and wiki contributions are usually
+              reflection or narrative writing with little drafting. A word count is converted
+              to pages at the density you choose.</p>
 
-            <p class="rate">Estimated writing rate <strong id="out-writerate">&nbsp;</strong></p>
+            <p class="rate">Estimated writing rate <strong id="out-writerate">&nbsp;</strong>
+              <span class="est">About <strong id="out-writing">0.00</strong> hours</span></p>
 
             <div class="check">
               <input type="checkbox" id="setwritingrate">
@@ -203,8 +207,8 @@
             </div>
 
             <details class="guide">
-              <summary><h3>Where these numbers come from<span class="sr-only"> &mdash; writing
-                    assignments</span></h3></summary>
+              <summary><h3>Where these numbers come from<span class="sr-only"> &mdash;
+                    writing</span></h3></summary>
               <p>These are the most speculative estimates in the tool. They rest largely on
                 Torrance et al.&rsquo;s study of 493 students writing 1,500-word essays, who
                 reported spending 9 to 15 hours per assignment.</p>
@@ -218,34 +222,18 @@
           </details>
         </section>
 
-        <!-- VIDEO / PODCAST -->
-        <section class="step" aria-labelledby="s-video">
-          <details class="step-body">
-            <summary id="sum-video" data-sum=""><h2 id="s-video">Videos / podcasts</h2></summary>
-            <p class="step-lead">Assigned viewing or listening.</p>
-
-            <div class="fields">
-              <div class="field">
-                <label for="weeklyvideos">Hours per week</label>
-                <input type="number" id="weeklyvideos" min="0" step="0.25" value="0">
-              </div>
-            </div>
-            <p class="hint">Entered directly as hours, so it passes straight through to the
-              estimate.</p>
-          </details>
-        </section>
-
         <!-- DISCUSSION -->
         <section class="step" aria-labelledby="s-disc">
           <details class="step-body">
-            <summary id="sum-disc" data-sum=""><h2 id="s-disc">Discussion posts</h2></summary>
-            <p class="step-lead">Posts students write or record each week, including reading and
-              replying to classmates.</p>
+            <summary id="sum-disc" data-sum=""><h2 id="s-disc">Discussion &amp; peer feedback</h2></summary>
+            <p class="step-lead">Discussion posts and replies, peer review comments, and comments on
+              classmates&rsquo; blogs, journals or wiki pages. Count the posts one student writes
+              for the activity, including replies, and how long each one is.</p>
 
             <div class="fields">
               <div class="field">
-                <label for="postsperweek">Posts per week</label>
-                <input type="number" id="postsperweek" min="0" step="1" value="0">
+                <label for="posts">Posts</label>
+                <input type="number" id="posts" min="0" step="1" value="0">
               </div>
               <div class="field">
                 <label for="postformat">Format</label>
@@ -263,8 +251,11 @@
                 <input type="number" id="postlength_av" min="0" step="1" value="3">
               </div>
             </div>
+            <p class="hint">An initial post plus two replies is three posts. The time includes
+              reading what classmates wrote.</p>
 
-            <p class="rate">Estimated discussion time <strong id="out-postrate">&nbsp;</strong></p>
+            <p class="rate"><span class="est">About <strong id="out-discussion">0.00</strong>
+                hours</span></p>
 
             <div class="check">
               <input type="checkbox" id="setdiscussion">
@@ -272,14 +263,14 @@
             </div>
             <div class="fields" id="wrap-overridedisc" hidden>
               <div class="field">
-                <label for="overridediscussion">Hours per week</label>
+                <label for="overridediscussion">Hours for the activity</label>
                 <input type="number" id="overridediscussion" min="0" step="0.25" value="1">
               </div>
             </div>
 
             <details class="guide">
-              <summary><h3>Where these numbers come from<span class="sr-only"> &mdash; discussion
-                    posts</span></h3></summary>
+              <summary><h3>Where these numbers come from<span class="sr-only"> &mdash;
+                    discussion</span></h3></summary>
               <p>These assumptions are not covered by the published methodology; they are taken
                 from the original tool&rsquo;s code.</p>
               <p><strong>Text posts:</strong> 250 words of composed discussion writing per hour
@@ -287,97 +278,100 @@
                 composing a response.</p>
               <p><strong>Audio / video posts:</strong> 20 minutes of student work per finished
                 minute of recording, covering planning, recording, re-recording, and uploading.</p>
-              <p>Discussion time counts as <em>contact</em> time, since it is interaction with
-                the instructor and classmates.</p>
             </details>
           </details>
         </section>
 
-        <!-- EXAMS -->
-        <section class="step" aria-labelledby="s-exams">
+        <!-- MEDIA & LIVE SESSIONS -->
+        <section class="step" aria-labelledby="s-media">
           <details class="step-body">
-            <summary id="sum-exams" data-sum=""><h2 id="s-exams">Exams</h2></summary>
-            <p class="step-lead">Studying, plus sitting time if the exam is taken at home.</p>
+            <summary id="sum-media" data-sum=""><h2 id="s-media">Media &amp; live sessions</h2></summary>
+            <p class="step-lead">Mini-lecture videos, other videos, podcasts, webinar sessions, and
+              simulations or eLearning tutorials. Count the items and their running time.</p>
 
             <div class="fields">
               <div class="field">
-                <label for="exams">Exams per semester</label>
-                <input type="number" id="exams" min="0" step="1" value="0">
+                <label for="mediacount">Number of items</label>
+                <input type="number" id="mediacount" min="0" step="1" value="0">
               </div>
               <div class="field">
-                <label for="examhours">Study hours per exam</label>
-                <input type="number" id="examhours" min="0" max="100" step="0.5" value="5">
-              </div>
-              <div class="field" id="wrap-examlength" hidden>
-                <label for="exam_length">Exam time limit (minutes)</label>
-                <input type="number" id="exam_length" min="0" step="15" value="60">
+                <label for="medialength">Running time each (minutes)</label>
+                <input type="number" id="medialength" min="0" step="5" value="0">
               </div>
             </div>
+            <p class="hint">Counted at running time: a live webinar runs its scheduled length, a
+              self-paced tutorial the time it says it takes. Add time separately if students are
+              asked to take notes or complete a task while watching.</p>
 
-            <div class="check">
-              <input type="checkbox" id="takehome">
-              <label for="takehome">Take-home exams (add sitting time)</label>
-            </div>
-
-            <p class="hint">Study hours and take-home sitting time are spread across the weeks of
-              the term.</p>
+            <p class="rate"><span class="est">About <strong id="out-media">0.00</strong>
+                hours</span></p>
           </details>
         </section>
 
-        <!-- OTHER -->
+        <!-- QUIZZES & TESTS -->
+        <section class="step" aria-labelledby="s-tests">
+          <details class="step-body">
+            <summary id="sum-tests" data-sum=""><h2 id="s-tests">Quizzes &amp; tests</h2></summary>
+            <p class="step-lead">A quiz, test or pre-assessment: the time students spend sitting
+              it, plus any preparation you expect.</p>
+
+            <div class="fields">
+              <div class="field">
+                <label for="testlength">Time limit (minutes)</label>
+                <input type="number" id="testlength" min="0" step="5" value="0">
+              </div>
+              <div class="field">
+                <label for="testprep">Preparation (hours)</label>
+                <input type="number" id="testprep" min="0" step="0.5" value="0">
+              </div>
+            </div>
+            <p class="hint">The Credit Hour Planner suggests about 3 hours of preparation for an
+              assessment. Leave it at zero for a low-stakes quiz or a pre-assessment.</p>
+
+            <p class="rate"><span class="est">About <strong id="out-tests">0.00</strong>
+                hours</span></p>
+          </details>
+        </section>
+
+        <!-- PROJECTS & OTHER ACTIVITIES -->
         <section class="step" aria-labelledby="s-other">
           <details class="step-body">
-            <summary id="sum-other" data-sum=""><h2 id="s-other">Other assignments</h2></summary>
-            <p class="step-lead">Problem sets, projects, labs, studio work &mdash; anything not
-              covered by the sections above.</p>
+            <summary id="sum-other" data-sum=""><h2 id="s-other">Projects &amp; other activities</h2></summary>
+            <p class="step-lead">Case studies, experiential learning, research activities,
+              individual and group assignments, projects and presentations. There is no
+              research-based rate for these, so the Credit Hour Planner&rsquo;s typical time is
+              filled in as a starting point for you to adjust.</p>
 
             <div class="fields">
               <div class="field">
-                <label for="otherassign">Number per semester</label>
-                <input type="number" id="otherassign" min="0" step="1" value="0">
-              </div>
-              <div class="field">
-                <label for="other_bucket">Counts as</label>
-                <select id="other_bucket">
-                  <option value="ind">Independent work</option>
-                  <option value="con">Contact time with instructor</option>
+                <label for="othertype">Activity</label>
+                <select id="othertype">
+                  <option value="case" data-sug="2">Case study</option>
+                  <option value="experiential" data-sug="2">Experiential learning</option>
+                  <option value="research" data-sug="2">Research activities</option>
+                  <option value="individual" data-sug="2">Individual assignment</option>
+                  <option value="group" data-sug="4">Group assignment</option>
+                  <option value="project" data-sug="1">Project / presentation</option>
+                  <option value="other" data-sug="0">Something else</option>
                 </select>
               </div>
-              <div class="field wide">
-                <label for="otherhours">Hours per assignment: <span id="otherhours_val">0</span></label>
-                <input type="range" id="otherhours" min="0" max="50" step="1" value="0"
-                  aria-describedby="otherhours_val">
+              <div class="field">
+                <label for="otherhours">Hours</label>
+                <input type="number" id="otherhours" min="0" step="0.5" value="0">
               </div>
             </div>
+            <p class="hint">Experiential learning is attending an event, an interview, a field
+              trip, a lab. Choosing an activity fills in its typical time; edit the hours to fit
+              yours.</p>
 
-            <p class="hint">Problem sets and projects are usually independent; labs, studio time,
-              and workshops are usually contact time.</p>
-          </details>
-        </section>
-
-        <!-- MEETINGS -->
-        <section class="step" aria-labelledby="s-meet">
-          <details class="step-body">
-            <summary id="sum-meet" data-sum=""><h2 id="s-meet">Class meetings</h2></summary>
-            <p class="step-lead">Scheduled synchronous sessions.</p>
-
-            <div class="fields">
-              <div class="field">
-                <label for="syncsessions">Live meetings per week</label>
-                <input type="number" id="syncsessions" min="0" step="1" value="0">
-              </div>
-              <div class="field">
-                <label for="synclength">Meeting length (hours)</label>
-                <input type="number" id="synclength" min="0" step="0.25" value="0">
-              </div>
-            </div>
-            <p class="hint">Synchronous sessions count as contact time.</p>
+            <p class="rate"><span class="est">About <strong id="out-other">0.00</strong>
+                hours</span></p>
           </details>
         </section>
 
       </form>
 
-      <h2 id="h-est">Workload estimate</h2>
+      <h2 id="h-est">Your estimates</h2>
 
       <section class="results" aria-labelledby="h-est">
         <div id="warnings"></div>
@@ -385,30 +379,18 @@
         <div class="totals">
           <p class="total primary">
             <span class="num" id="out-total">0.00</span>
-            <span class="lab">Total</span>
-            <span class="sub">hours per week</span>
-          </p>
-          <p class="total">
-            <span class="num" id="out-ind">0.00</span>
-            <span class="lab">Independent</span>
-            <span class="sub">hours per week</span>
-          </p>
-          <p class="total">
-            <span class="num" id="out-con">0.00</span>
-            <span class="lab">Contact</span>
-            <span class="sub">hours per week</span>
+            <span class="lab">Total hours</span>
+            <span class="sub">for the activities described above</span>
           </p>
         </div>
 
         <table>
-          <caption>Where the hours go</caption>
+          <caption>Estimated time by activity</caption>
           <thead>
             <tr>
-              <th scope="col">Category</th>
-              <th scope="col">Type</th>
-              <th scope="col" class="num">Hrs/wk</th>
-              <th scope="col" class="num">Share</th>
-              <th scope="col" class="bar-cell"><span class="sr-only">Relative size</span></th>
+              <th scope="col">Activity</th>
+              <th scope="col">Based on</th>
+              <th scope="col" class="num">Hours</th>
             </tr>
           </thead>
           <tbody id="breakdown"></tbody>
@@ -417,11 +399,13 @@
               <td>Total</td>
               <td></td>
               <td class="num" id="foot-hours">0.00</td>
-              <td class="num">100%</td>
-              <td></td>
             </tr>
           </tfoot>
         </table>
+
+        <p class="hint">Each section estimates one activity at a time. To check a whole module
+          against its time budget, enter these hours in the
+          <a href="credit_hour_planner.html">Credit Hour Planner</a>&rsquo;s module planner.</p>
 
         <p class="sr-only" aria-live="polite" id="live"></p>
 
@@ -483,23 +467,29 @@
           3: { 1: { 1: 3, 2: 6 }, 2: { 1: 4, 2: 8 }, 3: { 1: 5, 2: 10 } }
         };
 
+        // Words per written page, by the writing density option. Used to turn
+        // a word count into pages before the HOURS_PER_PAGE lookup.
+        var WORDS_PER_PAGE = { 1: 250, 2: 500 };
+
         // Discussion assumptions (from the original code)
         var TEXT_WORDS_PER_HOUR = 250;   // composing discussion prose
         var AV_MINUTES_PER_HOUR = 3;     // 20 min of work per finished minute
 
-        var STORAGE_KEY = "uoes-workload-estimator";
+        /* A new key: the Course Workload Estimator this page replaced saved a
+           different set of fields under "uoes-workload-estimator", and none of
+           its per-week figures mean anything here. Deliberately not read. */
+        var STORAGE_KEY = "uoes-activity-estimator";
 
         var FIELDS = [
-          "classweeks", "weeklypages", "readingdensity", "difficulty", "readingpurpose",
+          "pages", "readingdensity", "difficulty", "readingpurpose",
           "setreadingrate", "overridepagesperhour",
-          "semesterpages", "writtendensity", "writingpurpose", "draftrevise",
+          "length", "lengthunit", "writtendensity", "writingpurpose", "draftrevise",
           "setwritingrate", "overridehoursperwriting",
-          "weeklyvideos",
-          "postsperweek", "postformat", "postlength_text", "postlength_av",
+          "posts", "postformat", "postlength_text", "postlength_av",
           "setdiscussion", "overridediscussion",
-          "exams", "examhours", "takehome", "exam_length",
-          "otherassign", "otherhours", "other_bucket",
-          "syncsessions", "synclength"
+          "mediacount", "medialength",
+          "testlength", "testprep",
+          "othertype", "otherhours"
         ];
 
         var el = {};
@@ -519,22 +509,16 @@
           if (!isFinite(n)) return "0.00";
           return n.toFixed(2);
         }
+        function plural(n, one, many) {
+          return n === 1 ? one : many;
+        }
 
         /* ---------------- calculation ---------------- */
 
         function calculate() {
           var warnings = [];
 
-          var weeks = num("classweeks");
-          if (weeks < 1) {
-            warnings.push("Class duration must be at least 1 week. Per-semester totals are not being spread until you set it.");
-            weeks = 0; // signals "cannot divide"
-          }
-          var perWeek = function (semesterTotal) {
-            return weeks > 0 ? semesterTotal / weeks : 0;
-          };
-
-          // --- reading rate ---
+          // --- reading ---
           var readRate;
           if (on("setreadingrate")) {
             readRate = num("overridepagesperhour");
@@ -545,9 +529,10 @@
           } else {
             readRate = PAGES_PER_HOUR[opt("readingdensity")][opt("difficulty")][opt("readingpurpose")];
           }
-          var readingHours = readRate > 0 ? num("weeklypages") / readRate : 0;
+          var pages = num("pages");
+          var readingHours = readRate > 0 ? pages / readRate : 0;
 
-          // --- writing rate ---
+          // --- writing ---
           var writeRate;
           if (on("setwritingrate")) {
             writeRate = num("overridehoursperwriting");
@@ -555,59 +540,88 @@
           } else {
             writeRate = HOURS_PER_PAGE[opt("writingpurpose")][opt("draftrevise")][opt("writtendensity")];
           }
-          var writingHours = perWeek(writeRate * num("semesterpages"));
+          var wordsPerPage = WORDS_PER_PAGE[opt("writtendensity")];
+          var writtenPages = el.lengthunit.value === "words"
+            ? num("length") / wordsPerPage
+            : num("length");
+          var writingHours = writeRate * writtenPages;
 
           // --- discussion ---
           // NOTE: the original R used two slightly different audio/video formulas
           // (0.18x + x/6 in the total, x/3 in the sub-totals), so the parts did not
           // add up to the whole. This version uses x/3 everywhere.
-          var discussionHours;
+          var posts = num("posts");
+          var discussionHours, discussionDetail;
           if (on("setdiscussion")) {
             discussionHours = num("overridediscussion");
+            discussionDetail = "set manually";
           } else if (opt("postformat") === 1) {
-            discussionHours = num("postlength_text") * num("postsperweek") / TEXT_WORDS_PER_HOUR;
+            discussionHours = num("postlength_text") * posts / TEXT_WORDS_PER_HOUR;
+            discussionDetail = posts + " text " + plural(posts, "post", "posts") + " of " +
+              num("postlength_text") + " words";
           } else {
-            discussionHours = num("postlength_av") * num("postsperweek") / AV_MINUTES_PER_HOUR;
+            discussionHours = num("postlength_av") * posts / AV_MINUTES_PER_HOUR;
+            discussionDetail = posts + " audio/video " + plural(posts, "post", "posts") + " of " +
+              num("postlength_av") + " " + plural(num("postlength_av"), "minute", "minutes");
           }
 
-          // --- exams ---
-          var examStudyHours = perWeek(num("exams") * num("examhours"));
-          var takehomeHours = on("takehome")
-            ? perWeek((num("exam_length") / 60) * num("exams"))
-            : 0;
+          // --- media & live sessions ---
+          var mediaCount = num("mediacount"), mediaLength = num("medialength");
+          var mediaHours = mediaCount * mediaLength / 60;
 
-          // --- other, videos, meetings ---
-          var otherHours = perWeek(num("otherassign") * num("otherhours"));
-          var videoHours = num("weeklyvideos");
-          var syncHours = num("syncsessions") * num("synclength");
+          // --- quizzes & tests ---
+          var sitHours = num("testlength") / 60;
+          var prepHours = num("testprep");
+          var testHours = sitHours + prepHours;
 
-          var otherIsContact = el.other_bucket.value === "con";
+          // --- projects & other ---
+          var otherHours = num("otherhours");
+          var otherName = el.othertype.options[el.othertype.selectedIndex].textContent;
 
           var rows = [
-            { name: "Reading", hours: readingHours, contact: false },
-            { name: "Writing", hours: writingHours, contact: false },
-            { name: "Videos / podcasts", hours: videoHours, contact: false },
-            { name: "Exam study", hours: examStudyHours, contact: false },
-            { name: "Take-home exams", hours: takehomeHours, contact: false },
-            { name: "Other assignments", hours: otherHours, contact: otherIsContact },
-            { name: "Discussion posts", hours: discussionHours, contact: true },
-            { name: "Class meetings", hours: syncHours, contact: true }
+            {
+              id: "reading", name: "Reading", hours: readingHours,
+              detail: pages + " " + plural(pages, "page", "pages") + " at " + readRate + " pages per hour" +
+                (on("setreadingrate") ? " (set manually)" : "")
+            },
+            {
+              id: "writing", name: "Writing", hours: writingHours,
+              detail: (el.lengthunit.value === "words"
+                ? num("length") + " words, about " + fmt(writtenPages) + " pages,"
+                : writtenPages + " " + plural(writtenPages, "page", "pages")) +
+                " at " + writeRate + " hours per page" +
+                (on("setwritingrate") ? " (set manually)" : "")
+            },
+            { id: "discussion", name: "Discussion & peer feedback", hours: discussionHours, detail: discussionDetail },
+            {
+              id: "media", name: "Media & live sessions", hours: mediaHours,
+              detail: mediaCount + " " + plural(mediaCount, "item", "items") + " of " + mediaLength +
+                " " + plural(mediaLength, "minute", "minutes")
+            },
+            {
+              id: "tests", name: "Quizzes & tests", hours: testHours,
+              detail: num("testlength") + " " + plural(num("testlength"), "minute", "minutes") + " sitting time" +
+                (prepHours > 0 ? " plus " + prepHours + " " + plural(prepHours, "hour", "hours") + " of preparation" : "")
+            },
+            {
+              id: "other", name: otherName, hours: otherHours,
+              detail: el.othertype.value === "other" ? "hours you entered" : "typical time from the Credit Hour Planner, adjusted by you"
+            }
           ];
 
-          var independent = 0, contact = 0;
+          var total = 0, count = 0;
           rows.forEach(function (r) {
             if (!isFinite(r.hours) || r.hours < 0) r.hours = 0;
-            if (r.contact) contact += r.hours; else independent += r.hours;
+            if (r.hours > 0) { total += r.hours; count += 1; }
           });
 
           return {
             rows: rows,
-            independent: independent,
-            contact: contact,
-            total: independent + contact,
+            total: total,
+            count: count,
             readRate: readRate,
             writeRate: writeRate,
-            discussionHours: discussionHours,
+            writtenPages: writtenPages,
             warnings: warnings
           };
         }
@@ -618,63 +632,56 @@
           document.getElementById("wrap-overridepages").hidden = !on("setreadingrate");
           document.getElementById("wrap-overridewriting").hidden = !on("setwritingrate");
           document.getElementById("wrap-overridedisc").hidden = !on("setdiscussion");
-          document.getElementById("wrap-examlength").hidden = !on("takehome");
           var isText = opt("postformat") === 1;
           document.getElementById("wrap-posttext").hidden = !isText;
           document.getElementById("wrap-postav").hidden = isText;
-          document.getElementById("otherhours_val").textContent = el.otherhours.value;
         }
 
         /* Per-section readouts on the section headings. With the sections
            collapsed by default there is otherwise no way to see which ones
-           have anything in them, so each heading carries its own contribution
-           to the weekly total.
+           have anything in them, so each heading carries its own estimate.
 
            Written into `data-sum` on the <summary> and drawn by CSS generated
-           content (see the ::after rule in workload_estimator.css). It must
-           NOT be a child element: as a floated <span> the rendered label picks
-           up a space the summary's text content does not have, which breaks
-           WCAG 2.5.3 label-in-name. Empty string when a section contributes
-           nothing, so its label stays just the heading. */
-        var SECTION_SUMS = [
-          { el: "sum-reading", of: function (r) { return r.rows[0].hours; } },
-          { el: "sum-writing", of: function (r) { return r.rows[1].hours; } },
-          { el: "sum-video", of: function (r) { return r.rows[2].hours; } },
-          { el: "sum-disc", of: function (r) { return r.rows[6].hours; } },
-          { el: "sum-exams", of: function (r) { return r.rows[3].hours + r.rows[4].hours; } },
-          { el: "sum-other", of: function (r) { return r.rows[5].hours; } },
-          { el: "sum-meet", of: function (r) { return r.rows[7].hours; } }
-        ];
+           content (see the ::after rule in learning_activity_estimator.css).
+           It must NOT be a child element: as a floated <span> the rendered
+           label picks up a space the summary's text content does not have,
+           which breaks WCAG 2.5.3 label-in-name. Empty string when a section
+           has nothing in it, so its label stays just the heading. */
+        var SECTION_SUMS = {
+          reading: "sum-reading", writing: "sum-writing", discussion: "sum-disc",
+          media: "sum-media", tests: "sum-tests", other: "sum-other"
+        };
 
         function renderSectionSums(r) {
-          SECTION_SUMS.forEach(function (s) {
-            var node = document.getElementById(s.el);
+          r.rows.forEach(function (row) {
+            var node = document.getElementById(SECTION_SUMS[row.id]);
             if (!node) return;
-            var h = s.of(r);
-            node.setAttribute("data-sum", h > 0 ? fmt(h) + " hrs/wk" : "");
+            node.setAttribute("data-sum", row.hours > 0 ? fmt(row.hours) + " hrs" : "");
           });
+        }
+
+        function byId(rows, id) {
+          for (var i = 0; i < rows.length; i++) if (rows[i].id === id) return rows[i];
+          return null;
         }
 
         function render() {
           syncVisibility();
           var r = calculate();
 
-          document.getElementById("out-readrate").textContent =
-            (on("setreadingrate") ? r.readRate : r.readRate) + " pages per hour";
-          document.getElementById("out-writerate").textContent =
-            r.writeRate + " hours per page";
-          document.getElementById("out-postrate").textContent =
-            fmt(r.discussionHours) + " hours per week";
+          document.getElementById("out-readrate").textContent = r.readRate + " pages per hour";
+          document.getElementById("out-writerate").textContent = r.writeRate + " hours per page";
+          document.getElementById("out-reading").textContent = fmt(byId(r.rows, "reading").hours);
+          document.getElementById("out-writing").textContent = fmt(byId(r.rows, "writing").hours);
+          document.getElementById("out-discussion").textContent = fmt(byId(r.rows, "discussion").hours);
+          document.getElementById("out-media").textContent = fmt(byId(r.rows, "media").hours);
+          document.getElementById("out-tests").textContent = fmt(byId(r.rows, "tests").hours);
+          document.getElementById("out-other").textContent = fmt(byId(r.rows, "other").hours);
 
           document.getElementById("out-total").textContent = fmt(r.total);
-          document.getElementById("out-ind").textContent = fmt(r.independent);
-          document.getElementById("out-con").textContent = fmt(r.contact);
           document.getElementById("foot-hours").textContent = fmt(r.total);
 
           renderSectionSums(r);
-
-          var max = 0;
-          r.rows.forEach(function (x) { if (x.hours > max) max = x.hours; });
 
           var body = document.getElementById("breakdown");
           body.innerHTML = "";
@@ -686,35 +693,23 @@
             td1.textContent = x.name;
 
             var td2 = document.createElement("td");
-            var tag = document.createElement("span");
-            tag.className = "tag" + (x.contact ? " contact" : "");
-            tag.textContent = x.contact ? "Contact" : "Independent";
-            td2.appendChild(tag);
+            td2.className = "detail";
+            td2.textContent = x.detail;
 
             var td3 = document.createElement("td");
             td3.className = "num";
             td3.textContent = fmt(x.hours);
 
-            var td4 = document.createElement("td");
-            td4.className = "num";
-            td4.textContent = r.total > 0 ? Math.round(x.hours / r.total * 100) + "%" : "0%";
-
-            var td5 = document.createElement("td");
-            var bar = document.createElement("span");
-            bar.className = "bar";
-            bar.style.width = (max > 0 ? (x.hours / max * 100) : 0) + "%";
-            td5.appendChild(bar);
-
-            [td1, td2, td3, td4, td5].forEach(function (td) { tr.appendChild(td); });
+            [td1, td2, td3].forEach(function (td) { tr.appendChild(td); });
             body.appendChild(tr);
           });
 
           if (!body.children.length) {
             var tr = document.createElement("tr");
             var td = document.createElement("td");
-            td.colSpan = 5;
+            td.colSpan = 3;
+            td.className = "empty";
             td.textContent = "Nothing entered yet.";
-            td.style.color = "#666";
             tr.appendChild(td);
             body.appendChild(tr);
           }
@@ -729,8 +724,8 @@
           });
 
           document.getElementById("live").textContent =
-            "Total " + fmt(r.total) + " hours per week: " +
-            fmt(r.independent) + " independent, " + fmt(r.contact) + " contact.";
+            "Total " + fmt(r.total) + " hours across " + r.count + " " +
+            plural(r.count, "activity", "activities") + ".";
 
           save();
           return r;
@@ -741,26 +736,17 @@
         function asText() {
           var r = calculate();
           var lines = [];
-          lines.push("COURSE WORKLOAD ESTIMATE");
+          lines.push("LEARNING ACTIVITY ESTIMATE");
           lines.push("");
-          lines.push("Total:        " + fmt(r.total) + " hrs/week");
-          lines.push("Independent:  " + fmt(r.independent) + " hrs/week");
-          lines.push("Contact:      " + fmt(r.contact) + " hrs/week");
-          lines.push("Over " + num("classweeks") + " weeks: " + fmt(r.total * num("classweeks")) + " hours total");
-          lines.push("");
-          lines.push("BREAKDOWN");
           r.rows.forEach(function (x) {
             if (x.hours <= 0) return;
-            var pad = (x.name + "                    ").slice(0, 20);
-            lines.push("  " + pad + fmt(x.hours) + " hrs/wk  (" +
-              (x.contact ? "contact" : "independent") + ")");
+            var pad = (x.name + "                            ").slice(0, 28);
+            lines.push("  " + pad + fmt(x.hours) + " hrs   (" + x.detail + ")");
           });
+          if (!r.count) lines.push("  Nothing entered yet.");
           lines.push("");
-          lines.push("ASSUMPTIONS");
-          lines.push("  Reading rate: " + r.readRate + " pages/hour" +
-            (on("setreadingrate") ? " (set manually)" : ""));
-          lines.push("  Writing rate: " + r.writeRate + " hours/page" +
-            (on("setwritingrate") ? " (set manually)" : ""));
+          lines.push("Total: " + fmt(r.total) + " hours for " + r.count + " " +
+            plural(r.count, "activity", "activities"));
           lines.push("");
           lines.push("Adapted from the Course Workload Estimator by Betsy Barre,");
           lines.push("Allen Brown, and Justin Esarey. CC BY-NC-SA 4.0.");
@@ -774,16 +760,10 @@
           wrap.hidden = false;
 
           var h = document.createElement("h2");
-          h.textContent = "Workload summary";
+          h.textContent = "Learning activity estimate";
           wrap.appendChild(h);
 
           var pre = document.createElement("pre");
-          pre.style.fontFamily = "Georgia, serif";
-          pre.style.whiteSpace = "pre-wrap";
-          pre.style.background = "#fff";
-          pre.style.border = "2px solid #007FAC";
-          pre.style.borderRadius = "8px";
-          pre.style.padding = "1rem";
           pre.textContent = asText();
           wrap.appendChild(pre);
           return r;
@@ -812,19 +792,23 @@
             if (!raw) return;
             var data = JSON.parse(raw);
             FIELDS.forEach(function (id) {
-              if (!(id in data)) return;              // migration: new fields keep defaults
+              if (!(id in data)) return;              // new fields keep their defaults
               var e = el[id];
               if (e.type === "checkbox") e.checked = !!data[id];
               else e.value = data[id];
             });
-            // migration from the original checkbox-based "other.engage"
-            if ("other_engage" in data && !("other_bucket" in data)) {
-              el.other_bucket.value = data.other_engage ? "con" : "ind";
-            }
           } catch (err) { /* corrupt or unavailable; ignore */ }
         }
 
         /* ---------------- wiring ---------------- */
+
+        /* Choosing an activity in "Projects & other activities" fills in the
+           Credit Hour Planner's typical time for it. This listener is on the
+           select itself, so it runs before the form's change handler renders. */
+        el.othertype.addEventListener("change", function () {
+          var o = el.othertype.options[el.othertype.selectedIndex];
+          el.otherhours.value = o.getAttribute("data-sug") || "0";
+        });
 
         document.getElementById("f").addEventListener("input", render);
         document.getElementById("f").addEventListener("change", render);
