@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Load Rock 'n' Roll Activity Test Data</title>
+  <style>
+    body {
+      font-family: Georgia, serif;
+      max-width: 620px;
+      margin: 60px auto;
+      padding: 0 20px;
+      background: #f4f7f9;
+      color: #333;
+      text-align: center;
+    }
+    .card {
+      background: white;
+      border: 2px solid #007FAC;
+      border-radius: 8px;
+      padding: 28px;
+    }
+    h1 { font-size: 24px; margin-top: 0; }
+    p { line-height: 1.6; }
+    ul { text-align: left; line-height: 1.6; margin: 0 auto 16px; max-width: 520px; }
+    li strong { color: #A30029; }
+    button {
+      font-family: inherit;
+      font-size: 18px;
+      padding: 12px 32px;
+      border: none;
+      border-radius: 8px;
+      background: #CC0033;
+      color: white;
+      cursor: pointer;
+      margin: 6px;
+    }
+    button:hover { background: #A30029; }
+    button.secondary {
+      background: white;
+      color: #CC0033;
+      border: 2px solid #CC0033;
+      font-size: 15px;
+      padding: 8px 20px;
+    }
+    button.secondary:hover { background: #CC0033; color: white; }
+    button:focus { outline: 2px solid #007FAC; outline-offset: 2px; }
+    #status { font-weight: bold; color: #A30029; min-height: 1.4em; }
+    .warn { font-size: 14px; color: #666; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Learning Activity Estimator Test Data</h1>
+    <p>Fills every section of the Learning Activity Estimator with one
+      activity from <strong>Rock 'n' Roll: Origins to Present</strong>, then
+      opens it. The estimator has no field for an activity's name, so this is
+      what each section will be holding:</p>
+    <ul>
+      <li><strong>Reading</strong> &mdash; Module 7 readings (Meet the Beatles /
+        The British Blues Boom): 28 pages of academic monograph, some new
+        concepts, read to understand.</li>
+      <li><strong>Writing</strong> &mdash; Research &amp; Analysis progress
+        report: 1,000 words, argument, minimal drafting, double-spaced.</li>
+      <li><strong>Discussion &amp; peer feedback</strong> &mdash; Electric
+        Dylan Discussion: an initial post and two replies of about 200
+        words each.</li>
+      <li><strong>Media &amp; live sessions</strong> &mdash; Module 8 lecture
+        videos with guided listening: four videos of 25 minutes.</li>
+      <li><strong>Quizzes &amp; tests</strong> &mdash; Exam 1: a 90-minute
+        window with 4 hours of studying.</li>
+      <li><strong>Projects &amp; other activities</strong> &mdash; Research
+        &amp; Analysis final presentation, as a project / presentation, at
+        6 hours rather than the 1-hour typical time.</li>
+    </ul>
+    <p class="warn">This replaces anything currently saved in the estimator in
+      this browser. Use "Clear" afterward to empty it again.</p>
+    <button id="loadBtn">Load test data &amp; open estimator</button>
+    <br>
+    <button id="clearBtn" class="secondary">Clear estimator data</button>
+    <p id="status" role="status"></p>
+  </div>
+
+  <script>
+    // Must match STORAGE_KEY in learning_activity_estimator.html — seeding
+    // any other key just opens an empty estimator. The shape is the page's
+    // own save: one entry per field id, values as strings (a select's option
+    // value, a number field's text) and checkboxes as booleans. load() copies
+    // each straight into its control, so anything left out keeps its default.
+    const KEY = "uoes-activity-estimator";
+    const SEED = {
+      // Reading — Module 7 readings
+      "pages": "28",
+      "readingdensity": "2",      // 600 words (academic monograph)
+      "difficulty": "2",          // some new concepts
+      "readingpurpose": "2",      // understand
+      "setreadingrate": false,
+      "overridepagesperhour": "10",
+
+      // Writing — R&A progress report
+      "length": "1000",
+      "lengthunit": "words",
+      "writtendensity": "1",      // 250 words (double-spaced)
+      "writingpurpose": "2",      // argument
+      "draftrevise": "2",         // minimal drafting
+      "setwritingrate": false,
+      "overridehoursperwriting": "0.5",
+
+      // Discussion — Electric Dylan Discussion
+      "posts": "3",
+      "postformat": "1",          // text
+      "postlength_text": "200",
+      "postlength_av": "3",
+      "setdiscussion": false,
+      "overridediscussion": "1",
+
+      // Media — Module 8 lecture videos
+      "mediacount": "4",
+      "medialength": "25",
+
+      // Quizzes & tests — Exam 1
+      "testlength": "90",
+      "testprep": "4",
+
+      // Projects & other — R&A final presentation
+      "othertype": "project",
+      "otherhours": "6"
+    };
+
+    const status = document.getElementById("status");
+
+    document.getElementById("loadBtn").addEventListener("click", () => {
+      try {
+        localStorage.setItem(KEY, JSON.stringify(SEED));
+        status.textContent = "Loaded! Opening the estimator…";
+        setTimeout(() => { window.location.href = "../learning_activity_estimator.html"; }, 400);
+      } catch (e) {
+        status.textContent = "Could not save: " + e.message;
+      }
+    });
+
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      try {
+        localStorage.removeItem(KEY);
+        status.textContent = "Estimator data cleared.";
+      } catch (e) {
+        status.textContent = "Could not clear: " + e.message;
+      }
+    });
+  </script>
+</body>
+</html>

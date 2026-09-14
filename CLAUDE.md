@@ -893,6 +893,15 @@ planner's key rename: nothing worth carrying forward. New fields keep
 their defaults when a save lacks them; a corrupt save falls back to
 defaults.
 
+**Fixture:** `test/load_rock_activities.html` seeds one Rock 'n' Roll
+activity into every section (Module 7 readings, the R&A progress report,
+the Electric Dylan discussion, Module 8 lecture videos, Exam 1, the R&A
+final presentation) and opens the page — the estimator's counterpart to
+`load_rock_test.html`. The estimator has no field for an activity's
+name, so the loader's card lists what each section holds. The seed is
+the page's own save shape, keyed by field id; keep it in step with
+`FIELDS` if a field is renamed.
+
 ### Lookup tables
 
 Two R arrays, transcribed into nested JS objects. R fills arrays
