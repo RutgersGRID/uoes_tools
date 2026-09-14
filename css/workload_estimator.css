@@ -1,32 +1,280 @@
 /* ============================================================
    Course Workload Estimator — page-specific styles
-   Loaded after base.css and calculator.css.
+   Loaded after base.css and document.css.
+   ------------------------------------------------------------
+   Restyled (workload-estimator-restyle branch) from the wide
+   two-column calculator shell to the single-column, collapsible
+   document shell used by the Course Content Planner.
+
+   Load order is now:  base.css -> document.css -> this -> site_header.css
+   (it was base.css -> calculator.css -> this -> site_header.css).
+
+   NOTE ON DUPLICATION. The `section.step` / `.step-body` /
+   `.step-lead` block below is a deliberate copy of the same block
+   in course_planner.css rather than a promotion into document.css.
+   Course Planner v2 is out for side-by-side field testing against
+   v1, so nothing on this branch should be able to change how v2
+   renders. Once that comparison closes, these rules and the
+   planner's are identical and want to move into document.css
+   together — that is a separate change.
+
+   The results tiles, breakdown table, .warn callout, buttons,
+   footer and print rules below came from calculator.css, which
+   this page no longer loads. calculator.css is now consumed only
+   by credit_hour_planner.html and was left untouched.
    ============================================================ */
 
-header p { max-width: 44rem; }
+:root {
+  --content-width: 900px; /* matches the Course Content Planner */
+}
 
-input[type="range"] { width: 100%; accent-color: var(--blue); }
+.subtitle {
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
+}
 
-.check { display: flex; align-items: flex-start; gap: .5rem; font-size: .9rem; margin-top: .6rem; }
-.check input { margin-top: .35rem; accent-color: var(--red); }
-.check label { margin: 0; }
+/* The short orientation lines under the subtitle. Left-aligned body text,
+   matching the planner — not a second, smaller subtitle. */
+.lede {
+  margin: 6px 0;
+  line-height: 1.5;
+}
 
-/* The computed pages-per-hour / hours-per-page readout under a card's inputs */
+a { color: var(--red); }
+
+a:hover,
+a:focus { color: var(--red-dark); }
+
+/* ============================================================
+   Collapsible sections  (mirrors course_planner.css — see note above)
+   ============================================================ */
+
+section.step {
+  background: var(--surface);
+  border: 2px solid var(--blue);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+
+section.step h2 {
+  margin: 0 0 4px 0;
+  font-size: 22px;
+}
+
+.step-body > summary {
+  cursor: pointer;
+}
+
+.step-body > summary > h2 {
+  display: inline;
+}
+
+.step-body[open] > summary {
+  margin-bottom: 10px;
+}
+
+.step-lead {
+  margin: 6px 0 14px 0;
+  line-height: 1.5;
+  color: var(--text-mid);
+}
+
+/* A short right-aligned readout on the summary line, so a collapsed section
+   still says what it is contributing to the weekly total. Written by the JS
+   into `data-sum` on the <summary> and drawn as generated content, NOT as a
+   child element.
+
+   That is deliberate. As a real <span> inside the <summary> it broke
+   WCAG 2.5.3 (label in name): the float puts a space between the readout
+   and the heading in the rendered label, while the summary's text content —
+   which is where the accessible name comes from — has no space, so the
+   visible label was not a substring of the accessible name.
+   verify_css_extraction.js catches exactly this. As generated content the
+   readout is outside textContent entirely, and Chrome folds it into both
+   the visible label and the accessible name identically.
+
+   Empty string when the section contributes nothing, so an untouched
+   section's label is just its heading. */
+.step-body > summary::after {
+  content: attr(data-sum);
+  float: right;
+  font-size: 14px;
+  font-weight: normal;
+  color: var(--red-dark);
+  font-variant-numeric: tabular-nums;
+  margin-left: 12px;
+  padding-top: 5px;
+}
+
+/* ---- guidance panel extras (the base panel is in document.css) ---- */
+
+.guide { line-height: 1.55; }
+.guide p { margin: 10px 0 4px 0; }
+.guide p:first-of-type { margin-top: 4px; }
+
+/* ============================================================
+   Form controls — the planner's treatment, not the calculator's
+   underline. Bordered boxes on white, bold labels.
+   ============================================================ */
+
+label {
+  font-weight: bold;
+}
+
+input[type="number"],
+input[type="text"],
+select {
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--text);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 8px 10px;
+  background: var(--surface);
+  box-sizing: border-box;
+}
+
+input[type="number"] {
+  width: 110px;
+}
+
+select {
+  max-width: 100%;
+}
+
+/* The focus outline itself comes from base.css; this is the wash. */
+input:focus,
+select:focus { background: var(--blue-light); }
+
+/* Fields wrap across the section's width rather than running one to a
+   line — the same arrangement as the planner's .basics row. The page is
+   still a single column of sections. */
+.fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  align-items: flex-end;
+  margin-bottom: 4px;
+}
+
+.fields > .field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  min-width: 0;
+}
+
+/* A field that should take the whole row on its own */
+.field.wide {
+  flex: 1 1 100%;
+}
+
+.hint {
+  font-size: 14px;
+  color: var(--muted);
+  font-style: italic;
+  margin: 6px 0 0;
+  line-height: 1.45;
+}
+
+.fields .hint { max-width: 32rem; }
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: .5rem;
+  font-size: 15px;
+  margin-top: 12px;
+}
+
+.check input {
+  margin-top: .3rem;
+  accent-color: var(--red);
+}
+
+.check label {
+  margin: 0;
+  font-weight: normal;
+}
+
+input[type="range"] {
+  width: 100%;
+  max-width: 320px;
+  accent-color: var(--blue);
+}
+
+/* The computed pages-per-hour / hours-per-page readout under a section's
+   inputs. Now a row rather than a centred tile, since the section is the
+   full width of the page. */
 .rate {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
   background: var(--blue-light);
   border-radius: 6px;
-  padding: .5rem .6rem;
-  margin: .75rem 0 .25rem;
-  font-size: .9rem;
-  text-align: center;
+  padding: .55rem .8rem;
+  margin: 16px 0 0;
+  font-size: 15px;
 }
-.rate strong { display: block; font-size: 1.05rem; color: var(--red-dark); }
 
-/* ---- results ---- */
+.rate strong {
+  font-size: 1.05rem;
+  color: var(--red-dark);
+}
 
-.totals { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+/* ============================================================
+   Results  (from calculator.css, this page's copy)
+   ============================================================ */
 
-/* ---- per-category breakdown table ---- */
+#h-est {
+  text-align: center;
+  font-size: 24px;
+  margin: 32px 0 12px;
+}
+
+.results {
+  background: var(--surface);
+  border: 2px solid var(--red);
+  border-radius: 8px;
+  padding: 20px 24px;
+}
+
+.totals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: .75rem;
+  margin-bottom: 1.25rem;
+}
+
+.total {
+  background: var(--blue-light);
+  border-radius: 8px;
+  padding: .8rem;
+  text-align: center;
+  margin: 0;
+}
+
+.total .num { display: block; font-size: 1.7rem; color: var(--red); font-weight: bold; line-height: 1.2; }
+.total .lab { display: block; font-size: .85rem; color: var(--text); }
+.total .sub { display: block; font-size: .75rem; color: var(--muted); margin-top: .2rem; }
+.total.primary { background: var(--red); }
+.total.primary .num { color: var(--surface); }
+.total.primary .lab { color: var(--surface); }
+.total.primary .sub { color: var(--red-pale); }
+
+/* ---- breakdown table ---- */
+
+table { width: 100%; border-collapse: collapse; font-size: 15px; }
+caption { text-align: left; font-size: 15px; color: var(--muted); padding-bottom: .4rem; }
+th, td { padding: .4rem .45rem; text-align: left; border-bottom: 1px solid var(--blue-mid); }
+thead th { background: var(--blue-light); color: var(--text); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+tfoot td { font-weight: bold; border-top: 2px solid var(--blue); border-bottom: none; }
 
 .bar {
   display: block;
@@ -35,8 +283,11 @@ input[type="range"] { width: 100%; accent-color: var(--blue); }
   border-radius: 4px;
   min-width: 1px;
 }
+
 .bar-cell { width: 22%; }
+
 .tag {
+  display: inline-block;
   font-size: .72rem;
   padding: .1rem .4rem;
   border-radius: 10px;
@@ -44,4 +295,104 @@ input[type="range"] { width: 100%; accent-color: var(--blue); }
   color: var(--text);
   white-space: nowrap;
 }
+
 .tag.contact { background: var(--red-tint); }
+
+/* ---- callouts ---- */
+
+.warn {
+  background: var(--red-wash);
+  border-left: 4px solid var(--red);
+  padding: .6rem .8rem;
+  margin: 0 0 .9rem;
+  font-size: 15px;
+}
+
+/* ---- buttons ---- */
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  margin-top: 1.25rem;
+}
+
+.actions button {
+  padding: 8px 20px;
+  font-size: 15px;
+  background: var(--red);
+  color: var(--surface);
+  border: 2px solid var(--red);
+}
+
+.actions button:hover {
+  background: var(--red-dark);
+  border-color: var(--red-dark);
+}
+
+.actions button.secondary {
+  background: var(--surface);
+  color: var(--blue);
+  border-color: var(--blue);
+}
+
+.actions button.secondary:hover { background: var(--blue-light); }
+
+/* ---- generated report ---- */
+
+#reportWrap {
+  background: var(--surface);
+  border: 2px solid var(--red);
+  border-radius: 8px;
+  padding: 24px;
+  margin-top: 24px;
+}
+
+#reportWrap h2 { margin-top: 0; }
+
+footer {
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--blue-mid);
+  font-size: 14px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.6;
+}
+
+footer a { color: var(--blue); }
+
+/* ---- printing: show only the generated report ----
+   The hide rule must target `main > :not(#reportWrap)`. An earlier
+   `body > ...` selector hid <main> itself and printed a blank page. */
+@media print {
+  body {
+    background: var(--surface);
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  main > :not(#reportWrap) { display: none !important; }
+
+  #reportWrap {
+    display: block !important;
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .actions { display: none !important; }
+}
+
+@media (max-width: 640px) {
+  section.step { padding: 16px 14px; }
+  .fields > .field { flex: 1 1 100%; }
+  select, input[type="number"] { width: 100%; }
+}

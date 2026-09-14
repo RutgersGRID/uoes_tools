@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Course Workload Estimator</title>
     <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/calculator.css">
+    <link rel="stylesheet" href="css/document.css">
     <link rel="stylesheet" href="css/workload_estimator.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -61,256 +61,320 @@
 
     <main>
 
-      <header>
-        <h1>Course Workload Estimator</h1>
-        <p>Estimate how many hours per week your course asks of students. Fill in what you
-          know and leave the rest at zero &mdash; every field updates the estimate immediately.</p>
-      </header>
+      <h1>Course Workload Estimator</h1>
+      <p class="subtitle">Estimate how many hours per week your course asks of students. Fill in
+        what you know and leave the rest at zero &mdash; every field updates the estimate
+        immediately.</p>
+      <p class="lede">Your entries will be saved automatically as you go.</p>
+      <p class="lede">Click a section heading to expand or collapse that section.</p>
+      <p class="lede">Click the panels with an arrow for background on where the numbers come
+        from.</p>
 
       <form id="f" autocomplete="off">
 
-        <h2 id="h-inputs">Course inputs</h2>
+        <!-- COURSE INFO -->
+        <section class="step" aria-labelledby="s-course">
+          <details class="step-body" open>
+            <summary><h2 id="s-course">Course info</h2></summary>
+            <div class="fields">
+              <div class="field">
+                <label for="classweeks">Class duration (weeks)</label>
+                <input type="number" id="classweeks" min="1" step="1" value="15">
+              </div>
+            </div>
+            <p class="hint">Semester-long totals are divided by this number.</p>
+          </details>
+        </section>
 
-        <div class="grid" role="group" aria-labelledby="h-inputs">
+        <!-- READING -->
+        <section class="step" aria-labelledby="s-reading">
+          <details class="step-body">
+            <summary id="sum-reading" data-sum=""><h2 id="s-reading">Reading assignments</h2></summary>
+            <p class="step-lead">Pages assigned each week, and how hard they are to read.</p>
 
-          <!-- COURSE INFO + READING -->
-          <section class="card" aria-labelledby="s-course">
-            <h3 id="s-course">Course info</h3>
-            <div class="field">
-              <label for="classweeks">Class duration (weeks)</label>
-              <input type="number" id="classweeks" min="1" step="1" value="15">
-              <p class="hint">Semester-long totals are divided by this number.</p>
+            <div class="fields">
+              <div class="field">
+                <label for="weeklypages">Pages per week</label>
+                <input type="number" id="weeklypages" min="0" step="1" value="0">
+              </div>
+              <div class="field">
+                <label for="readingdensity">Page density</label>
+                <select id="readingdensity">
+                  <option value="1">450 words (paperback / article)</option>
+                  <option value="2">600 words (academic monograph)</option>
+                  <option value="3">750 words (textbook)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="difficulty">Difficulty</label>
+                <select id="difficulty">
+                  <option value="1">No new concepts</option>
+                  <option value="2">Some new concepts</option>
+                  <option value="3">Many new concepts</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="readingpurpose">Purpose</label>
+                <select id="readingpurpose">
+                  <option value="1">Survey &mdash; skim for main ideas</option>
+                  <option value="2">Understand &mdash; comprehend the text</option>
+                  <option value="3">Engage &mdash; analyze and critique</option>
+                </select>
+              </div>
             </div>
-          </section>
 
-          <section class="card" aria-labelledby="s-reading">
-            <h3 id="s-reading">Reading assignments</h3>
-            <div class="field">
-              <label for="weeklypages">Pages per week</label>
-              <input type="number" id="weeklypages" min="0" step="1" value="0">
-            </div>
-            <div class="field">
-              <label for="readingdensity">Page density</label>
-              <select id="readingdensity">
-                <option value="1">450 words (paperback / article)</option>
-                <option value="2">600 words (academic monograph)</option>
-                <option value="3">750 words (textbook)</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="difficulty">Difficulty</label>
-              <select id="difficulty">
-                <option value="1">No new concepts</option>
-                <option value="2">Some new concepts</option>
-                <option value="3">Many new concepts</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="readingpurpose">Purpose</label>
-              <select id="readingpurpose">
-                <option value="1">Survey &mdash; skim for main ideas</option>
-                <option value="2">Understand &mdash; comprehend the text</option>
-                <option value="3">Engage &mdash; analyze and critique</option>
-              </select>
-            </div>
-            <p class="rate">Estimated reading rate<strong id="out-readrate">&nbsp;</strong></p>
+            <p class="rate">Estimated reading rate <strong id="out-readrate">&nbsp;</strong></p>
+
             <div class="check">
               <input type="checkbox" id="setreadingrate">
               <label for="setreadingrate">Set this rate manually</label>
             </div>
-            <div class="field" id="wrap-overridepages" hidden>
-              <label for="overridepagesperhour">Pages read per hour</label>
-              <input type="number" id="overridepagesperhour" min="0.1" step="0.5" value="10">
-            </div>
-            <details>
-              <summary><h4>Where these numbers come from<span class="sr-only"> &mdash; reading assignments</span></h4></summary>
-              <div class="body">
-                <p>Reading rate depends on page density, text difficulty, and reading purpose.
-                  The table is built from Keith Rayner&rsquo;s synthesis of reading science: a
-                  skilled adult reader&rsquo;s optimal rate is about 300 words per minute, with
-                  comprehension dropping off above that. Real-world rates run somewhat slower.</p>
-                <p>&ldquo;Engage&rdquo; reading is treated as roughly equivalent to reading for
-                  memorization (about 138 words per minute or slower) &mdash; the original authors
-                  note this probably still understates the time.</p>
-                <p>Rates range from 67 pages/hour (light paperback, familiar material, skimming)
-                  down to 5 pages/hour (dense textbook, all new concepts, critical engagement).</p>
+            <div class="fields" id="wrap-overridepages" hidden>
+              <div class="field">
+                <label for="overridepagesperhour">Pages read per hour</label>
+                <input type="number" id="overridepagesperhour" min="0.1" step="0.5" value="10">
               </div>
-            </details>
-          </section>
+            </div>
 
-          <!-- WRITING -->
-          <section class="card" aria-labelledby="s-writing">
-            <h3 id="s-writing">Writing assignments</h3>
-            <div class="field">
-              <label for="semesterpages">Pages per semester</label>
-              <input type="number" id="semesterpages" min="0" step="1" value="0">
+            <details class="guide">
+              <summary><h3>Where these numbers come from<span class="sr-only"> &mdash; reading
+                    assignments</span></h3></summary>
+              <p>Reading rate depends on page density, text difficulty, and reading purpose.
+                The table is built from Keith Rayner&rsquo;s synthesis of reading science: a
+                skilled adult reader&rsquo;s optimal rate is about 300 words per minute, with
+                comprehension dropping off above that. Real-world rates run somewhat slower.</p>
+              <p>&ldquo;Engage&rdquo; reading is treated as roughly equivalent to reading for
+                memorization (about 138 words per minute or slower) &mdash; the original authors
+                note this probably still understates the time.</p>
+              <p>Rates range from 67 pages/hour (light paperback, familiar material, skimming)
+                down to 5 pages/hour (dense textbook, all new concepts, critical engagement).</p>
+            </details>
+          </details>
+        </section>
+
+        <!-- WRITING -->
+        <section class="step" aria-labelledby="s-writing">
+          <details class="step-body">
+            <summary id="sum-writing" data-sum=""><h2 id="s-writing">Writing assignments</h2></summary>
+            <p class="step-lead">Total pages written across the whole term, and what kind of
+              writing they are.</p>
+
+            <div class="fields">
+              <div class="field">
+                <label for="semesterpages">Pages per semester</label>
+                <input type="number" id="semesterpages" min="0" step="1" value="0">
+              </div>
+              <div class="field">
+                <label for="writtendensity">Page density</label>
+                <select id="writtendensity">
+                  <option value="1">250 words (double-spaced)</option>
+                  <option value="2">500 words (single-spaced)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="writingpurpose">Genre</label>
+                <select id="writingpurpose">
+                  <option value="1">Reflection / narrative</option>
+                  <option value="2">Argument</option>
+                  <option value="3">Research</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="draftrevise">Drafting</label>
+                <select id="draftrevise">
+                  <option value="1">No drafting</option>
+                  <option value="2">Minimal drafting</option>
+                  <option value="3">Extensive drafting</option>
+                </select>
+              </div>
             </div>
-            <div class="field">
-              <label for="writtendensity">Page density</label>
-              <select id="writtendensity">
-                <option value="1">250 words (double-spaced)</option>
-                <option value="2">500 words (single-spaced)</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="writingpurpose">Genre</label>
-              <select id="writingpurpose">
-                <option value="1">Reflection / narrative</option>
-                <option value="2">Argument</option>
-                <option value="3">Research</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="draftrevise">Drafting</label>
-              <select id="draftrevise">
-                <option value="1">No drafting</option>
-                <option value="2">Minimal drafting</option>
-                <option value="3">Extensive drafting</option>
-              </select>
-            </div>
-            <p class="rate">Estimated writing rate<strong id="out-writerate">&nbsp;</strong></p>
+
+            <p class="rate">Estimated writing rate <strong id="out-writerate">&nbsp;</strong></p>
+
             <div class="check">
               <input type="checkbox" id="setwritingrate">
               <label for="setwritingrate">Set this rate manually</label>
             </div>
-            <div class="field" id="wrap-overridewriting" hidden>
-              <label for="overridehoursperwriting">Hours per written page</label>
-              <input type="number" id="overridehoursperwriting" min="0.1" step="0.25" value="0.5">
-            </div>
-            <details>
-              <summary><h4>Where these numbers come from<span class="sr-only"> &mdash; writing assignments</span></h4></summary>
-              <div class="body">
-                <p>These are the most speculative estimates in the tool. They rest largely on
-                  Torrance et al.&rsquo;s study of 493 students writing 1,500-word essays, who
-                  reported spending 9 to 15 hours per assignment.</p>
-                <p>The table assumes students write at a constant rate (unrealistic), that
-                  reflection essays take half the time of arguments, and that research papers take
-                  twice as long as arguments. The original authors flag these linear relationships
-                  as &ldquo;highly unlikely&rdquo; but useful as a starting point.</p>
-                <p>Rates range from 45 minutes per page to 10 hours per page. If they look wrong
-                  for your assignment, set the rate manually.</p>
+            <div class="fields" id="wrap-overridewriting" hidden>
+              <div class="field">
+                <label for="overridehoursperwriting">Hours per written page</label>
+                <input type="number" id="overridehoursperwriting" min="0.1" step="0.25" value="0.5">
               </div>
+            </div>
+
+            <details class="guide">
+              <summary><h3>Where these numbers come from<span class="sr-only"> &mdash; writing
+                    assignments</span></h3></summary>
+              <p>These are the most speculative estimates in the tool. They rest largely on
+                Torrance et al.&rsquo;s study of 493 students writing 1,500-word essays, who
+                reported spending 9 to 15 hours per assignment.</p>
+              <p>The table assumes students write at a constant rate (unrealistic), that
+                reflection essays take half the time of arguments, and that research papers take
+                twice as long as arguments. The original authors flag these linear relationships
+                as &ldquo;highly unlikely&rdquo; but useful as a starting point.</p>
+              <p>Rates range from 45 minutes per page to 10 hours per page. If they look wrong
+                for your assignment, set the rate manually.</p>
             </details>
-          </section>
+          </details>
+        </section>
 
-          <!-- VIDEO / PODCAST -->
-          <section class="card" aria-labelledby="s-video">
-            <h3 id="s-video">Videos / podcasts</h3>
-            <div class="field">
-              <label for="weeklyvideos">Hours per week</label>
-              <input type="number" id="weeklyvideos" min="0" step="0.25" value="0">
-            </div>
-            <p class="hint">Assigned viewing or listening. Entered directly as hours, so
-              it passes straight through to the estimate.</p>
-          </section>
+        <!-- VIDEO / PODCAST -->
+        <section class="step" aria-labelledby="s-video">
+          <details class="step-body">
+            <summary id="sum-video" data-sum=""><h2 id="s-video">Videos / podcasts</h2></summary>
+            <p class="step-lead">Assigned viewing or listening.</p>
 
-          <!-- DISCUSSION -->
-          <section class="card" aria-labelledby="s-disc">
-            <h3 id="s-disc">Discussion posts</h3>
-            <div class="field">
-              <label for="postsperweek">Posts per week</label>
-              <input type="number" id="postsperweek" min="0" step="1" value="0">
+            <div class="fields">
+              <div class="field">
+                <label for="weeklyvideos">Hours per week</label>
+                <input type="number" id="weeklyvideos" min="0" step="0.25" value="0">
+              </div>
             </div>
-            <div class="field">
-              <label for="postformat">Format</label>
-              <select id="postformat">
-                <option value="1">Text</option>
-                <option value="2">Audio / video</option>
-              </select>
+            <p class="hint">Entered directly as hours, so it passes straight through to the
+              estimate.</p>
+          </details>
+        </section>
+
+        <!-- DISCUSSION -->
+        <section class="step" aria-labelledby="s-disc">
+          <details class="step-body">
+            <summary id="sum-disc" data-sum=""><h2 id="s-disc">Discussion posts</h2></summary>
+            <p class="step-lead">Posts students write or record each week, including reading and
+              replying to classmates.</p>
+
+            <div class="fields">
+              <div class="field">
+                <label for="postsperweek">Posts per week</label>
+                <input type="number" id="postsperweek" min="0" step="1" value="0">
+              </div>
+              <div class="field">
+                <label for="postformat">Format</label>
+                <select id="postformat">
+                  <option value="1">Text</option>
+                  <option value="2">Audio / video</option>
+                </select>
+              </div>
+              <div class="field" id="wrap-posttext">
+                <label for="postlength_text">Average length (words)</label>
+                <input type="number" id="postlength_text" min="0" step="25" value="250">
+              </div>
+              <div class="field" id="wrap-postav" hidden>
+                <label for="postlength_av">Average length (minutes)</label>
+                <input type="number" id="postlength_av" min="0" step="1" value="3">
+              </div>
             </div>
-            <div class="field" id="wrap-posttext">
-              <label for="postlength_text">Average length (words)</label>
-              <input type="number" id="postlength_text" min="0" step="25" value="250">
-            </div>
-            <div class="field" id="wrap-postav" hidden>
-              <label for="postlength_av">Average length (minutes)</label>
-              <input type="number" id="postlength_av" min="0" step="1" value="3">
-            </div>
-            <p class="rate">Estimated discussion time<strong id="out-postrate">&nbsp;</strong></p>
+
+            <p class="rate">Estimated discussion time <strong id="out-postrate">&nbsp;</strong></p>
+
             <div class="check">
               <input type="checkbox" id="setdiscussion">
               <label for="setdiscussion">Set this manually</label>
             </div>
-            <div class="field" id="wrap-overridedisc" hidden>
-              <label for="overridediscussion">Hours per week</label>
-              <input type="number" id="overridediscussion" min="0" step="0.25" value="1">
-            </div>
-            <details>
-              <summary><h4>Where these numbers come from<span class="sr-only"> &mdash; discussion posts</span></h4></summary>
-              <div class="body">
-                <p>These assumptions are not covered by the published methodology; they are taken
-                  from the original tool&rsquo;s code.</p>
-                <p><strong>Text posts:</strong> 250 words of composed discussion writing per hour
-                  &mdash; slower than drafting prose, since posts involve reading peers and
-                  composing a response.</p>
-                <p><strong>Audio / video posts:</strong> 20 minutes of student work per finished
-                  minute of recording, covering planning, recording, re-recording, and uploading.</p>
-                <p>Discussion time counts as <em>contact</em> time, since it is interaction with
-                  the instructor and classmates.</p>
+            <div class="fields" id="wrap-overridedisc" hidden>
+              <div class="field">
+                <label for="overridediscussion">Hours per week</label>
+                <input type="number" id="overridediscussion" min="0" step="0.25" value="1">
               </div>
-            </details>
-          </section>
+            </div>
 
-          <!-- EXAMS -->
-          <section class="card" aria-labelledby="s-exams">
-            <h3 id="s-exams">Exams</h3>
-            <div class="field">
-              <label for="exams">Exams per semester</label>
-              <input type="number" id="exams" min="0" step="1" value="0">
+            <details class="guide">
+              <summary><h3>Where these numbers come from<span class="sr-only"> &mdash; discussion
+                    posts</span></h3></summary>
+              <p>These assumptions are not covered by the published methodology; they are taken
+                from the original tool&rsquo;s code.</p>
+              <p><strong>Text posts:</strong> 250 words of composed discussion writing per hour
+                &mdash; slower than drafting prose, since posts involve reading peers and
+                composing a response.</p>
+              <p><strong>Audio / video posts:</strong> 20 minutes of student work per finished
+                minute of recording, covering planning, recording, re-recording, and uploading.</p>
+              <p>Discussion time counts as <em>contact</em> time, since it is interaction with
+                the instructor and classmates.</p>
+            </details>
+          </details>
+        </section>
+
+        <!-- EXAMS -->
+        <section class="step" aria-labelledby="s-exams">
+          <details class="step-body">
+            <summary id="sum-exams" data-sum=""><h2 id="s-exams">Exams</h2></summary>
+            <p class="step-lead">Studying, plus sitting time if the exam is taken at home.</p>
+
+            <div class="fields">
+              <div class="field">
+                <label for="exams">Exams per semester</label>
+                <input type="number" id="exams" min="0" step="1" value="0">
+              </div>
+              <div class="field">
+                <label for="examhours">Study hours per exam</label>
+                <input type="number" id="examhours" min="0" max="100" step="0.5" value="5">
+              </div>
+              <div class="field" id="wrap-examlength" hidden>
+                <label for="exam_length">Exam time limit (minutes)</label>
+                <input type="number" id="exam_length" min="0" step="15" value="60">
+              </div>
             </div>
-            <div class="field">
-              <label for="examhours">Study hours per exam</label>
-              <input type="number" id="examhours" min="0" max="100" step="0.5" value="5">
-            </div>
+
             <div class="check">
               <input type="checkbox" id="takehome">
               <label for="takehome">Take-home exams (add sitting time)</label>
             </div>
-            <div class="field" id="wrap-examlength" hidden>
-              <label for="exam_length">Exam time limit (minutes)</label>
-              <input type="number" id="exam_length" min="0" step="15" value="60">
-            </div>
-            <p class="hint">Study hours and take-home sitting time are spread across the
-              weeks of the term.</p>
-          </section>
 
-          <!-- OTHER -->
-          <section class="card" aria-labelledby="s-other">
-            <h3 id="s-other">Other assignments</h3>
-            <div class="field">
-              <label for="otherassign">Number per semester</label>
-              <input type="number" id="otherassign" min="0" step="1" value="0">
-            </div>
-            <div class="field">
-              <label for="otherhours">Hours per assignment: <span id="otherhours_val">0</span></label>
-              <input type="range" id="otherhours" min="0" max="50" step="1" value="0" aria-describedby="otherhours_val">
-            </div>
-            <div class="field">
-              <label for="other_bucket">Counts as</label>
-              <select id="other_bucket">
-                <option value="ind">Independent work</option>
-                <option value="con">Contact time with instructor</option>
-              </select>
-              <p class="hint">Problem sets and projects are usually independent; labs,
-                studio time, and workshops are usually contact time.</p>
-            </div>
-          </section>
+            <p class="hint">Study hours and take-home sitting time are spread across the weeks of
+              the term.</p>
+          </details>
+        </section>
 
-          <!-- MEETINGS -->
-          <section class="card" aria-labelledby="s-meet">
-            <h3 id="s-meet">Class meetings</h3>
-            <div class="field">
-              <label for="syncsessions">Live meetings per week</label>
-              <input type="number" id="syncsessions" min="0" step="1" value="0">
+        <!-- OTHER -->
+        <section class="step" aria-labelledby="s-other">
+          <details class="step-body">
+            <summary id="sum-other" data-sum=""><h2 id="s-other">Other assignments</h2></summary>
+            <p class="step-lead">Problem sets, projects, labs, studio work &mdash; anything not
+              covered by the sections above.</p>
+
+            <div class="fields">
+              <div class="field">
+                <label for="otherassign">Number per semester</label>
+                <input type="number" id="otherassign" min="0" step="1" value="0">
+              </div>
+              <div class="field">
+                <label for="other_bucket">Counts as</label>
+                <select id="other_bucket">
+                  <option value="ind">Independent work</option>
+                  <option value="con">Contact time with instructor</option>
+                </select>
+              </div>
+              <div class="field wide">
+                <label for="otherhours">Hours per assignment: <span id="otherhours_val">0</span></label>
+                <input type="range" id="otherhours" min="0" max="50" step="1" value="0"
+                  aria-describedby="otherhours_val">
+              </div>
             </div>
-            <div class="field">
-              <label for="synclength">Meeting length (hours)</label>
-              <input type="number" id="synclength" min="0" step="0.25" value="0">
+
+            <p class="hint">Problem sets and projects are usually independent; labs, studio time,
+              and workshops are usually contact time.</p>
+          </details>
+        </section>
+
+        <!-- MEETINGS -->
+        <section class="step" aria-labelledby="s-meet">
+          <details class="step-body">
+            <summary id="sum-meet" data-sum=""><h2 id="s-meet">Class meetings</h2></summary>
+            <p class="step-lead">Scheduled synchronous sessions.</p>
+
+            <div class="fields">
+              <div class="field">
+                <label for="syncsessions">Live meetings per week</label>
+                <input type="number" id="syncsessions" min="0" step="1" value="0">
+              </div>
+              <div class="field">
+                <label for="synclength">Meeting length (hours)</label>
+                <input type="number" id="synclength" min="0" step="0.25" value="0">
+              </div>
             </div>
             <p class="hint">Synchronous sessions count as contact time.</p>
-          </section>
+          </details>
+        </section>
 
-        </div>
       </form>
 
       <h2 id="h-est">Workload estimate</h2>
@@ -561,6 +625,36 @@
           document.getElementById("otherhours_val").textContent = el.otherhours.value;
         }
 
+        /* Per-section readouts on the section headings. With the sections
+           collapsed by default there is otherwise no way to see which ones
+           have anything in them, so each heading carries its own contribution
+           to the weekly total.
+
+           Written into `data-sum` on the <summary> and drawn by CSS generated
+           content (see the ::after rule in workload_estimator.css). It must
+           NOT be a child element: as a floated <span> the rendered label picks
+           up a space the summary's text content does not have, which breaks
+           WCAG 2.5.3 label-in-name. Empty string when a section contributes
+           nothing, so its label stays just the heading. */
+        var SECTION_SUMS = [
+          { el: "sum-reading", of: function (r) { return r.rows[0].hours; } },
+          { el: "sum-writing", of: function (r) { return r.rows[1].hours; } },
+          { el: "sum-video", of: function (r) { return r.rows[2].hours; } },
+          { el: "sum-disc", of: function (r) { return r.rows[6].hours; } },
+          { el: "sum-exams", of: function (r) { return r.rows[3].hours + r.rows[4].hours; } },
+          { el: "sum-other", of: function (r) { return r.rows[5].hours; } },
+          { el: "sum-meet", of: function (r) { return r.rows[7].hours; } }
+        ];
+
+        function renderSectionSums(r) {
+          SECTION_SUMS.forEach(function (s) {
+            var node = document.getElementById(s.el);
+            if (!node) return;
+            var h = s.of(r);
+            node.setAttribute("data-sum", h > 0 ? fmt(h) + " hrs/wk" : "");
+          });
+        }
+
         function render() {
           syncVisibility();
           var r = calculate();
@@ -576,6 +670,8 @@
           document.getElementById("out-ind").textContent = fmt(r.independent);
           document.getElementById("out-con").textContent = fmt(r.contact);
           document.getElementById("foot-hours").textContent = fmt(r.total);
+
+          renderSectionSums(r);
 
           var max = 0;
           r.rows.forEach(function (x) { if (x.hours > max) max = x.hours; });
