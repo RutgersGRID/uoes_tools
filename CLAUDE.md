@@ -153,10 +153,13 @@ any new rule.
   renders the heading `display: inline` so it stays on the
   disclosure marker's line; do not give it its own size or weight.
 - **No two disclosures on a page may share an accessible name.** Where a
-  panel is deliberately repeated (the three "Where these numbers come
-  from" panels in the activity estimator), append an `.sr-only` qualifier
-  *inside the heading*, so the visible text stays a substring of the
-  accessible name. The planner had a repeated assessment panel until the
+  panel is deliberately repeated, append an `.sr-only` qualifier *inside
+  the heading*, so the visible text stays a substring of the accessible
+  name. The activity estimator's three "Where these numbers come from"
+  panels carried such qualifiers until September 14, 2026, when Maka
+  asked for explicit titles instead ("Where this estimated reading rate
+  comes from", "…writing rate…", "Where this discussion estimate comes
+  from") — unique on their own, so the qualifiers went. The planner had a repeated assessment panel until the
   September 2026 consolidation; its Step 2 copy still carries its
   qualifier ("— course objectives"), harmless now that it is the only
   one, and a reminder of the rule if a panel is ever repeated again.
