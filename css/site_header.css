@@ -32,7 +32,7 @@
   margin-bottom: 40px;
   background: #ffffff;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10);
-  text-align: left;            /* calculator.css centers <header>; undo */
+  text-align: left;            /* a page sheet may centre <header>; undo */
   line-height: 1.2;
 }
 

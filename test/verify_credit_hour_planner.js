@@ -708,8 +708,8 @@ function excelOnline(weeks, credits, study) {
         o.width === "2px" && o.style === "solid", o.width + " " + o.style);
     }
 
-    // Scan every stylesheet: the print block lives in css/calculator.css,
-    // which is not necessarily the first sheet the page links.
+    // Scan every stylesheet: the print block lives in the page's own
+    // sheet, which is not the first sheet the page links.
     const printRule = await page.evaluate(() =>
       Array.from(document.styleSheets)
         // Cross-origin sheets (the Google Fonts link in the site header)

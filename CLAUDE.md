@@ -44,7 +44,7 @@ sheets in cascade order, most general first:
 | `blooms_verbs.html` | `base` + `document` + `blooms_verbs` |
 | `course_planner.html` | `base` + `document` + `course_planner` |
 | `credit_hour_planner.html` | `base` + `document` + `credit_hour_planner` |
-| `workload_estimator.html` | `base` + `calculator` + `workload_estimator` |
+| `workload_estimator.html` | `base` + `document` + `workload_estimator` |
 
 - **`css/base.css`** — the `:root` design tokens, the `.sr-only` helper,
   `[hidden]`, and the one focus-visibility rule. Loaded by every page and
@@ -61,12 +61,13 @@ sheets in cascade order, most general first:
   each set `--content-width: 900px` in their own sheet. The `.guide` panel takes a `var(--blue)` border and
   16px text (both changed August 26, 2026 — see **Accessibility
   conventions**).
-- **`css/calculator.css`** — the shell for the wide calculator layout
-  (header, section headings, `.card`, number/select fields, `details`
-  panels, `.results`/`.total` tiles, the breakdown table, `.warn`,
-  buttons, footer, print). **Only the workload estimator uses it now.**
-  The credit hour planner did too until September 11, 2026 — see **The
-  credit hour planner takes the planner's layout** under its notes.
+- **`css/calculator.css` is gone** (deleted September 14, 2026). It was
+  the shell for the wide, multi-column calculator layout the two
+  calculators shared. The credit hour planner left it on September 11
+  and the workload estimator on September 14, each for the planner's
+  layout on `document.css`; the tiles, breakdown table, `.warn`,
+  buttons and print rules each page still wanted moved into its own
+  sheet. Recoverable from git history.
 - **`css/<page>.css`** — only what is unique to that page.
 
 Rules of thumb when editing:
@@ -111,9 +112,9 @@ any new rule.
   `--red-tint` `#ffe3ea` (the "contact time" tag), `--red-pale` `#ffdbe4`
   (sub-label on a solid red tile).
 - Content max-width: 750px on the objective builders and index page,
-  900px on the planner and the credit hour planner, 1080px on the
-  workload estimator (wider because it is a multi-column calculator). On
-  the `document.css` pages this is the `--content-width` token.
+  900px on the planner and both calculators (the workload estimator was
+  1080px, as a wide multi-column calculator, until September 14, 2026).
+  On the `document.css` pages this is the `--content-width` token.
 
 ## Accessibility conventions
 
@@ -143,8 +144,8 @@ any new rule.
   the page outline — `h3`/`h4` on the planner, `h2` on the objective
   builder, `h4` on both calculators. Heading navigation is the commonest
   screen reader strategy on these long pages and it skipped every guidance
-  panel until this landed (August 26, 2026). `document.css` and
-  `calculator.css` render the heading `display: inline` so it stays on the
+  panel until this landed (August 26, 2026). `document.css`
+  renders the heading `display: inline` so it stays on the
   disclosure marker's line; do not give it its own size or weight.
 - **No two disclosures on a page may share an accessible name.** Where a
   panel is deliberately repeated (the three "Where these numbers come
@@ -820,6 +821,29 @@ Why JS was the right call: the app is pure arithmetic over form values —
 no R statistics, no server-side data — so it collapses into one static
 HTML file with no Shiny server to host.
 
+### The estimator takes the planner's layout too
+
+**September 14, 2026, Maka's, on the `course-planner-simplification`
+branch** (the commit is "Restyle workload estimator to the course
+planner's layout"). The wide multi-column grid became a single 900px
+column of collapsible `section.step` cards, one per activity category;
+Course info opens by default and the rest start closed. **Each closed
+heading shows that category's hours per week** — the JS writes it into
+`data-sum` on the `<summary>` and the sheet draws it as `::after`
+generated content. That is deliberate, not a shortcut: as a real
+`<span>` inside the summary it failed WCAG 2.5.3 (the float put a space
+in the visible label that the accessible name lacked) and
+`verify_css_extraction.js` caught it. The math is unchanged; the commit
+verified `calculate()` across 16 scenarios.
+
+The restyle carried its own copy of the step-card block to avoid
+touching the planner mid-field-test. It merged into the credit hour
+planner's layout branch on September 14, which had promoted the same
+rules into `document.css` with a byte-identical planner screenshot, so
+the copy was dropped and the estimator now shares them (the estimator's
+own screenshot was byte-identical across that removal too). With
+neither calculator on `calculator.css`, that file was deleted.
+
 ### Lookup tables
 
 Two R arrays, transcribed into nested JS objects. R fills arrays
@@ -1303,7 +1327,7 @@ round-trip, migration of a v1-shaped save (string `objectives` → one row, `due
 G-number tags and field ordering, print-PDF non-blankness and print-CSS
 visibility.
 
-For the stylesheets, `test/verify_css_extraction.js` runs 160 checks: each
+For the stylesheets, `test/verify_css_extraction.js` runs 170 checks: each
 converted page links exactly the expected sheets in the expected order
 with `base.css` first, every sheet actually parses (a 404 or a typo'd
 `href` yields zero rules and fails), no inline `<style>` block survives,
@@ -1341,12 +1365,16 @@ rather than counted as a parse failure.
 
 ## Current status (August 2026)
 
-- **The credit hour planner took the course planner's layout, September
-  11, 2026** — Maka's ask, to bring the two pages' look together. It is
-  off `calculator.css` and on `document.css`; the planner's step-card
-  and button rules moved into that shared sheet (the planner renders
-  byte-identically). See **The credit hour planner takes the planner's
-  layout**. Worth telling anyone field testing: same page, same numbers,
+- **Both calculators took the course planner's layout, September 11
+  and 14, 2026, and `calculator.css` is deleted.** The credit hour
+  planner first (Maka's ask, to bring the pages' look together), then
+  the workload estimator on a branch Maka made at the office; the two
+  branches merged into `credit-hour-planner-layout` on September 14,
+  the estimator's duplicated step-card rules were dropped in favour of
+  the shared ones in `document.css`, and the now-unused calculator
+  sheet went. See **The credit hour planner takes the planner's
+  layout** and **The estimator takes the planner's layout too**. Local
+  `main` also still holds the unpushed September 10 minutes commit. Worth telling anyone field testing: same page, same numbers,
   a narrower column of numbered cards with boxed inputs. The
   "How this is calculated" explainer is still in section 1 — Maka's
   earlier question about what it refers to is still open, and the

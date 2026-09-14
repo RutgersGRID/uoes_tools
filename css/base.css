@@ -6,10 +6,10 @@
    hidden helper, and the focus-visibility convention.
 
    Layout, typography scale and components live in the per-page
-   stylesheets (and, for the two calculators, in calculator.css),
-   because the pages deliberately differ: the objective builder and
-   the course planner are narrow reading-width documents, while the
-   workload and credit-hour tools are wide multi-column calculators.
+   stylesheets and in document.css, the shell every tool page shares
+   (calculator.css, the wide shell the two calculators used until
+   September 2026, is gone). The pages still differ in what they put
+   inside that shell, which is what the per-page sheets are for.
    ============================================================ */
 
 :root {

@@ -2,26 +2,25 @@
    Course Workload Estimator — page-specific styles
    Loaded after base.css and document.css.
    ------------------------------------------------------------
-   Restyled (workload-estimator-restyle branch) from the wide
-   two-column calculator shell to the single-column, collapsible
-   document shell used by the Course Content Planner.
+   Restyled on September 14, 2026 from the wide two-column
+   calculator shell to the single-column, collapsible document shell
+   used by the Course Content Planner.
 
    Load order is now:  base.css -> document.css -> this -> site_header.css
    (it was base.css -> calculator.css -> this -> site_header.css).
 
-   NOTE ON DUPLICATION. The `section.step` / `.step-body` /
-   `.step-lead` block below is a deliberate copy of the same block
-   in course_planner.css rather than a promotion into document.css.
-   Course Planner v2 is out for side-by-side field testing against
-   v1, so nothing on this branch should be able to change how v2
-   renders. Once that comparison closes, these rules and the
-   planner's are identical and want to move into document.css
-   together — that is a separate change.
+   The step cards (section.step, .step-body, .step-num, .step-lead)
+   come from document.css, where they are shared with the planner and
+   the credit hour planner. The restyle first carried its own copy of
+   that block, to keep the planner untouched during field testing;
+   the credit hour planner's restyle (September 11) promoted the same
+   rules into document.css with a byte-identical planner screenshot
+   to show for it, so the copy went when the two branches merged.
+   Only the summary readout (::after, below) is this page's own.
 
-   The results tiles, breakdown table, .warn callout, buttons,
-   footer and print rules below came from calculator.css, which
-   this page no longer loads. calculator.css is now consumed only
-   by credit_hour_planner.html and was left untouched.
+   The results tiles, breakdown table, .warn callout, buttons, footer
+   and print rules below came from calculator.css, which was deleted
+   once neither calculator loaded it.
    ============================================================ */
 
 :root {
@@ -48,39 +47,8 @@ a:hover,
 a:focus { color: var(--red-dark); }
 
 /* ============================================================
-   Collapsible sections  (mirrors course_planner.css — see note above)
+   Collapsible sections  (the cards themselves are in document.css)
    ============================================================ */
-
-section.step {
-  background: var(--surface);
-  border: 2px solid var(--blue);
-  border-radius: 8px;
-  padding: 20px 24px;
-  margin-bottom: 24px;
-}
-
-section.step h2 {
-  margin: 0 0 4px 0;
-  font-size: 22px;
-}
-
-.step-body > summary {
-  cursor: pointer;
-}
-
-.step-body > summary > h2 {
-  display: inline;
-}
-
-.step-body[open] > summary {
-  margin-bottom: 10px;
-}
-
-.step-lead {
-  margin: 6px 0 14px 0;
-  line-height: 1.5;
-  color: var(--text-mid);
-}
 
 /* A short right-aligned readout on the summary line, so a collapsed section
    still says what it is contributing to the weekly total. Written by the JS
@@ -228,7 +196,7 @@ input[type="range"] {
 }
 
 /* ============================================================
-   Results  (from calculator.css, this page's copy)
+   Results  (this page's copy of the old calculator.css tiles)
    ============================================================ */
 
 #h-est {

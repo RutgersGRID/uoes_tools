@@ -188,7 +188,9 @@ const ok = (label, cond, detail) => {
   {
     const dir = path.join(ROOT, "css");
     const files = fs.readdirSync(dir).filter((f) => f.endsWith(".css"));
-    ok("css/ holds the expected sheets", files.length === 10, files.join(" "));
+    // calculator.css was deleted on September 14, 2026, once neither
+    // calculator loaded it.
+    ok("css/ holds the expected sheets", files.length === 9 && !files.includes("calculator.css"), files.join(" "));
 
     // Brand colours belong in base.css as tokens; nowhere else as raw hex.
     const BRAND = /#(CC0033|A30029|007FAC|DEF0F9|7DBFD6|f4f7f9)/gi;
