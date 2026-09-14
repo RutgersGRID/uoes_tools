@@ -726,16 +726,21 @@ function excelOnline(weeks, credits, study) {
     const design = await page.evaluate(() => {
       const cs = getComputedStyle(document.body);
       const root = getComputedStyle(document.documentElement);
-      const main = getComputedStyle(document.querySelector("main"));
+      // The measure is on <body>, as on the course planner (document.css).
+      const step = getComputedStyle(document.querySelector("section.step"));
       const card = getComputedStyle(document.querySelector(".card"));
+      const h1 = getComputedStyle(document.querySelector("h1"));
       return {
         font: cs.fontFamily, bg: cs.backgroundColor, color: cs.color,
         red: root.getPropertyValue("--red").trim(),
         blue: root.getPropertyValue("--blue").trim(),
         blueLight: root.getPropertyValue("--blue-light").trim(),
-        maxWidth: main.maxWidth,
-        cardBorder: card.borderTopWidth + " " + card.borderTopStyle,
-        cardRadius: card.borderTopLeftRadius
+        maxWidth: cs.maxWidth,
+        stepBorder: step.borderTopWidth + " " + step.borderTopStyle + " " + step.borderTopColor,
+        stepRadius: step.borderTopLeftRadius,
+        cardBorder: card.borderTopWidth + " " + card.borderTopStyle + " " + card.borderTopColor,
+        cardRadius: card.borderTopLeftRadius,
+        h1Align: h1.textAlign, h1Color: h1.color
       };
     });
     ok("Georgia serif", /Georgia/.test(design.font), design.font);
@@ -744,22 +749,44 @@ function excelOnline(weeks, credits, study) {
     ok("Rutgers Red token", design.red === "#CC0033", design.red);
     ok("Rutgers Blue token", design.blue === "#007FAC", design.blue);
     ok("Light Blue token", design.blueLight === "#DEF0F9", design.blueLight);
-    ok("1080px max width like the estimator", design.maxWidth === "1080px", design.maxWidth);
-    ok("cards 2px solid", design.cardBorder === "2px solid", design.cardBorder);
-    ok("cards 8px radius", design.cardRadius === "8px", design.cardRadius);
+    // Layout matches the course planner (September 11, 2026): a 900px
+    // column of numbered white step cards with a 2px Rutgers Blue frame,
+    // inner cards taking the planner's module-card treatment (a thin Mid
+    // Blue border under a Light Blue header band), and a centred black h1.
+    ok("900px measure like the course planner", design.maxWidth === "900px", design.maxWidth);
+    ok("step cards 2px solid Rutgers Blue", design.stepBorder === "2px solid rgb(0, 127, 172)", design.stepBorder);
+    ok("step cards 8px radius", design.stepRadius === "8px", design.stepRadius);
+    ok("inner cards 1px solid Mid Blue", design.cardBorder === "1px solid rgb(125, 191, 214)", design.cardBorder);
+    ok("inner cards 8px radius", design.cardRadius === "8px", design.cardRadius);
+    ok("h1 is centred and black like the planner's",
+      design.h1Align === "center" && design.h1Color === "rgb(51, 51, 51)",
+      design.h1Align + " " + design.h1Color);
+
+    const steps = await page.evaluate(() => ({
+      count: document.querySelectorAll("section.step > details.step-body > summary > h2").length,
+      open: Array.from(document.querySelectorAll("section.step > details.step-body")).map(d => d.open),
+      nums: Array.from(document.querySelectorAll("section.step .step-num")).map(s => s.textContent.trim()),
+      guides: document.querySelectorAll("details.guide").length
+    }));
+    ok("four numbered step cards, each heading its own disclosure",
+      steps.count === 4 && steps.nums.join(",") === "1,2,3,4", steps.count + " " + steps.nums.join(","));
+    ok("every step starts open", steps.open.every(Boolean), steps.open.join(","));
+    ok("explanatory panels use the planner's .guide treatment", steps.guides === 3, "count " + steps.guides);
 
     // Repo convention: Mid Blue (#7DBFD6 = rgb(125,191,214)) fails the 3:1
-    // non-text contrast requirement, so it must never carry an input underline.
+    // non-text contrast requirement, so it must never carry an input border.
+    // The inputs are boxed like the planner's since September 11, 2026 (a
+    // 1px --rule border); before that they were underlined in Rutgers Blue.
     const underlines = await page.evaluate(() => {
       const bad = [];
       document.querySelectorAll("input, select").forEach(el => {
         const cs = getComputedStyle(el);
         if (cs.borderBottomStyle === "none" || cs.borderBottomWidth === "0px") return;
-        if (cs.borderBottomColor !== "rgb(0, 127, 172)") bad.push(el.id + ":" + cs.borderBottomColor);
+        if (cs.borderBottomColor === "rgb(125, 191, 214)") bad.push(el.id + ":" + cs.borderBottomColor);
       });
       return bad;
     });
-    ok("no input underline uses Mid Blue", underlines.length === 0, underlines.join(", "));
+    ok("no input border uses Mid Blue", underlines.length === 0, underlines.join(", "));
 
     const derived = await page.evaluate(() => {
       const cs = getComputedStyle(document.getElementById("l_readings"));

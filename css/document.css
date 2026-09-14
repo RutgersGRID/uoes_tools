@@ -1,7 +1,8 @@
 /* ============================================================
    UOES Tools — shared shell for the document-style pages
    ------------------------------------------------------------
-   Used by learning_objectives2.html and course_planner.html:
+   Used by learning_objectives.html, blooms_verbs.html, course_planner.html
+   and credit_hour_planner.html:
    pages that read as a centred document at reading width rather
    than a wide calculator. Set --content-width in the page file
    to change the measure (750px if unset).
@@ -74,4 +75,123 @@ h1 { text-align: center; }
 
 .guide dd {
   margin: 2px 0 0 0;
+}
+
+/* ---- step cards ----
+   A numbered white card per step, shared by course_planner.html and
+   credit_hour_planner.html since September 11, 2026 (they were the
+   planner's own until the credit hour planner took the same layout).
+   Markup:
+
+     <section class="step" aria-labelledby="…">
+       <details class="step-body" open>
+         <summary><h2 id="…"><span class="step-num" aria-hidden="true">1</span>Title</h2></summary>
+         …
+       </details>
+     </section>
+
+   Each step's body sits in a <details> so a finished step can be folded
+   to its heading. The heading is the <summary>, inline so it stays on
+   the disclosure marker's line — the same arrangement as the .guide
+   panels above. */
+
+section.step {
+  background: var(--surface);
+  border: 2px solid var(--blue);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+
+section.step h2 {
+  margin: 0 0 4px 0;
+  font-size: 22px;
+}
+
+.step-body > summary {
+  cursor: pointer;
+}
+
+.step-body > summary > h2 {
+  display: inline;
+}
+
+/* Breathing room under the heading only when the step is open; a closed
+   step is just its heading and needs none. */
+.step-body[open] > summary {
+  margin-bottom: 10px;
+}
+
+.step-num {
+  display: inline-block;
+  background: var(--red);
+  color: var(--surface);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  font-size: 17px;
+  margin-right: 8px;
+}
+
+.step-lead {
+  margin: 6px 0 14px 0;
+  line-height: 1.5;
+  color: var(--text-mid);
+}
+
+/* Two equal columns inside a step, stacking on a phone. */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 640px) {
+  .two-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---- buttons ----
+   The solid red call to action and the outlined red secondary button.
+   Self-contained (font, cursor, radius) so a page need not carry a
+   generic `button` rule for them to look right. */
+
+.primary-btn {
+  display: block;
+  margin: 28px auto;
+  padding: 12px 32px;
+  font-size: 18px;
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: 8px;
+  background: var(--red);
+  color: var(--surface);
+  border: none;
+}
+
+.primary-btn:hover {
+  background: var(--red-dark);
+}
+
+.small-btn {
+  display: inline-block;
+  margin: 14px 8px 0 0;
+  padding: 6px 16px;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--red);
+  border: 2px solid var(--red);
+  line-height: normal;
+}
+
+.small-btn:hover {
+  background: var(--red);
+  color: var(--surface);
 }

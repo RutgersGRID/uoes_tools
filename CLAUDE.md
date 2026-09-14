@@ -43,22 +43,30 @@ sheets in cascade order, most general first:
 | `learning_objectives.html` | `base` + `document` + `learning_objectives` |
 | `blooms_verbs.html` | `base` + `document` + `blooms_verbs` |
 | `course_planner.html` | `base` + `document` + `course_planner` |
-| `credit_hour_planner.html` | `base` + `calculator` + `credit_hour_planner` |
+| `credit_hour_planner.html` | `base` + `document` + `credit_hour_planner` |
 | `workload_estimator.html` | `base` + `calculator` + `workload_estimator` |
 
 - **`css/base.css`** — the `:root` design tokens, the `.sr-only` helper,
   `[hidden]`, and the one focus-visibility rule. Loaded by every page and
   always first. Change a brand colour here and it changes everywhere.
 - **`css/document.css`** — the shell for the reading-width pages
-  (`body`, centred `h1`, `.subtitle`, the `.guide` panel). The measure is
-  `var(--content-width, 750px)`; the planner sets `--content-width: 900px`
-  in its own sheet. The `.guide` panel takes a `var(--blue)` border and
+  (`body`, centred `h1`, `.subtitle`, the `.guide` panel), plus the
+  **step-card family** shared by the planner and the credit hour planner
+  since September 11, 2026: `section.step`, the collapsible
+  `.step-body`, `.step-num`, `.step-lead`, the `.two-col` grid and the
+  `.primary-btn` / `.small-btn` pair. Those were the planner's own until
+  the credit hour planner adopted the same layout; they moved verbatim
+  and the planner renders byte-identically. The measure is
+  `var(--content-width, 750px)`; the planner and the credit hour planner
+  each set `--content-width: 900px` in their own sheet. The `.guide` panel takes a `var(--blue)` border and
   16px text (both changed August 26, 2026 — see **Accessibility
   conventions**).
-- **`css/calculator.css`** — the shell for the two wide calculators
+- **`css/calculator.css`** — the shell for the wide calculator layout
   (header, section headings, `.card`, number/select fields, `details`
   panels, `.results`/`.total` tiles, the breakdown table, `.warn`,
-  buttons, footer, print). Both calculators are ~90% this file.
+  buttons, footer, print). **Only the workload estimator uses it now.**
+  The credit hour planner did too until September 11, 2026 — see **The
+  credit hour planner takes the planner's layout** under its notes.
 - **`css/<page>.css`** — only what is unique to that page.
 
 Rules of thumb when editing:
@@ -103,9 +111,9 @@ any new rule.
   `--red-tint` `#ffe3ea` (the "contact time" tag), `--red-pale` `#ffdbe4`
   (sub-label on a solid red tile).
 - Content max-width: 750px on the objective builders and index page,
-  900px on the planner, 1080px on the workload estimator (wider because
-  it is a multi-column calculator). On the two `document.css` pages this
-  is the `--content-width` token.
+  900px on the planner and the credit hour planner, 1080px on the
+  workload estimator (wider because it is a multi-column calculator). On
+  the `document.css` pages this is the `--content-width` token.
 
 ## Accessibility conventions
 
@@ -885,6 +893,59 @@ reword it without asking.
 
 Both sheets were password-protected (`Rutgers`); irrelevant in the port.
 
+### The credit hour planner takes the planner's layout
+
+**September 11, 2026, Maka's ask:** bring the page's layout in line with
+the course content planner. It had sat on `calculator.css` beside the
+workload estimator — a 1080px, three-column calculator with red
+uppercase card headings, a red `h1` and underlined fields. Now it links
+`base` + `document` + `credit_hour_planner` and reads like the planner:
+
+- **A 900px column of four numbered step cards** — Your course, Weekly
+  time budget, Module time planner, Does the module fit? — each a
+  `section.step` whose `h2` (with the red `.step-num` badge) is the
+  `<summary>` of a `details.step-body`. **All four start open**, unlike
+  the planner's later steps: sections 2 and 4 are live results of 1 and
+  3, and folding an input section while its results show would be odd.
+  The harness pins all four open.
+- **Inner cards take the planner's module-card treatment**: 1px Mid Blue
+  border, Light Blue header band holding the `h3`, a `.card-body`
+  wrapper. Nesting a second 2px Rutgers Blue frame inside the step's own
+  looked heavy. The harness checks the step frame (2px blue) and the
+  inner card (1px Mid Blue) separately.
+- **Section 1 is Course format and Course basics side by side** in
+  `.two-col`, with "How this is calculated" below them as a plain `h3`,
+  a `.step-lead` sentence and **two `.guide` panels** ("What counts as
+  instructional time", open; "The acceleration rate", closed). It was a
+  third card. The "A note on these two numbers" panel in Reading &
+  writing is a `.guide` too, so the page has three.
+- **Section 3 is Reading & writing full width** (its two fields in a
+  `.field-row`) over Learning activities and Assessment activities in
+  `.two-col`. The old `.grid-2` is gone.
+- **Inputs are boxed like the planner's** (1px `--rule`, 6px radius,
+  120px wide in the fields, right-aligned in the activity rows), not
+  underlined. The harness's Mid Blue rule now reads "no input *border*
+  uses Mid Blue" rather than requiring a Rutgers Blue underline.
+- **Buttons use the planner's vocabulary**: `#btn-report` is a
+  `.primary-btn` (inline in the `.actions` row rather than centred on
+  its own line), the other three are `.small-btn`. Ids and handlers are
+  untouched.
+- **The tiles are a fixed three-column grid** (one column under 640px):
+  six budget tiles make two even rows, the three balance tiles one.
+  `auto-fit` gave 4 + 2, with the second row looking like leftovers.
+- **Type comes up to the planner's sizes**: 16px body and labels, 14px
+  hints, 15px table and activity rows, 16px guide text. The `h1` is
+  black and centred, the report box is a red-bordered white card like
+  `#planWrap` (its `<pre>` lost its inline styles, including a raw
+  brand hex), and links are red.
+
+What did not change: every id, the JS, the math, the saved-data shape,
+the text of every label and hint, and the print rule
+(`main > :not(#reportWrap)`, now in the page sheet). The two intro lines
+under the subtitle ("Your work will be saved automatically as you go."
+and "Click a section heading to expand or collapse that section.") are
+new, copied from the planner.
+
 ### Sheet 1 → "Weekly time budget"
 
 Four inputs (semester weeks, course credits, scheduled meeting hours per
@@ -1158,7 +1219,7 @@ Contact, divide-by-zero guards, conditional panel visibility,
 localStorage round-trip and migration, report generation, print-PDF
 non-blankness, and label/aria coverage. Re-run it after any math change.
 
-For the credit hour planner, `test/verify_credit_hour_planner.js` runs 338
+For the credit hour planner, `test/verify_credit_hour_planner.js` runs 344
 checks: 18 scenarios against an independent transcription of the workbook's
 cell formulas, the credit-hour invariant, blended-with-zero-f2f equivalence,
 the non-accelerating meetings rule, all three guards, module totals and
@@ -1166,8 +1227,11 @@ the budget comparison, over/under-budget styling, the no-bulk-suggestions
 regression guard, the instructional-time explainer,
 localStorage round-trip and partial/corrupt
 saves, "Start over", report and copy text, print-PDF non-blankness,
-label/aria coverage, computed focus outlines, the design tokens, and the
-Mid-Blue-underline prohibition.
+label/aria coverage, computed focus outlines, the design tokens, the
+Mid-Blue-border prohibition, and (since September 11, 2026) the planner
+layout: the 900px measure on `body`, the 2px step frame and 1px inner
+card, the centred black `h1`, four numbered open step disclosures, and
+three `.guide` panels.
 
 The August 29, 2026 format change added 37 of those. The uncapped meeting
 hours are a **regression guard**: a 3-credit course meeting five hours a
@@ -1239,7 +1303,7 @@ round-trip, migration of a v1-shaped save (string `objectives` → one row, `due
 G-number tags and field ordering, print-PDF non-blankness and print-CSS
 visibility.
 
-For the stylesheets, `test/verify_css_extraction.js` runs 153 checks: each
+For the stylesheets, `test/verify_css_extraction.js` runs 160 checks: each
 converted page links exactly the expected sheets in the expected order
 with `base.css` first, every sheet actually parses (a 404 or a typo'd
 `href` yields zero rules and fails), no inline `<style>` block survives,
@@ -1276,6 +1340,18 @@ tolerate the **cross-origin Google Fonts sheet** the site header links:
 rather than counted as a parse failure.
 
 ## Current status (August 2026)
+
+- **The credit hour planner took the course planner's layout, September
+  11, 2026** — Maka's ask, to bring the two pages' look together. It is
+  off `calculator.css` and on `document.css`; the planner's step-card
+  and button rules moved into that shared sheet (the planner renders
+  byte-identically). See **The credit hour planner takes the planner's
+  layout**. Worth telling anyone field testing: same page, same numbers,
+  a narrower column of numbered cards with boxed inputs. The
+  "How this is calculated" explainer is still in section 1 — Maka's
+  earlier question about what it refers to is still open, and the
+  planned answer (move it under the Weekly time budget and name the row
+  it means) is a content change for a separate pass.
 
 - **Length-reduction pass on the planner, September 2026** — Maka's,
   edited directly on the page. **The goal was to make the page

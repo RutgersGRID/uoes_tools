@@ -1,8 +1,9 @@
 /* ============================================================
    UOES Tools — shared chrome for the calculator-style pages
    ------------------------------------------------------------
-   Used by workload_estimator.html and credit_hour_planner.html.
-   Both are wide, multi-column tools built from the same parts:
+   Used by workload_estimator.html. (credit_hour_planner.html used it
+   too until September 11, 2026, when it moved to document.css to match
+   the course planner's layout.) A wide, multi-column tool built from:
    a centred header, red section headings, white cards holding
    number/select fields, a results block of stat tiles and a
    breakdown table, and a print view that shows only the report.

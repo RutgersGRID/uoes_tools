@@ -31,7 +31,7 @@ const CONVERTED = {
   "learning_objectives.html": ["css/base.css", "css/document.css", "css/learning_objectives.css"],
   "blooms_verbs.html": ["css/base.css", "css/document.css", "css/blooms_verbs.css"],
   "course_planner.html": ["css/base.css", "css/document.css", "css/course_planner.css"],
-  "credit_hour_planner.html": ["css/base.css", "css/calculator.css", "css/credit_hour_planner.css"],
+  "credit_hour_planner.html": ["css/base.css", "css/document.css", "css/credit_hour_planner.css"],
   "workload_estimator.html": ["css/base.css", "css/calculator.css", "css/workload_estimator.css"],
 };
 for (const k of Object.keys(CONVERTED)) CONVERTED[k] = CONVERTED[k].concat(HEADER);

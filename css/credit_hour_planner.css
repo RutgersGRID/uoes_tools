@@ -1,97 +1,288 @@
 /* ============================================================
    Credit Hour Planner — page-specific styles
-   Loaded after base.css and calculator.css.
+   Loaded after base.css and document.css.
+
+   Until September 11, 2026 this page sat on calculator.css beside the
+   workload estimator: a 1080px, three-column calculator with red
+   uppercase headings and underlined fields. It now takes the course
+   planner's layout instead — a 900px column of numbered step cards
+   (section.step, from document.css), boxed inputs, black headings and
+   the .guide panel for explanatory text. What is left of the
+   calculator idiom is the part with no planner equivalent: the stat
+   tiles, the breakdown table, the activity rows and the two callouts.
    ============================================================ */
 
-header p { max-width: 46rem; }
+:root {
+  --content-width: 900px; /* same measure as the course planner */
+}
 
-.lede { margin: 0 0 1rem; font-size: .92rem; color: var(--muted); max-width: 46rem; }
+/* The activity rows and boxed inputs size themselves with widths that
+   include their padding; body is left out so the 900px measure is the
+   same content width the planner gets. */
+main, main * { box-sizing: border-box; }
 
-/* A wider two-up grid than calculator.css's .grid, for the pair of
-   cards that each hold a full column of activity rows. */
-.grid-2 {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-  gap: 1rem;
-  align-items: start;
+.subtitle {
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
+}
+
+/* ---- inner cards ----
+   A card inside a step (Course format, Course basics, the three activity
+   lists) takes the planner's module-card treatment: a thin Mid Blue
+   border under a Light Blue header band, rather than a second 2px
+   Rutgers Blue frame inside the step's own. */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--blue-mid);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.card > h3 {
+  background: var(--blue-light);
+  margin: 0;
+  padding: 8px 14px;
+  font-size: 16px;
+}
+
+.card-body { padding: 12px 14px; }
+
+/* Plain sub-heading inside a step, e.g. "How this is calculated". */
+.step h3.plain {
+  margin: 18px 0 4px 0;
+  font-size: 18px;
+}
+
+/* ---- form controls ---- */
+
+label { font-weight: bold; }
+
+.field { margin-bottom: 14px; }
+.field:last-child { margin-bottom: 0; }
+.field label { display: block; margin-bottom: 6px; }
+
+/* Two fields side by side (Reading & writing), stacking when narrow. */
+.field-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 24px;
+}
+.field-row .field { flex: 1 1 260px; margin-bottom: 0; }
+
+input[type="number"] {
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--text);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 8px 10px;
+  width: 120px;
+  background: var(--surface);
+}
+
+/* The focus outline itself comes from base.css; this is the wash on top. */
+input[type="number"]:focus { background: var(--blue-light); }
+
+.hint {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 4px 0 0;
+  line-height: 1.4;
 }
 
 /* ---- course-format radio group ---- */
 
 fieldset { border: none; margin: 0; padding: 0; }
-fieldset legend {
-  font-size: .9rem;
-  padding: 0;
-  margin-bottom: .4rem;
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
 }
-.choice { display: flex; align-items: flex-start; gap: .5rem; font-size: .95rem; margin-bottom: .4rem; }
-.choice input { margin-top: .35rem; accent-color: var(--red); }
-.choice label { margin: 0; font-size: .95rem; }
-.choice .hint { margin: .05rem 0 0; }
+.choice input { margin-top: 5px; accent-color: var(--red); }
+.choice label { margin: 0; }
+.choice .hint { margin: 1px 0 0; }
+
+/* ---- guidance panels (the base panel is in document.css) ---- */
+
+.guide { line-height: 1.55; }
+.guide p { margin: 10px 0 4px 0; }
 
 /* ---- activity rows ---- */
 
 .act {
   display: grid;
-  grid-template-columns: 1fr 5.5rem;
-  gap: .5rem .75rem;
-  align-items: baseline;
-  padding: .3rem 0;
+  grid-template-columns: 1fr 88px;
+  gap: 8px 12px;
+  align-items: center;
+  padding: 6px 0;
   border-bottom: 1px solid var(--blue-light);
 }
 .act:last-child { border-bottom: none; }
-.act label { margin: 0; }
-.act .sug { display: block; font-size: .75rem; color: var(--muted); }
-.act input[type="number"] { text-align: right; padding-right: .2rem; }
-/* Derived rows are read-only. No underline: an underline here would read
-   as an editable input, and Mid Blue fails 3:1 non-text contrast anyway. */
+.act label { margin: 0; font-weight: normal; font-size: 15px; line-height: 1.35; }
+.act .sug { display: block; font-size: 13px; color: var(--muted); }
+.act input[type="number"] { width: 100%; text-align: right; padding: 6px 8px; font-size: 15px; }
+/* Derived rows are read-only. No border: a box here would read as an
+   editable input. */
 .act .derived {
   text-align: right;
   font-variant-numeric: tabular-nums;
   color: var(--red-dark);
-  padding: .35rem .2rem;
-  font-size: 1rem;
+  padding: 6px 8px;
+  font-size: 15px;
   font-style: italic;
 }
 .subtotal {
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
-  margin-top: .8rem;
-  padding-top: .6rem;
+  gap: 16px;
+  margin: 12px 0 0;
+  padding-top: 10px;
   border-top: 2px solid var(--blue);
   font-weight: bold;
 }
 .subtotal .v { font-variant-numeric: tabular-nums; }
 
-/* ---- results ---- */
+/* ---- results: stat tiles and the breakdown table ---- */
 
-.totals { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
-.total { margin: 0; }
+.results { margin-top: 4px; }
+
+.totals {
+  display: grid;
+  /* Three across: the six budget tiles make two even rows and the three
+     balance tiles one. auto-fit gave 4 + 2, with the second row looking
+     like leftovers. */
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+@media (max-width: 640px) {
+  .totals { grid-template-columns: 1fr; }
+}
+.total {
+  background: var(--blue-light);
+  border-radius: 8px;
+  padding: 12px 10px;
+  margin: 0;
+  text-align: center;
+}
+.total .num { display: block; font-size: 28px; color: var(--red); font-weight: bold; line-height: 1.2; }
+.total .lab { display: block; font-size: 14px; color: var(--text); margin-top: 2px; }
+.total .sub { display: block; font-size: 13px; color: var(--muted); margin-top: 3px; }
 .total .desc {
   display: block;
-  font-size: .72rem;
+  font-size: 13px;
   color: var(--muted);
-  margin-top: .35rem;
+  margin-top: 5px;
   font-style: italic;
   line-height: 1.3;
 }
 .total .desc:empty { display: none; }
+.total.primary { background: var(--red); }
+.total.primary .num { color: var(--surface); }
+.total.primary .lab { color: var(--surface); }
+.total.primary .sub { color: var(--red-pale); }
 /* `.over` is a semantic hook only. Being over budget takes the solid-red
    .primary treatment so it reads as louder than being under, never softer. */
 
 .table-scroll { overflow-x: auto; }
 
+table { width: 100%; border-collapse: collapse; font-size: 15px; }
+caption { text-align: left; font-size: 15px; color: var(--muted); padding-bottom: 6px; }
+th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--blue-mid); line-height: 1.4; }
+thead th { background: var(--blue-light); color: var(--text); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+th:first-child, td:first-child { white-space: nowrap; }
+tfoot td { font-weight: bold; border-top: 2px solid var(--blue); border-bottom: none; }
+
+/* ---- callouts ---- */
+
+.warn {
+  background: var(--red-wash);
+  border-left: 4px solid var(--red);
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
 .note {
   background: var(--blue-light);
   border-left: 4px solid var(--blue);
-  padding: .6rem .8rem;
-  margin: .75rem 0;
-  font-size: .88rem;
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-size: 15px;
+  line-height: 1.5;
 }
-.note p { margin: 0 0 .4rem; }
+.note p { margin: 0 0 6px; }
 .note p:last-child { margin: 0; }
 
-button.small { font-size: .82rem; padding: .3rem .7rem; }
+/* ---- buttons ----
+   One row: the red call to action from document.css, inline rather than
+   centred on its own line, beside the outlined secondary buttons. */
 
-a { color: var(--blue); }
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+.actions .primary-btn {
+  display: inline-block;
+  margin: 0;
+  padding: 10px 24px;
+  font-size: 16px;
+}
+.actions .small-btn { margin: 0; }
+
+/* ---- generated report ---- */
+
+#reportWrap {
+  background: var(--surface);
+  border: 2px solid var(--red);
+  border-radius: 8px;
+  padding: 24px;
+  margin-top: 8px;
+}
+#reportWrap h2 { margin-top: 0; }
+#reportWrap pre {
+  font-family: inherit;
+  white-space: pre-wrap;
+  margin: 0;
+  line-height: 1.5;
+}
+
+footer {
+  text-align: center;
+  font-size: 14px;
+  color: var(--muted);
+  margin: 30px 0;
+  line-height: 1.6;
+}
+footer p { margin: 0 0 6px; }
+
+a { color: var(--red); }
+a:hover, a:focus { color: var(--red-dark); }
+
+/* ---- printing: show only the generated report ----
+   The hide rule must target `main > :not(#reportWrap)`. An earlier
+   `body > ...` selector hid <main> itself and printed a blank page. */
+@media print {
+  body {
+    background: var(--surface);
+    max-width: none;
+    margin: 0;
+  }
+  main > :not(#reportWrap) { display: none !important; }
+  #reportWrap {
+    display: block !important;
+    border: none;
+    padding: 0;
+  }
+}
+
+/* A full-width card sitting above a .two-col pair (Reading & writing). */
+.card-full { margin-bottom: 12px; }

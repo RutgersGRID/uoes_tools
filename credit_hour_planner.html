@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Credit Hour Planner</title>
     <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/calculator.css">
+    <link rel="stylesheet" href="css/document.css">
     <link rel="stylesheet" href="css/credit_hour_planner.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -61,89 +61,95 @@
 
     <main>
 
-      <header>
-        <h1>Credit Hour Planner</h1>
-        <p>Turn your course&rsquo;s credit hours into an hours-per-week budget, then check whether
-          the activities you have planned for a module actually fit inside it.</p>
-      </header>
+      <h1>Credit Hour Planner</h1>
+      <p class="subtitle">Turn your course&rsquo;s credit hours into an hours-per-week budget, then check
+        whether the activities you have planned for a module actually fit inside it.</p>
+      <p>Your work will be saved automatically as you go.</p>
+      <p>Click a section heading to expand or collapse that section.</p>
 
       <form id="f" autocomplete="off">
 
         <!-- ============================================================ -->
-        <h2 id="h-course">1. Your course</h2>
+        <section class="step" aria-labelledby="h-course">
+          <details class="step-body" open>
+            <summary><h2 id="h-course"><span class="step-num" aria-hidden="true">1</span>Your course</h2></summary>
 
-        <div class="grid" role="group" aria-labelledby="h-course">
+            <div class="two-col">
 
-          <section class="card" aria-labelledby="s-format">
-            <h3 id="s-format">Course format</h3>
-            <fieldset>
-              <legend class="sr-only">Choose a course format</legend>
-              <div class="choice">
-                <input type="radio" name="format" id="fmt-sync" value="sync" checked>
-                <div>
-                  <label for="fmt-sync">Synchronous</label>
-                  <p class="hint">All instructional time happens in scheduled meetings &mdash;
-                    in a classroom, live online, or both.</p>
+              <section class="card" aria-labelledby="s-format">
+                <h3 id="s-format">Course format</h3>
+                <div class="card-body">
+                  <fieldset>
+                    <legend class="sr-only">Choose a course format</legend>
+                    <div class="choice">
+                      <input type="radio" name="format" id="fmt-sync" value="sync" checked>
+                      <div>
+                        <label for="fmt-sync">Synchronous</label>
+                        <p class="hint">All instructional time happens in scheduled meetings &mdash;
+                          in a classroom, live online, or both.</p>
+                      </div>
+                    </div>
+                    <div class="choice">
+                      <input type="radio" name="format" id="fmt-blended" value="blended">
+                      <div>
+                        <label for="fmt-blended">Blended / hybrid</label>
+                        <p class="hint">Some scheduled meetings, with the rest of the instructional
+                          time self-paced.</p>
+                      </div>
+                    </div>
+                    <div class="choice">
+                      <input type="radio" name="format" id="fmt-async" value="async">
+                      <div>
+                        <label for="fmt-async">Asynchronous</label>
+                        <p class="hint">No scheduled meetings. Students work through the instructional
+                          time on their own.</p>
+                      </div>
+                    </div>
+                  </fieldset>
+                  <p class="hint" style="margin-top:12px;">Choosing a format fills in the meeting hours
+                    beside it. You can always change that number afterwards.</p>
                 </div>
-              </div>
-              <div class="choice">
-                <input type="radio" name="format" id="fmt-blended" value="blended">
-                <div>
-                  <label for="fmt-blended">Blended / hybrid</label>
-                  <p class="hint">Some scheduled meetings, with the rest of the instructional
-                    time self-paced.</p>
-                </div>
-              </div>
-              <div class="choice">
-                <input type="radio" name="format" id="fmt-async" value="async">
-                <div>
-                  <label for="fmt-async">Asynchronous</label>
-                  <p class="hint">No scheduled meetings. Students work through the instructional
-                    time on their own.</p>
-                </div>
-              </div>
-            </fieldset>
-            <p class="hint" style="margin-top:.9rem;">Choosing a format fills in the meeting hours
-              beside it. You can always change that number afterwards.</p>
-          </section>
+              </section>
 
-          <section class="card" aria-labelledby="s-basics">
-            <h3 id="s-basics">Course basics</h3>
-            <div class="field">
-              <label for="weeks">Semester length (weeks)</label>
-              <input type="number" id="weeks" min="1" step="1" value="15">
-              <p class="hint">A standard semester at Rutgers is 15 weeks. A shorter term packs the same
-                total hours into fewer weeks.</p>
-            </div>
-            <div class="field">
-              <label for="credits">Course credits</label>
-              <input type="number" id="credits" min="0" step="0.5" value="3">
-            </div>
-            <div class="field">
-              <label for="f2f">Scheduled meeting minutes per week</label>
-              <input type="number" id="f2f" min="0" step="5" value="150">
-              <p class="hint" id="f2f-hours">= 2.50 hours a week, or 3.0 fifty-minute periods</p>
-              <p class="hint">Add up the week's meetings: two 80-minute classes are 160. Live online
-                meetings count as well as in-person ones. Labs, studios and clinicals may meet for
-                more minutes than their credit hours cover &mdash; that is allowed.</p>
-            </div>
-            <div class="field">
-              <label for="study">Study time per credit hour (per week)</label>
-              <input type="number" id="study" min="0" step="0.5" value="2">
-              <p class="hint">Hours of out-of-class work expected per credit hour, typically 2 or 3 (per week).</p>
-            </div>
-          </section>
+              <section class="card" aria-labelledby="s-basics">
+                <h3 id="s-basics">Course basics</h3>
+                <div class="card-body">
+                  <div class="field">
+                    <label for="weeks">Semester length (weeks)</label>
+                    <input type="number" id="weeks" min="1" step="1" value="15">
+                    <p class="hint">A standard semester at Rutgers is 15 weeks. A shorter term packs the same
+                      total hours into fewer weeks.</p>
+                  </div>
+                  <div class="field">
+                    <label for="credits">Course credits</label>
+                    <input type="number" id="credits" min="0" step="0.5" value="3">
+                  </div>
+                  <div class="field">
+                    <label for="f2f">Scheduled meeting minutes per week</label>
+                    <input type="number" id="f2f" min="0" step="5" value="150">
+                    <p class="hint" id="f2f-hours">= 2.50 hours a week, or 3.0 fifty-minute periods</p>
+                    <p class="hint">Add up the week's meetings: two 80-minute classes are 160. Live online
+                      meetings count as well as in-person ones. Labs, studios and clinicals may meet for
+                      more minutes than their credit hours cover &mdash; that is allowed.</p>
+                  </div>
+                  <div class="field">
+                    <label for="study">Study time per credit hour (per week)</label>
+                    <input type="number" id="study" min="0" step="0.5" value="2">
+                    <p class="hint">Hours of out-of-class work expected per credit hour, typically 2 or 3 (per week).</p>
+                  </div>
+                </div>
+              </section>
 
-          <section class="card" aria-labelledby="s-how">
-            <h3 id="s-how">How this is calculated</h3>
-            <p class="hint" style="font-size:.85rem;">
-              One credit hour means one 50-minute period of instruction plus the study time you
-              set above, each week, for a 15-week semester.</p>
-            <details open>
-              <summary>
-                <h4>What counts as instructional time</h4>
-              </summary>
-              <div class="body">
+            </div>
+
+            <section aria-labelledby="s-how">
+              <h3 id="s-how" class="plain">How this is calculated</h3>
+              <p class="step-lead">One credit hour means one 50-minute period of instruction plus the study
+                time you set above, each week, for a 15-week semester.</p>
+              <details class="guide" open>
+                <summary>
+                  <h4>What counts as instructional time</h4>
+                </summary>
                 <p>The instructional rows are <strong>seat time</strong> &mdash; the 50-minute
                   period per credit hour a course owes each week. A 3-credit course owes 150
                   minutes.</p>
@@ -157,13 +163,11 @@
                   minimum rather than a ceiling. The self-paced instructional row simply drops to
                   zero.</p>
                 <p>It is <em>not</em> homework. Out-of-class work is the studying row.</p>
-              </div>
-            </details>
-            <details>
-              <summary>
-                <h4>The acceleration rate</h4>
-              </summary>
-              <div class="body">
+              </details>
+              <details class="guide">
+                <summary>
+                  <h4>The acceleration rate</h4>
+                </summary>
                 <p>A course worth the same credits has to deliver the same total hours no matter
                   how long the term runs. The <strong>acceleration rate</strong> is
                   15 &divide; your semester length.</p>
@@ -172,181 +176,202 @@
                 <p>Scheduled meetings are the exception: they stay at their actual scheduled
                   length. In an accelerated course the extra instructional time that the meetings
                   do not cover is pushed into the self-paced instructional total.</p>
-              </div>
-            </details>
-          </section>
+              </details>
+            </section>
 
-        </div>
-
-        <!-- ============================================================ -->
-        <h2 id="h-week">2. Weekly time budget</h2>
-
-        <section class="results" aria-labelledby="h-week">
-          <div id="warnings"></div>
-
-          <div class="totals">
-            <p class="total primary">
-              <span class="num" id="out-total">0.00</span>
-              <span class="lab">Total per week</span>
-              <span class="sub">hours</span>
-            </p>
-            <p class="total" id="tile-f2f" hidden>
-              <span class="num" id="out-f2f">0.00</span>
-              <span class="lab">Scheduled meetings</span>
-              <span class="sub">hours per week</span>
-              <span class="desc" id="desc-f2f">in person or live online</span>
-            </p>
-            <p class="total">
-              <span class="num" id="out-instr">0.00</span>
-              <span class="lab" id="lab-instr">Instructional activities</span>
-              <span class="sub">hours per week</span>
-              <span class="desc" id="desc-instr">meeting time, or its self-paced equivalent</span>
-            </p>
-            <p class="total">
-              <span class="num" id="out-study">0.00</span>
-              <span class="lab">Homework / study</span>
-              <span class="sub">hours per week</span>
-            </p>
-            <p class="total" id="tile-online" hidden>
-              <span class="num" id="out-online">0.00</span>
-              <span class="lab">Self-paced total</span>
-              <span class="sub">hours per week</span>
-              <span class="desc">the budget a module works with</span>
-            </p>
-            <p class="total">
-              <span class="num" id="out-semester">0.00</span>
-              <span class="lab">Total per semester</span>
-              <span class="sub">hours</span>
-            </p>
-          </div>
-
-          <div class="table-scroll">
-            <table>
-              <caption>Where the weekly hours come from</caption>
-              <thead>
-                <tr>
-                  <th scope="col">Time type</th>
-                  <th scope="col" class="num">Weeks</th>
-                  <th scope="col" class="num">Acceleration</th>
-                  <th scope="col" class="num">Credit hours</th>
-                  <th scope="col" class="num">Weekly minutes</th>
-                  <th scope="col" class="num">Weekly hours</th>
-                  <th scope="col" class="num">Semester minutes</th>
-                  <th scope="col" class="num">Semester hours</th>
-                </tr>
-              </thead>
-              <tbody id="weekrows"></tbody>
-            </table>
-          </div>
-
-          <p class="sr-only" aria-live="polite" id="live-week"></p>
+          </details>
         </section>
 
         <!-- ============================================================ -->
-        <h2 id="h-module">3. Module time planner</h2>
+        <section class="step" aria-labelledby="h-week">
+          <details class="step-body" open>
+            <summary><h2 id="h-week"><span class="step-num" aria-hidden="true">2</span>Weekly time budget</h2></summary>
 
-        <p class="lede">Now plan one module. Enter the time you expect students to spend on each
-          activity, and this checks the total against the self-paced hours your credit budget
-          allows for a week. A module here is one week&rsquo;s worth of time.</p>
+            <div class="results">
+              <div id="warnings"></div>
 
-        <div class="note">
-          <p><strong>Reading and writing:</strong> estimate those two with the
-            <a href="workload_estimator.html">Course Workload Estimator</a> &mdash; run it once for
-            readings and once for writing assignments &mdash; then enter the hours below.
-          </p>
-          <p class="hint" style="margin:0;">That tool is a port of the
-            <a href="https://cte.rice.edu/workload" target="_blank" rel="noopener">Rice / Wake Forest
-              Course Workload Estimator</a>, which you can also use directly.
-          </p>
-        </div>
-
-        <p class="lede">Each activity below shows a suggested time for <em>that activity on its
-            own</em>. They are not a checklist &mdash; a module usually combines a handful of these,
-          not all of them.</p>
-
-        <div class="grid-2">
-
-          <section class="card" aria-labelledby="s-rw">
-            <h3 id="s-rw">Reading &amp; writing</h3>
-            <div class="field">
-              <label for="rw_reading">Reading assignments &mdash; total hours</label>
-              <input type="number" id="rw_reading" min="0" step="0.25" value="0">
-              <p class="hint">Hours per week from the workload estimator, readings only.</p>
-            </div>
-            <div class="field">
-              <label for="rw_writing">Writing assignments &mdash; total hours</label>
-              <input type="number" id="rw_writing" min="0" step="0.25" value="0">
-              <p class="hint">Hours per week from the workload estimator, writing only.</p>
-            </div>
-            <details>
-              <summary>
-                <h4>A note on these two numbers</h4>
-              </summary>
-              <div class="body">
-                <p>The original spreadsheet multiplied both of these by 50/60 before adding them
-                  in, which quietly shrank them by 17%. Everything else on that sheet is entered in
-                  plain clock hours, and the workload estimator reports clock hours, so this version
-                  adds them at face value.</p>
+              <div class="totals">
+                <p class="total primary">
+                  <span class="num" id="out-total">0.00</span>
+                  <span class="lab">Total per week</span>
+                  <span class="sub">hours</span>
+                </p>
+                <p class="total" id="tile-f2f" hidden>
+                  <span class="num" id="out-f2f">0.00</span>
+                  <span class="lab">Scheduled meetings</span>
+                  <span class="sub">hours per week</span>
+                  <span class="desc" id="desc-f2f">in person or live online</span>
+                </p>
+                <p class="total">
+                  <span class="num" id="out-instr">0.00</span>
+                  <span class="lab" id="lab-instr">Instructional activities</span>
+                  <span class="sub">hours per week</span>
+                  <span class="desc" id="desc-instr">meeting time, or its self-paced equivalent</span>
+                </p>
+                <p class="total">
+                  <span class="num" id="out-study">0.00</span>
+                  <span class="lab">Homework / study</span>
+                  <span class="sub">hours per week</span>
+                </p>
+                <p class="total" id="tile-online" hidden>
+                  <span class="num" id="out-online">0.00</span>
+                  <span class="lab">Self-paced total</span>
+                  <span class="sub">hours per week</span>
+                  <span class="desc">the budget a module works with</span>
+                </p>
+                <p class="total">
+                  <span class="num" id="out-semester">0.00</span>
+                  <span class="lab">Total per semester</span>
+                  <span class="sub">hours</span>
+                </p>
               </div>
-            </details>
-          </section>
 
-          <section class="card" aria-labelledby="s-learn">
-            <h3 id="s-learn">Learning activities</h3>
-            <p class="hint" style="margin:0 0 .6rem;">Estimated hours a student spends. Leave
-              anything you are not using at zero.</p>
-            <div id="learn-rows"></div>
-            <p class="subtotal"><span>Learning activities total</span>
-              <span class="v"><span id="out-learn">0.00</span> hrs</span>
-            </p>
-          </section>
+              <div class="table-scroll">
+                <table>
+                  <caption>Where the weekly hours come from</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">Time type</th>
+                      <th scope="col" class="num">Weeks</th>
+                      <th scope="col" class="num">Acceleration</th>
+                      <th scope="col" class="num">Credit hours</th>
+                      <th scope="col" class="num">Weekly minutes</th>
+                      <th scope="col" class="num">Weekly hours</th>
+                      <th scope="col" class="num">Semester minutes</th>
+                      <th scope="col" class="num">Semester hours</th>
+                    </tr>
+                  </thead>
+                  <tbody id="weekrows"></tbody>
+                </table>
+              </div>
 
-          <section class="card" aria-labelledby="s-assess">
-            <h3 id="s-assess">Assessment activities</h3>
-            <p class="hint" style="margin:0 0 .6rem;">Includes the time students spend preparing,
-              not just sitting the assessment.</p>
-            <div id="assess-rows"></div>
-            <p class="subtotal"><span>Assessment activities total</span>
-              <span class="v"><span id="out-assess">0.00</span> hrs</span>
-            </p>
-          </section>
+              <p class="sr-only" aria-live="polite" id="live-week"></p>
+            </div>
 
-        </div>
+          </details>
+        </section>
+
+        <!-- ============================================================ -->
+        <section class="step" aria-labelledby="h-module">
+          <details class="step-body" open>
+            <summary><h2 id="h-module"><span class="step-num" aria-hidden="true">3</span>Module time planner</h2></summary>
+
+            <p class="step-lead lede">Now plan one module. Enter the time you expect students to spend on each
+              activity, and this checks the total against the self-paced hours your credit budget
+              allows for a week. A module here is one week&rsquo;s worth of time.</p>
+
+            <div class="note">
+              <p><strong>Reading and writing:</strong> estimate those two with the
+                <a href="workload_estimator.html">Course Workload Estimator</a> &mdash; run it once for
+                readings and once for writing assignments &mdash; then enter the hours below.
+              </p>
+              <p class="hint" style="margin:0;">That tool is a port of the
+                <a href="https://cte.rice.edu/workload" target="_blank" rel="noopener">Rice / Wake Forest
+                  Course Workload Estimator</a>, which you can also use directly.
+              </p>
+            </div>
+
+            <p class="step-lead lede">Each activity below shows a suggested time for <em>that activity on its
+                own</em>. They are not a checklist &mdash; a module usually combines a handful of these,
+              not all of them.</p>
+
+            <section class="card card-full" aria-labelledby="s-rw">
+              <h3 id="s-rw">Reading &amp; writing</h3>
+              <div class="card-body">
+                <div class="field-row">
+                  <div class="field">
+                    <label for="rw_reading">Reading assignments &mdash; total hours</label>
+                    <input type="number" id="rw_reading" min="0" step="0.25" value="0">
+                    <p class="hint">Hours per week from the workload estimator, readings only.</p>
+                  </div>
+                  <div class="field">
+                    <label for="rw_writing">Writing assignments &mdash; total hours</label>
+                    <input type="number" id="rw_writing" min="0" step="0.25" value="0">
+                    <p class="hint">Hours per week from the workload estimator, writing only.</p>
+                  </div>
+                </div>
+                <details class="guide" style="margin:14px 0 0;">
+                  <summary>
+                    <h4>A note on these two numbers</h4>
+                  </summary>
+                  <p>The original spreadsheet multiplied both of these by 50/60 before adding them
+                    in, which quietly shrank them by 17%. Everything else on that sheet is entered in
+                    plain clock hours, and the workload estimator reports clock hours, so this version
+                    adds them at face value.</p>
+                </details>
+              </div>
+            </section>
+
+            <div class="two-col">
+
+              <section class="card" aria-labelledby="s-learn">
+                <h3 id="s-learn">Learning activities</h3>
+                <div class="card-body">
+                  <p class="hint" style="margin:0 0 8px;">Estimated hours a student spends. Leave
+                    anything you are not using at zero.</p>
+                  <div id="learn-rows"></div>
+                  <p class="subtotal"><span>Learning activities total</span>
+                    <span class="v"><span id="out-learn">0.00</span> hrs</span>
+                  </p>
+                </div>
+              </section>
+
+              <section class="card" aria-labelledby="s-assess">
+                <h3 id="s-assess">Assessment activities</h3>
+                <div class="card-body">
+                  <p class="hint" style="margin:0 0 8px;">Includes the time students spend preparing,
+                    not just sitting the assessment.</p>
+                  <div id="assess-rows"></div>
+                  <p class="subtotal"><span>Assessment activities total</span>
+                    <span class="v"><span id="out-assess">0.00</span> hrs</span>
+                  </p>
+                </div>
+              </section>
+
+            </div>
+
+          </details>
+        </section>
 
       </form>
 
       <!-- ============================================================ -->
-      <h2 id="h-balance">4. Does the module fit?</h2>
+      <section class="step" aria-labelledby="h-balance">
+        <details class="step-body" open>
+          <summary><h2 id="h-balance"><span class="step-num" aria-hidden="true">4</span>Does the module fit?</h2></summary>
 
-      <section class="results" aria-labelledby="h-balance">
-        <div class="totals">
-          <p class="total">
-            <span class="num" id="out-budget">0.00</span>
-            <span class="lab">Weekly self-paced hours available</span>
-            <span class="sub">from your credit budget</span>
-          </p>
-          <p class="total">
-            <span class="num" id="out-planned">0.00</span>
-            <span class="lab">Module hours planned</span>
-            <span class="sub">everything entered above</span>
-          </p>
-          <p class="total" id="tile-diff">
-            <span class="num" id="out-diff">0.00</span>
-            <span class="lab">Difference</span>
-            <span class="sub" id="diff-sub">hours</span>
-          </p>
-        </div>
+          <div class="results">
+            <div class="totals">
+              <p class="total">
+                <span class="num" id="out-budget">0.00</span>
+                <span class="lab">Weekly self-paced hours available</span>
+                <span class="sub">from your credit budget</span>
+              </p>
+              <p class="total">
+                <span class="num" id="out-planned">0.00</span>
+                <span class="lab">Module hours planned</span>
+                <span class="sub">everything entered above</span>
+              </p>
+              <p class="total" id="tile-diff">
+                <span class="num" id="out-diff">0.00</span>
+                <span class="lab">Difference</span>
+                <span class="sub" id="diff-sub">hours</span>
+              </p>
+            </div>
 
-        <div id="balance-msg"></div>
-        <p class="sr-only" aria-live="polite" id="live-balance"></p>
+            <div id="balance-msg"></div>
+            <p class="sr-only" aria-live="polite" id="live-balance"></p>
 
-        <div class="actions">
-          <button type="button" id="btn-report">Create printable summary</button>
-          <button type="button" class="secondary" id="btn-copy">Copy as text</button>
-          <button type="button" class="secondary" id="btn-print">Print</button>
-          <button type="button" class="secondary" id="btn-reset">Start over</button>
-        </div>
-        <p class="sr-only" role="status" id="copystatus"></p>
+            <div class="actions">
+              <button type="button" class="primary-btn" id="btn-report">Create printable summary</button>
+              <button type="button" class="small-btn" id="btn-copy">Copy as text</button>
+              <button type="button" class="small-btn" id="btn-print">Print</button>
+              <button type="button" class="small-btn" id="btn-reset">Start over</button>
+            </div>
+            <p class="sr-only" role="status" id="copystatus"></p>
+          </div>
+
+        </details>
       </section>
 
       <div id="reportWrap" hidden></div>
@@ -903,12 +928,6 @@
           wrap.appendChild(h);
 
           var pre = document.createElement("pre");
-          pre.style.fontFamily = "Georgia, serif";
-          pre.style.whiteSpace = "pre-wrap";
-          pre.style.background = "#fff";
-          pre.style.border = "2px solid #007FAC";
-          pre.style.borderRadius = "8px";
-          pre.style.padding = "1rem";
           pre.textContent = asText();
           wrap.appendChild(pre);
         }
