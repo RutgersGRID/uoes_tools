@@ -1,0 +1,13 @@
+# Line endings are decided here, not by each machine's core.autocrlf.
+#
+# Text files are stored with LF in the repository; each working copy still
+# checks out its platform's native convention, so nothing changes about
+# editing them on Windows. Only the stored form is pinned — which is the
+# form diffs, merges and GitHub actually see.
+#
+# Added September 17, 2026, after two clones of this repo disagreed about
+# line endings. Every blob was already LF at that point, so this pins the
+# existing state rather than changing it; no renormalise was needed.
+#
+# Binary files (the thumbnail JPG) are auto-detected and left alone.
+* text=auto
