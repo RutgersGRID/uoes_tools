@@ -23,21 +23,11 @@
 }
 
 /* ---- intro ----
-   The title stays centred (document.css); the subtitle runs left beneath
-   it. Everything else that was standing instruction is now a
-   <details class="guide"> — "Hints on how to use this tool." — so it takes
-   the shared guidance panel wholesale: fill, border, radius, summary
-   treatment and the 24px target padding all come from document.css, and
-   this page adds nothing to it.
-
-   Only the alignment is overridden here. Colour and size stay
-   document.css's, so the subtitle matches the one on every other tool. */
-.subtitle {
-  text-align: left;
-  max-width: none;
-  margin: 0 0 16px;
-  line-height: 1.5;
-}
+   The subtitle takes document.css unchanged: centred under the centred
+   title, --muted, same as every other tool. Everything that was standing
+   instruction is a <details class="guide"> — "Hints on how to use this
+   tool." — so the panel comes wholly from document.css too. This page
+   overrides neither; the section is here only to say so. */
 
 a { color: var(--red); }
 
