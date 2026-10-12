@@ -22,43 +22,20 @@
   --content-width: 900px; /* matches the Course Content Planner */
 }
 
-/* ---- intro panel ----
-   The title stays centred (document.css); everything under it is
-   left-aligned instruction sitting on the Light Blue guidance wash, so the
-   same colour that marks a .guide panel also marks the standing
-   instructions. It is a plain block, not a <details class="guide">: there
-   is nothing to disclose here, so it takes the panel's fill, border and
-   radius without the disclosure machinery.
+/* ---- intro ----
+   The title stays centred (document.css); the subtitle runs left beneath
+   it. Everything else that was standing instruction is now a
+   <details class="guide"> — "Hints on how to use this tool." — so it takes
+   the shared guidance panel wholesale: fill, border, radius, summary
+   treatment and the 24px target padding all come from document.css, and
+   this page adds nothing to it.
 
-   document.css centres .subtitle and sets it --muted; inside the panel it
-   is left-aligned and takes the body colour, so the four lines read as one
-   block rather than a grey line above three darker ones.
-
-   These rules are page-level on purpose. The course planner and the credit
-   hour planner carry the same orientation lines under their subtitles; if
-   this treatment is wanted there too, .intro belongs in document.css
-   beside .guide rather than being copied. */
-.intro {
-  background: var(--blue-light);
-  border: 1px solid var(--blue);
-  border-radius: 8px;
-  padding: 14px 18px;
-  margin: 0 0 24px;
-}
-
-.intro > :first-child { margin-top: 0; }
-.intro > :last-child { margin-bottom: 0; }
-
+   Only the alignment is overridden here. Colour and size stay
+   document.css's, so the subtitle matches the one on every other tool. */
 .subtitle {
   text-align: left;
   max-width: none;
-  margin: 0;
-  color: var(--text);
-  line-height: 1.5;
-}
-
-.lede {
-  margin: 10px 0 0;
+  margin: 0 0 16px;
   line-height: 1.5;
 }
 

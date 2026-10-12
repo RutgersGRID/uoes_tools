@@ -62,23 +62,31 @@
     <main>
 
       <h1>Learning Activity Estimator</h1>
-      <div class="intro">
-        <p class="subtitle">Estimate how long a learning activity will take your students. Describe
-          the activity in the section that fits it and read off the hours &mdash; then enter them in
-          the <a href="credit_hour_planner.html">Credit Hour Planner</a> to check a module against
-          its time budget.</p>
-        <p class="lede">Click a section heading to expand or collapse that section.</p>
-        <p class="lede">Click the panels with an arrow for background on where the numbers come
-          from.</p>
-        <p class="lede">Your entries will be saved automatically as you go.</p>
-      </div>
+      <p class="subtitle">You can use this tool to estimate how long a learning activity will take your students.</p>
+
+      <details class="guide">
+        <summary>
+          <h2>Hints on how to use this tool.</h2>
+        </summary>
+        <p>Use the section that most closely matches your activity, reading, writing, discussion & peer
+          feedback (which includes reviewing others' work), media & live sessions (podcasts, videos, webinars, etc),
+          quizzes & tests (including time for studying and taking the test), and projects or other activities (case
+          studies, field trips, research activities, etc).</p>
+        <p>Click a section heading to expand or collapse that section. A running total will appear at the
+          bottom of the section and a total for all activities entered will appear at the bottom of the form.</p>
+        <p>Click the panels with an arrow for background on where the numbers come from.</p>
+        <p>Your entries will be saved automatically in your browser's cookies as you go. Clearing cookies
+          will delete your saved entries.</p>
+      </details>
 
       <form id="f" autocomplete="off">
 
         <!-- READING -->
         <section class="step" aria-labelledby="s-reading">
           <details class="step-body" open>
-            <summary id="sum-reading" data-sum=""><h2 id="s-reading">Reading</h2></summary>
+            <summary id="sum-reading" data-sum="">
+              <h2 id="s-reading">Reading</h2>
+            </summary>
             <p class="step-lead">Use this to estimate the workload of any assigned reading: texts,
               supplemental materials,
               case studies, blogs, journal entries, and more. Refine the estimate with the page
@@ -120,7 +128,8 @@
               density.</p>
 
             <p class="rate">Estimated reading rate <strong id="out-readrate">&nbsp;</strong>
-              <span class="est">About <strong id="out-reading">0.00</strong> hours</span></p>
+              <span class="est">About <strong id="out-reading">0.00</strong> hours</span>
+            </p>
 
             <div class="check">
               <input type="checkbox" id="setreadingrate">
@@ -134,7 +143,9 @@
             </div>
 
             <details class="guide">
-              <summary><h3>Where this estimated reading rate comes from</h3></summary>
+              <summary>
+                <h3>Where this estimated reading rate comes from</h3>
+              </summary>
               <p>The rate is looked up from three things you choose above. <strong>Page
                   density</strong> is words per page: about 450 for a paperback or article, 600
                 for an academic monograph, 750 for a textbook. <strong>Difficulty</strong> is how
@@ -157,7 +168,9 @@
         <!-- WRITING -->
         <section class="step" aria-labelledby="s-writing">
           <details class="step-body">
-            <summary id="sum-writing" data-sum=""><h2 id="s-writing">Writing</h2></summary>
+            <summary id="sum-writing" data-sum="">
+              <h2 id="s-writing">Writing</h2>
+            </summary>
             <p class="step-lead">Papers and writing assignments, blog posts, journal entries, wiki
               contributions, and the written report for a project. Describe one piece of writing:
               how long it is and what kind of writing it is.</p>
@@ -203,7 +216,8 @@
               to pages at the density you choose.</p>
 
             <p class="rate">Estimated writing rate <strong id="out-writerate">&nbsp;</strong>
-              <span class="est">About <strong id="out-writing">0.00</strong> hours</span></p>
+              <span class="est">About <strong id="out-writing">0.00</strong> hours</span>
+            </p>
 
             <div class="check">
               <input type="checkbox" id="setwritingrate">
@@ -217,7 +231,9 @@
             </div>
 
             <details class="guide">
-              <summary><h3>Where this estimated writing rate comes from</h3></summary>
+              <summary>
+                <h3>Where this estimated writing rate comes from</h3>
+              </summary>
               <p>These are the most speculative estimates in the tool. They rest largely on
                 Torrance et al.&rsquo;s study of 493 students writing 1,500-word essays, who
                 reported spending 9 to 15 hours per assignment.</p>
@@ -234,7 +250,9 @@
         <!-- DISCUSSION -->
         <section class="step" aria-labelledby="s-disc">
           <details class="step-body">
-            <summary id="sum-disc" data-sum=""><h2 id="s-disc">Discussion &amp; peer feedback</h2></summary>
+            <summary id="sum-disc" data-sum="">
+              <h2 id="s-disc">Discussion &amp; peer feedback</h2>
+            </summary>
             <p class="step-lead">Discussion posts and replies, peer review comments, and comments on
               classmates&rsquo; blogs, journals or wiki pages. Count the posts one student writes
               for the activity, including replies, and how long each one is.</p>
@@ -278,7 +296,9 @@
             </div>
 
             <details class="guide">
-              <summary><h3>Where this discussion estimate comes from</h3></summary>
+              <summary>
+                <h3>Where this discussion estimate comes from</h3>
+              </summary>
               <p>These assumptions are not covered by the published methodology; they are taken
                 from the original tool&rsquo;s code.</p>
               <p><strong>Text posts:</strong> 250 words of composed discussion writing per hour
@@ -293,7 +313,9 @@
         <!-- MEDIA & LIVE SESSIONS -->
         <section class="step" aria-labelledby="s-media">
           <details class="step-body">
-            <summary id="sum-media" data-sum=""><h2 id="s-media">Media &amp; live sessions</h2></summary>
+            <summary id="sum-media" data-sum="">
+              <h2 id="s-media">Media &amp; live sessions</h2>
+            </summary>
             <p class="step-lead">Mini-lecture videos, other videos, podcasts, webinar sessions, and
               simulations or eLearning tutorials. Count the items and their running time.</p>
 
@@ -319,7 +341,9 @@
         <!-- QUIZZES & TESTS -->
         <section class="step" aria-labelledby="s-tests">
           <details class="step-body">
-            <summary id="sum-tests" data-sum=""><h2 id="s-tests">Quizzes &amp; tests</h2></summary>
+            <summary id="sum-tests" data-sum="">
+              <h2 id="s-tests">Quizzes &amp; tests</h2>
+            </summary>
             <p class="step-lead">A quiz, test or pre-assessment: the time students spend sitting
               it, plus any preparation you expect.</p>
 
@@ -344,7 +368,9 @@
         <!-- PROJECTS & OTHER ACTIVITIES -->
         <section class="step" aria-labelledby="s-other">
           <details class="step-body">
-            <summary id="sum-other" data-sum=""><h2 id="s-other">Projects &amp; other activities</h2></summary>
+            <summary id="sum-other" data-sum="">
+              <h2 id="s-other">Projects &amp; other activities</h2>
+            </summary>
             <p class="step-lead">Case studies, experiential learning, research activities,
               individual and group assignments, projects and presentations. There is no
               research-based rate for these, so the Credit Hour Planner&rsquo;s typical time is
@@ -413,7 +439,8 @@
 
         <p class="hint">Each section estimates one activity at a time. To check a whole module
           against its time budget, enter these hours in the
-          <a href="credit_hour_planner.html">Credit Hour Planner</a>&rsquo;s module planner.</p>
+          <a href="credit_hour_planner.html">Credit Hour Planner</a>&rsquo;s module planner.
+        </p>
 
         <p class="sr-only" aria-live="polite" id="live"></p>
 

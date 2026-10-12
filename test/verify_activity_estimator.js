@@ -397,7 +397,10 @@ function near(name, got, exp, eps) {
       };
     });
     ok("every input and select has a label", a11y.unlabelled.length === 0, a11y.unlabelled.join(","));
-    ok("every summary wraps a heading", a11y.summaries === 9 && a11y.heads === 9, a11y.summaries + "/" + a11y.heads);
+    // 10 disclosures: the six section cards, the "Hints on how to use this
+    // tool." panel under the subtitle, and the three "where the numbers come
+    // from" panels inside Reading, Writing and Discussion.
+    ok("every summary wraps a heading", a11y.summaries === 10 && a11y.heads === 10, a11y.summaries + "/" + a11y.heads);
     ok("no two disclosures share an accessible name", a11y.uniqueNames);
     ok("live region and copy status present", a11y.live && a11y.status);
     ok("every section's aria-labelledby resolves", a11y.sections);
