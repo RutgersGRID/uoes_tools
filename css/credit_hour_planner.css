@@ -64,6 +64,24 @@ label { font-weight: bold; }
 .field:last-child { margin-bottom: 0; }
 .field label { display: block; margin-bottom: 6px; }
 
+/* A number input with a note alongside it, using the width the narrow box
+   leaves empty — used by Course credits and Semester length. Wraps below the
+   input on a narrow card. */
+.field-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 16px;
+}
+
+/* 180px basis, not 260: the card is the right half of .two-col, which leaves
+   about 252px beside the 120px input. A larger basis wraps the note under the
+   input and the gap it was meant to fill reappears. */
+.field-inline .hint {
+  flex: 1 1 180px;
+  margin: 0;
+}
+
 /* Two fields side by side (Reading & writing), stacking when narrow. */
 .field-row {
   display: flex;
@@ -218,6 +236,15 @@ tfoot td { font-weight: bold; border-top: 2px solid var(--blue); border-bottom: 
 }
 .note p { margin: 0 0 6px; }
 .note p:last-child { margin: 0; }
+
+/* The below-minimum notice under Planned Academic Work reuses the .warn
+   callout so a shortfall reads the same as the warnings above the tiles, but
+   sized to sit inside a field rather than across the results column. */
+.field .warn {
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  font-size: 14px;
+}
 
 /* ---- buttons ----
    One row: the red call to action from document.css, inline rather than

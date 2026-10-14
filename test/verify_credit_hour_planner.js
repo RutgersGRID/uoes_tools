@@ -112,7 +112,11 @@ function excelOnline(weeks, credits, study) {
   const week = () => page.evaluate(() => window.__calcWeek());
   const mod  = () => page.evaluate(() => window.__calcModule());
 
-  /* ================= 1. Asynchronous (the old fully-online block) ================= */
+  /* ============ 1. No scheduled or monitored work (the old fully-online block) ============
+     f2f is set to 0 explicitly. Until October 14, 2026 the asynchronous preset
+     supplied the zero; it now fills the credit-hour minimum instead, so these
+     cases have to say so. The arithmetic they check is unchanged: this is the
+     branch where the whole instructional requirement is self-paced. */
 
   const onlineCases = [
     { weeks: 15, credits: 3, study: 2 },
@@ -128,7 +132,7 @@ function excelOnline(weeks, credits, study) {
   ];
 
   for (const c of onlineCases) {
-    await setup({ ...c, blended: false });
+    await setup({ ...c, blended: false, f2f: 0 });
     const got = await week();
     const exp = excelOnline(c.weeks, c.credits, c.study);
     const tag = `async w${c.weeks} c${c.credits} s${c.study}`;
@@ -183,7 +187,7 @@ function excelOnline(weeks, credits, study) {
   for (const c of [{ weeks: 15, credits: 3, study: 2 }, { weeks: 7, credits: 4, study: 3 }]) {
     await setup({ ...c, blended: true, f2f: 0 });
     const b = await week();
-    await setup({ ...c, blended: false });
+    await setup({ ...c, blended: false, f2f: 0 });
     const o = await week();
     near(`f2f=0 equivalence w${c.weeks} total`, b.totalHours, o.totalHours, 1e-9);
     near(`f2f=0 equivalence w${c.weeks} self-paced budget`, b.selfPacedHours, o.selfPacedHours, 1e-9);
@@ -346,36 +350,73 @@ function excelOnline(weeks, credits, study) {
     ok("meeting hours sit below the course credits", place.creditsFirst === true);
     ok("meeting hours are not labelled face-to-face",
       !/face-to-face/i.test(place.label), place.label);
-    ok("the meeting field is labelled in minutes",
+    ok("the field is labelled in minutes",
       /minutes per week/.test(place.label), place.label);
+    // Renamed October 14, 2026: the field covers monitored asynchronous work as
+    // well as meetings, so neither the label nor the vocabulary on the tile may
+    // narrow back to meetings only.
+    ok("the field is labelled Planned Academic Work",
+      /Planned Academic Work/.test(place.label), place.label);
     await setup({ format: "blended", weeks: 15, credits: 3, study: 2, f2f: 3 });
     const echo = await page.evaluate(() => ({
-      line: document.getElementById("f2f-hours").textContent,
       field: document.getElementById("f2f").value,
-      tile: document.querySelector("#tile-f2f .desc").textContent
+      tile: document.querySelector("#tile-f2f .desc").textContent,
+      lab: document.querySelector("#tile-f2f .lab").textContent,
+      hours: document.getElementById("f2f-hours") === null
     }));
-    ok("150 minutes echo as 2.50 hours under the field",
-      echo.field === "150" && /= 2\.50 hours a week/.test(echo.line), JSON.stringify(echo));
-    ok("the echo also counts fifty-minute periods", /3\.0 fifty-minute periods/.test(echo.line), echo.line);
-    ok("the meetings tile repeats the minutes", /150 minutes a week/.test(echo.tile), echo.tile);
-    await setup({ format: "blended", weeks: 15, credits: 3, study: 2, f2f: 160 / 50 });
-    const echo2 = await page.evaluate(() => document.getElementById("f2f-hours").textContent);
-    ok("two 80-minute classes echo as 2.67 hours", /= 2\.67 hours a week, or 3\.2 fifty-minute/.test(echo2), echo2);
-    await setup({ format: "async", weeks: 15, credits: 3, study: 2 });
-    ok("meeting-hours label says scheduled meetings",
-      /scheduled meeting/i.test(place.label), place.label);
+    ok("the field's own hours echo is gone", echo.hours === true);
+    ok("the tile repeats the minutes entered",
+      echo.field === "150" && /150 minutes a week/.test(echo.tile), JSON.stringify(echo));
+    ok("the tile says scheduled or monitored", /scheduled or monitored/.test(echo.tile), echo.tile);
+    ok("the tile is labelled planned academic work",
+      /Planned academic work/.test(echo.lab), echo.lab);
 
+    /* The below-minimum notice (added October 14, 2026). It compares the field
+       with credits x 50 x the acceleration rate, so it must appear for a short
+       term that the standard weekly rate does not cover, and must not appear
+       when the field meets or exceeds the minimum. The figures are the ones the
+       Semester length lines already state, in hours and minutes. */
+    const shortfall = () => page.evaluate(() => {
+      const p = document.getElementById("f2f-min");
+      return { hidden: p.hidden, text: p.textContent };
+    });
+    await setup({ format: "blended", weeks: 15, credits: 3, study: 2, f2f: 3 });
+    ok("at the minimum, no shortfall notice", (await shortfall()).hidden === true);
+    await setup({ format: "blended", weeks: 15, credits: 3, study: 2, f2f: 4 });
+    ok("above the minimum, no shortfall notice", (await shortfall()).hidden === true);
+    await setup({ format: "blended", weeks: 15, credits: 3, study: 2, f2f: 2 });
+    const under = await shortfall();
+    ok("below the minimum, the shortfall notice appears", under.hidden === false);
+    ok("the shortfall notice states the minimum in hours and minutes",
+      /minimum amount of academic work is 2 hours and 30 minutes based on your entered credits and semester length/
+        .test(under.text), under.text);
+    // A 5-week 3-credit course: 150 x (15/5) = 450 minutes, the same 7:30 the
+    // Semester length readout gives.
+    await setup({ format: "blended", weeks: 5, credits: 3, study: 2, f2f: 3.6 });
+    const short5 = await shortfall();
+    ok("an accelerated term raises the minimum",
+      short5.hidden === false && /is 7 hours and 30 minutes/.test(short5.text), short5.text);
+    await setup({ format: "blended", weeks: 5, credits: 3, study: 2, f2f: 9 });
+    ok("meeting the accelerated minimum clears the notice", (await shortfall()).hidden === true);
+    // Below 1 week nothing is calculated and the warnings block says so; the
+    // notice must not add a second, contradictory line.
+    await setup({ format: "blended", weeks: 0, credits: 3, study: 2, f2f: 1 });
+    ok("no shortfall notice below 1 week", (await shortfall()).hidden === true);
+
+    // The tiles key off the number, not the format, so the no-work case is the
+    // field at zero rather than a format choice.
+    await setup({ format: "async", weeks: 15, credits: 3, study: 2, f2f: 0 });
     let v = await page.evaluate(() => ({
       f2fTile: document.getElementById("tile-f2f").hidden,
       onlineTile: document.getElementById("tile-online").hidden,
       label: document.getElementById("lab-instr").textContent
     }));
-    ok("no meetings: meetings tile hidden", v.f2fTile === true);
-    ok("no meetings: self-paced-total tile hidden", v.onlineTile === true);
-    ok("no meetings: instructional label", v.label === "Instructional activities", v.label);
+    ok("no planned work: academic-work tile hidden", v.f2fTile === true);
+    ok("no planned work: self-paced-total tile hidden", v.onlineTile === true);
+    ok("no planned work: instructional label", v.label === "Instructional activities", v.label);
     let d = await page.evaluate(() => document.getElementById("desc-instr").textContent);
-    ok("no meetings: instructional described as meeting time or its equivalent",
-      /meeting time, or its self-paced equivalent/.test(d), d);
+    ok("no planned work: instructional described as academic work or its equivalent",
+      /planned academic work, or its self-paced equivalent/.test(d), d);
 
     await setup({ format: "blended", weeks: 15, credits: 3, study: 2, f2f: 1 });
     v = await page.evaluate(() => ({
@@ -388,11 +429,11 @@ function excelOnline(weeks, credits, study) {
     ok("meetings: label switches", v.label === "Self-paced instructional", v.label);
     d = await page.evaluate(() => document.getElementById("desc-instr").textContent);
     ok("meetings: instructional described as uncovered seat time",
-      /seat time your meetings/.test(d), d);
+      /seat time your planned work/.test(d), d);
     const f2fDesc = await page.evaluate(() =>
       document.querySelector("#tile-f2f .desc").textContent);
-    ok("meetings tile counts live online meetings too",
-      /in person or live online/.test(f2fDesc), f2fDesc);
+    ok("the academic-work tile names both kinds of time",
+      /50 minutes a week, scheduled or monitored/.test(f2fDesc), f2fDesc);
 
     // the explainer card must say what instructional time is, and that it isn't homework
     const card = await page.evaluate(() => {
@@ -407,8 +448,10 @@ function excelOnline(weeks, credits, study) {
     // presentation choice, so this no longer asserts a state.
     ok("explainer says seat time", card && /seat time/.test(card.text));
     ok("explainer covers the self-paced case", card && /asynchronous equivalent/.test(card.text));
-    ok("explainer says meetings cover seat time directly",
-      card && /Scheduled meetings cover it directly/.test(card.text));
+    ok("explainer says planned academic work covers seat time directly",
+      card && /planned academic work covers it directly/.test(card.text));
+    ok("explainer counts monitored asynchronous material",
+      card && /monitored and documented/.test(card.text));
     ok("explainer counts a live online meeting the same as a room",
       card && /live online meeting counts the same/.test(card.text));
     ok("explainer says the credit hour is a minimum, not a ceiling",
@@ -417,8 +460,8 @@ function excelOnline(weeks, credits, study) {
 
     const rowNames = await page.$$eval("#weekrows tr td:first-child", e => e.map(x => x.textContent));
     ok("blended table has 4 rows incl. total", rowNames.length === 4, rowNames.join("|"));
-    ok("blended table lists the meetings row",
-      rowNames[0] === "Scheduled meetings", rowNames[0]);
+    ok("blended table lists the academic-work row",
+      rowNames[0] === "Planned academic work", rowNames[0]);
     ok("blended table lists the self-paced row",
       rowNames[1] === "Self-paced instructional", rowNames[1]);
     ok("blended table ends with Total", rowNames[3] === "Total", rowNames[3]);
@@ -437,7 +480,7 @@ function excelOnline(weeks, credits, study) {
     ok("three formats on the synchronous axis",
       d.options.join(",") === "sync,blended,async", d.options.join(","));
     ok("default format is synchronous", d.sync === true);
-    ok("meeting minutes default to the credit hours x 50", d.f2f === String(Number(d.credits) * 50),
+    ok("academic-work minutes default to the credit hours x 50", d.f2f === String(Number(d.credits) * 50),
       d.f2f + " vs " + d.credits);
 
     const pick = (id) => page.evaluate((id) => {
@@ -453,17 +496,20 @@ function excelOnline(weeks, credits, study) {
       return document.getElementById("f2f").value;
     }, [id, v]);
 
-    ok("asynchronous zeroes the meeting hours", (await pick("fmt-async")) === "0");
+    // Changed October 14, 2026: an asynchronous course owes the same minimum as
+    // any other, so its preset fills the minimum rather than zeroing the field.
+    ok("asynchronous also fills the credit-hour minimum", (await pick("fmt-async")) === "150");
+    await type("f2f", "0");
     const kept = await pick("fmt-blended");
     ok("blended keeps the number already there", kept === "0", kept);
     const refilled = await pick("fmt-sync");
     ok("synchronous refills to the credit hours x 50", refilled === "150", refilled);
 
     const followed = await type("credits", "4");
-    ok("meeting minutes follow the credits while untouched", followed === "200", followed);
+    ok("academic-work minutes follow the credits while untouched", followed === "200", followed);
     await type("f2f", "300");
     const left = await type("credits", "5");
-    ok("a hand-set meeting number is left alone", left === "300", left);
+    ok("a hand-set academic-work number is left alone", left === "300", left);
     const g = await week();
     near("a 5-credit course can meet for 6 hours", g.f2fHours, 50 * 6 / 60, 1e-9);
   }
@@ -630,8 +676,9 @@ function excelOnline(weeks, credits, study) {
     ok("report becomes visible", rep.hidden === false);
     ok("report is not empty", rep.text.length > 300, "len " + rep.text.length);
     ok("report names the format", /Blended \/ hybrid/.test(rep.text));
-    ok("report states the meeting minutes and hours", /Meeting minutes: +50 per week \(0\.83 hours\)/.test(rep.text));
-    ok("report labels the meetings row", /Scheduled meetings/.test(rep.text));
+    ok("report states the academic-work minutes and hours",
+      /Academic work: +50 minutes per week \(0\.83 hours\)/.test(rep.text));
+    ok("report labels the academic-work row", /Planned academic work/.test(rep.text));
     ok("report labels the self-paced budget",
       /Weekly self-paced hours available/.test(rep.text));
     ok("report shows the acceleration rate", /Acceleration rate: 2\.14/.test(rep.text));
