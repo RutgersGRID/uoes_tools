@@ -771,7 +771,11 @@ function excelOnline(weeks, credits, study) {
     ok("four numbered step cards, each heading its own disclosure",
       steps.count === 4 && steps.nums.join(",") === "1,2,3,4", steps.count + " " + steps.nums.join(","));
     ok("every step starts open", steps.open.every(Boolean), steps.open.join(","));
-    ok("explanatory panels use the planner's .guide treatment", steps.guides === 3, "count " + steps.guides);
+    // 5 panels: the two above the form ("Hints on how to use this tool." and
+    // "Why we built this tool:") plus the three inside section 1 — what counts
+    // as instructional time, the acceleration rate, and the note on the two
+    // reading/writing numbers.
+    ok("explanatory panels use the planner's .guide treatment", steps.guides === 5, "count " + steps.guides);
 
     // Repo convention: Mid Blue (#7DBFD6 = rgb(125,191,214)) fails the 3:1
     // non-text contrast requirement, so it must never carry an input border.

@@ -62,17 +62,51 @@
     <main>
 
       <h1>Credit Hour Planner</h1>
-      <p class="subtitle">Turn your course&rsquo;s credit hours into an hours-per-week budget, then check
-        whether the activities you have planned for a module actually fit inside it.</p>
-      <p>Your work will be saved automatically as you go.</p>
-      <p>Click a section heading to expand or collapse that section.</p>
+      <p class="subtitle">Use this tool to determine the total time needed for all of your planned course activities.
+      </p>
+      <details class="guide">
+        <summary>
+          <h2>Hints on how to use this tool.</h2>
+        </summary>
+        <p class="lead">Turn your course&rsquo;s credit hours into an hours-per-week budget, then check
+          whether the activities you have planned for a module actually fit inside it.</p>
+        <p class="lead">Click a section heading to expand or collapse that section.</p>
+        <p class="lead">Your work will be saved automatically as you go.</p>
+      </details>
+
+
+
+      <details class="guide">
+        <summary>
+          <h2>Why we built this tool:</h2>
+        </summary>
+        <p class="lead">This tool is designed to help you plan a course that meets the federal
+          definition of a credit hour (<a
+            href="https://www.ecfr.gov/current/title-34/subtitle-B/chapter-VI/part-600/subpart-A/section-600.2">34
+            C.F.R. § 600.2 (2026)</a>).<br />
+          It is not a substitute for your department's or school's policies, which may be more restrictive.</p>
+        <p class="lead">New Jersey sets the floor this tool calculates against: a semester credit hour is
+          <strong>150 minutes of academic work a week for 15 weeks</strong> &mdash; typically 50 minutes of
+          class complemented by at least 100 minutes of laboratory or outside assignments (<a
+            href="https://www.nj.gov/highereducation/documents/pdf/licensure/licensureadoptionregulations.pdf">N.J.A.C.
+            9A:1-1.2</a>). That is 37.5 hours per credit, so a 3-credit course comes to 7.5 hours a week and
+          112.5 hours for the term. A shorter term carries the same total in fewer weeks.</p>
+        <p class="lead"><a
+            href="https://senate.rutgers.edu/wp-content/uploads/2023/10/10.2.4-Units-of-Credit-EVPAA-DRAFT-20231017-CLEAN-COPY.pdf">Rutgers
+            Policy 10.2.4</a> asks for more than the state floor &mdash; three hours of student work a week per
+          credit, or roughly 45 hours per credit, which works out to 9 hours a week and 135 hours for a 3-credit
+          course. The numbers on this page are the minimum, not a target: if your school or department plans to
+          the University standard, aim above them.</p>
+      </details>
 
       <form id="f" autocomplete="off">
 
         <!-- ============================================================ -->
         <section class="step" aria-labelledby="h-course">
           <details class="step-body" open>
-            <summary><h2 id="h-course"><span class="step-num" aria-hidden="true">1</span>Your course</h2></summary>
+            <summary>
+              <h2 id="h-course"><span class="step-num" aria-hidden="true">1</span>Your course</h2>
+            </summary>
 
             <div class="two-col">
 
@@ -117,6 +151,7 @@
                   <div class="field">
                     <label for="weeks">Semester length (weeks)</label>
                     <input type="number" id="weeks" min="1" step="1" value="15">
+                    <p class="hint" id="weeks-hours">= 112.50 hours for the whole course, at 7.50 hours a week</p>
                     <p class="hint">A standard semester at Rutgers is 15 weeks. A shorter term packs the same
                       total hours into fewer weeks.</p>
                   </div>
@@ -135,7 +170,8 @@
                   <div class="field">
                     <label for="study">Study time per credit hour (per week)</label>
                     <input type="number" id="study" min="0" step="0.5" value="2">
-                    <p class="hint">Hours of out-of-class work expected per credit hour, typically 2 or 3 (per week).</p>
+                    <p class="hint">Hours of out-of-class work expected per credit hour, typically 2 or 3 (per week).
+                    </p>
                   </div>
                 </div>
               </section>
@@ -185,7 +221,9 @@
         <!-- ============================================================ -->
         <section class="step" aria-labelledby="h-week">
           <details class="step-body" open>
-            <summary><h2 id="h-week"><span class="step-num" aria-hidden="true">2</span>Weekly time budget</h2></summary>
+            <summary>
+              <h2 id="h-week"><span class="step-num" aria-hidden="true">2</span>Weekly time budget</h2>
+            </summary>
 
             <div class="results">
               <div id="warnings"></div>
@@ -254,7 +292,9 @@
         <!-- ============================================================ -->
         <section class="step" aria-labelledby="h-module">
           <details class="step-body" open>
-            <summary><h2 id="h-module"><span class="step-num" aria-hidden="true">3</span>Module time planner</h2></summary>
+            <summary>
+              <h2 id="h-module"><span class="step-num" aria-hidden="true">3</span>Module time planner</h2>
+            </summary>
 
             <p class="step-lead lede">Now plan one module. Enter the time you expect students to spend on each
               activity, and this checks the total against the self-paced hours your credit budget
@@ -283,12 +323,15 @@
                   <div class="field">
                     <label for="rw_reading">Reading assignments &mdash; total hours</label>
                     <input type="number" id="rw_reading" min="0" step="0.25" value="0">
-                    <p class="hint">Hours for the module's readings, from the Learning Activity Estimator or your own estimate.</p>
+                    <p class="hint">Hours for the module's readings, from the Learning Activity Estimator or your own
+                      estimate.</p>
                   </div>
                   <div class="field">
                     <label for="rw_writing">Writing assignments &mdash; total hours</label>
                     <input type="number" id="rw_writing" min="0" step="0.25" value="0">
-                    <p class="hint">Hours for the module's writing assignments, from the Learning Activity Estimator or your own estimate.</p>
+                    <p class="hint">Hours for the module's writing assignments, from the Learning Activity Estimator
+                      or
+                      your own estimate.</p>
                   </div>
                 </div>
                 <details class="guide" style="margin:14px 0 0;">
@@ -339,7 +382,9 @@
       <!-- ============================================================ -->
       <section class="step" aria-labelledby="h-balance">
         <details class="step-body" open>
-          <summary><h2 id="h-balance"><span class="step-num" aria-hidden="true">4</span>Does the module fit?</h2></summary>
+          <summary>
+            <h2 id="h-balance"><span class="step-num" aria-hidden="true">4</span>Does the module fit?</h2>
+          </summary>
 
           <div class="results">
             <div class="totals">
@@ -714,7 +759,7 @@
         function trackCredits() {
           var c = num("credits");
           if (format() === "sync" && lastCredits !== null &&
-              num("f2f") === lastCredits * MINUTES_PER_CREDIT_HOUR) {
+            num("f2f") === lastCredits * MINUTES_PER_CREDIT_HOUR) {
             $("f2f").value = String(c * MINUTES_PER_CREDIT_HOUR);
           }
           lastCredits = c;
@@ -733,6 +778,17 @@
           $("f2f-hours").textContent = "= " + fmt(mins / 60) + " hours a week, or " +
             fmt1(mins / MINUTES_PER_CREDIT_HOUR) + " fifty-minute periods";
           $("desc-f2f").textContent = mins + " minutes a week, in person or live online";
+
+          /* The same echo for the semester length. The semester total is the
+             number that does NOT move when the term gets shorter — the weekly
+             figure beside it does — which is the whole point of the
+             acceleration rate and is otherwise only visible on a tile two
+             sections further down. (It does climb with the weeks once the
+             scheduled meetings exceed what the credits cover, since meeting
+             time is never accelerated; the readout shows that rather than
+             hiding it.) */
+          $("weeks-hours").textContent = "= " + fmt(w.semesterHours) +
+            " hours for the whole course, at " + fmt(w.totalHours) + " hours a week";
 
           /* --- weekly tiles --- */
           $("out-total").textContent = fmt(w.totalHours);
