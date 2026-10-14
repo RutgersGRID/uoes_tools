@@ -79,134 +79,166 @@
 
       <section class="step" aria-labelledby="basicsHead">
         <details class="step-body" open>
-          <summary><h2 id="basicsHead"><span class="step-num" aria-hidden="true">&#9998;</span>Course basics</h2></summary>
-        <div class="basics">
-          <div class="field">
-            <label for="courseTitle">Course title</label>
-            <input type="text" id="courseTitle" autocomplete="off" placeholder="e.g., Introduction to Ecology">
+          <summary>
+            <h2 id="basicsHead"><span class="step-num" aria-hidden="true">&#9998;</span>Course basics</h2>
+          </summary>
+          <div class="basics">
+            <div class="field">
+              <label for="courseTitle">Course title</label>
+              <input type="text" id="courseTitle" autocomplete="off" placeholder="e.g., Introduction to Ecology">
+            </div>
+            <div class="field">
+              <label for="moduleCount">Number of modules<span class="sr-only"> &mdash; same setting as in Step
+                  3</span></label>
+              <input type="number" id="moduleCount" min="1" max="20" value="16">
+            </div>
           </div>
-          <div class="field">
-            <label for="moduleCount">Number of modules<span
-              class="sr-only"> &mdash; same setting as in Step 3</span></label>
-            <input type="number" id="moduleCount" min="1" max="20" value="16">
-          </div>
-        </div>
         </details>
       </section>
 
       <section class="step" aria-labelledby="step1Head">
         <details class="step-body" open>
-          <summary><h2 id="step1Head"><span class="step-num" aria-hidden="true">1</span>Decide what your students will take away
-          from your
-          course</h2></summary>
-        <p class="step-lead">Backwards design starts with your objectives for the course. Before
-          choosing readings or lectures, name what students will be able to <em>do</em> when the course is over.
-        </p>
+          <summary>
+            <h2 id="step1Head"><span class="step-num" aria-hidden="true">1</span>Decide what your students will take
+              away
+              from your
+              course</h2>
+          </summary>
+          <p class="step-lead">Backwards design starts with your objectives for the course. Before
+            choosing readings or lectures, name what students will be able to <em>do</em> when the course is over.
+          </p>
 
-        <details class="guide">
-          <summary><h3>Why start at the end?</h3></summary>
-          <p>The three core elements of a course &mdash; Learning Objectives,
-            assessments, and activities &mdash; only work when they
-            point at the same destination. Starting from <a href="https://uoes.rutgers.edu/node/194">Learning Objectives</a> keeps everything
-            aligned.</p>
-          <p>Use the <a href="learning_objectives.html" target="_blank"
-            rel="noopener noreferrer">Learning Objective Builder</a> if you want
-            help writing an objective, then paste the result into the list
-            below.</p>
-        </details>
+          <details class="guide">
+            <summary>
+              <h3>Why start at the end?</h3>
+            </summary>
+            <p>The three core elements of a course &mdash; Learning Objectives,
+              assessments, and activities &mdash; only work when they
+              point at the same destination. Starting from <a href="https://uoes.rutgers.edu/node/194">Learning
+                Objectives</a> keeps everything
+              aligned.</p>
+            <p>Use the <a href="learning_objectives.html" target="_blank" rel="noopener noreferrer">Learning Objective
+                Builder</a> if you want
+              help writing an objective, then paste the result into the list
+              below.</p>
+          </details>
 
-        <h3><label for="goal-first" style="font-size:24px;">Course objectives</label></h3>
-        <p class="step-lead">What should students be able to do by the end of
-          the course.
-        </p>
-        <ul class="row-list" id="goalsList" aria-label="Course objectives"></ul>
-        <button type="button" class="add-btn" id="addGoalBtn">+ Add an objective</button>
+          <h3><label for="goal-first" style="font-size:24px;">Course objectives</label></h3>
+          <p class="step-lead">What should students be able to do by the end of
+            the course.
+          </p>
+          <ul class="row-list" id="goalsList" aria-label="Course objectives"></ul>
+          <button type="button" class="add-btn" id="addGoalBtn">+ Add an objective</button>
         </details>
       </section>
 
       <section class="step" aria-labelledby="step2Head">
         <details class="step-body">
-          <summary><h2 id="step2Head"><span class="step-num" aria-hidden="true">2</span>Decide how you'll assess each course objective
-        </h2></summary>
-        <p class="step-lead">Before planning any activities, decide how you will
-          <em>assess</em> the objectives you chose in Step 1. They appear below &mdash;
-          plan at least one assessment for each.
-        </p>
-
-        <details class="guide">
-          <summary><h3>What makes a good assessment online?<span class="sr-only"> &mdash; course objectives</span></h3></summary>
-          <p>An assessment is any student work you can evaluate against an objective.
-            Common options in online courses include auto-graded quizzes (recall
-            and concept checks), discussion posts and peer replies (critique and
-            application), papers and problem sets, projects and portfolios,
-            recorded presentations or demonstrations, and reflective journals.</p>
-          <p>Match the assessment to the verb in your objective: if students should
-            <em>analyze</em>, a multiple-choice quiz alone won't show it. And keep
-            your own grading load in mind &mdash; every assessment you assign is
-            something you (or an autograder) must respond to.
+          <summary>
+            <h2 id="step2Head"><span class="step-num" aria-hidden="true">2</span>Decide how you'll assess each course
+              objective
+            </h2>
+          </summary>
+          <p class="step-lead">Before planning any activities, decide how you will
+            <em>assess</em> the objectives you chose in Step 1. They appear below &mdash;
+            plan at least one assessment for each.
           </p>
-        </details>
 
-        <ul class="ev-list" id="evidenceList" aria-label="Assessments for each course objective"></ul>
+          <details class="guide">
+            <summary>
+              <h3>What makes a good assessment online?<span class="sr-only"> &mdash; course objectives</span></h3>
+            </summary>
+            <p>An assessment is any student work you can evaluate against an objective.
+              Common options in online courses include auto-graded quizzes (recall
+              and concept checks), discussion posts and peer replies (critique and
+              application), papers and problem sets, projects and portfolios,
+              recorded presentations or demonstrations, and reflective journals.</p>
+            <p>Match the assessment to the verb in your objective: if students should
+              <em>analyze</em>, a multiple-choice quiz alone won't show it. And keep
+              your own grading load in mind &mdash; every assessment you assign is
+              something you (or an autograder) must respond to.
+            </p>
+          </details>
+
+          <ul class="ev-list" id="evidenceList" aria-label="Assessments for each course objective"></ul>
         </details>
       </section>
 
       <section class="step" aria-labelledby="step3Head">
         <details class="step-body">
-          <summary><h2 id="step3Head"><span class="step-num" aria-hidden="true">3</span>Organize your course content into modules</h2></summary>
-        <p class="step-lead">Break down your course content into manageable chunks. Distribute your learning materials, activities, and assessments across the modules. </p>
+          <summary>
+            <h2 id="step3Head"><span class="step-num" aria-hidden="true">3</span>Organize your course content into
+              modules</h2>
+          </summary>
+          <p class="step-lead">Break down your course content into manageable chunks. Distribute your learning
+            materials, activities, and assessments across the modules. </p>
+          <p>If you'd like additional assistance with estimating how long individual activities will take, use the <a
+              href="learning_activity_estimator.html">Learning Activity Estimator</a>.</p>
 
-        <details class="guide">
-          <summary><h3>Why break content into modules?</h3></summary>
-          <p>Helps students avoid feeling overwhelmed by too much information at once. </p>
-                  <p>Modules may be organized by topic, by week, or by any other logical grouping that makes sense for your course.</p>
+          <details class="guide">
+            <summary>
+              <h3>Why break content into modules?</h3>
+            </summary>
+            <p>Helps students avoid feeling overwhelmed by too much information at once.</p>
+            <p>Modules may be organized by topic, by week, or by any other logical grouping that makes sense for your
+              course.</p>
 
-          <p>For tips on structuring and scheduling your modules, see the (not yet released) <a href="scheduling_tips.html">Structure and Scheduling Tips</a> resource from UOES.</p>
+  
+            <p>For tips on structuring and scheduling your modules, see the (not yet released) <a
+                href="scheduling_tips.html">Structure and Scheduling Tips</a> resource from UOES.</p>
 
-        </details>
+          </details>
 
-        <h3>Plan Your Modules</h3>
-        <p>For each module, you should:</p>
-                <span><ol>
-                  <li>Create Learning Objectives that represent student expectations.</li>
-                  
-                  <li>Decide how you will assess student success.</li>
-                  <li>Select Learning Activities that build the skills and knowledge its assessment will measure.</li>
-                  <li>List any materials & resources needed for the module.</li>
-                </ol>
-</span>
+          <h3>Plan Your Modules</h3>
+          <p>For each module, you should:</p>
+          <span>
+            <ol>
+              <li>Create Learning Objectives that represent student expectations.</li>
 
-        <details class="guide">
-          <summary><h3>Resources for planning</h3></summary>
-          <p>Visit the UOES Resource Library for a refresher on  <a href="https://uoes.rutgers.edu/node/194">Learning Objectives</a>,  <a href="https://uoes.rutgers.edu/node/196">Assessments</a>, and <a href="https://uoes.rutgers.edu/node/195">Learning Activities</a>.</p>
-<dd>For a list of some possible activities, see the Learning Activities section of the <a href="https://apps.uoes.rutgers.edu/credit_hour_planner.html">Credit Hour Planner</a>.</dd>
-                  
+              <li>Decide how you will assess student success.</li>
+              <li>Select Learning Activities that build the skills and knowledge its assessment will measure.</li>
+              <li>List any materials & resources needed for the module.</li>
+            </ol>
+          </span>
 
-        </details>
+          <details class="guide">
+            <summary>
+              <h3>Resources for planning</h3>
+            </summary>
+            <p>Visit the UOES Resource Library for a refresher on <a href="https://uoes.rutgers.edu/node/194">Learning
+                Objectives</a>, <a href="https://uoes.rutgers.edu/node/196">Assessments</a>, and <a
+                href="https://uoes.rutgers.edu/node/195">Learning Activities</a>.</p>
+            <dd>For a list of some possible activities, see the Learning Activities section of the <a
+                href="https://apps.uoes.rutgers.edu/credit_hour_planner.html">Credit Hour Planner</a>.</dd>
 
 
-                  
+          </details>
 
-        <!-- <h3 style="margin-top:28px;">Module cards</h3> -->
 
-        <div class="module-count">
-          <label for="moduleCountCards">Number of modules<span
-            class="sr-only"> &mdash; same setting as in Course basics</span></label>
-          <input type="number" id="moduleCountCards" min="1" max="20" value="16">
-          <p class="hint">Changing this adds or removes cards below. Anything you
-            have already typed is kept.</p>
-        </div>
 
-        <!-- The key is a closed panel, not a standing block. Every chip's
+
+          <!-- <h3 style="margin-top:28px;">Module cards</h3> -->
+
+          <div class="module-count">
+            <label for="moduleCountCards">Number of modules<span class="sr-only"> &mdash; same setting as in Course
+                basics</span></label>
+            <input type="number" id="moduleCountCards" min="1" max="20" value="16">
+            <p class="hint">Changing this adds or removes cards below. Anything you
+              have already typed is kept.</p>
+          </div>
+
+          <!-- The key is a closed panel, not a standing block. Every chip's
              aria-label already carries "CO1: <full text>", so a screen
              reader never needed the key; a touch user cannot read the chip
              tooltip without ticking the box, so they still do. Collapsed
              keeps it one line for everyone and one click from anybody. -->
-        <details class="guide legend-panel">
-          <summary><h3>What CO1, CO2&hellip; stand for</h3></summary>
-          <div id="goalLegend" aria-label="Course objective key"></div>
-        </details>
-        <div id="moduleCards"></div>
+          <details class="guide legend-panel">
+            <summary>
+              <h3>What CO1, CO2&hellip; stand for</h3>
+            </summary>
+            <div id="goalLegend" aria-label="Course objective key"></div>
+          </details>
+          <div id="moduleCards"></div>
         </details>
       </section>
 
