@@ -127,11 +127,60 @@
 
             <div class="two-col">
 
+              <section class="card" aria-labelledby="s-basics">
+                <h3 id="s-basics">Course basics</h3>
+                <div class="card-body">
+                  <p class="card-lead">Adjust these values to match the course credits and course length for your
+                    course. </p>
+                  <div class="field-row tight">
+                    <div class="field">
+                      <label for="credits">Course credits</label>
+                      <input type="number" id="credits" min="0" step="0.5" value="3">
+                    </div>
+                    <div class="field">
+                      <label for="weeks">Course length (weeks)</label>
+                      <input type="number" id="weeks" min="1" step="1" value="15">
+                    </div>
+                  </div>
+                  <div class="card-guidance">
+                    <p class="req" id="minimums">Based on the entered credits (3) and course length
+                      (15 weeks), the minimum required academic work is 150 minutes (2 hours and 30
+                      minutes) per week and the minimum additional student work is 300 minutes (5 hours)
+                      per week, for a total of 37 hours and 30 minutes of academic work and 75 hours of
+                      additional student work across the entire course.</p>
+                    <p class="req">Note: These minimums are based on federal and state guidelines --
+                      your department may have additional requirements.</p>
+                  </div>
+                  <details class="guide">
+                    <summary>
+                      <h4>How these minimums are calculated.</h4>
+                    </summary>
+                    <p>A "credit hour" is at least 50 minutes of faculty-led instruction and another 100 minutes of
+                      out-of-class student work, each week, for 15 weeks.
+                    </p>
+                    <p>Multiply the number of credits by the minimums to determine the total amount of work required for
+                      the course.</p>
+                    <p>For shorter terms, the minimum work required per week is adjusted to meet the total
+                      requirements across the course. Divide 15 by the number of weeks in the term to get the adjustment
+                      factor. A 5 week term is 3 times shorter than a 15 week term, so the minimum work required per
+                      week would be 3 times greater.</p>
+                    <p>References: <a
+                        href="https://www.ecfr.gov/current/title-34/part-600/section-600.2#p-600.2(Credit%20hour)">34
+                        CFR § 600.2</a>, <a
+                        href="https://www.nj.gov/highereducation/documents/pdf/licensure/licensureadoptionregulations.pdf">New
+                        Jersey Administrative Code Title 9A.</a>, <a
+                        href="https://senate.rutgers.edu/wp-content/uploads/2023/10/10.2.4-Units-of-Credit-EVPAA-DRAFT-20231017-CLEAN-COPY.pdf">Rutgers
+                        University Policy 10.2.4</a></p>
+                  </details>
+                </div>
+              </section>
+
               <section class="card" aria-labelledby="s-format">
                 <h3 id="s-format">Course format</h3>
                 <div class="card-body">
                   <fieldset>
-                    <legend class="sr-only">Choose a course format</legend>
+                    <legend class="hint">Choose a course format; this choice affects how the academic work is delivered.
+                    </legend>
                     <div class="choice">
                       <input type="radio" name="format" id="fmt-sync" value="sync" checked>
                       <div>
@@ -157,85 +206,61 @@
                       </div>
                     </div>
                   </fieldset>
-                  <p class="hint" style="margin-top:12px;">Choosing a format fills in the planned academic
-                    work beside it. You can always change that number afterwards.</p>
-                </div>
-              </section>
-
-              <section class="card" aria-labelledby="s-basics">
-                <h3 id="s-basics">Course basics</h3>
-                <div class="card-body">
-                  <div class="field">
-                    <label for="credits">Course credits</label>
-                    <div class="field-inline">
-                      <input type="number" id="credits" min="0" step="0.5" value="3">
-                      <p class="hint" id="credit-def">One credit hour is 50 minutes of instructional time
-                        and 100 minutes of outside student work.</p>
-                    </div>
-                    <p class="hint" id="course-hours">A 3 credit course requires 150 minutes of instructional
-                      time and 300 minutes of outside student work each week, for a total of 37.50 hours of
-                      instructional time and 75.00 hours of outside student work for the course.</p>
-                  </div>
-                  <div class="field">
-                    <label for="weeks">Semester length (weeks)</label>
-                    <div class="field-inline">
-                      <input type="number" id="weeks" min="1" step="1" value="15">
-                      <p class="hint">Per week minimums are based on 15 weeks.</p>
-                    </div>
-                    <p class="hint">For longer or shorter terms, the minimums must be adjusted. A shorter term
-                      will increase per week minimums and a longer term would reduce minimums.</p>
-                    <p class="hint" id="weeks-accel">At 15 weeks, your minimums are 2 hours and 30 minutes
-                      of instructional time and 5 hours of outside student work.</p>
-                  </div>
-                  <div class="field">
-                    <label for="f2f">Planned Academic Work (minutes per week)</label>
-                    <div class="field-inline">
-                      <input type="number" id="f2f" min="0" step="5" value="150">
-                      <p class="hint">This includes synchronous meetings and monitored asynchronous
-                        materials.</p>
-                    </div>
-                    <p class="hint">Enter the week's scheduled meetings in minutes, including instruction,
-                      labs, or other scheduled academic work. Asynchronous learning activities using
-                      technology that can monitor and document the time students participate can be
-                      included in this number. For example, a 1.5 hour class and 1 hour WeVideo lecture,
-                      each week, would be 2.5 hours of academic work.</p>
-                    <p class="warn" id="f2f-min" hidden>The minimum amount of academic work is 2 hours and
-                      30 minutes based on your entered credits and semester length.</p>
-                  </div>
-                  <div class="field">
-                    <label for="study">Study time per credit hour (per week)</label>
-                    <input type="number" id="study" min="0" step="0.5" value="2">
-                    <p class="hint">Hours of out-of-class work expected per credit hour, typically 2 or 3 (per week).
-                    </p>
-                  </div>
+                  <details class="guide">
+                    <summary>
+                      <h4>What counts as instructional time</h4>
+                    </summary>
+                    <p>The instructional rows are <strong>seat time</strong> &mdash; the 50-minute
+                      period per credit hour a course owes each week. A 3-credit course owes 150
+                      minutes.</p>
+                    <p>Your planned academic work covers it directly &mdash; scheduled meetings, where a
+                      live online meeting counts the same as one in a room, together with asynchronous
+                      material whose time can be monitored and documented. Whatever that does not cover is
+                      self-paced: the asynchronous equivalent of a class meeting &mdash; recorded lectures,
+                      guided activities, instructor-directed content students work through on their own
+                      time.</p>
+                    <p>Planning more academic work than the course carries credits is fine. Labs, studios
+                      and clinicals routinely do, and the federal definition sets the credit hour as a
+                      minimum rather than a ceiling. The self-paced instructional row simply drops to
+                      zero.</p>
+                    <p>It is <em>not</em> homework. Out-of-class work is the studying row.</p>
+                  </details>
                 </div>
               </section>
 
             </div>
 
+            <section class="card card-full" aria-labelledby="s-structure">
+              <h3 id="s-structure">Course structure</h3>
+              <div class="card-body">
+                <div class="field">
+                  <label for="f2f">Academic Work (minutes per week)</label>
+                  <div class="field-inline">
+                    <input type="number" id="f2f" min="0" step="1" value="150">
+                    <p class="hint">This includes synchronous meetings and monitored asynchronous
+                      materials.</p>
+                  </div>
+                  <p class="warn" id="f2f-min" hidden></p>
+                </div>
+                <div class="field">
+                  <label for="study">Additional Student Work (minutes per week)</label>
+                  <div class="field-inline">
+                    <input type="number" id="study" min="0" step="1" value="300">
+                    <p class="hint">Reading, assignments, studying &mdash; work students do on their
+                      own.</p>
+                  </div>
+                  <p class="hint">Enter the out-of-class work you expect students to do in a week, in
+                    minutes. The statutory minimum is 100 minutes per credit; many departments plan for
+                    150.</p>
+                  <p class="warn" id="study-min" hidden></p>
+                </div>
+              </div>
+            </section>
+
             <section aria-labelledby="s-how">
               <h3 id="s-how" class="plain">How this is calculated</h3>
               <p class="step-lead">One credit hour means one 50-minute period of instruction plus the study
                 time you set above, each week, for a 15-week semester.</p>
-              <details class="guide" open>
-                <summary>
-                  <h4>What counts as instructional time</h4>
-                </summary>
-                <p>The instructional rows are <strong>seat time</strong> &mdash; the 50-minute
-                  period per credit hour a course owes each week. A 3-credit course owes 150
-                  minutes.</p>
-                <p>Your planned academic work covers it directly &mdash; scheduled meetings, where a
-                  live online meeting counts the same as one in a room, together with asynchronous
-                  material whose time can be monitored and documented. Whatever that does not cover is
-                  self-paced: the asynchronous equivalent of a class meeting &mdash; recorded lectures,
-                  guided activities, instructor-directed content students work through on their own
-                  time.</p>
-                <p>Planning more academic work than the course carries credits is fine. Labs, studios
-                  and clinicals routinely do, and the federal definition sets the credit hour as a
-                  minimum rather than a ceiling. The self-paced instructional row simply drops to
-                  zero.</p>
-                <p>It is <em>not</em> homework. Out-of-class work is the studying row.</p>
-              </details>
               <details class="guide">
                 <summary>
                   <h4>The acceleration rate</h4>
@@ -248,6 +273,16 @@
                 <p>Planned academic work is the exception: it stays at the length you entered. In an
                   accelerated course the extra instructional time that it does not cover is pushed
                   into the self-paced instructional total.</p>
+              </details>
+              <details class="guide">
+                <summary>
+                  <h4>What counts as Academic Work</h4>
+                </summary>
+                <p>Enter the week's scheduled meetings in minutes, including instruction, labs, or
+                  other scheduled academic work. Asynchronous learning activities using technology
+                  that can monitor and document the time students participate can be included in this
+                  number. For example, a 1.5 hour class and 1 hour WeVideo lecture, each week, would
+                  be 2.5 hours of academic work.</p>
               </details>
             </section>
 
@@ -370,7 +405,7 @@
                       your own estimate.</p>
                   </div>
                 </div>
-                <details class="guide" style="margin:14px 0 0;">
+                <details class="guide">
                   <summary>
                     <h4>A note on these two numbers</h4>
                   </summary>
@@ -485,6 +520,18 @@
         var STANDARD_WEEKS = 15;
         /* One credit hour = one 50-minute period of instruction per week. */
         var MINUTES_PER_CREDIT_HOUR = 50;
+        /* The outside-work half of the credit hour, as N.J.A.C. 9A:1-1.2 states
+           it: the 50 minutes of class activity is "complemented by at least 100
+           minutes" of laboratory or outside assignments. Deliberately NOT the
+           study field, which is what this course expects (2 or 3 hours per credit)
+           rather than what the state requires. The Course structure readout is
+           about the minimum, so it uses this; the computed rows below use the
+           study field. */
+        var STUDY_MINUTES_PER_CREDIT = 100;
+        /* Ceiling for reading a markerless save's student-work value as the old
+           hours-per-credit-per-week unit; above it the value is already minutes. */
+        var OLD_STUDY_CEILING = 24;
+        var MINUTES_PER_WEEK = 7 * 24 * 60;
 
         /* ------------------------------------------------------------------
            Activity rows. `sug` is the suggested time shown to the user and
@@ -706,7 +753,17 @@
           var instrMin = M * accel * (credits - f2f) + (M * accel * f2f - f2fMin);
           if (!isFinite(instrMin) || instrMin < 0) instrMin = 0;
 
-          var studyMin = M * accel * credits * study;
+          /* Until October 14, 2026 this field held hours per credit per week and
+             the figure was accelerated with everything else. It now holds the
+             minutes a week the instructor actually plans, so it is taken as
+             entered — nobody types into a "per week" box expecting the tool to
+             multiply it by 2.14 for a 7-week term. Scheduled academic work has
+             always been treated this way; the two fields now match.
+
+             The consequence is that a short term no longer inflates this number
+             silently: it falls short of the accelerated minimum, and the notice
+             under the field says so. That is the point of the notice. */
+          var studyMin = study;
           if (!isFinite(studyMin) || studyMin < 0) studyMin = 0;
 
           var rows = [];
@@ -719,7 +776,10 @@
           } else {
             rows.push({ name: "Instructional", accel: accel, credits: credits, min: instrMin });
           }
-          rows.push({ name: "Studying", accel: accel, credits: credits * study, min: studyMin });
+          rows.push({
+            name: "Studying", accel: 1,
+            credits: studyMin / MINUTES_PER_CREDIT_HOUR, min: studyMin
+          });
 
           rows.forEach(function (r) {
             r.weeklyHours = r.min / 60;
@@ -791,38 +851,69 @@
             : "planned academic work, or its self-paced equivalent";
         }
 
-        /* Picking a format fills the academic-work field in. Synchronous and
-           asynchronous courses both owe the full minimum — the difference between
-           them is whether that time is scheduled meetings or monitored asynchronous
-           material, not how much of it there is — so both presets fill the minimum
-           and blended keeps whatever number is already there. The field stays
-           editable in every format: a lab may well run longer than its credit hours.
+        /* The format choice writes nothing. Until October 15, 2026 picking
+           synchronous or asynchronous overwrote the academic-work field with the
+           minimum, which had become both redundant and wrong: trackSetup already
+           keeps that field at the minimum while it is untouched, so the preset's
+           only remaining effect was to discard a number the user had set on
+           purpose — under a card that says the choice does not affect the
+           minimum requirements.
 
-           Until October 14, 2026 the asynchronous preset set this to 0, from a
-           reading in which only meetings counted. N.J.A.C. 9A:1-1.2 counts
-           asynchronous activity whose time can be monitored and documented, so an
-           asynchronous course has the same minimum as any other. */
-        function applyFormatPreset() {
-          var f = format();
-          if (f !== "blended") { $("f2f").value = String(num("credits") * MINUTES_PER_CREDIT_HOUR); }
-          lastCredits = num("credits");
+           All three formats owe the same minimum. What differs is how the work is
+           delivered, which is a matter for the text beside each choice, not for
+           the arithmetic: nothing below reads the format except the saved plan and
+           the printed report. */
+
+        /* The weekly minimum for a given course setup, in whole minutes: the
+           statutory rate per credit, scaled by the acceleration rate, because a
+           shorter term carries the same course total in fewer weeks. null when
+           there is no sensible answer — under a week the rate is undefined and
+           the warnings block already says nothing is being calculated.
+
+           Rounded here rather than at each call site so the figure written into a
+           field is the same one the readout above it states: a 7-week 3-credit
+           course gives 321.43, and both must say 321. */
+        function minimumFor(credits, weeks, perCredit) {
+          if (!(weeks >= 1) || !(credits >= 0)) return null;
+          return Math.round(credits * perCredit * (STANDARD_WEEKS / weeks));
         }
 
-        /* While the planned academic work still matches the credit-hour minimum,
-           changing the credits carries it along; once the number has been changed
-           by hand it is left alone. */
+        /* Both work fields start at the minimum and follow the course setup for as
+           long as they still hold it. Change the credits or the length and they
+           move with it; type anything else into one and it becomes yours, and is
+           left alone from then on.
+
+           "Untouched" is judged by the value, not by a flag: the field is followed
+           while it equals the minimum for the credits and length then in force.
+           That costs nothing — someone who types the minimum by hand keeps the
+           convenience, and anyone who types a different number keeps their number
+           — and it needs no extra state to survive a reload.
+
+           Below 1 week there is no minimum to compute, so the fields and the
+           remembered setup are both left alone until a real length comes back. A
+           trip through 0 weeks therefore does not strand them at a stale figure. */
         var lastCredits = null;
-        function trackCredits() {
+        var lastWeeks = null;
+        var TRACKED = [["f2f", MINUTES_PER_CREDIT_HOUR], ["study", STUDY_MINUTES_PER_CREDIT]];
+        function trackSetup() {
           var c = num("credits");
-          if (format() !== "blended" && lastCredits !== null &&
-            num("f2f") === lastCredits * MINUTES_PER_CREDIT_HOUR) {
-            $("f2f").value = String(c * MINUTES_PER_CREDIT_HOUR);
+          var w = num("weeks");
+          if (!(w >= 1)) return;
+          if (lastCredits !== null && lastWeeks !== null) {
+            TRACKED.forEach(function (pair) {
+              var was = minimumFor(lastCredits, lastWeeks, pair[1]);
+              var now = minimumFor(c, w, pair[1]);
+              if (was !== null && now !== null && num(pair[0]) === was) {
+                $(pair[0]).value = String(now);
+              }
+            });
           }
           lastCredits = c;
+          lastWeeks = w;
         }
 
         function render() {
-          trackCredits();
+          trackSetup();
           syncVisibility();
 
           var w = calcWeek();
@@ -851,60 +942,21 @@
              course must not be told it runs across a 15-week semester. Dropped
              entirely below 1 week, where weeks is clamped to 0 and the warning
              above already explains that nothing is being calculated. */
-          /* The credit-hour definition itself, spelled out for the credits
-             entered: 50 minutes of instruction plus `study` x 50 minutes of
-             outside work, per credit, per week (N.J.A.C. 9A:1-1.2). The
-             outside-work figure tracks the study field rather than being fixed
-             at 100, so it stays right when that is set to 3.
+          /* The statutory weekly rate for the credits entered. Both halves are
+             the minimum the regulation sets (50 and 100 minutes per credit), not
+             what this course plans: the study field is what the instructor
+             expects, and reading it here would make the page say the minimum is
+             whatever they typed.
 
-             This is the standard weekly rate — what one credit is defined as —
-             and it is deliberately unaccelerated. What a shorter term does to
-             it is the business of the two lines under Semester length.
-
-             "across 15 weeks" is STANDARD_WEEKS, NOT the semester-length field.
-             The rate is anchored to a standard term by definition, so a 7-week
-             course must still read "450 minutes a week across 15 weeks" — the
-             actual weekly load there is far higher, and the lines below say so.
-             Wiring this to w.weeks would make the sentence false. */
-          var perCreditStudyMin = MINUTES_PER_CREDIT_HOUR * num("study");
-          $("credit-def").textContent = "One credit hour is " + MINUTES_PER_CREDIT_HOUR +
-            " minutes of instructional time and " + perCreditStudyMin +
-            " minutes of outside student work.";
-          /* Weekly figures in minutes, course totals in hours: 2250 and 4500
-             minutes are hard to hold in your head, and the hour figures match
-             both the tiles below and the standards quoted in the panels above.
-             The totals multiply by
-             STANDARD_WEEKS rather than the semester-length field: they are what
-             the credits are worth, and an accelerated term redistributes that
-             same total across fewer weeks rather than changing it. */
+             These feed the #minimums sentence below the fields and the notice
+             under each input. A fuller version, naming the course totals as well
+             as the weekly rate, was printed inside the "How these minimums are
+             calculated." panel until October 16, 2026; it said the same thing as
+             the sentence below the fields, so Maka dropped it. The totals
+             themselves are no longer stated anywhere but the Total per semester
+             tile in step 2. */
           var weeklyInstrMin = num("credits") * MINUTES_PER_CREDIT_HOUR;
-          var weeklyStudyMin = num("credits") * perCreditStudyMin;
-          $("course-hours").textContent = "A " + num("credits") + " credit course requires " +
-            weeklyInstrMin + " minutes of instructional time and " +
-            weeklyStudyMin + " minutes of outside student work each week, for a total of " +
-            fmt(weeklyInstrMin * STANDARD_WEEKS / 60) + " hours of instructional time and " +
-            fmt(weeklyStudyMin * STANDARD_WEEKS / 60) + " hours of outside student work for the course.";
-
-          /* The per-week minimums for the term actually entered: the standard
-             weekly rate scaled by the acceleration rate.
-
-             Derived from credits and study rather than read off the computed
-             rows, because the rows carry the user's own meeting minutes. Those
-             can exceed what the credits require, and this sentence is about the
-             minimum, not about what they have planned.
-
-             Hidden rather than emptied below 1 week, so no blank line is left
-             where the figures would be. */
-          var weeksAccel = $("weeks-accel");
-          if (w.weeks < 1) {
-            weeksAccel.hidden = true;
-          } else {
-            weeksAccel.hidden = false;
-            weeksAccel.textContent = "At " + w.weeks + (w.weeks === 1 ? " week" : " weeks") +
-              ", your minimums are " +
-              hhmm(weeklyInstrMin * w.accel) + " of instructional time and " +
-              hhmm(weeklyStudyMin * w.accel) + " of outside student work.";
-          }
+          var weeklyStudyMin = num("credits") * STUDY_MINUTES_PER_CREDIT;
 
           /* The below-minimum notice, shown only when the planned academic work
              falls short of the instructional minimum for the credits and term
@@ -919,15 +971,84 @@
              already says nothing is being calculated. The quarter-minute tolerance
              keeps a fractional rate (a 7-week term gives 321.428... minutes) from
              flagging a value the user typed to match it. */
-          var academicMin = $("f2f-min");
-          var requiredMin = weeklyInstrMin * w.accel;
-          if (w.weeks < 1 || mins >= requiredMin - 0.25) {
-            academicMin.hidden = true;
-          } else {
-            academicMin.hidden = false;
-            academicMin.textContent = "The minimum amount of academic work is " + hhmm(requiredMin) +
-              " based on your entered credits and semester length.";
+          /* Both minimums in one sentence, closing the card that produces them:
+             the statutory rate for the credits entered, scaled by the acceleration
+             rate, since a shorter term carries the same course total in fewer
+             weeks. Stated once here rather than twice over in Course structure,
+             where the two sentences shared an eleven-word opening.
+
+             Minutes lead, because minutes are what the two boxes take: a reader
+             comparing 300 against "5 hours" has to convert before they can tell
+             whether they are short. The hours-and-minutes form follows in
+             brackets, and is dropped under an hour where it would only repeat the
+             minutes.
+
+             Below 1 week nothing is calculated (weeks is clamped to 0 and the
+             warnings block says so), so the line goes quiet rather than printing
+             figures derived from a zero rate. */
+          function minutesPhrase(x) {
+            var m = Math.round(x);
+            return m + (m === 1 ? " minute" : " minutes") +
+              (m >= 60 ? " (" + hhmm(x) + ")" : "");
           }
+          var reqWork = weeklyInstrMin * w.accel;
+          var reqStudy = weeklyStudyMin * w.accel;
+          var minLine = $("minimums");
+          if (w.weeks < 1) {
+            minLine.hidden = true;
+          } else {
+            minLine.hidden = false;
+            /* The course totals close the sentence. They multiply by
+               STANDARD_WEEKS, not the course-length field: they are what the
+               credits are worth, and a shorter term redistributes that same
+               total across fewer weeks rather than shrinking it. So the figures
+               in brackets at the front change with the term and the ones at the
+               end do not, which is the whole point of the acceleration rate and
+               is what the panel below spells out. */
+            minLine.textContent = "Based on the entered credits (" + num("credits") +
+              ") and course length (" + w.weeks + (w.weeks === 1 ? " week" : " weeks") +
+              "), the minimum required academic work is " + minutesPhrase(reqWork) +
+              " per week and the minimum additional student work is " + minutesPhrase(reqStudy) +
+              " per week, for a total of " + hhmm(weeklyInstrMin * STANDARD_WEEKS) +
+              " of academic work and " + hhmm(weeklyStudyMin * STANDARD_WEEKS) +
+              " of additional student work across the entire course.";
+          }
+
+          /* The notice under each field. Measured against the rounded figure,
+             which is the one stated above and the one the field is filled with: a
+             7-week 3-credit course owes 321.43, so an entry of 321 must not be
+             called short of a minimum the page itself prints as 321.
+
+             Each field is judged only against its own minimum. Scheduling more
+             academic work than the credits require does not lower what students
+             owe outside class, so it must not quietly cancel a shortfall here or
+             manufacture one there.
+
+             Short is a warning; over is only a note, in the calmer blue treatment,
+             because exceeding the minimum is allowed — labs, studios and
+             clinicals routinely do — and the page should say so without colouring
+             it as a fault. */
+          function stateNotice(noticeId, required, planned, label) {
+            var notice = $(noticeId);
+            if (w.weeks < 1) {
+              notice.hidden = true;
+              return;
+            }
+            var diff = Math.round(planned) - Math.round(required);
+            notice.hidden = diff === 0;
+            if (diff < 0) {
+              notice.className = "warn";
+              notice.textContent = "You will need to provide an additional " + (-diff) +
+                (diff === -1 ? " minute" : " minutes") + " to meet the required minimums.";
+            } else if (diff > 0) {
+              notice.className = "note";
+              notice.textContent = "You have entered " + diff +
+                (diff === 1 ? " minute" : " minutes") + " more than is required. You may wish to " +
+                "reduce the " + label + ", but this is not required.";
+            }
+          }
+          stateNotice("f2f-min", reqWork, mins, "academic work");
+          stateNotice("study-min", reqStudy, Math.max(0, num("study")), "additional student work");
 
           /* --- weekly tiles --- */
           $("out-total").textContent = fmt(w.totalHours);
@@ -1055,7 +1176,8 @@
           lines.push("  Format:            " + FORMAT_NAMES[w.format]);
           lines.push("  Semester length:   " + num("weeks") + " weeks");
           lines.push("  Credits:           " + num("credits"));
-          lines.push("  Study per credit:  " + num("study") + " hours");
+          lines.push("  Student work:      " + num("study") + " minutes per week (" +
+            fmt(num("study") / 60) + " hours)");
           lines.push("  Academic work:     " + num("f2f") + " minutes per week (" + fmt(num("f2f") / 60) + " hours)");
           lines.push("  Acceleration rate: " + w.accel.toFixed(2));
           lines.push("");
@@ -1135,9 +1257,11 @@
           clearTimeout(saveTimer);
           saveTimer = setTimeout(function () {
             try {
-              /* f2fUnit marks that f2f is in minutes; a save without it is
-                 the pre-September-10-2026 shape, in 50-minute academic hours. */
-              var data = { format: format(), f2fUnit: "min" };
+              /* f2fUnit marks that f2f is in minutes; a save without it is the
+                 pre-September-10-2026 shape, in 50-minute academic hours.
+                 studyUnit does the same for the student-work field, which held
+                 hours per credit per week until October 14, 2026. */
+              var data = { format: format(), f2fUnit: "min", studyUnit: "min" };
               ALL_FIELDS.forEach(function (id) {
                 var e = $(id);
                 if (e) data[id] = e.value;
@@ -1173,8 +1297,37 @@
               $("f2f").value = isFinite(oldF2f)
                 ? String(Math.round(oldF2f * MINUTES_PER_CREDIT_HOUR)) : "0";
             }
+            /* Until October 14, 2026 the student-work field held hours per credit
+               per week; it now holds minutes a week. Converting needs the credits
+               from the same save, since the old figure was per credit.
+
+               OLD_STUDY_CEILING guards against converting twice. The marker alone
+               is not enough: a save written by an older copy of this page carries
+               no marker even when the value in it is already minutes, and running
+               the conversion on that multiplies it by 50 x credits (300 becomes
+               45,000). The old field was hours per credit per week — realistically
+               2 or 3, and more than a day's worth is not a reading anyone meant —
+               so a larger number is already in the new unit and is left alone. */
+            if (("study" in data) && data.studyUnit !== "min") {
+              var oldStudy = parseFloat(data.study);
+              var savedCredits = parseFloat(data.credits);
+              if (!isFinite(savedCredits)) savedCredits = 0;
+              if (!isFinite(oldStudy)) $("study").value = "0";
+              else if (oldStudy <= OLD_STUDY_CEILING) {
+                $("study").value =
+                  String(Math.round(oldStudy * MINUTES_PER_CREDIT_HOUR * savedCredits));
+              }
+            }
             if (wasMergedOnline) $("f2f").value = "0";
+            /* Last line of defence for the two weekly-minute fields: a week holds
+               10,080 minutes, so anything above that is corrupt rather than
+               ambitious, whatever wrote it. Reset rather than render a course
+               that asks for 750 hours a week. */
+            ["f2f", "study"].forEach(function (id) {
+              if (num(id) > MINUTES_PER_WEEK) $(id).value = $(id).defaultValue;
+            });
             lastCredits = num("credits");
+            lastWeeks = num("weeks");
           } catch (err) { /* corrupt or unavailable; ignore */ }
         }
 
@@ -1182,15 +1335,6 @@
 
         $("f").addEventListener("input", render);
         $("f").addEventListener("change", render);
-
-        /* Listeners on the radios themselves, so the preset lands before the
-           form-level render sees the new value. */
-        Array.prototype.forEach.call(
-          document.querySelectorAll('input[name="format"]'),
-          function (r) {
-            r.addEventListener("input", applyFormatPreset);
-            r.addEventListener("change", applyFormatPreset);
-          });
 
         /* There is deliberately no "fill everything with suggested times" control.
            In the original workbook these were per-cell Excel input-message tooltips
@@ -1248,6 +1392,7 @@
         window.__asText = asText;
 
         lastCredits = num("credits");
+        lastWeeks = num("weeks");
         load();
         render();
       })();

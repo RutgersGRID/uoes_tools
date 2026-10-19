@@ -35,11 +35,19 @@ function near(name, actual, expected, tol) {
 
    The fully-online block (rows 11-12) is the same thing with B19 = 0.
 ------------------------------------------------------------------ */
+/* October 14, 2026: H22 no longer carries the acceleration rate. The student-work
+   field holds the minutes a week the instructor plans, not a per-credit rate the
+   tool scales, so it is taken as entered -- the same treatment scheduled academic
+   work has always had. Cases still give `study` in the workbook's per-credit hours;
+   setup() converts, and this transcription applies the same conversion so the two
+   agree about what a case means. */
+function studyMinutes(credits, study, accel) { return 50 * credits * study * accel; }
+
 function excelWeek(weeks, credits, study, f2f) {
   const accel = weeks === 0 ? 0 : 15 / weeks;
   const H20 = 50 * f2f * 1;
   const H21 = 50 * (credits - f2f) * accel + (50 * accel * f2f - H20);
-  const H22 = 50 * ((f2f + (credits - f2f)) * study) * accel;
+  const H22 = studyMinutes(credits, study, accel);
   return {
     accel,
     f2fMin: H20, instrMin: H21, studyMin: H22,
@@ -54,7 +62,7 @@ function excelWeek(weeks, credits, study, f2f) {
 function excelOnline(weeks, credits, study) {
   const accel = weeks === 0 ? 0 : 15 / weeks;
   const H11 = 50 * credits * accel;
-  const H12 = 50 * (credits * study) * accel;
+  const H12 = studyMinutes(credits, study, accel);
   return {
     accel, instrMin: H11, studyMin: H12,
     instrHours: H11 / 60, studyHours: H12 / 60,
@@ -89,7 +97,14 @@ function excelOnline(weeks, credits, study) {
 
      Cases give f2f in 50-minute academic hours, matching the workbook's cell
      formulas. The field itself takes minutes per week (September 10, 2026), so
-     setup() scales it. */
+     setup() scales it.
+
+     `study` is likewise given in the workbook's hours per credit per week. That
+     field took minutes per week from October 14, 2026, and is no longer
+     accelerated, so setup() converts with the acceleration rate baked in -- a
+     case's `study: 2` at 7 weeks means the same weekly load it always did, and
+     every expected figure in the matrices below still holds. A case that wants
+     to set the field directly passes studyMin instead. */
   const setup = async (o) => page.evaluate((o) => {
     const set = (id, v) => {
       const e = document.getElementById(id);
@@ -100,7 +115,12 @@ function excelOnline(weeks, credits, study) {
       { sync: "fmt-sync", blended: "fmt-blended", async: "fmt-async" }[o.format]);
     fmt.checked = true;
     fmt.dispatchEvent(new Event("change", { bubbles: true }));
-    set("weeks", o.weeks); set("credits", o.credits); set("study", o.study);
+    set("weeks", o.weeks); set("credits", o.credits);
+    if (o.studyMin !== undefined) set("study", o.studyMin);
+    else if (o.study !== undefined) {
+      const a = o.weeks > 0 ? 15 / o.weeks : 0;
+      set("study", 50 * o.credits * o.study * a);
+    }
     if (o.f2f !== undefined) set("f2f", o.f2f * 50);
     if (o.reading !== undefined) set("rw_reading", o.reading);
     if (o.writing !== undefined) set("rw_writing", o.writing);
@@ -323,31 +343,78 @@ function excelOnline(weeks, credits, study) {
     ok("under-budget shows a note", noted === 1, "count " + noted);
   }
 
-  /* ===== 8. Where the meeting-hours field lives, and what the tiles show =====
-     The field moved out of the format card (where it appeared only for a
-     blended course) into Course basics, below the course credits, and is now
-     always visible. The tiles key off the number instead of the format. */
+  /* ===== 8. Where the fields live, and what the tiles show =====
+     The academic-work field moved out of the format card (where it appeared only
+     for a blended course) and is now always visible. October 14, 2026: credits
+     and course length moved the other way, into the format card, leaving the
+     right-hand card as Course structure — the standard's figures plus the two
+     fields that describe the work. The tiles key off the number, not the format. */
   {
     await setup({ format: "async", weeks: 15, credits: 3, study: 2 });
     const place = await page.evaluate(() => {
       const credits = document.getElementById("credits");
+      const weeks = document.getElementById("weeks");
       const f2f = document.getElementById("f2f");
       const card = f2f.closest("section");
+      const fmtCard = credits.closest("section");
       return {
         oldWrapper: !!document.getElementById("wrap-f2f"),
         visible: !!f2f.offsetParent,
-        sameCard: card === credits.closest("section"),
+        sameCard: card === fmtCard,
         heading: card.querySelector("h3").textContent,
+        fmtHeading: fmtCard.querySelector("h3").textContent,
+        weeksWithCredits: weeks.closest("section") === fmtCard,
+        creditsBeforeFormat: !!(credits.compareDocumentPosition(
+          document.getElementById("fmt-sync")) & Node.DOCUMENT_POSITION_FOLLOWING),
         creditsFirst: !!(credits.compareDocumentPosition(f2f) &
           Node.DOCUMENT_POSITION_FOLLOWING),
-        label: document.querySelector('label[for="f2f"]').textContent
+        label: document.querySelector('label[for="f2f"]').textContent,
+        weeksLabel: document.querySelector('label[for="weeks"]').textContent
       };
     });
     ok("the blended-only wrapper is gone", place.oldWrapper === false);
-    ok("meeting hours are visible in an asynchronous course", place.visible === true);
-    ok("meeting hours sit in the Course basics card",
-      place.sameCard && /Course basics/.test(place.heading), place.heading);
-    ok("meeting hours sit below the course credits", place.creditsFirst === true);
+    ok("the academic-work field is visible in an asynchronous course", place.visible === true);
+    // October 15, 2026: the format choices moved to their own full-width card
+    // below the pair, so the card holding credits and length is Course basics.
+    ok("credits sit in the Course basics card",
+      /Course basics/.test(place.fmtHeading), place.fmtHeading);
+    ok("course length sits with the credits", place.weeksWithCredits === true);
+    ok("the length field is labelled course length", /Course length/.test(place.weeksLabel),
+      place.weeksLabel);
+    ok("credits and length come before the format choices", place.creditsBeforeFormat === true);
+    /* October 15, 2026: Course format and Course structure swapped places.
+       Format pairs with Course basics at the top -- what the course is -- and
+       Course structure runs full width below it, holding the two work fields. */
+    const cards = await page.evaluate(() => {
+      const pair = document.querySelector(".two-col");
+      const fmt = document.getElementById("fmt-sync").closest("section");
+      const struct = document.getElementById("f2f").closest("section");
+      return {
+        fmtHeading: fmt.querySelector("h3").textContent,
+        structHeading: struct.querySelector("h3").textContent,
+        fmtInPair: pair.contains(fmt),
+        fmtFullWidth: fmt.classList.contains("card-full"),
+        structInPair: pair.contains(struct),
+        structFullWidth: struct.classList.contains("card-full"),
+        structBelowPair: !!(pair.compareDocumentPosition(struct) &
+          Node.DOCUMENT_POSITION_FOLLOWING),
+        structAboveHow: !!(struct.compareDocumentPosition(document.getElementById("s-how")) &
+          Node.DOCUMENT_POSITION_FOLLOWING)
+      };
+    });
+    ok("the format choices have their own card", /Course format/.test(cards.fmtHeading),
+      cards.fmtHeading);
+    ok("the format card pairs with Course basics", cards.fmtInPair === true);
+    ok("and is not full width", cards.fmtFullWidth === false);
+    ok("Course structure holds the work fields", /Course structure/.test(cards.structHeading),
+      cards.structHeading);
+    ok("it sits outside the two-column pair", cards.structInPair === false);
+    ok("it runs full width", cards.structFullWidth === true);
+    ok("below both of the paired cards", cards.structBelowPair === true);
+    ok("and above How this is calculated", cards.structAboveHow === true);
+    ok("the academic-work field sits in the Course structure card",
+      !place.sameCard && /Course structure/.test(place.heading), place.heading);
+    ok("the academic-work field still follows the credits", place.creditsFirst === true);
     ok("meeting hours are not labelled face-to-face",
       !/face-to-face/i.test(place.label), place.label);
     ok("the field is labelled in minutes",
@@ -355,8 +422,8 @@ function excelOnline(weeks, credits, study) {
     // Renamed October 14, 2026: the field covers monitored asynchronous work as
     // well as meetings, so neither the label nor the vocabulary on the tile may
     // narrow back to meetings only.
-    ok("the field is labelled Planned Academic Work",
-      /Planned Academic Work/.test(place.label), place.label);
+    ok("the field is labelled Academic Work",
+      /\bAcademic Work\b/.test(place.label), place.label);
     await setup({ format: "blended", weeks: 15, credits: 3, study: 2, f2f: 3 });
     const echo = await page.evaluate(() => ({
       field: document.getElementById("f2f").value,
@@ -371,37 +438,312 @@ function excelOnline(weeks, credits, study) {
     ok("the tile is labelled planned academic work",
       /Planned academic work/.test(echo.lab), echo.lab);
 
-    /* The below-minimum notice (added October 14, 2026). It compares the field
-       with credits x 50 x the acceleration rate, so it must appear for a short
-       term that the standard weekly rate does not cover, and must not appear
-       when the field meets or exceeds the minimum. The figures are the ones the
-       Semester length lines already state, in hours and minutes. */
-    const shortfall = () => page.evaluate(() => {
-      const p = document.getElementById("f2f-min");
-      return { hidden: p.hidden, text: p.textContent };
+    /* The panel explaining where the minimums come from. It printed a live
+       sentence of its own until October 16, 2026, saying the same thing as the
+       #minimums line below the fields, so Maka dropped it; what the figures must
+       be is checked against #minimums instead, further down. The panel is still
+       the page's only account of the arithmetic and of the three sources it
+       rests on. */
+    const minPanel = await page.evaluate(() => {
+      const d = Array.from(document.querySelectorAll("details.guide"))
+        .find(x => /minimums are calculated/i.test(x.querySelector("summary").textContent));
+      const card = d && d.closest("section");
+      return {
+        inGuide: !!(d && d.classList.contains("guide")),
+        summary: d && d.querySelector("summary").textContent.trim(),
+        open: d && d.open,
+        inBasicsCard: !!(card && /Course basics/.test(card.querySelector("h3").textContent)),
+        lastInCard: d === card.querySelector(".card-body").lastElementChild,
+        afterGuidance: !!(card.querySelector(".card-guidance").compareDocumentPosition(d) &
+          Node.DOCUMENT_POSITION_FOLLOWING),
+        headed: !!(d && d.querySelector("summary > h4"))
+      };
     });
+    ok("the worked example sits in a .guide panel", minPanel.inGuide === true);
+    ok("the panel is named for what it explains",
+      minPanel.summary === "How these minimums are calculated.", minPanel.summary);
+    ok("the panel starts collapsed", minPanel.open === false);
+    /* October 16, 2026: the panel closes the Course basics card, under the
+       minimums it explains, rather than sitting in How this is calculated. */
+    ok("the panel closes the Course basics card", minPanel.inBasicsCard === true);
+    ok("it is the last thing in that card", minPanel.lastInCard === true);
+    ok("and sits below the minimums it explains", minPanel.afterGuidance === true);
+    ok("the panel's summary wraps a heading", minPanel.headed === true);
+    ok("the panel no longer prints a live figure of its own",
+      (await page.evaluate(() => document.getElementById("course-hours") === null)) === true);
+    /* The panel is where the three sources are cited. Losing them would leave
+       the page asserting a legal minimum with nothing behind it. */
+    const sources = await page.evaluate(() => {
+      const d = Array.from(document.querySelectorAll("details.guide"))
+        .find(x => /minimums are calculated/i.test(x.querySelector("summary").textContent));
+      return Array.from(d.querySelectorAll("a")).map(a => a.href);
+    });
+    ok("it cites the federal rule", sources.some(h => /ecfr\.gov/.test(h)), sources.join(" "));
+    ok("it cites the New Jersey code", sources.some(h => /nj\.gov/.test(h)), sources.join(" "));
+    ok("it cites the Rutgers policy", sources.some(h => /senate\.rutgers\.edu/.test(h)),
+      sources.join(" "));
+    /* The block closing the Course basics card: the live minimums for the course
+       as set up, then a standing caveat that these are floors a department may
+       raise, pointing at the panel that shows the arithmetic. The fixed
+       one-credit sentence was dropped from it on October 16, 2026 -- the panel
+       carries that. */
+    const rateLine = await page.evaluate(() => {
+      const el = document.querySelector(".card-guidance");
+      return {
+        text: el.textContent.replace(/\s+/g, " ").trim(),
+        card: el.closest("section").querySelector("h3").textContent,
+        paras: el.querySelectorAll("p").length,
+        belowFields: !!(document.getElementById("weeks").compareDocumentPosition(el) &
+          Node.DOCUMENT_POSITION_FOLLOWING),
+        holdsLive: el.contains(document.getElementById("minimums"))
+      };
+    });
+    ok("the closing block is in the Course basics card",
+      /Course basics/.test(rateLine.card), rateLine.card);
+    ok("and sits below the two fields", rateLine.belowFields === true);
+    ok("it holds the live minimums line", rateLine.holdsLive === true);
+    ok("it opens with the minimums, not a fixed rate",
+      /^Based on the entered credits \(/.test(rateLine.text), rateLine.text);
+    /* The caveat has to keep pointing somewhere real: it names the panel by
+       title, so a rename of that panel must break this. */
+    /* Matched on the idea, not the sentence: the caveat has to say the figures
+       are a floor a department may raise. Its exact wording is Maka's and has
+       changed more than once, so pinning the phrasing only produces failures
+       that mean nothing. */
+    ok("it carries the departmental caveat",
+      /federal and state/i.test(rateLine.text) &&
+      /department.{0,40}additional requirements/i.test(rateLine.text), rateLine.text);
+    /* The caveat pointed the reader at a panel by title until October 16, 2026,
+       when the panel moved directly underneath it and the cross-reference came
+       out. A reference that names a panel has to name one that exists, so if a
+       quoted title comes back here it must match a real summary. */
+    const caveatTarget = await page.evaluate(() => {
+      const names = Array.from(document.querySelectorAll("details.guide summary"))
+        .map(x => x.textContent.trim().replace(/\.$/, ""));
+      const txt = document.querySelector(".card-guidance").textContent;
+      const quoted = (txt.match(/"([^"]+)"/) || [])[1] || null;
+      return { quoted, names };
+    });
+    ok("the caveat does not send the reader elsewhere",
+      caveatTarget.quoted === null ||
+      caveatTarget.names.indexOf(caveatTarget.quoted.replace(/\.$/, "")) !== -1,
+      String(caveatTarget.quoted) + " vs " + caveatTarget.names.join(" | "));
+    ok("the rest of the old intro is not back with it",
+      !/multiply those minimums/.test(rateLine.text) && !/For shorter terms/.test(rateLine.text),
+      rateLine.text);
+    ok("the block is the two paragraphs and no more", rateLine.paras === 2,
+      "n " + rateLine.paras);
+
+    /* The old per-field echoes are gone with the restructure. */
+    const goneIds = await page.evaluate(() => ({
+      creditDef: document.getElementById("credit-def") === null,
+      weeksAccel: document.getElementById("weeks-accel") === null
+    }));
+    ok("the per-field credit echo is gone", goneIds.creditDef === true);
+    ok("the per-field semester echo is gone", goneIds.weeksAccel === true);
+
+    /* October 15, 2026: both minimums are stated in one sentence closing the
+       Course basics card, under the credits and length that produce them. Each
+       field then carries only its own notice, which names the gap in minutes, so
+       no figure is printed twice. The minimum is credits x the statutory rate x
+       the acceleration rate, so a short term raises it. */
+    const minimum = (noticeId) => page.evaluate((n) => {
+      const line = document.getElementById("minimums");
+      const notice = document.getElementById(n);
+      return {
+        lineHidden: line.hidden,
+        text: line.textContent.replace(/\s+/g, " ").trim(),
+        shown: notice.hidden === false,
+        // .warn is the red shortfall; .note is the calm over-minimum message.
+        under: notice.hidden === false && notice.className === "warn",
+        over: notice.hidden === false && notice.className === "note",
+        noticeText: notice.textContent.replace(/\s+/g, " ").trim()
+      };
+    }, noticeId);
+    const work = () => minimum("f2f-min");
+    const extra = () => minimum("study-min");
+
     await setup({ format: "blended", weeks: 15, credits: 3, study: 2, f2f: 3 });
-    ok("at the minimum, no shortfall notice", (await shortfall()).hidden === true);
+    const atMin = await work();
+    ok("one sentence states both minimums and both course totals",
+      atMin.text === "Based on the entered credits (3) and course length (15 weeks), the minimum " +
+      "required academic work is 150 minutes (2 hours and 30 minutes) per week and the minimum " +
+      "additional student work is 300 minutes (5 hours) per week, for a total of 37 hours and " +
+      "30 minutes of academic work and 75 hours of additional student work across the entire " +
+      "course.", atMin.text);
+    ok("the sentence closes the Course basics card",
+      (await page.evaluate(() => document.getElementById("minimums")
+        .closest("section").querySelector("h3").textContent)) === "Course basics");
+    ok("the per-field minimum lines are gone",
+      (await page.evaluate(() => document.getElementById("f2f-req") === null &&
+        document.getElementById("study-req") === null)) === true);
+    ok("at the minimum, no shortfall notice", atMin.under === false);
+    ok("at the minimum, no student-work shortfall", (await extra()).under === false);
+    ok("at the minimum, nothing is shown at all", atMin.shown === false);
+
+    // Over the minimum: a note, not a warning, naming the gap.
+    /* The stated minimum is the statute's 100 minutes per credit, not the study
+       field, which is what this course expects rather than what is required.
+       This was guarded on the panel's own line until that line went. */
+    await setup({ format: "blended", weeks: 15, credits: 3, study: 3, f2f: 3 });
+    ok("the study field does not move the stated minimum",
+      /additional student work is 300 minutes \(5 hours\) per week/.test((await work()).text),
+      (await work()).text);
+    await setup({ format: "blended", weeks: 15, credits: 0.5, study: 2, f2f: 1 });
+    ok("a half credit halves both minimums",
+      /credits \(0\.5\)/.test((await work()).text) &&
+      /academic work is 25 minutes per week and the minimum additional student work is 50 minutes/
+        .test((await work()).text), (await work()).text);
+    ok("and halves both course totals",
+      /total of 6 hours and 15 minutes of academic work and 12 hours and 30 minutes of additional student work/
+        .test((await work()).text), (await work()).text);
+    // A one-week term reads in the singular.
+    await setup({ format: "blended", weeks: 1, credits: 3, study: 2, f2f: 45 });
+    ok("a one-week term reads in the singular",
+      /course length \(1 week\),/.test((await work()).text), (await work()).text);
+
     await setup({ format: "blended", weeks: 15, credits: 3, study: 2, f2f: 4 });
-    ok("above the minimum, no shortfall notice", (await shortfall()).hidden === true);
+    const over = await work();
+    ok("above the minimum, no shortfall warning", over.under === false);
+    ok("above the minimum, a calm note instead", over.over === true);
+    ok("the note names the surplus and says it is allowed",
+      over.noticeText === "You have entered 50 minutes more than is required. You may wish to " +
+      "reduce the academic work, but this is not required.", over.noticeText);
+
+    // Under the minimum: the red warning, naming what is still owed.
     await setup({ format: "blended", weeks: 15, credits: 3, study: 2, f2f: 2 });
-    const under = await shortfall();
-    ok("below the minimum, the shortfall notice appears", under.hidden === false);
-    ok("the shortfall notice states the minimum in hours and minutes",
-      /minimum amount of academic work is 2 hours and 30 minutes based on your entered credits and semester length/
-        .test(under.text), under.text);
-    // A 5-week 3-credit course: 150 x (15/5) = 450 minutes, the same 7:30 the
-    // Semester length readout gives.
+    const under = await work();
+    ok("below the minimum, the shortfall warning appears", under.under === true);
+    ok("the warning names the minutes still owed",
+      under.noticeText === "You will need to provide an additional 50 minutes to meet the " +
+      "required minimums.", under.noticeText);
+
+    // The student-work notices are the same two messages, naming their own field.
+    await setup({ format: "blended", weeks: 15, credits: 3, f2f: 3, studyMin: 200 });
+    ok("student work short gets the warning",
+      (await extra()).under === true && (await extra()).noticeText ===
+      "You will need to provide an additional 100 minutes to meet the required minimums.",
+      (await extra()).noticeText);
+    await setup({ format: "blended", weeks: 15, credits: 3, f2f: 3, studyMin: 360 });
+    ok("student work over gets the note",
+      (await extra()).over === true && (await extra()).noticeText ===
+      "You have entered 60 minutes more than is required. You may wish to reduce the " +
+      "additional student work, but this is not required.", (await extra()).noticeText);
+
+    /* The two fields are judged independently: extra academic work neither
+       cancels a student-work shortfall nor creates one. */
+    await setup({ format: "blended", weeks: 15, credits: 3, f2f: 20, studyMin: 200 });
+    const lopsided = { work: await work(), extra: await extra() };
+    ok("a big academic-work surplus leaves the student-work warning standing",
+      lopsided.extra.under === true &&
+      /additional 100 minutes/.test(lopsided.extra.noticeText), lopsided.extra.noticeText);
+    ok("and the academic-work note is about academic work alone",
+      lopsided.work.over === true && /reduce the academic work/.test(lopsided.work.noticeText),
+      lopsided.work.noticeText);
+    await setup({ format: "blended", weeks: 15, credits: 3, f2f: 1, studyMin: 300 });
+    ok("an academic-work shortfall does not disturb student work at its minimum",
+      (await extra()).shown === false && (await work()).under === true);
+
+    // A one-minute gap reads in the singular.
+    await setup({ format: "blended", weeks: 15, credits: 3, f2f: 3, studyMin: 299 });
+    ok("one minute short reads in the singular",
+      /an additional 1 minute to meet/.test((await extra()).noticeText), (await extra()).noticeText);
+    await setup({ format: "blended", weeks: 15, credits: 3, f2f: 3, studyMin: 301 });
+    ok("one minute over reads in the singular",
+      /entered 1 minute more than is required/.test((await extra()).noticeText),
+      (await extra()).noticeText);
+
+    // A 5-week 3-credit course: 150 x (15/5) = 450 minutes a week of academic
+    // work, and 300 x 3 = 900 of student work.
     await setup({ format: "blended", weeks: 5, credits: 3, study: 2, f2f: 3.6 });
-    const short5 = await shortfall();
-    ok("an accelerated term raises the minimum",
-      short5.hidden === false && /is 7 hours and 30 minutes/.test(short5.text), short5.text);
+    const short5 = await work();
+    ok("an accelerated term raises the stated minimum",
+      short5.under === true &&
+      /academic work is 450 minutes \(7 hours and 30 minutes\) per week/.test(short5.text),
+      short5.text);
+    ok("the student-work minimum accelerates too",
+      /additional student work is 900 minutes \(15 hours\) per week,/.test(short5.text),
+      short5.text);
+    ok("the entered setup is echoed in the sentence",
+      /^Based on the entered credits \(3\) and course length \(5 weeks\),/.test(short5.text),
+      short5.text);
+    /* The course totals are what the credits are worth: a 5-week term carries
+       the same 37:30 and 75 hours as a 15-week one, in fewer weeks. If these
+       ever track the length field the sentence starts contradicting itself. */
+    ok("but the course totals do not",
+      /total of 37 hours and 30 minutes of academic work and 75 hours of additional student work across the entire course\.$/
+        .test(short5.text), short5.text);
+    /* Minutes are what the box takes, so they lead; a fractional rate is rounded
+       to the nearest whole minute. A 7-week 3-credit course owes 321.43. */
+    await setup({ format: "blended", weeks: 7, credits: 3, study: 2, f2f: 3 });
+    ok("a fractional rate rounds to whole minutes",
+      /academic work is 321 minutes \(5 hours and 21 minutes\) per week/.test((await work()).text),
+      (await work()).text);
+    /* Under an hour the bracket would only repeat the minutes, so it is dropped. */
+    await setup({ format: "blended", weeks: 15, credits: 1, study: 2, f2f: 1 });
+    ok("under an hour the minimum is minutes alone",
+      /academic work is 50 minutes per week and/.test((await work()).text), (await work()).text);
     await setup({ format: "blended", weeks: 5, credits: 3, study: 2, f2f: 9 });
-    ok("meeting the accelerated minimum clears the notice", (await shortfall()).hidden === true);
-    // Below 1 week nothing is calculated and the warnings block says so; the
-    // notice must not add a second, contradictory line.
+    ok("meeting the accelerated minimum clears the notice", (await work()).shown === false);
+
+    // The student-work field is taken as entered, so a flat weekly figure in a
+    // short term falls short and must be flagged.
+    await setup({ format: "blended", weeks: 5, credits: 3, f2f: 9, studyMin: 300 });
+    const flat = await extra();
+    ok("a flat weekly figure falls short in a 5-week term", flat.under === true);
+    ok("entered student work is not accelerated",
+      (await week()).studyHours === 5, String((await week()).studyHours));
+    await setup({ format: "blended", weeks: 5, credits: 3, f2f: 9, studyMin: 900 });
+    ok("meeting the accelerated student-work minimum clears it", (await extra()).shown === false);
+
+    // Below 1 week nothing is calculated and the warnings block says so; neither
+    // the line nor the notice may add a figure derived from a zero rate.
     await setup({ format: "blended", weeks: 0, credits: 3, study: 2, f2f: 1 });
-    ok("no shortfall notice below 1 week", (await shortfall()).hidden === true);
+    const none = await work();
+    ok("no shortfall notice below 1 week", none.shown === false);
+    ok("no minimum stated below 1 week", none.lineHidden === true);
+
+    // The explanatory paragraph became its own panel.
+    const workPanel = await page.evaluate(() => {
+      const d = Array.from(document.querySelectorAll("details.guide"))
+        .find(x => /What counts as Academic Work/.test(x.querySelector("summary").textContent));
+      return d ? {
+        headed: !!d.querySelector("summary > h4"),
+        open: d.open,
+        inField: !!d.closest(".field"),
+        inHowSection: /How this is calculated/.test(d.closest("section").querySelector("h3").textContent),
+        text: d.textContent.replace(/\s+/g, " ")
+      } : null;
+    });
+    ok("the academic-work paragraph has its own panel", workPanel !== null);
+    ok("that panel's summary wraps a heading", workPanel && workPanel.headed === true);
+    ok("that panel starts collapsed", workPanel && workPanel.open === false);
+    ok("that panel is no longer inside the academic-work field",
+      workPanel && workPanel.inField === false);
+    ok("that panel keeps the WeVideo example",
+      workPanel && /1 hour WeVideo lecture/.test(workPanel.text));
+    ok("that panel moved to the How this is calculated section",
+      workPanel && workPanel.inHowSection === true);
+    /* Course basics and Course format each close with exactly one panel --
+       the minimums, and what counts as instructional time. Course structure
+       carries none. More than one in any of them means a panel landed in the
+       wrong card. */
+    const cardGuides = await page.evaluate(() => ({
+      structure: Array.from(document.querySelectorAll(
+        'section[aria-labelledby="s-structure"] details.guide summary')).map(x => x.textContent.trim()),
+      format: Array.from(document.querySelectorAll(
+        'section[aria-labelledby="s-format"] details.guide summary')).map(x => x.textContent.trim()),
+      basics: Array.from(document.querySelectorAll(
+        'section[aria-labelledby="s-basics"] details.guide summary')).map(x => x.textContent.trim())
+    }));
+    ok("Course format carries just the instructional-time panel",
+      cardGuides.format.length === 1 && /instructional time/i.test(cardGuides.format[0]),
+      cardGuides.format.join(" | "));
+    ok("Course basics carries just the minimums panel",
+      cardGuides.basics.length === 1 && /minimums are calculated/i.test(cardGuides.basics[0]),
+      cardGuides.basics.join(" | "));
+    ok("Course structure carries none", cardGuides.structure.length === 0,
+      cardGuides.structure.join(" | "));
 
     // The tiles key off the number, not the format, so the no-work case is the
     // field at zero rather than a format choice.
@@ -439,9 +781,23 @@ function excelOnline(weeks, credits, study) {
     const card = await page.evaluate(() => {
       const s = Array.from(document.querySelectorAll("details summary"))
         .find(x => /instructional time/i.test(x.textContent));
-      return s ? { open: s.parentElement.open, text: s.parentElement.textContent.replace(/\s+/g, " ") } : null;
+      if (!s) return null;
+      const d = s.parentElement;
+      const sec = d.closest("section");
+      const body = sec.querySelector(".card-body");
+      return {
+        open: d.open,
+        text: d.textContent.replace(/\s+/g, " "),
+        card: sec.querySelector("h3").textContent,
+        last: !!(body && d === body.lastElementChild)
+      };
     });
     ok("explainer panel for instructional time exists", !!card);
+    /* October 16, 2026: moved from How this is calculated to the foot of the
+       Course format card, under the three delivery choices. */
+    ok("the explainer closes the Course format card",
+      card && /Course format/.test(card.card), card && card.card);
+    ok("it is the last thing in that card", card && card.last === true);
     // Collapsed by default as of August 12, 2026 (Maka's call). The panel
     // itself must stay — without it nothing on the page says the
     // instructional row means seat time — but whether it starts open is a
@@ -496,14 +852,29 @@ function excelOnline(weeks, credits, study) {
       return document.getElementById("f2f").value;
     }, [id, v]);
 
-    // Changed October 14, 2026: an asynchronous course owes the same minimum as
-    // any other, so its preset fills the minimum rather than zeroing the field.
-    ok("asynchronous also fills the credit-hour minimum", (await pick("fmt-async")) === "150");
-    await type("f2f", "0");
-    const kept = await pick("fmt-blended");
-    ok("blended keeps the number already there", kept === "0", kept);
-    const refilled = await pick("fmt-sync");
-    ok("synchronous refills to the credit hours x 50", refilled === "150", refilled);
+    /* October 15, 2026: the format choice writes nothing at all. It briefly
+       preset the academic-work field to the minimum, which trackSetup already
+       maintains, so the only thing the preset could still do was discard a number
+       the user had entered deliberately. All three formats owe the same minimum;
+       what differs is how the work is delivered, which is the business of the
+       text beside each choice. */
+    await type("f2f", "275");
+    await type("study", "410");
+    for (const id of ["fmt-async", "fmt-blended", "fmt-sync", "fmt-async"]) {
+      ok("choosing " + id + " leaves the academic-work field alone",
+        (await pick(id)) === "275");
+    }
+    ok("and leaves the student-work field alone",
+      (await page.evaluate(() => document.getElementById("study").value)) === "410");
+    /* Nothing below reads the format except the saved plan and the report, so the
+       weekly figures must not move either. */
+    const beforeFmt = await week();
+    await pick("fmt-blended");
+    const afterFmt = await week();
+    near("the weekly total does not move with the format",
+      afterFmt.totalHours, beforeFmt.totalHours, 1e-9);
+    await type("f2f", "150");
+    await type("study", "300");
 
     const followed = await type("credits", "4");
     ok("academic-work minutes follow the credits while untouched", followed === "200", followed);
@@ -512,6 +883,63 @@ function excelOnline(weeks, credits, study) {
     ok("a hand-set academic-work number is left alone", left === "300", left);
     const g = await week();
     near("a 5-credit course can meet for 6 hours", g.f2fHours, 50 * 6 / 60, 1e-9);
+
+    /* Both work fields follow the course setup while they still hold the minimum
+       for it (October 14, 2026). Course length drives them as well as credits:
+       entering a 5-week term on a 3-credit course must put 450 and 900 in the
+       boxes, matching the two readouts above them. */
+    const fields = () => page.evaluate(() => ({
+      f2f: document.getElementById("f2f").value,
+      study: document.getElementById("study").value
+    }));
+    const typeIn = (id, v) => page.evaluate(([id, v]) => {
+      const e = document.getElementById(id);
+      e.value = v;
+      e.dispatchEvent(new Event("input", { bubbles: true }));
+    }, [id, v]);
+
+    await page.evaluate(() => localStorage.removeItem("uoes-credit-hour-planner"));
+    await page.reload();
+    const fresh = await fields();
+    ok("a fresh page starts both fields at the 15-week minimum",
+      fresh.f2f === "150" && fresh.study === "300", JSON.stringify(fresh));
+    await typeIn("weeks", "5");
+    const five = await fields();
+    ok("a 5-week term fills in 450 minutes of academic work", five.f2f === "450", five.f2f);
+    ok("and 900 minutes of student work", five.study === "900", five.study);
+    await typeIn("credits", "4");
+    const four = await fields();
+    ok("credits move both fields too",
+      four.f2f === "600" && four.study === "1200", JSON.stringify(four));
+    /* A fractional rate is written as the whole minutes the readout states. */
+    await typeIn("credits", "3");
+    await typeIn("weeks", "7");
+    const seven = await fields();
+    ok("a 7-week term rounds to whole minutes", seven.f2f === "321", seven.f2f);
+    const req = () => page.evaluate(() => ({
+      text: document.getElementById("minimums").textContent.replace(/\s+/g, " ").trim(),
+      under: document.getElementById("f2f-min").className === "warn" &&
+        document.getElementById("f2f-min").hidden === false
+    }));
+    ok("the field matches the figure stated for it",
+      /academic work is 321 minutes/.test((await req()).text), (await req()).text);
+    ok("no shortfall when the field holds the rounded minimum", (await req()).under === false);
+
+    /* Once a field holds something that is not the minimum it is the user's. */
+    await typeIn("f2f", "400");
+    await typeIn("weeks", "15");
+    const held = await fields();
+    ok("a hand-set academic-work field stops following", held.f2f === "400", held.f2f);
+    ok("the untouched student-work field keeps following", held.study === "300", held.study);
+
+    /* A trip through an unusable length must not strand the fields. */
+    await typeIn("weeks", "0");
+    await typeIn("weeks", "5");
+    ok("the still-tracking field survives a pass through 0 weeks",
+      (await fields()).study === "900", (await fields()).study);
+
+    await page.evaluate(() => localStorage.removeItem("uoes-credit-hour-planner"));
+    await page.reload();
   }
 
   /* ===== 9. Suggested times are per-activity guidance, never bulk-applied =====
@@ -593,7 +1021,42 @@ function excelOnline(weeks, credits, study) {
       sync: document.getElementById("fmt-sync").checked
     }));
     ok("partial save loads", partial.weeks === "12", partial.weeks);
-    ok("missing fields keep defaults", partial.study === "2", partial.study);
+    ok("missing fields keep defaults", partial.study === "300", partial.study);
+
+    /* Student-work unit migration (October 14, 2026). A save in the old
+       hours-per-credit-per-week unit converts with the credits from that same
+       save; one that already holds minutes but carries no marker must be left
+       alone, or the conversion multiplies it by 50 x credits. */
+    const reloadWith = async (obj) => {
+      await page.evaluate((o) => {
+        localStorage.setItem("uoes-credit-hour-planner", JSON.stringify(o));
+      }, obj);
+      await page.reload();
+      return page.evaluate(() => document.getElementById("study").value);
+    };
+    ok("an old per-credit save converts to minutes",
+      (await reloadWith({ weeks: "15", credits: "3", study: "2" })) === "300");
+    ok("a half-credit old save converts too",
+      (await reloadWith({ weeks: "15", credits: "0.5", study: "3" })) === "75");
+    ok("a markerless save already in minutes is left alone",
+      (await reloadWith({ weeks: "15", credits: "3", study: "300" })) === "300");
+    ok("a marked save is taken as it stands",
+      (await reloadWith({ weeks: "15", credits: "3", study: "450", studyUnit: "min" })) === "450");
+    /* A week holds 10,080 minutes; anything above that is corrupt, including a
+       value an older copy of this page wrote after converting twice. */
+    ok("an impossible weekly figure resets to the default",
+      (await reloadWith({ weeks: "15", credits: "3", study: "45000", studyUnit: "min" })) === "300");
+    const bigF2f = await page.evaluate(async () => {
+      localStorage.setItem("uoes-credit-hour-planner",
+        JSON.stringify({ weeks: "15", credits: "3", f2f: "99999", f2fUnit: "min" }));
+      return null;
+    });
+    await page.reload();
+    ok("the same clamp covers the academic-work field",
+      (await page.evaluate(() => document.getElementById("f2f").value)) === "150",
+      await page.evaluate(() => document.getElementById("f2f").value), bigF2f);
+    await page.evaluate(() => localStorage.removeItem("uoes-credit-hour-planner"));
+    await page.reload();
     ok("missing format defaults to synchronous", partial.sync === true && partial.blended === false);
 
     // migration: "online" was the merged fully-online-or-traditional format,
@@ -741,6 +1204,21 @@ function excelOnline(weeks, credits, study) {
     ok("has a role=status for copy feedback", a11y.status === 1, "n " + a11y.status);
     ok("sections are labelled", a11y.sections >= 6, "n " + a11y.sections);
     ok("radio group has a legend", a11y.legend === 1, "n " + a11y.legend);
+    /* Every id on the page must be unique. getElementById silently returns the
+       first match, so a duplicate makes the render write to one element while
+       the other keeps whatever static text it was authored with -- which is
+       exactly how a caveat paragraph came to share the live minimums line's id
+       on October 16, 2026, and neither harness noticed. */
+    const dupeIds = await page.evaluate(() => {
+      const seen = Object.create(null);
+      const dupes = [];
+      document.querySelectorAll("[id]").forEach((el) => {
+        if (seen[el.id]) dupes.push(el.id);
+        else seen[el.id] = true;
+      });
+      return dupes;
+    });
+    ok("every id on the page is unique", dupeIds.length === 0, dupeIds.join(", "));
 
     // computed, not textual: focus real elements and read the resolved outline
     for (const sel of ["#weeks", "#l_blog", "#btn-report", "#fmt-blended"]) {
@@ -822,7 +1300,12 @@ function excelOnline(weeks, credits, study) {
     // "Why we built this tool:") plus the three inside section 1 — what counts
     // as instructional time, the acceleration rate, and the note on the two
     // reading/writing numbers.
-    ok("explanatory panels use the planner's .guide treatment", steps.guides === 5, "count " + steps.guides);
+    // Two intro panels, the two in "How this is calculated", the Reading & writing
+    // panel, and "How these minimums are calculated." in the Course structure card.
+    // Two intro panels, the two in "How this is calculated", the Reading & writing
+    // panel, and two in the Course structure card: "What counts as Academic Work"
+    // and "How these minimums are calculated."
+    ok("explanatory panels use the planner's .guide treatment", steps.guides === 7, "count " + steps.guides);
 
     // Repo convention: Mid Blue (#7DBFD6 = rgb(125,191,214)) fails the 3:1
     // non-text contrast requirement, so it must never carry an input border.

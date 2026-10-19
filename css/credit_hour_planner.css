@@ -60,6 +60,46 @@ main, main * { box-sizing: border-box; }
 
 label { font-weight: bold; }
 
+/* The instruction line at the top of a card body: the card-level equivalent
+   of .step-lead, sized to sit above the first field without competing with
+   the card's own heading. */
+.card-lead {
+  font-size: 14px;
+  color: var(--text-mid);
+  line-height: 1.45;
+  margin: 0 0 12px;
+}
+
+/* A block of explanatory text closing a card, under the fields it explains.
+   Reads as hint text; the rule above it is what separates "what you enter"
+   from "what the standard requires". */
+.card-guidance {
+  border-top: 1px solid var(--blue-mid);
+  padding-top: 10px;
+  margin-top: 14px;
+}
+.card-guidance p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.45;
+  margin: 0 0 8px;
+}
+.card-guidance p:last-child { margin-bottom: 0; }
+
+/* The derived minimums sit a little apart from the fixed one-credit rate above
+   them: one is what a credit is, the other is what this course's credits and
+   length come to. */
+.card-guidance .req { margin-top: 10px; }
+
+/* The minimum a field is measured against, stated under its label and above
+   the input. Carries the same weight as the label so the number is read before
+   the box is filled, not after; the .warn notice below the input then only has
+   to say the entry is under it. */
+.req {
+  color: var(--text-mid);
+  margin: -2px 0 6px;
+}
+
 .field { margin-bottom: 14px; }
 .field:last-child { margin-bottom: 0; }
 .field label { display: block; margin-bottom: 6px; }
@@ -90,6 +130,13 @@ label { font-weight: bold; }
 }
 .field-row .field { flex: 1 1 260px; margin-bottom: 0; }
 
+/* The same row inside a half-width card. Reading & writing is full width, so a
+   260px basis pairs there; the Course basics card leaves about 390px of content,
+   which two 260px fields cannot share -- they wrap and the row does nothing. The
+   widest label here, "Course length (weeks)", measures about 160px. */
+.field-row.tight { gap: 14px 20px; }
+.field-row.tight .field { flex: 1 1 160px; }
+
 input[type="number"] {
   font-family: inherit;
   font-size: 16px;
@@ -111,9 +158,31 @@ input[type="number"]:focus { background: var(--blue-light); }
   line-height: 1.4;
 }
 
+/* Step 1's three cards read at one size and one leading. Everything in them
+   that is not a heading, a label or an input is 14px/1.45, whichever class it
+   happens to carry. Until October 16, 2026 .card-lead was 15px and the leadings
+   ran 1.4 (.hint), 1.45 (.card-guidance p) and 1.5 (the in-field callouts),
+   which showed as ragged spacing between paragraphs sitting side by side. */
+section[aria-labelledby="s-basics"] .hint,
+section[aria-labelledby="s-format"] .hint,
+section[aria-labelledby="s-structure"] .hint {
+  line-height: 1.45;
+}
+
 /* ---- course-format radio group ---- */
 
 fieldset { border: none; margin: 0; padding: 0; }
+
+/* The instruction above the format choices IS the fieldset's legend, so the
+   group's accessible name is the sentence on screen rather than a hidden
+   duplicate of it. A legend carries UA padding and sits in the border gap, so
+   it needs its own box reset; .hint gives it the type. */
+fieldset > legend.hint {
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin: 0 0 12px;
+}
 .choice {
   display: flex;
   align-items: flex-start;
@@ -128,6 +197,15 @@ fieldset { border: none; margin: 0; padding: 0; }
 
 .guide { line-height: 1.55; }
 .guide p { margin: 10px 0 4px 0; }
+
+/* A panel closing a card. The base .guide carries a 16px bottom margin, meant
+   for panels stacked inside a section; in a card that doubles up with
+   .card-body's own padding and leaves a gap under the panel, while the top
+   edge butts straight against the text above it. Reversed here: space above,
+   none below. Replaces the inline style the Reading & writing panel carried. */
+.card-body > .guide {
+  margin: 14px 0 0;
+}
 
 /* ---- activity rows ---- */
 
@@ -237,13 +315,16 @@ tfoot td { font-weight: bold; border-top: 2px solid var(--blue); border-bottom: 
 .note p { margin: 0 0 6px; }
 .note p:last-child { margin: 0; }
 
-/* The below-minimum notice under Planned Academic Work reuses the .warn
-   callout so a shortfall reads the same as the warnings above the tiles, but
+/* The notice under a work field reuses the page's two callout treatments so a
+   shortfall reads the same as the warnings above the tiles (.warn, red) and an
+   overage reads as information rather than a fault (.note, blue). Both are
    sized to sit inside a field rather than across the results column. */
-.field .warn {
+.field .warn,
+.field .note {
   margin: 8px 0 0;
   padding: 8px 12px;
   font-size: 14px;
+  line-height: 1.45;
 }
 
 /* ---- buttons ----
