@@ -2,7 +2,7 @@
 
 A collection of single-file HTML tools helping faculty and staff (mostly
 instructional designers) plan and build courses, with a focus on online
-courses. Repo: `themaka/uoes_tools`. Each tool is one .html file with its
+courses. Repo: `RutgersGRID/uoes_tools`. Each tool is one .html file with its
 JS inline — no build step, no external dependencies, no framework. CSS
 lives in `css/` and is linked (see **Stylesheets** below).
 
