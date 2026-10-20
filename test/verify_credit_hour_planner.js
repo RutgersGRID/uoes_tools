@@ -736,8 +736,8 @@ function excelOnline(weeks, credits, study) {
       basics: Array.from(document.querySelectorAll(
         'section[aria-labelledby="s-basics"] details.guide summary')).map(x => x.textContent.trim())
     }));
-    ok("Course format carries just the instructional-time panel",
-      cardGuides.format.length === 1 && /instructional time/i.test(cardGuides.format[0]),
+    ok("Course format carries just the academic-work panel",
+      cardGuides.format.length === 1 && /academic work/i.test(cardGuides.format[0]),
       cardGuides.format.join(" | "));
     ok("Course basics carries just the minimums panel",
       cardGuides.basics.length === 1 && /minimums are calculated/i.test(cardGuides.basics[0]),
@@ -780,7 +780,7 @@ function excelOnline(weeks, credits, study) {
     // the explainer card must say what instructional time is, and that it isn't homework
     const card = await page.evaluate(() => {
       const s = Array.from(document.querySelectorAll("details summary"))
-        .find(x => /instructional time/i.test(x.textContent));
+        .find(x => /What is, and isn't, academic work/i.test(x.textContent));
       if (!s) return null;
       const d = s.parentElement;
       const sec = d.closest("section");
@@ -792,7 +792,7 @@ function excelOnline(weeks, credits, study) {
         last: !!(body && d === body.lastElementChild)
       };
     });
-    ok("explainer panel for instructional time exists", !!card);
+    ok("explainer panel for academic work exists", !!card);
     /* October 16, 2026: moved from How this is calculated to the foot of the
        Course format card, under the three delivery choices. */
     ok("the explainer closes the Course format card",
@@ -802,14 +802,16 @@ function excelOnline(weeks, credits, study) {
     // itself must stay — without it nothing on the page says the
     // instructional row means seat time — but whether it starts open is a
     // presentation choice, so this no longer asserts a state.
-    ok("explainer says seat time", card && /seat time/.test(card.text));
-    ok("explainer covers the self-paced case", card && /asynchronous equivalent/.test(card.text));
-    ok("explainer says planned academic work covers seat time directly",
-      card && /planned academic work covers it directly/.test(card.text));
+    /* October 20, 2026: Maka rewrote the panel as "What is, and isn't,
+       academic work?". The seat-time, asynchronous-equivalent and
+       live-online-counts-the-same sentences went with the old wording, so
+       their checks did too; these pin the new version's substance. */
+    ok("explainer defines academic work as instructor-led",
+      card && /structured, instructor-led learning/.test(card.text));
     ok("explainer counts monitored asynchronous material",
       card && /monitored and documented/.test(card.text));
-    ok("explainer counts a live online meeting the same as a room",
-      card && /live online meeting counts the same/.test(card.text));
+    ok("explainer counts asynchronous material that tracks engagement",
+      card && /track student engagement/.test(card.text));
     ok("explainer says the credit hour is a minimum, not a ceiling",
       card && /minimum rather than a ceiling/.test(card.text));
     ok("explainer rules out homework", card && /not.{0,3} homework/.test(card.text), card && card.text.slice(-90));

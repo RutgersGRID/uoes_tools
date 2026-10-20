@@ -222,6 +222,28 @@ fieldset > legend.hint {
   margin: 14px 0 0;
 }
 
+/* Section 1's two cards sit side by side and the grid already makes them the
+   same height. Making each card a column lets its body fill that height, and
+   the panel's auto top margin then drops it to the bottom, so "What is, and
+   isn't, academic work?" lines up with "How these minimums are calculated."
+   in the taller card beside it. The element above each panel keeps the 14px
+   gap the panel's own margin used to give. */
+.card:is([aria-labelledby="s-basics"], [aria-labelledby="s-format"]) {
+  display: flex;
+  flex-direction: column;
+}
+.card:is([aria-labelledby="s-basics"], [aria-labelledby="s-format"]) > .card-body {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+.card:is([aria-labelledby="s-basics"], [aria-labelledby="s-format"]) > .card-body > .guide {
+  margin-top: auto;
+}
+.card:is([aria-labelledby="s-basics"], [aria-labelledby="s-format"]) > .card-body > :has(+ .guide) {
+  margin-bottom: 14px;
+}
+
 /* ---- activity rows ---- */
 
 .act {
