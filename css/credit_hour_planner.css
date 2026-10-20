@@ -137,6 +137,19 @@ label { font-weight: bold; }
 .field-row.tight { gap: 14px 20px; }
 .field-row.tight .field { flex: 1 1 160px; }
 
+/* Each input sits centred in its column, and both sit on one line even when
+   "Course length (weeks)" wraps to two lines and "Course credits" does not:
+   the row stretches both fields to the taller one's height, and the input's
+   auto top margin pushes it to the bottom of its field. */
+.field-row.tight .field {
+  display: flex;
+  flex-direction: column;
+}
+.field-row.tight .field input {
+  margin-top: auto;
+  align-self: center;
+}
+
 input[type="number"] {
   font-family: inherit;
   font-size: 16px;
