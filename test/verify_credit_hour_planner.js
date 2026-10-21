@@ -63,12 +63,16 @@ const KEY = "uoes-credit-hour-course";
     await page.evaluate(() => !document.getElementById("f2f") && !document.getElementById("study") &&
       !/acceleration|self-paced instructional/i.test(document.querySelector("main").innerText)));
   ok("no module-fit step", !(await page.evaluate(() => /Does the module fit/i.test(document.body.innerText))));
-  const explainers = await page.$$eval(".explainers summary", s => s.map(x => x.textContent.trim()));
-  ok("both explainers sit together in Course activities",
-    explainers.length === 2 && /instructional time/i.test(explainers[0]) && /out-of-class work/i.test(explainers[1]),
-    explainers.join(" | "));
-  ok("academic explainer keeps the monitored-async wording",
-    await page.evaluate(() => /monitored and documented/.test(document.querySelector(".explainers").textContent)));
+  /* October 21, 2026: the out-of-class explainer merged into the
+     instructional-time one, which already said what isn't instructional. */
+  const explainers = await page.$$eval("section[aria-labelledby=h-activities] details.guide summary", s => s.map(x => x.textContent.trim()));
+  ok("one explainer covers both kinds of work",
+    explainers.filter(t => /instructional time|out-of-class/i.test(t)).length === 1 &&
+    /What is, and isn't, instructional time/.test(explainers[0]), explainers.join(" | "));
+  const ex = await page.evaluate(() => document.querySelector(".guide.explainer").textContent.replace(/\s+/g, " "));
+  ok("explainer keeps the monitored-async wording", /monitored and documented/.test(ex));
+  ok("explainer defines out-of-class work", /Out-of-class work is distinct from instructional time/.test(ex) && /twice as much out-of-class work/.test(ex));
+  ok("explainer says one activity can go either way", /can land on either side/.test(ex));
   ok("format card says what the choice sets up",
     /Class meetings/.test(await page.textContent(".format-effect")));
   /* October 21, 2026: the instructor-led bucket is "instructional time".
