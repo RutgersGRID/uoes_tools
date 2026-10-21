@@ -331,7 +331,7 @@ fieldset > legend.hint {
 }
 
 /* The two explainers side by side at the top of Course activities. */
-.explainers { margin: 8px 0 4px; align-items: start; }
+.explainers { margin: 8px 0 14px; align-items: start; }
 .explainers > .guide { margin: 0; }
 
 /* The line under the format choices saying what the choice sets up. */
