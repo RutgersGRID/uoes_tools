@@ -68,11 +68,11 @@
         <summary>
           <h2>Hints on how to use this tool.</h2>
         </summary>
-        <p class="lead">This tool helps you plan your course by estimating the total time needed for all of your planned
-          course activities.</p>
-        <p class="lead">Select your course format (all synchronous meetings, mixed synchronous and self-paced work, or
-          all self-paced work).</p>
-        <p class="lead">Enter the semester length in weeks.</p>
+          <p class="lead">This tool is designed to help you plan your course by estimating the total time needed for all of your planned
+            course activities.</p>
+          <p class="lead">Enter the credit hours for your course.</p>
+          <p class="lead">Enter the semester length in weeks.</p>
+          <p class="lead">Select your course format (all synchronous meetings, mixed synchronous and self-paced work, or all self-paced work).</p>
         <p class="lead">Enter all your planned activities and the time you expect students to spend on each.</p>
         <p class="lead">Turn your course&rsquo;s credit hours into an hours-per-week budget, then check
           whether the activities you have planned for a module actually fit inside it.</p>
@@ -212,11 +212,6 @@
                     <p>Academic work is the structured, instructor-led learning that takes place during scheduled meetings or through asynchronous materials that are monitored and documented. This includes, but is not limited to, live meetings, lab or field work, internships, and other forms of experiential learning. </p>
                     <p>Asynchronous materials that can track student engagement also count towards academic work. This can be recorded lectures, guided activities, or instructor-directed content that students work through on their own time.</p>
                     <p>This is distinct from homework or out-of-class study.</p>
-                    <p>Planning more academic work than the course carries credits is fine. Labs, studios
-                      and clinicals routinely do, and the federal definition sets the credit hour as a
-                      minimum rather than a ceiling. The self-paced instructional row simply drops to
-                      zero.</p>
-                    <p>It is <em>not</em> homework. Out-of-class work is the studying row.</p>
                   </details>
                 </div>
               </section>
@@ -230,8 +225,8 @@
                   <label for="f2f">Academic Work (minutes per week)</label>
                   <div class="field-inline">
                     <input type="number" id="f2f" min="0" step="1" value="150">
-                    <p class="hint">This includes synchronous meetings and monitored asynchronous
-                      materials.</p>
+                    <p class="hint">This is the minimum amount of time students will spend on academic work each week. The value is based on the credits and course length listed above. This includes synchronous meetings and monitored asynchronous
+                      materials. </p>
                   </div>
                   <p class="warn" id="f2f-min" hidden></p>
                 </div>
@@ -239,12 +234,9 @@
                   <label for="study">Additional Student Work (minutes per week)</label>
                   <div class="field-inline">
                     <input type="number" id="study" min="0" step="1" value="300">
-                    <p class="hint">Reading, assignments, studying &mdash; work students do on their
-                      own.</p>
+                    <p class="hint">This is additional work that students are expected to do on their own time. This includes reading, writing, and other assignments, studying for exams, and many more possible learning activities. This is work done without direct instruction, supervision, or monitoring.</p>
                   </div>
-                  <p class="hint">Enter the out-of-class work you expect students to do in a week, in
-                    minutes. The statutory minimum is 100 minutes per credit; many departments plan for
-                    150.</p>
+                  <p class="hint">The default values listed here meet the minimum requirements for a typical course, however you can increase the values if needed. Additional time added to the Academic work can be deducted from the Additional Student Work. For example, if you have 150 minutes of Academic work planned for each week, per credit, you would not need to add any Additional Student Work time.</p>
                   <p class="warn" id="study-min" hidden></p>
                 </div>
               </div>
@@ -276,6 +268,11 @@
                   that can monitor and document the time students participate can be included in this
                   number. For example, a 1.5 hour class and 1 hour WeVideo lecture, each week, would
                   be 2.5 hours of academic work.</p>
+                    <p>Planning more academic work than the course carries credits is fine. Labs, studios
+                      and clinicals routinely do, and the federal definition sets the credit hour as a
+                      minimum rather than a ceiling. The self-paced instructional row simply drops to
+                      zero.</p>
+                    <p>It is <em>not</em> homework. Out-of-class work is the studying row.</p>
               </details>
             </section>
 
