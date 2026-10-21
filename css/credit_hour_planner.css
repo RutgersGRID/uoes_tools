@@ -513,6 +513,9 @@ tfoot td { font-weight: bold; border-top: 2px solid var(--blue); border-bottom: 
 }
 .actions .small-btn { margin: 0; }
 
+/* "Next Steps", under the buttons: what to do with the finished plan. */
+.results > .guide.next-steps { margin: 18px 0 0; }
+
 /* ---- generated report ---- */
 
 #reportWrap {

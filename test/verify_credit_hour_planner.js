@@ -56,7 +56,7 @@ const KEY = "uoes-credit-hour-course";
   const heads = await page.$$eval("section.step h2", hs => hs.map(h => h.textContent.trim()));
   ok("three steps, in order",
     heads.length === 3 && /Your course/.test(heads[0]) && /Course activities/.test(heads[1]) &&
-    /Does the course add up/.test(heads[2]), heads.join(" | "));
+    /Course totals/.test(heads[2]), heads.join(" | "));
   ok("all three steps start open",
     await page.$$eval("details.step-body", ds => ds.length === 3 && ds.every(d => d.open)));
   ok("no weekly-budget leftovers",
@@ -87,12 +87,24 @@ const KEY = "uoes-credit-hour-course";
   ok("the page says instructional time, not academic work",
     await page.evaluate(() => !/academic work/i.test(document.querySelector("main").innerText) &&
       /Instructional time/.test(document.querySelector(".inv-row select[data-field=bucket]").innerText)));
-  /* October 21, 2026: Maka replaced the "Not sure how long an activity
-     takes?" panel, which linked the Learning Activity Estimator, with hints
-     on breaking down larger activities; the Estimate panels do that job
-     in the page itself now. */
-  ok("breaking-down hints panel present",
-    await page.evaluate(() => Array.from(document.querySelectorAll("details.guide summary")).some(x => /Hints for breaking down larger activities/.test(x.textContent))));
+  /* October 21, 2026: a "Next Steps" panel under the buttons points the
+     finished plan at the Course Content Planner (Maka). The breaking-down
+     hints panel came and went the same day. */
+  const next = await page.evaluate(() => {
+    const s = Array.from(document.querySelectorAll("details.guide summary")).find(x => /Next Steps/.test(x.textContent));
+    if (!s) return null;
+    const d = s.parentElement, actions = document.querySelector(".actions");
+    const a = d.querySelector('a[href="course_planner.html"]');
+    return {
+      afterButtons: !!(actions.compareDocumentPosition(d) & Node.DOCUMENT_POSITION_FOLLOWING),
+      inTotals: d.closest("section").getAttribute("aria-labelledby") === "h-check",
+      link: !!a, newTab: a && a.target === "_blank" && /noopener/.test(a.rel),
+      text: d.textContent.replace(/\s+/g, " ")
+    };
+  });
+  ok("Next Steps panel sits under the buttons in Course totals", next && next.afterButtons && next.inTotals, JSON.stringify(next));
+  ok("Next Steps links the Course Content Planner in a new tab", next && next.link && next.newTab);
+  ok("Next Steps names the two save buttons", next && /Create printable summary/.test(next.text) && /Copy as text/.test(next.text));
 
   // ---------- minimums ----------
   let mt = await page.textContent("#minimums");
