@@ -381,10 +381,6 @@ fieldset > legend.hint {
   .inv-row .n { text-align: left; }
 }
 
-/* The explainer at the top of Course activities: what counts as
-   instructional time and what as out-of-class work, in one panel since
-   October 21, 2026 (it was two panels side by side). */
-.guide.explainer { margin: 8px 0 14px; }
 
 /* The line under the format choices saying what the choice sets up. */
 .format-effect { font-size: 14px; color: var(--text-mid); line-height: 1.45; margin: 12px 0 0; }

@@ -64,12 +64,18 @@ const KEY = "uoes-credit-hour-course";
       !/acceleration|self-paced instructional/i.test(document.querySelector("main").innerText)));
   ok("no module-fit step", !(await page.evaluate(() => /Does the module fit/i.test(document.body.innerText))));
   /* October 21, 2026: the out-of-class explainer merged into the
-     instructional-time one, which already said what isn't instructional. */
-  const explainers = await page.$$eval("section[aria-labelledby=h-activities] details.guide summary", s => s.map(x => x.textContent.trim()));
+     instructional-time one, which then moved back to the foot of the
+     Course format card (Maka). */
+  const explainers = await page.$$eval("details.guide summary", s => s.map(x => x.textContent.trim()).filter(t => /instructional time|out-of-class/i.test(t)));
   ok("one explainer covers both kinds of work",
-    explainers.filter(t => /instructional time|out-of-class/i.test(t)).length === 1 &&
-    /What is, and isn't, instructional time/.test(explainers[0]), explainers.join(" | "));
-  const ex = await page.evaluate(() => document.querySelector(".guide.explainer").textContent.replace(/\s+/g, " "));
+    explainers.length === 1 && /What is, and isn't, instructional time/.test(explainers[0]), explainers.join(" | "));
+  const exInfo = await page.evaluate(() => {
+    const s = Array.from(document.querySelectorAll("details.guide summary")).find(x => /What is, and isn't, instructional time/.test(x.textContent));
+    const d = s.parentElement, body = d.closest(".card-body");
+    return { text: d.textContent.replace(/\s+/g, " "), card: d.closest("section").getAttribute("aria-labelledby"), last: !!body && body.lastElementChild === d };
+  });
+  const ex = exInfo.text;
+  ok("explainer closes the Course format card", exInfo.card === "s-format" && exInfo.last, JSON.stringify(exInfo).slice(0, 120));
   ok("explainer keeps the monitored-async wording", /monitored and documented/.test(ex));
   ok("explainer defines out-of-class work", /Out-of-class work is distinct from instructional time/.test(ex) && /twice as much out-of-class work/.test(ex));
   ok("explainer says one activity can go either way", /can land on either side/.test(ex));
