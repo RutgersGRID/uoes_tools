@@ -68,14 +68,15 @@
         <summary>
           <h2>Hints on how to use this tool.</h2>
         </summary>
-          <p class="lead">This tool is designed to help you plan your course by estimating the total time needed for all of your planned
-            course activities.</p>
-          <p class="lead">Enter the credit hours for your course.</p>
-          <p class="lead">Enter the semester length in weeks.</p>
-          <p class="lead">Select your course format (all synchronous meetings, mixed synchronous and self-paced work, or all self-paced work).</p>
-        <p class="lead">Enter all your planned activities and the time you expect students to spend on each.</p>
-        <p class="lead">Turn your course&rsquo;s credit hours into an hours-per-week budget, then check
-          whether the activities you have planned for a module actually fit inside it.</p>
+        <p class="lead">This tool is designed to help you plan your course by estimating the total time needed for all
+          of your planned course activities.</p>
+        <p class="lead">Enter the credit hours for your course.</p>
+        <p class="lead">Enter the semester length in weeks.</p>
+        <p class="lead">Select your course format (all synchronous meetings, mixed synchronous and self-paced work, or
+          all self-paced work).</p>
+        <p class="lead">List the activities in your course &mdash; how many of each, and how long each one takes a
+          student &mdash; and mark each one as academic work or out-of-class work.</p>
+        <p class="lead">Check whether the whole course adds up to the time its credit hours require.</p>
         <p class="lead">Click a section heading to expand or collapse that section.</p>
         <p class="lead">Your work will be saved automatically as you go.</p>
       </details>
@@ -205,235 +206,86 @@
                       </div>
                     </div>
                   </fieldset>
-                  <details class="guide">
+                  <p class="format-effect">Your choice sets up a <strong>Class meetings</strong> line in
+                    Course activities below, which you can change.</p>
+                </div>
+              </section>
+
+            </div>
+
+          </details>
+        </section>
+
+        <!-- ============================================================ -->
+        <section class="step" aria-labelledby="h-activities">
+          <details class="step-body" open>
+            <summary>
+              <h2 id="h-activities"><span class="step-num" aria-hidden="true">2</span>Course activities</h2>
+            </summary>
+
+            <p class="step-lead lede">List everything students will do across the whole course. Give each
+              activity a name, how many there are, and how long each one takes a student, and say whether it
+              counts as academic work or out-of-class work.</p>
+
+            <div class="two-col explainers">
+              <details class="guide">
                     <summary>
                       <h4>What is, and isn't, academic work?</h4>
                     </summary>
                     <p>Academic work is the structured, instructor-led learning that takes place during scheduled meetings or through asynchronous materials that are monitored and documented. This includes, but is not limited to, live meetings, lab or field work, internships, and other forms of experiential learning. </p>
                     <p>Asynchronous materials that can track student engagement also count towards academic work. This can be recorded lectures, guided activities, or instructor-directed content that students work through on their own time.</p>
                     <p>This is distinct from homework or out-of-class study.</p>
+                    <p>For example, a 1.5-hour class and a 1-hour WeVideo lecture each week would be 2.5
+                      hours of academic work a week.</p>
                   </details>
-                </div>
-              </section>
-
-            </div>
-
-            <section class="card card-full" aria-labelledby="s-structure">
-              <h3 id="s-structure">Course structure</h3>
-              <div class="card-body">
-                <div class="field">
-                  <label for="f2f">Academic Work (minutes per week)</label>
-                  <div class="field-inline">
-                    <input type="number" id="f2f" min="0" step="1" value="150">
-                    <p class="hint">This is the minimum amount of time students will spend on academic work each week. The value is based on the credits and course length listed above. This includes synchronous meetings and monitored asynchronous
-                      materials. </p>
-                  </div>
-                  <p class="warn" id="f2f-min" hidden></p>
-                </div>
-                <div class="field">
-                  <label for="study">Additional Student Work (minutes per week)</label>
-                  <div class="field-inline">
-                    <input type="number" id="study" min="0" step="1" value="300">
-                    <p class="hint">This is additional work that students are expected to do on their own time. This includes reading, writing, and other assignments, studying for exams, and many more possible learning activities. This is work done without direct instruction, supervision, or monitoring.</p>
-                  </div>
-                  <p class="hint">The default values listed here meet the minimum requirements for a typical course, however you can increase the values if needed. Additional time added to the Academic work can be deducted from the Additional Student Work. For example, if you have 150 minutes of Academic work planned for each week, per credit, you would not need to add any Additional Student Work time.</p>
-                  <p class="warn" id="study-min" hidden></p>
-                </div>
-              </div>
-            </section>
-
-            <section aria-labelledby="s-how">
-              <h3 id="s-how" class="plain">How this is calculated</h3>
-              <p class="step-lead">One credit hour means one 50-minute period of instruction plus the study
-                time you set above, each week, for a 15-week semester.</p>
               <details class="guide">
                 <summary>
-                  <h4>The acceleration rate</h4>
+                  <h4>What is out-of-class work?</h4>
                 </summary>
-                <p>A course worth the same credits has to deliver the same total hours no matter
-                  how long the term runs. The <strong>acceleration rate</strong> is
-                  15 &divide; your semester length.</p>
-                <p>A 15-week term has a rate of 1.0. A 7-week term has a rate of about 2.14,
-                  so every week carries roughly twice the work.</p>
-                <p>Planned academic work is the exception: it stays at the length you entered. In an
-                  accelerated course the extra instructional time that it does not cover is pushed
-                  into the self-paced instructional total.</p>
+                <p>Out-of-class work is what students do on their own time without direct instruction,
+                  supervision or monitoring: reading, writing and other assignments, studying, and
+                  preparing for exams.</p>
+                <p>The credit hour asks for at least twice as much of it as academic work &mdash; 100
+                  minutes a week for every credit in a 15-week term.</p>
+                <p>The same activity can land on either side. A discussion an instructor monitors and
+                  documents is academic work; one students complete on their own is out-of-class
+                  work. Choose whichever describes how your course runs it.</p>
               </details>
-              <details class="guide">
-                <summary>
-                  <h4>What counts as Academic Work</h4>
-                </summary>
-                <p>Enter the week's scheduled meetings in minutes, including instruction, labs, or
-                  other scheduled academic work. Asynchronous learning activities using technology
-                  that can monitor and document the time students participate can be included in this
-                  number. For example, a 1.5 hour class and 1 hour WeVideo lecture, each week, would
-                  be 2.5 hours of academic work.</p>
-                    <p>Planning more academic work than the course carries credits is fine. Labs, studios
-                      and clinicals routinely do, and the federal definition sets the credit hour as a
-                      minimum rather than a ceiling. The self-paced instructional row simply drops to
-                      zero.</p>
-                    <p>It is <em>not</em> homework. Out-of-class work is the studying row.</p>
-              </details>
-            </section>
-
-          </details>
-        </section>
-
-        <!-- ============================================================ -->
-        <section class="step" aria-labelledby="h-week">
-          <details class="step-body" open>
-            <summary>
-              <h2 id="h-week"><span class="step-num" aria-hidden="true">2</span>Weekly time budget</h2>
-            </summary>
-
-            <div class="results">
-              <div id="warnings"></div>
-
-              <div class="totals">
-                <p class="total primary">
-                  <span class="num" id="out-total">0.00</span>
-                  <span class="lab">Total per week</span>
-                  <span class="sub">hours</span>
-                </p>
-                <p class="total" id="tile-f2f" hidden>
-                  <span class="num" id="out-f2f">0.00</span>
-                  <span class="lab">Planned academic work</span>
-                  <span class="sub">hours per week</span>
-                  <span class="desc" id="desc-f2f">scheduled or monitored</span>
-                </p>
-                <p class="total">
-                  <span class="num" id="out-instr">0.00</span>
-                  <span class="lab" id="lab-instr">Instructional activities</span>
-                  <span class="sub">hours per week</span>
-                  <span class="desc" id="desc-instr">planned academic work, or its self-paced equivalent</span>
-                </p>
-                <p class="total">
-                  <span class="num" id="out-study">0.00</span>
-                  <span class="lab">Homework / study</span>
-                  <span class="sub">hours per week</span>
-                </p>
-                <p class="total" id="tile-online" hidden>
-                  <span class="num" id="out-online">0.00</span>
-                  <span class="lab">Self-paced total</span>
-                  <span class="sub">hours per week</span>
-                  <span class="desc">the budget a module works with</span>
-                </p>
-                <p class="total">
-                  <span class="num" id="out-semester">0.00</span>
-                  <span class="lab">Total per semester</span>
-                  <span class="sub">hours</span>
-                </p>
-              </div>
-
-              <div class="table-scroll">
-                <table>
-                  <caption>Where the weekly hours come from</caption>
-                  <thead>
-                    <tr>
-                      <th scope="col">Time type</th>
-                      <th scope="col" class="num">Weeks</th>
-                      <th scope="col" class="num">Acceleration</th>
-                      <th scope="col" class="num">Credit hours</th>
-                      <th scope="col" class="num">Weekly minutes</th>
-                      <th scope="col" class="num">Weekly hours</th>
-                      <th scope="col" class="num">Semester minutes</th>
-                      <th scope="col" class="num">Semester hours</th>
-                    </tr>
-                  </thead>
-                  <tbody id="weekrows"></tbody>
-                </table>
-              </div>
-
-              <p class="sr-only" aria-live="polite" id="live-week"></p>
             </div>
-
-          </details>
-        </section>
-
-        <!-- ============================================================ -->
-        <section class="step" aria-labelledby="h-module">
-          <details class="step-body" open>
-            <summary>
-              <h2 id="h-module"><span class="step-num" aria-hidden="true">3</span>Module time planner</h2>
-            </summary>
-
-            <p class="step-lead lede">Now plan one module. Enter the time you expect students to spend on each
-              activity, and this checks the total against the self-paced hours your credit budget
-              allows for a week. A module here is one week&rsquo;s worth of time.</p>
 
             <div class="note">
               <p><strong>Not sure how long an activity takes?</strong> The
                 <a href="learning_activity_estimator.html">Learning Activity Estimator</a> estimates a
-                reading, a piece of writing, a discussion and the other activities below from their
-                length and difficulty &mdash; then enter the hours here.
+                reading, a piece of writing, a discussion and other activities from their length and
+                difficulty &mdash; then enter the hours here.
               </p>
-              <p class="hint" style="margin:0;">Its reading and writing rates come from the
+              <p class="hint">Its reading and writing rates come from the
                 <a href="https://cte.rice.edu/workload" target="_blank" rel="noopener">Rice / Wake Forest
                   Course Workload Estimator</a>, which you can also use directly.
               </p>
             </div>
 
-            <p class="step-lead lede">Each activity below shows a suggested time for <em>that activity on its
-                own</em>. They are not a checklist &mdash; a module usually combines a handful of these,
-              not all of them.</p>
+            <p class="step-lead lede">Choosing a type fills in a typical time for one of that activity,
+              which you can change. Typical times are a starting point, not a requirement.</p>
 
-            <section class="card card-full" aria-labelledby="s-rw">
-              <h3 id="s-rw">Reading &amp; writing</h3>
-              <div class="card-body">
-                <div class="field-row">
-                  <div class="field">
-                    <label for="rw_reading">Reading assignments &mdash; total hours</label>
-                    <input type="number" id="rw_reading" min="0" step="0.25" value="0">
-                    <p class="hint">Hours for the module's readings, from the Learning Activity Estimator or your own
-                      estimate.</p>
-                  </div>
-                  <div class="field">
-                    <label for="rw_writing">Writing assignments &mdash; total hours</label>
-                    <input type="number" id="rw_writing" min="0" step="0.25" value="0">
-                    <p class="hint">Hours for the module's writing assignments, from the Learning Activity Estimator
-                      or
-                      your own estimate.</p>
-                  </div>
-                </div>
-                <details class="guide">
-                  <summary>
-                    <h4>A note on these two numbers</h4>
-                  </summary>
-                  <p>The original spreadsheet multiplied both of these by 50/60 before adding them
-                    in, which quietly shrank them by 17%. Everything else on that sheet is entered in
-                    plain clock hours, and the Learning Activity Estimator reports clock hours, so this version
-                    adds them at face value.</p>
-                </details>
+            <div class="inventory" role="group" aria-labelledby="h-activities">
+              <div class="inv-head" aria-hidden="true">
+                <span>Activity</span>
+                <span>Type</span>
+                <span>Counts as</span>
+                <span class="n">How many</span>
+                <span class="n">Hours each</span>
+                <span class="n">Total hours</span>
+                <span></span>
               </div>
-            </section>
-
-            <div class="two-col">
-
-              <section class="card" aria-labelledby="s-learn">
-                <h3 id="s-learn">Learning activities</h3>
-                <div class="card-body">
-                  <p class="hint" style="margin:0 0 8px;">Estimated hours a student spends. Leave
-                    anything you are not using at zero.</p>
-                  <div id="learn-rows"></div>
-                  <p class="subtotal"><span>Learning activities total</span>
-                    <span class="v"><span id="out-learn">0.00</span> hrs</span>
-                  </p>
-                </div>
-              </section>
-
-              <section class="card" aria-labelledby="s-assess">
-                <h3 id="s-assess">Assessment activities</h3>
-                <div class="card-body">
-                  <p class="hint" style="margin:0 0 8px;">Includes the time students spend preparing,
-                    not just sitting the assessment.</p>
-                  <div id="assess-rows"></div>
-                  <p class="subtotal"><span>Assessment activities total</span>
-                    <span class="v"><span id="out-assess">0.00</span> hrs</span>
-                  </p>
-                </div>
-              </section>
-
+              <div id="rows"></div>
             </div>
+            <button type="button" class="small-btn" id="btn-add">+ Add an activity</button>
+
+            <p class="subtotal"><span>Academic work</span>
+              <span class="v"><span id="sum-acad">0.00</span> hrs</span></p>
+            <p class="subtotal"><span>Out-of-class work</span>
+              <span class="v"><span id="sum-ooc">0.00</span> hrs</span></p>
 
           </details>
         </section>
@@ -441,33 +293,40 @@
       </form>
 
       <!-- ============================================================ -->
-      <section class="step" aria-labelledby="h-balance">
+      <section class="step" aria-labelledby="h-check">
         <details class="step-body" open>
           <summary>
-            <h2 id="h-balance"><span class="step-num" aria-hidden="true">4</span>Does the module fit?</h2>
+            <h2 id="h-check"><span class="step-num" aria-hidden="true">3</span>Does the course add up?</h2>
           </summary>
 
           <div class="results">
+            <div id="warnings"></div>
+
             <div class="totals">
-              <p class="total">
-                <span class="num" id="out-budget">0.00</span>
-                <span class="lab">Weekly self-paced hours available</span>
-                <span class="sub">from your credit budget</span>
-              </p>
-              <p class="total">
-                <span class="num" id="out-planned">0.00</span>
-                <span class="lab">Module hours planned</span>
-                <span class="sub">everything entered above</span>
-              </p>
-              <p class="total" id="tile-diff">
-                <span class="num" id="out-diff">0.00</span>
-                <span class="lab">Difference</span>
-                <span class="sub" id="diff-sub">hours</span>
-              </p>
+              <div class="total" id="tile-acad">
+                <span class="num" id="out-acad">0.00</span>
+                <span class="lab">Academic work</span>
+                <span class="sub" id="min-acad">hours, of a 0.00 minimum</span>
+                <span class="meter" aria-hidden="true"><span class="fill" id="bar-acad"></span></span>
+              </div>
+              <div class="total" id="tile-ooc">
+                <span class="num" id="out-ooc">0.00</span>
+                <span class="lab">Out-of-class work</span>
+                <span class="sub" id="min-ooc">hours, of a 0.00 minimum</span>
+                <span class="meter" aria-hidden="true"><span class="fill" id="bar-ooc"></span></span>
+              </div>
+              <div class="total primary" id="tile-total">
+                <span class="num" id="out-total">0.00</span>
+                <span class="lab">Whole course</span>
+                <span class="sub" id="min-total">hours, of a 0.00 minimum</span>
+                <span class="meter" aria-hidden="true"><span class="fill" id="bar-total"></span></span>
+              </div>
             </div>
 
-            <div id="balance-msg"></div>
-            <p class="sr-only" aria-live="polite" id="live-balance"></p>
+            <p class="weekly" id="weekly"></p>
+
+            <div id="status"></div>
+            <p class="sr-only" aria-live="polite" id="live-status"></p>
 
             <div class="actions">
               <button type="button" class="primary-btn" id="btn-report">Create printable summary</button>
@@ -504,157 +363,83 @@
       (function () {
         "use strict";
 
-        var STORAGE_KEY = "uoes-credit-hour-planner";
+        /* A new key, not "uoes-credit-hour-planner": that one belongs to the
+           weekly-budget page now kept as old_credit_hour_planner.html, and its
+           saves hold minutes-per-week fields this page has no use for. Both
+           pages can sit side by side without reading each other's work. */
+        var STORAGE_KEY = "uoes-credit-hour-course";
 
-        /* A standard semester, used as the numerator of the acceleration rate. */
+        /* The credit hour, as 34 CFR 600.2 and N.J.A.C. 9A:1-1.2 state it: per
+           credit, each week of a 15-week term, 50 minutes of instruction and at
+           least 100 minutes of out-of-class work. The course owes the same
+           totals however long its term runs, so the minimums here are whole-
+           course figures and the weeks only turn them into weekly averages. */
         var STANDARD_WEEKS = 15;
-        /* One credit hour = one 50-minute period of instruction per week. */
-        var MINUTES_PER_CREDIT_HOUR = 50;
-        /* The outside-work half of the credit hour, as N.J.A.C. 9A:1-1.2 states
-           it: the 50 minutes of class activity is "complemented by at least 100
-           minutes" of laboratory or outside assignments. Deliberately NOT the
-           study field, which is what this course expects (2 or 3 hours per credit)
-           rather than what the state requires. The Course structure readout is
-           about the minimum, so it uses this; the computed rows below use the
-           study field. */
-        var STUDY_MINUTES_PER_CREDIT = 100;
-        /* Ceiling for reading a markerless save's student-work value as the old
-           hours-per-credit-per-week unit; above it the value is already minutes. */
-        var OLD_STUDY_CEILING = 24;
-        var MINUTES_PER_WEEK = 7 * 24 * 60;
+        var ACADEMIC_MIN_PER_CREDIT = 50;
+        var OOC_MIN_PER_CREDIT = 100;
 
-        /* ------------------------------------------------------------------
-           Activity rows. `sug` is the suggested time shown to the user and
-           used by the "fill blanks" button; it comes from the tooltips in the
-           original workbook. Rows with `derived` are computed, not entered.
-        ------------------------------------------------------------------ */
-
-        var LEARN = [
-          { id: "blog", name: "Blog", sug: 1 },
-          { id: "case", name: "Case study", sug: 2 },
-          { id: "discussion", name: "Discussion posts (combined)", sug: 3 },
-          {
-            id: "experiential", name: "Experiential learning", sug: 2,
-            note: "Attend an event, interview, field trip, lab, etc."
-          },
-          { id: "journal", name: "Journal posts", sug: 1.5 },
-          { id: "minilecture", name: "Mini-lecture video", sug: 0.3 },
-          { id: "othervideo", name: "Other videos", sug: 0.5 },
-          { id: "podcast", name: "Podcast", sug: 0.5 },
-          {
-            id: "readings", name: "Readings", derived: "reading",
-            note: "From the reading hours you entered"
-          },
-          { id: "research", name: "Research activities", sug: 2 },
-          { id: "simulation", name: "Simulation / eLearning tutorial", sug: 0.5 },
-          { id: "supplemental", name: "Supplemental materials", sug: 2 },
-          { id: "webinar", name: "Webinar session", sug: 1.5 },
-          { id: "wiki", name: "Wiki", sug: 2 },
-          {
-            id: "addlearn", name: "Additional learning activities",
-            note: "Anything not listed above"
-          }
+        /* Activity types. `sug` is the typical time for one of that activity,
+           in hours, carried over from the original workbook's per-cell
+           suggestions. `bucket` is the default answer to "counts as", which
+           the designer can change on any row: see the academic-work
+           explainer for why the same activity can go either way. */
+        var TYPES = [
+          { id: "meetings", group: "Scheduled", name: "Class meetings", bucket: "acad" },
+          { id: "readings", group: "Learning activities", name: "Readings", bucket: "ooc" },
+          { id: "blog", group: "Learning activities", name: "Blog", sug: 1, bucket: "ooc" },
+          { id: "case", group: "Learning activities", name: "Case study", sug: 2, bucket: "ooc" },
+          { id: "discussion", group: "Learning activities", name: "Discussion posts", sug: 3, bucket: "ooc" },
+          { id: "experiential", group: "Learning activities", name: "Experiential learning (event, interview, field trip, lab)", sug: 2, bucket: "acad" },
+          { id: "journal", group: "Learning activities", name: "Journal posts", sug: 1.5, bucket: "ooc" },
+          { id: "minilecture", group: "Learning activities", name: "Mini-lecture video", sug: 0.3, bucket: "acad" },
+          { id: "othervideo", group: "Learning activities", name: "Other videos", sug: 0.5, bucket: "ooc" },
+          { id: "podcast", group: "Learning activities", name: "Podcast", sug: 0.5, bucket: "ooc" },
+          { id: "research", group: "Learning activities", name: "Research activities", sug: 2, bucket: "ooc" },
+          { id: "simulation", group: "Learning activities", name: "Simulation / eLearning tutorial", sug: 0.5, bucket: "acad" },
+          { id: "supplemental", group: "Learning activities", name: "Supplemental materials", sug: 2, bucket: "ooc" },
+          { id: "webinar", group: "Learning activities", name: "Webinar session", sug: 1.5, bucket: "acad" },
+          { id: "wiki", group: "Learning activities", name: "Wiki", sug: 2, bucket: "ooc" },
+          { id: "writing", group: "Assessment activities", name: "Writing assignment", bucket: "ooc" },
+          { id: "prep", group: "Assessment activities", name: "Assessment preparation", sug: 3, bucket: "ooc" },
+          { id: "group", group: "Assessment activities", name: "Group assignment", sug: 4, bucket: "ooc" },
+          { id: "individual", group: "Assessment activities", name: "Individual assignment", sug: 2, bucket: "ooc" },
+          { id: "peer", group: "Assessment activities", name: "Peer review", sug: 1.5, bucket: "ooc" },
+          { id: "preassess", group: "Assessment activities", name: "Pre-assessment", sug: 1, bucket: "ooc" },
+          { id: "quiz", group: "Assessment activities", name: "Quiz", sug: 0.5, bucket: "ooc" },
+          { id: "project", group: "Assessment activities", name: "Project / presentation", sug: 1, bucket: "ooc" },
+          { id: "test", group: "Assessment activities", name: "Test / exam", sug: 1, bucket: "acad" },
+          { id: "other", group: "Other", name: "Something else", bucket: "ooc" }
         ];
+        var TYPE_BY_ID = {};
+        TYPES.forEach(function (t) { TYPE_BY_ID[t.id] = t; });
 
-        var ASSESS = [
-          { id: "prep", name: "Assessment preparation time", sug: 3 },
-          { id: "group", name: "Group assignment", sug: 4 },
-          { id: "individual", name: "Individual assignment", sug: 2 },
-          { id: "peer", name: "Peer review", sug: 1.5 },
-          { id: "preassess", name: "Pre-assessment", sug: 1 },
-          { id: "quiz", name: "Quiz", sug: 0.5 },
-          { id: "project", name: "Project / presentation", sug: 1 },
-          { id: "test", name: "Test", sug: 1 },
-          {
-            id: "writing", name: "Writing assignments", derived: "writing",
-            note: "From the writing hours you entered"
-          },
-          {
-            id: "addassess", name: "Other assessment activities",
-            note: "Anything not listed above"
-          }
-        ];
+        var BUCKET_NAMES = { acad: "Academic work", ooc: "Out-of-class work" };
 
-        /* ---------------- build the activity rows ---------------- */
-
-        function buildRows(list, container, prefix) {
-          var frag = document.createDocumentFragment();
-          list.forEach(function (row) {
-            var wrap = document.createElement("div");
-            wrap.className = "act";
-
-            var label = document.createElement("label");
-            label.setAttribute("for", prefix + "_" + row.id);
-            label.appendChild(document.createTextNode(row.name));
-
-            var subText = row.note ||
-              (typeof row.sug === "number" ? row.sug + (row.sug === 1 ? " hour suggested" : " hours suggested") : "");
-            if (row.note && typeof row.sug === "number") {
-              subText = row.note + " — " + row.sug + (row.sug === 1 ? " hour suggested" : " hours suggested");
-            }
-            if (subText) {
-              var sug = document.createElement("span");
-              sug.className = "sug";
-              sug.textContent = subText;
-              label.appendChild(sug);
-            }
-            wrap.appendChild(label);
-
-            if (row.derived) {
-              var out = document.createElement("output");
-              out.className = "derived";
-              out.id = prefix + "_" + row.id;
-              out.setAttribute("for", row.derived === "reading" ? "rw_reading" : "rw_writing");
-              out.textContent = "0.00";
-              wrap.appendChild(out);
-            } else {
-              var input = document.createElement("input");
-              input.type = "number";
-              input.id = prefix + "_" + row.id;
-              input.min = "0";
-              input.step = "0.25";
-              /* setAttribute, not .value — the content attribute is what
-                 form.reset() restores, so "Start over" clears these rows. */
-              input.setAttribute("value", "0");
-              wrap.appendChild(input);
-            }
-            frag.appendChild(wrap);
-          });
-          container.appendChild(frag);
-        }
-
-        buildRows(LEARN, document.getElementById("learn-rows"), "l");
-        buildRows(ASSESS, document.getElementById("assess-rows"), "a");
-
-        /* ---------------- field access ---------------- */
-
-        var SIMPLE_FIELDS = ["weeks", "credits", "study", "f2f", "rw_reading", "rw_writing"];
-
-        var ACTIVITY_FIELDS = [];
-        LEARN.forEach(function (r) { if (!r.derived) ACTIVITY_FIELDS.push("l_" + r.id); });
-        ASSESS.forEach(function (r) { if (!r.derived) ACTIVITY_FIELDS.push("a_" + r.id); });
-
-        var ALL_FIELDS = SIMPLE_FIELDS.concat(ACTIVITY_FIELDS);
-
-        function $(id) { return document.getElementById(id); }
-
-        function num(id) {
-          var e = $(id);
-          if (!e) return 0;
-          var v = parseFloat(e.value);
-          return isFinite(v) ? v : 0;
-        }
-
-        /* Three formats, on the synchronous/asynchronous axis rather than the
-           online/in-person one: a live online class is scheduled meeting time
-           just as a classroom is. Older saves used "online" for the merged
-           fully-online-or-traditional block, which computed no meeting time at
-           all; load() migrates it to "async". */
         var FORMAT_NAMES = {
           sync: "Synchronous",
           blended: "Blended / hybrid",
           async: "Asynchronous"
         };
+
+        function $(id) { return document.getElementById(id); }
+
+        function numVal(v) {
+          var n = parseFloat(v);
+          return isFinite(n) && n > 0 ? n : 0;
+        }
+        function num(id) { return numVal($(id).value); }
+
+        function fmt(n) { return isFinite(n) ? n.toFixed(2) : "0.00"; }
+
+        /* "37 hours and 30 minutes" rather than "37.50 hours" in sentences. */
+        function hhmm(hours) {
+          var m = Math.round(hours * 60);
+          if (!isFinite(m) || m < 0) m = 0;
+          var h = Math.floor(m / 60), mins = m % 60, parts = [];
+          if (h > 0) parts.push(h + (h === 1 ? " hour" : " hours"));
+          if (mins > 0 || h === 0) parts.push(mins + (mins === 1 ? " minute" : " minutes"));
+          return parts.join(" and ");
+        }
 
         function format() {
           if ($("fmt-blended").checked) return "blended";
@@ -662,488 +447,442 @@
           return "sync";
         }
 
-        function fmt(n) {
-          if (!isFinite(n)) return "0.00";
-          return n.toFixed(2);
-        }
-        function fmt1(n) {
-          if (!isFinite(n)) return "0.0";
-          return n.toFixed(1);
-        }
+        /* ---------------- state ---------------- */
 
-        /* "7 hours and 30 minutes" rather than "7.50 hours". A decimal of an
-           hour is hard to read at a glance — .36 of an hour is 21 minutes and
-           nobody converts that in their head. Rounds to the nearest minute,
-           drops a zero minutes part, and keeps the singular forms. */
-        function hhmm(totalMin) {
-          var m = Math.round(totalMin);
-          if (!isFinite(m) || m < 0) m = 0;
-          var h = Math.floor(m / 60);
-          var mins = m % 60;
-          var parts = [];
-          if (h > 0) parts.push(h + (h === 1 ? " hour" : " hours"));
-          if (mins > 0 || h === 0) parts.push(mins + (mins === 1 ? " minute" : " minutes"));
-          return parts.join(" and ");
+        /* Each row: { id, name, type, bucket, count, each, auto, bucketSet }.
+           count and each are kept as the strings typed, so an empty box stays
+           empty. `auto` marks the Class meetings line the format set up; it
+           follows the format, credits and weeks until the designer edits it.
+           `bucketSet` records that "counts as" was chosen by hand, so a later
+           change of type does not overwrite it. */
+        var rows = [];
+        var nextId = 1;
+        /* Deleting the format's meetings line keeps it deleted until the format
+           is changed again; otherwise every keystroke in Course basics would
+           bring it back. */
+        var meetingsDismissed = false;
+
+        function blankRow() {
+          return { id: nextId++, name: "", type: "", bucket: "ooc", count: "1", each: "", auto: false, bucketSet: false };
         }
 
-        /* ---------------- calculation ---------------- */
-
-        function calcWeek() {
-          var warnings = [];
-          var notes = [];
-
-          var weeks = num("weeks");
+        function minimums() {
           var credits = num("credits");
-          var study = num("study");
-          var fmtVal = format();
-          /* The field takes minutes per week (since September 10, 2026); the
-             math runs in 50-minute credit-hour periods, so convert once here. */
-          var f2fMinutes = num("f2f");
-
-          if (credits < 0) { credits = 0; }
-          if (study < 0) { study = 0; }
-          if (f2fMinutes < 0) { f2fMinutes = 0; }
-          var f2f = f2fMinutes / MINUTES_PER_CREDIT_HOUR;
-
-          /* The original used IFERROR(15/weeks, 0), which silently produced a
-             zero-hour course. Warn instead of failing quietly. */
-          var accel;
-          if (weeks < 1) {
-            warnings.push("Semester length must be at least 1 week. Nothing is being calculated until you set it.");
-            accel = 0;
-            weeks = 0;
-          } else {
-            accel = STANDARD_WEEKS / weeks;
-          }
-
-          /* Meeting for more hours than the course carries credits is legitimate —
-             34 CFR 600.2 defines the credit hour as a minimum, not a ceiling, and
-             labs, studios and clinicals routinely exceed it. The original workbook
-             turned that into a negative online instructional total; earlier versions
-             of this port clamped the meeting hours instead, which capped a 3-credit
-             course at three meeting hours a week. Now the self-paced instructional
-             row floors at zero and the total simply runs above the minimum. */
-          if (f2f > credits) {
-            notes.push("Your planned academic work (" + f2fMinutes + " minutes a week) comes to more " +
-              "than the " + (MINUTES_PER_CREDIT_HOUR * credits) + " minutes of instructional time a " +
-              fmt1(credits) + "-credit course owes. That is fine — " +
-              "labs, studios and clinicals routinely meet longer. The planned work covers all of the " +
-              "instructional time, so none of it is left to be self-paced, and the weekly total " +
-              "runs above the credit-hour minimum.");
-          }
-
-          var M = MINUTES_PER_CREDIT_HOUR;
-
-          /* Scheduled meetings run at their actual length, so they are never
-             accelerated (rate is always 1). */
-          var f2fMin = accel > 0 ? f2fMinutes : 0;
-
-          /* Remaining credit hours self-paced, plus whatever accelerated
-             instructional time the meetings do not cover. */
-          var instrMin = M * accel * (credits - f2f) + (M * accel * f2f - f2fMin);
-          if (!isFinite(instrMin) || instrMin < 0) instrMin = 0;
-
-          /* Until October 14, 2026 this field held hours per credit per week and
-             the figure was accelerated with everything else. It now holds the
-             minutes a week the instructor actually plans, so it is taken as
-             entered — nobody types into a "per week" box expecting the tool to
-             multiply it by 2.14 for a 7-week term. Scheduled academic work has
-             always been treated this way; the two fields now match.
-
-             The consequence is that a short term no longer inflates this number
-             silently: it falls short of the accelerated minimum, and the notice
-             under the field says so. That is the point of the notice. */
-          var studyMin = study;
-          if (!isFinite(studyMin) || studyMin < 0) studyMin = 0;
-
-          var rows = [];
-          if (f2f > 0) {
-            rows.push({ name: "Planned academic work", accel: 1, credits: f2f, min: f2fMin });
-            rows.push({
-              name: "Self-paced instructional", accel: accel,
-              credits: Math.max(0, credits - f2f), min: instrMin
-            });
-          } else {
-            rows.push({ name: "Instructional", accel: accel, credits: credits, min: instrMin });
-          }
-          rows.push({
-            name: "Studying", accel: 1,
-            credits: studyMin / MINUTES_PER_CREDIT_HOUR, min: studyMin
-          });
-
-          rows.forEach(function (r) {
-            r.weeklyHours = r.min / 60;
-            r.semesterMin = r.min * weeks;
-            r.semesterHours = r.semesterMin / 60;
-          });
-
-          var totalMin = rows.reduce(function (s, r) { return s + r.min; }, 0);
-
+          var weeks = num("weeks");
           return {
-            format: fmtVal,
+            credits: credits,
             weeks: weeks,
-            accel: accel,
-            rows: rows,
-            f2fHours: f2fMin / 60,
-            instrHours: instrMin / 60,
-            studyHours: studyMin / 60,
-            selfPacedHours: (instrMin + studyMin) / 60,   /* the module budget */
-            totalHours: totalMin / 60,
-            semesterHours: totalMin * weeks / 60,
-            warnings: warnings,
-            notes: notes
+            acad: credits * ACADEMIC_MIN_PER_CREDIT * STANDARD_WEEKS / 60,
+            ooc: credits * OOC_MIN_PER_CREDIT * STANDARD_WEEKS / 60
           };
         }
 
-        function calcModule() {
-          /* Reading and writing are entered as clock hours and used as-is.
-             The original workbook scaled them by 50/60 first; see the note in
-             the Reading & writing card. */
-          var reading = Math.max(0, num("rw_reading"));
-          var writing = Math.max(0, num("rw_writing"));
-
-          var learn = 0, assess = 0;
-          var detail = [];
-
-          LEARN.forEach(function (r) {
-            var v = r.derived ? reading : Math.max(0, num("l_" + r.id));
-            learn += v;
-            if (v > 0) detail.push({ group: "Learning", name: r.name, hours: v });
-          });
-          ASSESS.forEach(function (r) {
-            var v = r.derived ? writing : Math.max(0, num("a_" + r.id));
-            assess += v;
-            if (v > 0) detail.push({ group: "Assessment", name: r.name, hours: v });
-          });
-
+        /* The meetings line a format implies: one line per week of the term,
+           each the weekly share of the academic minimum (all of it for a
+           synchronous course, half for blended). A 3-credit, 15-week
+           synchronous course gets 15 × 2.50 hours = the 37.50-hour minimum. */
+        function meetingSpec() {
+          var f = format();
+          var m = minimums();
+          if (f === "async" || m.weeks < 1) return null;
+          var share = f === "blended" ? 0.5 : 1;
+          var weekly = m.acad / m.weeks * share;
           return {
-            reading: reading,
-            writing: writing,
-            learn: learn,
-            assess: assess,
-            planned: learn + assess,
-            detail: detail
+            name: f === "blended" ? "Class meetings (weekly, blended)" : "Class meetings (weekly)",
+            count: String(Math.round(m.weeks)),
+            each: String(Math.round(weekly * 100) / 100)
           };
         }
 
-        /* ---------------- rendering ---------------- */
-
-        /* The academic-work field is always visible, so the tiles key off the
-           number rather than the format: with no planned work there is nothing to
-           split and the self-paced total would just repeat the weekly total. */
-        function syncVisibility() {
-          var planned = num("f2f") > 0;
-          $("tile-f2f").hidden = !planned;
-          $("tile-online").hidden = !planned;
-          $("lab-instr").textContent = planned ? "Self-paced instructional" : "Instructional activities";
-          $("desc-instr").textContent = planned
-            ? "the seat time your planned work doesn’t cover"
-            : "planned academic work, or its self-paced equivalent";
+        function autoRow() {
+          for (var i = 0; i < rows.length; i++) if (rows[i].auto) return rows[i];
+          return null;
         }
 
-        /* The format choice writes nothing. Until October 15, 2026 picking
-           synchronous or asynchronous overwrote the academic-work field with the
-           minimum, which had become both redundant and wrong: trackSetup already
-           keeps that field at the minimum while it is untouched, so the preset's
-           only remaining effect was to discard a number the user had set on
-           purpose — under a card that says the choice does not affect the
-           minimum requirements.
-
-           All three formats owe the same minimum. What differs is how the work is
-           delivered, which is a matter for the text beside each choice, not for
-           the arithmetic: nothing below reads the format except the saved plan and
-           the printed report. */
-
-        /* The weekly minimum for a given course setup, in whole minutes: the
-           statutory rate per credit, scaled by the acceleration rate, because a
-           shorter term carries the same course total in fewer weeks. null when
-           there is no sensible answer — under a week the rate is undefined and
-           the warnings block already says nothing is being calculated.
-
-           Rounded here rather than at each call site so the figure written into a
-           field is the same one the readout above it states: a 7-week 3-credit
-           course gives 321.43, and both must say 321. */
-        function minimumFor(credits, weeks, perCredit) {
-          if (!(weeks >= 1) || !(credits >= 0)) return null;
-          return Math.round(credits * perCredit * (STANDARD_WEEKS / weeks));
-        }
-
-        /* Both work fields start at the minimum and follow the course setup for as
-           long as they still hold it. Change the credits or the length and they
-           move with it; type anything else into one and it becomes yours, and is
-           left alone from then on.
-
-           "Untouched" is judged by the value, not by a flag: the field is followed
-           while it equals the minimum for the credits and length then in force.
-           That costs nothing — someone who types the minimum by hand keeps the
-           convenience, and anyone who types a different number keeps their number
-           — and it needs no extra state to survive a reload.
-
-           Below 1 week there is no minimum to compute, so the fields and the
-           remembered setup are both left alone until a real length comes back. A
-           trip through 0 weeks therefore does not strand them at a stale figure. */
-        var lastCredits = null;
-        var lastWeeks = null;
-        var TRACKED = [["f2f", MINUTES_PER_CREDIT_HOUR], ["study", STUDY_MINUTES_PER_CREDIT]];
-        function trackSetup() {
-          var c = num("credits");
-          var w = num("weeks");
-          if (!(w >= 1)) return;
-          if (lastCredits !== null && lastWeeks !== null) {
-            TRACKED.forEach(function (pair) {
-              var was = minimumFor(lastCredits, lastWeeks, pair[1]);
-              var now = minimumFor(c, w, pair[1]);
-              if (was !== null && now !== null && num(pair[0]) === was) {
-                $(pair[0]).value = String(now);
-              }
-            });
+        /* Returns true when the set of rows changed and needs a re-render. */
+        function syncMeetings() {
+          var spec = meetingSpec();
+          var a = autoRow();
+          if (!spec) {
+            if (a) { rows.splice(rows.indexOf(a), 1); return true; }
+            return false;
           }
-          lastCredits = c;
-          lastWeeks = w;
-        }
-
-        function render() {
-          trackSetup();
-          syncVisibility();
-
-          var w = calcWeek();
-          var m = calcModule();
-
-          /* The tile repeats the minutes entered, so the hours figure on it can be
-             traced back to the field. The field itself no longer echoes its own
-             hours: the line that matters there is the minimum, below. */
-          var mins = Math.max(0, num("f2f"));
-          $("desc-f2f").textContent = mins + " minutes a week, scheduled or monitored";
-
-          /* The same echo, under Course credits — the first field in the card,
-             which is where the whole-course figure belongs. The semester total is the
-             number that does NOT move when the term gets shorter — the weekly
-             figure beside it does — which is the whole point of the
-             acceleration rate and is otherwise only visible on a tile two
-             sections further down. (It does climb with the weeks once the
-             scheduled meetings exceed what the credits cover, since meeting
-             time is never accelerated; the readout shows that rather than
-             hiding it.) */
-          /* Two echoes, each under the field that drives it. Credits set the
-             whole-course total; the semester length is what turns that total
-             into a per-week figure, so the weekly number sits under it.
-
-             The term length is read off the live field, not hardcoded: a 7-week
-             course must not be told it runs across a 15-week semester. Dropped
-             entirely below 1 week, where weeks is clamped to 0 and the warning
-             above already explains that nothing is being calculated. */
-          /* The statutory weekly rate for the credits entered. Both halves are
-             the minimum the regulation sets (50 and 100 minutes per credit), not
-             what this course plans: the study field is what the instructor
-             expects, and reading it here would make the page say the minimum is
-             whatever they typed.
-
-             These feed the #minimums sentence below the fields and the notice
-             under each input. A fuller version, naming the course totals as well
-             as the weekly rate, was printed inside the "How these minimums are
-             calculated." panel until October 16, 2026; it said the same thing as
-             the sentence below the fields, so Maka dropped it. The totals
-             themselves are no longer stated anywhere but the Total per semester
-             tile in step 2. */
-          var weeklyInstrMin = num("credits") * MINUTES_PER_CREDIT_HOUR;
-          var weeklyStudyMin = num("credits") * STUDY_MINUTES_PER_CREDIT;
-
-          /* The below-minimum notice, shown only when the planned academic work
-             falls short of the instructional minimum for the credits and term
-             entered — the same figure the line above states.
-
-             Derived from credits and the acceleration rate rather than read off
-             the computed rows, because the rows are built from the very number
-             being judged: instrMin absorbs any shortfall, so the total always
-             looks compliant and the rows can never reveal one.
-
-             Hidden below 1 week, where weeks is clamped to 0 and the warning above
-             already says nothing is being calculated. The quarter-minute tolerance
-             keeps a fractional rate (a 7-week term gives 321.428... minutes) from
-             flagging a value the user typed to match it. */
-          /* Both minimums in one sentence, closing the card that produces them:
-             the statutory rate for the credits entered, scaled by the acceleration
-             rate, since a shorter term carries the same course total in fewer
-             weeks. Stated once here rather than twice over in Course structure,
-             where the two sentences shared an eleven-word opening.
-
-             Minutes lead, because minutes are what the two boxes take: a reader
-             comparing 300 against "5 hours" has to convert before they can tell
-             whether they are short. The hours-and-minutes form follows in
-             brackets, and is dropped under an hour where it would only repeat the
-             minutes.
-
-             Below 1 week nothing is calculated (weeks is clamped to 0 and the
-             warnings block says so), so the line goes quiet rather than printing
-             figures derived from a zero rate. */
-          function minutesPhrase(x) {
-            var m = Math.round(x);
-            return m + (m === 1 ? " minute" : " minutes") +
-              (m >= 60 ? " (" + hhmm(x) + ")" : "");
+          if (a) {
+            var changed = a.name !== spec.name || a.count !== spec.count || a.each !== spec.each;
+            a.name = spec.name; a.count = spec.count; a.each = spec.each;
+            return changed;
           }
-          var reqWork = weeklyInstrMin * w.accel;
-          var reqStudy = weeklyStudyMin * w.accel;
-          var minLine = $("minimums");
-          if (w.weeks < 1) {
-            minLine.hidden = true;
-          } else {
-            minLine.hidden = false;
-            /* The course totals close the sentence. They multiply by
-               STANDARD_WEEKS, not the course-length field: they are what the
-               credits are worth, and a shorter term redistributes that same
-               total across fewer weeks rather than shrinking it. So the figures
-               in brackets at the front change with the term and the ones at the
-               end do not, which is the whole point of the acceleration rate and
-               is what the panel below spells out. */
-            minLine.textContent = "Based on the entered credits (" + num("credits") +
-              ") and course length (" + w.weeks + (w.weeks === 1 ? " week" : " weeks") +
-              "), the minimum required academic work is " + minutesPhrase(reqWork) +
-              " per week and the minimum additional student work is " + minutesPhrase(reqStudy) +
-              " per week, for a total of " + hhmm(weeklyInstrMin * STANDARD_WEEKS) +
-              " of academic work and " + hhmm(weeklyStudyMin * STANDARD_WEEKS) +
-              " of additional student work across the entire course.";
-          }
-
-          /* The notice under each field. Measured against the rounded figure,
-             which is the one stated above and the one the field is filled with: a
-             7-week 3-credit course owes 321.43, so an entry of 321 must not be
-             called short of a minimum the page itself prints as 321.
-
-             Each field is judged only against its own minimum. Scheduling more
-             academic work than the credits require does not lower what students
-             owe outside class, so it must not quietly cancel a shortfall here or
-             manufacture one there.
-
-             Short is a warning; over is only a note, in the calmer blue treatment,
-             because exceeding the minimum is allowed — labs, studios and
-             clinicals routinely do — and the page should say so without colouring
-             it as a fault. */
-          function stateNotice(noticeId, required, planned, label) {
-            var notice = $(noticeId);
-            if (w.weeks < 1) {
-              notice.hidden = true;
-              return;
-            }
-            var diff = Math.round(planned) - Math.round(required);
-            notice.hidden = diff === 0;
-            if (diff < 0) {
-              notice.className = "warn";
-              notice.textContent = "You will need to provide an additional " + (-diff) +
-                (diff === -1 ? " minute" : " minutes") + " to meet the required minimums.";
-            } else if (diff > 0) {
-              notice.className = "note";
-              notice.textContent = "You have entered " + diff +
-                (diff === 1 ? " minute" : " minutes") + " more than is required. You may wish to " +
-                "reduce the " + label + ", but this is not required.";
-            }
-          }
-          stateNotice("f2f-min", reqWork, mins, "academic work");
-          stateNotice("study-min", reqStudy, Math.max(0, num("study")), "additional student work");
-
-          /* --- weekly tiles --- */
-          $("out-total").textContent = fmt(w.totalHours);
-          $("out-f2f").textContent = fmt(w.f2fHours);
-          $("out-instr").textContent = fmt(w.instrHours);
-          $("out-study").textContent = fmt(w.studyHours);
-          $("out-online").textContent = fmt(w.selfPacedHours);
-          $("out-semester").textContent = fmt(w.semesterHours);
-
-          /* --- weekly table --- */
-          var body = $("weekrows");
-          body.innerHTML = "";
-          w.rows.forEach(function (r) {
-            body.appendChild(weekRow(r.name, r, w.weeks));
+          if (meetingsDismissed) return false;
+          var hasMeetings = rows.some(function (r) { return r.type === "meetings"; });
+          if (hasMeetings) return false;
+          rows.unshift({
+            id: nextId++, name: spec.name, type: "meetings", bucket: "acad",
+            count: spec.count, each: spec.each, auto: true, bucketSet: false
           });
-          var totalRow = {
-            accel: null,
-            credits: w.rows.reduce(function (s, r) { return s + r.credits; }, 0),
-            min: w.rows.reduce(function (s, r) { return s + r.min; }, 0)
-          };
-          totalRow.weeklyHours = totalRow.min / 60;
-          totalRow.semesterMin = totalRow.min * w.weeks;
-          totalRow.semesterHours = totalRow.semesterMin / 60;
-          var tr = weekRow("Total", totalRow, w.weeks);
-          tr.style.fontWeight = "bold";
-          tr.firstChild.style.borderTop = "2px solid #007FAC";
-          body.appendChild(tr);
-
-          /* --- warnings and notes --- */
-          var wbox = $("warnings");
-          wbox.innerHTML = "";
-          w.warnings.forEach(function (msg) { wbox.appendChild(noteEl("warn", msg)); });
-          w.notes.forEach(function (msg) { wbox.appendChild(noteEl("note", msg)); });
-
-          $("live-week").textContent =
-            "Weekly budget " + fmt(w.totalHours) + " hours, " +
-            fmt(w.semesterHours) + " hours for the semester.";
-
-          /* --- module --- */
-          var lr = $("l_readings"), aw = $("a_writing");
-          if (lr) lr.textContent = fmt(m.reading);
-          if (aw) aw.textContent = fmt(m.writing);
-          $("out-learn").textContent = fmt(m.learn);
-          $("out-assess").textContent = fmt(m.assess);
-
-          /* --- balance --- */
-          var diff = w.selfPacedHours - m.planned;
-          $("out-budget").textContent = fmt(w.selfPacedHours);
-          $("out-planned").textContent = fmt(m.planned);
-          $("out-diff").textContent = fmt(diff);
-
-          var tile = $("tile-diff");
-          tile.className = diff < -0.005 ? "total primary over" : "total";
-          $("diff-sub").textContent = diff < -0.005 ? "hours over budget" : "hours remaining";
-
-          var msg = $("balance-msg");
-          msg.innerHTML = "";
-          if (m.planned <= 0) {
-            msg.appendChild(noteEl("note",
-              "Nothing planned yet. Enter the hours you expect students to spend on each " +
-              "activity in this module."));
-          } else if (diff < -0.005) {
-            msg.appendChild(noteEl("warn",
-              "This module asks for " + fmt(-diff) + " hours more than the credit hours allow. " +
-              "Trim activities, move something to another module, or reconsider the study time " +
-              "per credit hour."));
-          } else {
-            msg.appendChild(noteEl("note",
-              fmt(diff) + " hours still unassigned. That is room for the activities you have " +
-              "not listed yet — or slack, which students will use."));
-          }
-
-          $("live-balance").textContent =
-            "Planned " + fmt(m.planned) + " hours against a budget of " +
-            fmt(w.selfPacedHours) + " hours. " +
-            (diff < -0.005 ? fmt(-diff) + " hours over." : fmt(diff) + " hours remaining.");
-
-          save();
-          return { week: w, module: m, diff: diff };
+          return true;
         }
 
-        function weekRow(name, r, weeks) {
-          var tr = document.createElement("tr");
-          function cell(text, isNum) {
-            var td = document.createElement("td");
-            if (isNum) td.className = "num";
-            td.textContent = text;
-            return td;
-          }
-          tr.appendChild(cell(name, false));
-          tr.appendChild(cell(weeks ? String(weeks) : "—", true));
-          tr.appendChild(cell(r.accel === null ? "—" : r.accel.toFixed(2), true));
-          tr.appendChild(cell(fmt1(r.credits), true));
-          tr.appendChild(cell(fmt1(r.min), true));
-          tr.appendChild(cell(fmt(r.weeklyHours), true));
-          tr.appendChild(cell(fmt1(r.semesterMin), true));
-          tr.appendChild(cell(fmt(r.semesterHours), true));
-          return tr;
+        function rowHours(r) { return numVal(r.count) * numVal(r.each); }
+
+        function totals() {
+          var t = { acad: 0, ooc: 0 };
+          rows.forEach(function (r) { t[r.bucket === "acad" ? "acad" : "ooc"] += rowHours(r); });
+          t.total = t.acad + t.ooc;
+          return t;
         }
+
+        /* ---------------- activity rows ---------------- */
+
+        function typeSelect(r) {
+          var sel = document.createElement("select");
+          var blank = document.createElement("option");
+          blank.value = "";
+          blank.textContent = "Choose a type";
+          sel.appendChild(blank);
+          var groups = {};
+          TYPES.forEach(function (t) {
+            if (!groups[t.group]) {
+              groups[t.group] = document.createElement("optgroup");
+              groups[t.group].label = t.group;
+              sel.appendChild(groups[t.group]);
+            }
+            var o = document.createElement("option");
+            o.value = t.id;
+            o.textContent = t.name;
+            groups[t.group].appendChild(o);
+          });
+          sel.value = r.type;
+          return sel;
+        }
+
+        function bucketSelect(r) {
+          var sel = document.createElement("select");
+          ["acad", "ooc"].forEach(function (b) {
+            var o = document.createElement("option");
+            o.value = b;
+            o.textContent = BUCKET_NAMES[b];
+            sel.appendChild(o);
+          });
+          sel.value = r.bucket;
+          return sel;
+        }
+
+        function cell(cls, mini, control) {
+          var c = document.createElement("div");
+          c.className = "inv-cell " + cls;
+          if (mini) {
+            var m = document.createElement("span");
+            m.className = "inv-mini";
+            m.setAttribute("aria-hidden", "true");
+            m.textContent = mini;
+            c.appendChild(m);
+          }
+          c.appendChild(control);
+          return c;
+        }
+
+        function rowLabel(r, i) {
+          return r.name.trim() ? r.name.trim() : "activity " + (i + 1);
+        }
+
+        function renderRows(focusId, focusField) {
+          var box = $("rows");
+          box.innerHTML = "";
+          rows.forEach(function (r, i) {
+            var wrap = document.createElement("div");
+            wrap.className = "inv-row" + (r.auto ? " auto" : "");
+            wrap.setAttribute("role", "group");
+            wrap.setAttribute("aria-label", "Activity " + (i + 1));
+            wrap.dataset.id = r.id;
+
+            var name = document.createElement("input");
+            name.type = "text";
+            name.value = r.name;
+            name.placeholder = "e.g. Weekly discussion";
+            name.setAttribute("aria-label", "Activity " + (i + 1) + " name");
+            name.dataset.field = "name";
+
+            var type = typeSelect(r);
+            type.setAttribute("aria-label", "Type of " + rowLabel(r, i));
+            type.dataset.field = "type";
+
+            var bucket = bucketSelect(r);
+            bucket.setAttribute("aria-label", rowLabel(r, i) + " counts as");
+            bucket.dataset.field = "bucket";
+
+            var count = document.createElement("input");
+            count.type = "number"; count.min = "0"; count.step = "1";
+            count.value = r.count;
+            count.setAttribute("aria-label", "How many " + rowLabel(r, i));
+            count.dataset.field = "count";
+
+            var each = document.createElement("input");
+            each.type = "number"; each.min = "0"; each.step = "0.25";
+            each.value = r.each;
+            each.setAttribute("aria-label", "Hours each, " + rowLabel(r, i));
+            each.dataset.field = "each";
+
+            var out = document.createElement("output");
+            out.className = "row-total";
+            out.textContent = fmt(rowHours(r));
+            out.setAttribute("aria-label", "Total hours, " + rowLabel(r, i));
+
+            var del = document.createElement("button");
+            del.type = "button";
+            del.className = "row-del";
+            del.textContent = "×";
+            del.setAttribute("aria-label", "Remove " + rowLabel(r, i));
+            del.dataset.field = "remove";
+
+            wrap.appendChild(cell("c-name", "Activity", name));
+            wrap.appendChild(cell("c-type", "Type", type));
+            wrap.appendChild(cell("c-bucket", "Counts as", bucket));
+            wrap.appendChild(cell("c-count n", "How many", count));
+            wrap.appendChild(cell("c-each n", "Hours each", each));
+            wrap.appendChild(cell("c-total n", "Total", out));
+            wrap.appendChild(cell("c-del", "", del));
+
+            if (r.type && TYPE_BY_ID[r.type] && !TYPE_BY_ID[r.type].sug && r.type !== "meetings" && !r.each) {
+              var hint = document.createElement("p");
+              hint.className = "hint inv-hint";
+              hint.textContent = "No typical time for this one. The Learning Activity Estimator can work it out.";
+              wrap.appendChild(hint);
+            }
+            if (r.auto) {
+              var ah = document.createElement("p");
+              ah.className = "hint inv-hint";
+              ah.textContent = "Set up from your course format, credits and length. It follows them until you change it.";
+              wrap.appendChild(ah);
+            }
+            box.appendChild(wrap);
+          });
+          if (focusId != null) {
+            var target = box.querySelector('[data-id="' + focusId + '"] [data-field="' + (focusField || "name") + '"]');
+            if (target) target.focus();
+          }
+        }
+
+        function findRow(el) {
+          var w = el.closest(".inv-row");
+          if (!w) return null;
+          var id = Number(w.dataset.id);
+          for (var i = 0; i < rows.length; i++) if (rows[i].id === id) return rows[i];
+          return null;
+        }
+
+        /* Updates one row's labels and total without rebuilding it, so typing
+           never loses focus. */
+        function refreshRow(r) {
+          var w = $("rows").querySelector('[data-id="' + r.id + '"]');
+          if (!w) return;
+          var i = rows.indexOf(r);
+          var lbl = rowLabel(r, i);
+          w.querySelector('[data-field="type"]').setAttribute("aria-label", "Type of " + lbl);
+          w.querySelector('[data-field="bucket"]').setAttribute("aria-label", lbl + " counts as");
+          w.querySelector('[data-field="count"]').setAttribute("aria-label", "How many " + lbl);
+          w.querySelector('[data-field="each"]').setAttribute("aria-label", "Hours each, " + lbl);
+          w.querySelector('[data-field="remove"]').setAttribute("aria-label", "Remove " + lbl);
+          var out = w.querySelector(".row-total");
+          out.textContent = fmt(rowHours(r));
+          out.setAttribute("aria-label", "Total hours, " + lbl);
+        }
+
+        $("rows").addEventListener("input", function (e) {
+          var f = e.target.dataset.field;
+          var r = findRow(e.target);
+          if (!r || !f || f === "type" || f === "bucket") return;
+          r[f] = e.target.value;
+          if (r.auto) r.auto = false;
+          refreshRow(r);
+          update();
+        });
+
+        $("rows").addEventListener("change", function (e) {
+          var f = e.target.dataset.field;
+          var r = findRow(e.target);
+          if (!r) return;
+          if (f === "type") {
+            var was = TYPE_BY_ID[r.type];
+            var now = TYPE_BY_ID[e.target.value];
+            r.type = e.target.value;
+            if (r.auto) r.auto = false;
+            /* Fill the typical time while the box is empty or still holds the
+               previous type's typical time; a number typed by hand stays. */
+            if (now && typeof now.sug === "number" &&
+              (r.each === "" || (was && String(was.sug) === r.each))) {
+              r.each = String(now.sug);
+            } else if (now && typeof now.sug !== "number" && was && String(was.sug) === r.each) {
+              r.each = "";
+            }
+            if (now && !r.bucketSet) r.bucket = now.bucket;
+            /* Name an unnamed row after its type, so the summary reads. */
+            if (now && !r.name.trim()) r.name = now.name;
+            renderRows(r.id, "type");
+            update();
+          } else if (f === "bucket") {
+            r.bucket = e.target.value;
+            r.bucketSet = true;
+            if (r.auto) r.auto = false;
+            update();
+          }
+        });
+
+        $("rows").addEventListener("click", function (e) {
+          if (e.target.dataset.field !== "remove") return;
+          var r = findRow(e.target);
+          if (!r) return;
+          var i = rows.indexOf(r);
+          if (r.auto) meetingsDismissed = true;
+          rows.splice(i, 1);
+          if (!rows.length) rows.push(blankRow());
+          var next = rows[Math.min(i, rows.length - 1)];
+          renderRows(next.id, "name");
+          update();
+        });
+
+        $("btn-add").addEventListener("click", function () {
+          var r = blankRow();
+          rows.push(r);
+          renderRows(r.id, "name");
+          update();
+        });
+
+        /* ---------------- course setup ---------------- */
+
+        function setupChanged(e) {
+          if (e && e.target && e.target.name === "format") meetingsDismissed = false;
+          if (syncMeetings()) renderRows();
+          update();
+        }
+        ["credits", "weeks"].forEach(function (id) {
+          $(id).addEventListener("input", setupChanged);
+        });
+        document.querySelectorAll('input[name="format"]').forEach(function (el) {
+          el.addEventListener("change", setupChanged);
+        });
+
+        /* ---------------- results ---------------- */
 
         function noteEl(cls, text) {
           var p = document.createElement("p");
           p.className = cls;
           p.textContent = text;
           return p;
+        }
+
+        function bar(id, have, need) {
+          var pct = need > 0 ? Math.min(100, have / need * 100) : (have > 0 ? 100 : 0);
+          var el = $(id);
+          el.style.width = pct.toFixed(1) + "%";
+          el.classList.toggle("short", need > 0 && have + 0.005 < need);
+        }
+
+        /* The checks, in order of how much they matter.
+
+           1. Academic work must reach its own minimum. Out-of-class work
+              cannot stand in for instruction.
+           2. The course as a whole must reach the combined minimum.
+           3. Out-of-class work short of its own minimum is acceptable when
+              extra academic work makes up the difference, so the total still
+              holds. That is how the page describes the rule ("additional time
+              added to the academic work can be deducted from the additional
+              student work"); it is reported as a note, not a fault. */
+        function check(m, t) {
+          var out = [];
+          var minTotal = m.acad + m.ooc;
+          if (m.credits <= 0) {
+            out.push({ cls: "note", text: "Enter the course credits to see the minimums." });
+            return out;
+          }
+          if (!rows.some(function (r) { return rowHours(r) > 0; })) {
+            out.push({ cls: "note", text: "Nothing planned yet. Add the course's activities above." });
+            return out;
+          }
+          var acadShort = m.acad - t.acad;
+          var totalShort = minTotal - t.total;
+          var oocShort = m.ooc - t.ooc;
+          if (acadShort > 0.005) {
+            out.push({
+              cls: "warn",
+              text: "Academic work is " + hhmm(acadShort) + " short of the " + hhmm(m.acad) +
+                " this course needs. Add instructor-led time: meetings, or asynchronous material " +
+                "that is monitored and documented."
+            });
+          }
+          if (totalShort > 0.005) {
+            out.push({
+              cls: "warn",
+              text: "The course as a whole is " + hhmm(totalShort) + " short of the " +
+                hhmm(minTotal) + " its credits require."
+            });
+          } else if (oocShort > 0.005 && acadShort <= 0.005) {
+            out.push({
+              cls: "note",
+              text: "Out-of-class work is " + hhmm(oocShort) + " under its own minimum, but the extra " +
+                "academic work covers it, so the course still meets the total."
+            });
+          }
+          if (!out.length) {
+            out.push({
+              cls: "note ok",
+              text: "This course meets the credit-hour minimums: " + hhmm(t.acad) +
+                " of academic work and " + hhmm(t.ooc) + " of out-of-class work."
+            });
+          }
+          return out;
+        }
+
+        function update() {
+          var m = minimums();
+          var t = totals();
+          var minTotal = m.acad + m.ooc;
+
+          var wbox = $("warnings");
+          wbox.innerHTML = "";
+          if (m.weeks < 1) {
+            wbox.appendChild(noteEl("warn", "Course length must be at least 1 week for the weekly averages."));
+          }
+
+          /* The minimums sentence in Course basics: whole-course totals first,
+             weekly averages second. */
+          var minText = "Based on the entered credits (" + m.credits + ")";
+          if (m.weeks >= 1) minText += " and course length (" + m.weeks + (m.weeks === 1 ? " week" : " weeks") + ")";
+          minText += ", the course needs at least " + hhmm(m.acad) + " of academic work and " +
+            hhmm(m.ooc) + " of out-of-class work, " + hhmm(minTotal) + " in all.";
+          if (m.weeks >= 1 && m.credits > 0) {
+            minText += " Across " + m.weeks + (m.weeks === 1 ? " week" : " weeks") + " that averages " +
+              hhmm(m.acad / m.weeks) + " of academic work and " + hhmm(m.ooc / m.weeks) +
+              " of out-of-class work a week.";
+          }
+          $("minimums").textContent = minText;
+
+          $("sum-acad").textContent = fmt(t.acad);
+          $("sum-ooc").textContent = fmt(t.ooc);
+
+          $("out-acad").textContent = fmt(t.acad);
+          $("out-ooc").textContent = fmt(t.ooc);
+          $("out-total").textContent = fmt(t.total);
+          $("min-acad").textContent = "hours, of a " + fmt(m.acad) + "-hour minimum";
+          $("min-ooc").textContent = "hours, of a " + fmt(m.ooc) + "-hour minimum";
+          $("min-total").textContent = "hours, of a " + fmt(minTotal) + "-hour minimum";
+          bar("bar-acad", t.acad, m.acad);
+          bar("bar-ooc", t.ooc, m.ooc);
+          bar("bar-total", t.total, minTotal);
+
+          $("weekly").textContent = m.weeks >= 1
+            ? "Averaged over " + m.weeks + (m.weeks === 1 ? " week" : " weeks") + ": " +
+            hhmm(t.acad / m.weeks) + " of academic work and " + hhmm(t.ooc / m.weeks) +
+            " of out-of-class work a week, " + hhmm(t.total / m.weeks) + " in all."
+            : "";
+
+          var results = check(m, t);
+          var sbox = $("status");
+          sbox.innerHTML = "";
+          results.forEach(function (x) { sbox.appendChild(noteEl(x.cls, x.text)); });
+          $("live-status").textContent = results.map(function (x) { return x.text; }).join(" ");
+
+          save();
+          return { minimums: m, totals: t, status: results };
         }
 
         /* ---------------- text summary ---------------- */
@@ -1153,71 +892,45 @@
           while (s.length < n) s += " ";
           return s;
         }
+        function lpad(s, n) {
+          s = String(s);
+          while (s.length < n) s = " " + s;
+          return s;
+        }
 
         function asText() {
-          var w = calcWeek();
-          var m = calcModule();
-          var diff = w.selfPacedHours - m.planned;
+          var res = update();
+          var m = res.minimums, t = res.totals;
           var lines = [];
-
           lines.push("CREDIT HOUR PLAN");
           lines.push("");
           lines.push("COURSE");
-          lines.push("  Format:            " + FORMAT_NAMES[w.format]);
-          lines.push("  Semester length:   " + num("weeks") + " weeks");
-          lines.push("  Credits:           " + num("credits"));
-          lines.push("  Student work:      " + num("study") + " minutes per week (" +
-            fmt(num("study") / 60) + " hours)");
-          lines.push("  Academic work:     " + num("f2f") + " minutes per week (" + fmt(num("f2f") / 60) + " hours)");
-          lines.push("  Acceleration rate: " + w.accel.toFixed(2));
+          lines.push("  Credits:         " + m.credits);
+          lines.push("  Course length:   " + m.weeks + " weeks");
+          lines.push("  Format:          " + FORMAT_NAMES[format()]);
           lines.push("");
-
-          var meets = w.f2fHours > 0;
-          lines.push("WEEKLY TIME BUDGET");
-          if (meets) lines.push("  " + pad("Planned academic work", 26) + fmt(w.f2fHours) + " hrs/wk");
-          lines.push("  " + pad(meets ? "Self-paced instructional" : "Instructional", 26) + fmt(w.instrHours) + " hrs/wk");
-          lines.push("  " + pad("Homework / study", 26) + fmt(w.studyHours) + " hrs/wk");
-          if (meets) lines.push("  " + pad("Self-paced total", 26) + fmt(w.selfPacedHours) + " hrs/wk");
-          lines.push("  " + pad("TOTAL", 26) + fmt(w.totalHours) + " hrs/wk");
-          lines.push("  " + pad("Semester total", 26) + fmt(w.semesterHours) + " hrs");
-          lines.push("");
-
-          lines.push("MODULE PLAN");
-          if (!m.detail.length) {
-            lines.push("  (nothing entered yet)");
-          } else {
-            var group = "";
-            m.detail.forEach(function (d) {
-              if (d.group !== group) {
-                group = d.group;
-                lines.push("  " + group.toUpperCase());
-              }
-              lines.push("    " + pad(d.name, 34) + fmt(d.hours) + " hrs");
+          ["acad", "ooc"].forEach(function (b) {
+            lines.push(BUCKET_NAMES[b].toUpperCase());
+            var any = false;
+            rows.forEach(function (r) {
+              if ((r.bucket === "acad" ? "acad" : "ooc") !== b || rowHours(r) <= 0) return;
+              any = true;
+              var label = r.name.trim() || (TYPE_BY_ID[r.type] ? TYPE_BY_ID[r.type].name : "Activity");
+              lines.push("  " + pad(label, 40) + lpad(numVal(r.count) + " x " + fmt(numVal(r.each)), 14) +
+                lpad(fmt(rowHours(r)), 10) + " hrs");
             });
+            if (!any) lines.push("  (none)");
+            lines.push("  " + pad("Total", 54) + lpad(fmt(t[b]), 10) + " hrs   (minimum " + fmt(m[b]) + ")");
+            lines.push("");
+          });
+          lines.push("WHOLE COURSE");
+          lines.push("  " + pad("Total", 54) + lpad(fmt(t.total), 10) + " hrs   (minimum " + fmt(m.acad + m.ooc) + ")");
+          if (m.weeks >= 1) {
+            lines.push("  " + pad("Average per week", 54) + lpad(fmt(t.total / m.weeks), 10) + " hrs");
           }
           lines.push("");
-          lines.push("  " + pad("Learning activities total", 34) + fmt(m.learn) + " hrs");
-          lines.push("  " + pad("Assessment activities total", 34) + fmt(m.assess) + " hrs");
-          lines.push("");
-
-          lines.push("DOES IT FIT?");
-          lines.push("  " + pad("Weekly self-paced hours available", 35) + fmt(w.selfPacedHours) + " hrs");
-          lines.push("  " + pad("Module hours planned", 35) + fmt(m.planned) + " hrs");
-          lines.push("  " + pad(diff < -0.005 ? "OVER BUDGET BY" : "Hours remaining", 35) +
-            fmt(Math.abs(diff)) + " hrs");
-
-          if (w.warnings.length) {
-            lines.push("");
-            lines.push("WARNINGS");
-            w.warnings.forEach(function (x) { lines.push("  - " + x); });
-          }
-
-          if (w.notes.length) {
-            lines.push("");
-            lines.push("NOTES");
-            w.notes.forEach(function (x) { lines.push("  - " + x); });
-          }
-
+          lines.push("CHECK");
+          res.status.forEach(function (x) { lines.push("  - " + x.text); });
           lines.push("");
           lines.push("Adapted from the Planning Time Calculator, initially developed by Ruth");
           lines.push("Ronan at Rutgers University. Reading and writing estimates from the");
@@ -1230,11 +943,9 @@
           var wrap = $("reportWrap");
           wrap.innerHTML = "";
           wrap.hidden = false;
-
           var h = document.createElement("h2");
           h.textContent = "Credit hour plan";
           wrap.appendChild(h);
-
           var pre = document.createElement("pre");
           pre.textContent = asText();
           wrap.appendChild(pre);
@@ -1247,16 +958,13 @@
           clearTimeout(saveTimer);
           saveTimer = setTimeout(function () {
             try {
-              /* f2fUnit marks that f2f is in minutes; a save without it is the
-                 pre-September-10-2026 shape, in 50-minute academic hours.
-                 studyUnit does the same for the student-work field, which held
-                 hours per credit per week until October 14, 2026. */
-              var data = { format: format(), f2fUnit: "min", studyUnit: "min" };
-              ALL_FIELDS.forEach(function (id) {
-                var e = $(id);
-                if (e) data[id] = e.value;
-              });
-              localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+              localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                credits: $("credits").value,
+                weeks: $("weeks").value,
+                format: format(),
+                meetingsDismissed: meetingsDismissed,
+                rows: rows
+              }));
             } catch (err) { /* storage unavailable; ignore */ }
           }, 400);
         }
@@ -1264,74 +972,33 @@
         function load() {
           try {
             var raw = localStorage.getItem(STORAGE_KEY);
-            if (!raw) return;
-            var data = JSON.parse(raw);
-            /* "online" was the old merged fully-online-or-traditional format, which
-               ignored the meeting-hours field entirely and computed none. It becomes
-               asynchronous, and any meeting hours left over from a spell in blended
-               are dropped rather than silently switched on. */
-            var wasMergedOnline = data.format === "online";
-            if (data.format === "blended") $("fmt-blended").checked = true;
-            else if (wasMergedOnline || data.format === "async") $("fmt-async").checked = true;
-            else if (data.format === "sync") $("fmt-sync").checked = true;
-            ALL_FIELDS.forEach(function (id) {
-              if (!(id in data)) return;          // migration: new fields keep defaults
-              var e = $(id);
-              if (e) e.value = data[id];
-            });
-            /* Until September 10, 2026 the meeting field took 50-minute academic
-               hours; it now takes minutes. A save without the unit marker is the
-               old shape, so scale it up. */
-            if (("f2f" in data) && data.f2fUnit !== "min") {
-              var oldF2f = parseFloat(data.f2f);
-              $("f2f").value = isFinite(oldF2f)
-                ? String(Math.round(oldF2f * MINUTES_PER_CREDIT_HOUR)) : "0";
+            if (!raw) return false;
+            var d = JSON.parse(raw);
+            if (d.credits != null) $("credits").value = d.credits;
+            if (d.weeks != null) $("weeks").value = d.weeks;
+            if (d.format === "blended") $("fmt-blended").checked = true;
+            else if (d.format === "async") $("fmt-async").checked = true;
+            else $("fmt-sync").checked = true;
+            meetingsDismissed = !!d.meetingsDismissed;
+            if (Array.isArray(d.rows)) {
+              rows = d.rows.filter(function (r) { return r && typeof r === "object"; }).map(function (r) {
+                return {
+                  id: nextId++,
+                  name: typeof r.name === "string" ? r.name : "",
+                  type: TYPE_BY_ID[r.type] ? r.type : "",
+                  bucket: r.bucket === "acad" ? "acad" : "ooc",
+                  count: r.count == null ? "" : String(r.count),
+                  each: r.each == null ? "" : String(r.each),
+                  auto: !!r.auto,
+                  bucketSet: !!r.bucketSet
+                };
+              });
             }
-            /* Until October 14, 2026 the student-work field held hours per credit
-               per week; it now holds minutes a week. Converting needs the credits
-               from the same save, since the old figure was per credit.
-
-               OLD_STUDY_CEILING guards against converting twice. The marker alone
-               is not enough: a save written by an older copy of this page carries
-               no marker even when the value in it is already minutes, and running
-               the conversion on that multiplies it by 50 x credits (300 becomes
-               45,000). The old field was hours per credit per week — realistically
-               2 or 3, and more than a day's worth is not a reading anyone meant —
-               so a larger number is already in the new unit and is left alone. */
-            if (("study" in data) && data.studyUnit !== "min") {
-              var oldStudy = parseFloat(data.study);
-              var savedCredits = parseFloat(data.credits);
-              if (!isFinite(savedCredits)) savedCredits = 0;
-              if (!isFinite(oldStudy)) $("study").value = "0";
-              else if (oldStudy <= OLD_STUDY_CEILING) {
-                $("study").value =
-                  String(Math.round(oldStudy * MINUTES_PER_CREDIT_HOUR * savedCredits));
-              }
-            }
-            if (wasMergedOnline) $("f2f").value = "0";
-            /* Last line of defence for the two weekly-minute fields: a week holds
-               10,080 minutes, so anything above that is corrupt rather than
-               ambitious, whatever wrote it. Reset rather than render a course
-               that asks for 750 hours a week. */
-            ["f2f", "study"].forEach(function (id) {
-              if (num(id) > MINUTES_PER_WEEK) $(id).value = $(id).defaultValue;
-            });
-            lastCredits = num("credits");
-            lastWeeks = num("weeks");
-          } catch (err) { /* corrupt or unavailable; ignore */ }
+            return true;
+          } catch (err) { return false; }
         }
 
-        /* ---------------- wiring ---------------- */
-
-        $("f").addEventListener("input", render);
-        $("f").addEventListener("change", render);
-
-        /* There is deliberately no "fill everything with suggested times" control.
-           In the original workbook these were per-cell Excel input-message tooltips
-           ("Suggested times are provided when you click on the cell for each
-           category"), i.e. guidance for one activity at a time. Applying all 21 at
-           once totals 32.8 hours against a 7.5-hour budget — a module no one would
-           ever build. See CLAUDE.md; better guidance is an open question. */
+        /* ---------------- buttons ---------------- */
 
         $("btn-report").addEventListener("click", function () {
           buildReport();
@@ -1368,23 +1035,31 @@
           window.print();
         });
 
+        function fresh() {
+          rows = [];
+          meetingsDismissed = false;
+          syncMeetings();
+          rows.push(blankRow());
+        }
+
         $("btn-reset").addEventListener("click", function () {
           if (!window.confirm("Clear all entries and start over?")) return;
           try { localStorage.removeItem(STORAGE_KEY); } catch (e) { }
           $("f").reset();
           $("reportWrap").hidden = true;
-          render();
+          fresh();
+          renderRows();
+          update();
         });
 
-        // expose for automated checks
-        window.__calcWeek = calcWeek;
-        window.__calcModule = calcModule;
+        window.__state = function () { return { rows: rows, meetingsDismissed: meetingsDismissed }; };
+        window.__update = update;
         window.__asText = asText;
 
-        lastCredits = num("credits");
-        lastWeeks = num("weeks");
-        load();
-        render();
+        if (!load() || !rows.length) fresh();
+        else syncMeetings();
+        renderRows();
+        update();
       })();
     </script>
   </body>

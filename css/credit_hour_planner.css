@@ -179,8 +179,7 @@ input[type="number"]:focus { background: var(--blue-light); }
    ran 1.4 (.hint), 1.45 (.card-guidance p) and 1.5 (the in-field callouts),
    which showed as ragged spacing between paragraphs sitting side by side. */
 section[aria-labelledby="s-basics"] .hint,
-section[aria-labelledby="s-format"] .hint,
-section[aria-labelledby="s-structure"] .hint {
+section[aria-labelledby="s-format"] .hint {
   line-height: 1.45;
 }
 
@@ -244,32 +243,104 @@ fieldset > legend.hint {
   margin-bottom: 14px;
 }
 
-/* ---- activity rows ---- */
+/* ---- course activity inventory ----
+   One free row per activity: name, type, counts as, how many, hours each,
+   total, remove. A grid with a visible header row on a wide screen; under
+   760px each row becomes a small card and every cell carries its own
+   visible mini-label instead, since the header row is out of sight. The
+   header is aria-hidden: each control has its own aria-label naming the
+   column and the activity, so it reads the same in a form-field list. */
 
-.act {
+.inventory { margin: 12px 0 10px; }
+
+.inv-head,
+.inv-row {
   display: grid;
-  grid-template-columns: 1fr 88px;
-  gap: 8px 12px;
+  grid-template-columns: minmax(0, 1fr) 190px 150px 72px 80px 72px 32px;
+  gap: 8px;
   align-items: center;
-  padding: 6px 0;
+}
+.inv-head {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--text-mid);
+  padding: 0 0 6px;
+  border-bottom: 2px solid var(--blue);
+}
+.inv-head .n { text-align: right; }
+
+.inv-row {
+  padding: 8px 0;
   border-bottom: 1px solid var(--blue-light);
 }
-.act:last-child { border-bottom: none; }
-.act label { margin: 0; font-weight: normal; font-size: 15px; line-height: 1.35; }
-.act .sug { display: block; font-size: 13px; color: var(--muted); }
-.act input[type="number"] { width: 100%; text-align: right; padding: 6px 8px; font-size: 15px; }
-/* Derived rows are read-only. No border: a box here would read as an
-   editable input. */
-.act .derived {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-  color: var(--red-dark);
-  padding: 6px 8px;
+/* The meetings line the format set up, marked so it reads as filled in for
+   you rather than typed. */
+.inv-row.auto { background: var(--blue-light); box-shadow: 0 0 0 6px var(--blue-light); border-radius: 2px; border-bottom-color: transparent; margin-bottom: 8px; }
+
+.inv-row input[type="text"],
+.inv-row select {
+  width: 100%;
+  font-family: inherit;
   font-size: 15px;
-  font-style: italic;
+  color: var(--text);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 6px 8px;
+  background: var(--surface);
 }
+.inv-row input[type="number"] { width: 100%; text-align: right; padding: 6px 8px; font-size: 15px; }
+.inv-row input[type="text"]:focus,
+.inv-row select:focus { background: var(--blue-light); }
+.inv-row .n { text-align: right; }
+.row-total { display: block; font-variant-numeric: tabular-nums; font-size: 15px; padding: 6px 0; }
+
+.row-del {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-mid);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.row-del:hover { color: var(--red); border-color: var(--red); }
+
+.inv-mini { display: none; }
+.inv-hint { grid-column: 1 / -1; margin: 0; font-size: 13px; }
+
+#btn-add { margin: 4px 0 6px; }
+
+@media (max-width: 760px) {
+  .inv-head { display: none; }
+  .inv-row {
+    grid-template-columns: 1fr 1fr 1fr 32px;
+    padding: 10px;
+    margin-bottom: 8px;
+    border: 1px solid var(--blue-mid);
+    border-radius: 8px;
+  }
+  .inv-row .c-name { grid-column: 1 / 4; }
+  .inv-row .c-del { grid-column: 4; grid-row: 1; align-self: end; }
+  .inv-row .c-type,
+  .inv-row .c-bucket { grid-column: 1 / -1; }
+  .inv-row .c-total { grid-column: 3 / 5; }
+  .inv-mini { display: block; font-size: 12px; color: var(--muted); margin-bottom: 2px; }
+  .inv-row .n { text-align: left; }
+}
+
+/* The two explainers side by side at the top of Course activities. */
+.explainers { margin: 8px 0 4px; align-items: start; }
+.explainers > .guide { margin: 0; }
+
+/* The line under the format choices saying what the choice sets up. */
+.format-effect { font-size: 14px; color: var(--text-mid); line-height: 1.45; margin: 12px 0 0; }
+
 .subtotal {
   display: flex;
+  max-width: 420px;
+  margin-left: auto;
   justify-content: space-between;
   gap: 16px;
   margin: 12px 0 0;
@@ -351,18 +422,29 @@ tfoot td { font-weight: bold; border-top: 2px solid var(--blue); border-bottom: 
 }
 .note p { margin: 0 0 6px; }
 .note p:last-child { margin: 0; }
+/* The all-clear line in the results reads as a pass, not just information. */
+.note.ok { font-weight: bold; }
 
-/* The notice under a work field reuses the page's two callout treatments so a
-   shortfall reads the same as the warnings above the tiles (.warn, red) and an
-   overage reads as information rather than a fault (.note, blue). Both are
-   sized to sit inside a field rather than across the results column. */
-.field .warn,
-.field .note {
-  margin: 8px 0 0;
-  padding: 8px 12px;
-  font-size: 14px;
-  line-height: 1.45;
+/* ---- results: progress against each minimum ----
+   A bar under each tile, filled to the share of the minimum reached and
+   capped at full. It repeats what the tile's numbers say, so it is
+   aria-hidden. Short of the minimum it fills red, met it fills blue. */
+.total .meter {
+  display: block;
+  height: 8px;
+  margin: 10px auto 0;
+  max-width: 220px;
+  background: var(--surface);
+  border-radius: 4px;
+  overflow: hidden;
 }
+.total .meter .fill { display: block; height: 100%; width: 0; background: var(--blue); }
+.total .meter .fill.short { background: var(--red); }
+.total.primary .meter { background: var(--red-pale); }
+.total.primary .meter .fill { background: var(--surface); }
+.total.primary .meter .fill.short { background: var(--red-dark); }
+
+.weekly { font-size: 15px; color: var(--text-mid); margin: 0 0 8px; text-align: center; }
 
 /* ---- buttons ----
    One row: the red call to action from document.css, inline rather than
@@ -393,8 +475,11 @@ tfoot td { font-weight: bold; border-top: 2px solid var(--blue); border-bottom: 
   margin-top: 8px;
 }
 #reportWrap h2 { margin-top: 0; }
+/* Monospaced, because the summary lines its figures up in columns with
+   spaces; a proportional face left them ragged. */
 #reportWrap pre {
-  font-family: inherit;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 14px;
   white-space: pre-wrap;
   margin: 0;
   line-height: 1.5;
@@ -431,3 +516,6 @@ a:hover, a:focus { color: var(--red-dark); }
 
 /* A full-width card sitting above a .two-col pair (Reading & writing). */
 .card-full { margin-bottom: 12px; }
+
+/* The two bucket subtotals under the activity list read as one block. */
+.subtotal + .subtotal { border-top: none; margin-top: 2px; padding-top: 0; }
