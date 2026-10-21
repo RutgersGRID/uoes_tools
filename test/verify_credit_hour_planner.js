@@ -65,26 +65,32 @@ const KEY = "uoes-credit-hour-course";
   ok("no module-fit step", !(await page.evaluate(() => /Does the module fit/i.test(document.body.innerText))));
   const explainers = await page.$$eval(".explainers summary", s => s.map(x => x.textContent.trim()));
   ok("both explainers sit together in Course activities",
-    explainers.length === 2 && /academic work/i.test(explainers[0]) && /out-of-class work/i.test(explainers[1]),
+    explainers.length === 2 && /instructional time/i.test(explainers[0]) && /out-of-class work/i.test(explainers[1]),
     explainers.join(" | "));
   ok("academic explainer keeps the monitored-async wording",
     await page.evaluate(() => /monitored and documented/.test(document.querySelector(".explainers").textContent)));
   ok("format card says what the choice sets up",
     /Class meetings/.test(await page.textContent(".format-effect")));
+  /* October 21, 2026: the instructor-led bucket is "instructional time".
+     "Academic work" means the whole credit hour in the NJ and Rutgers texts,
+     so the page must not use it for the part. */
+  ok("the page says instructional time, not academic work",
+    await page.evaluate(() => !/academic work/i.test(document.querySelector("main").innerText) &&
+      /Instructional time/.test(document.querySelector(".inv-row select[data-field=bucket]").innerText)));
   ok("Learning Activity Estimator linked",
     (await page.$$('a[href="learning_activity_estimator.html"]')).length === 1);
 
   // ---------- minimums ----------
   let mt = await page.textContent("#minimums");
-  ok("minimums: 3 credits -> 37h30 academic", /37 hours and 30 minutes of academic work/.test(mt), mt);
+  ok("minimums: 3 credits -> 37h30 academic", /37 hours and 30 minutes of instructional time/.test(mt), mt);
   ok("minimums: 75 hours out-of-class", /75 hours of out-of-class work/.test(mt), mt);
   ok("minimums: 112h30 in all", /112 hours and 30 minutes in all/.test(mt), mt);
   ok("minimums: weekly averages for 15 weeks",
-    /2 hours and 30 minutes of academic work and 5 hours of out-of-class work a week/.test(mt), mt);
+    /2 hours and 30 minutes of instructional time and 5 hours of out-of-class work a week/.test(mt), mt);
   await setNum("weeks", 7);
   mt = await page.textContent("#minimums");
-  ok("short term keeps the same totals", /37 hours and 30 minutes of academic work and 75 hours/.test(mt), mt);
-  ok("short term raises the weekly average", /5 hours and 21 minutes of academic work/.test(mt), mt);
+  ok("short term keeps the same totals", /37 hours and 30 minutes of instructional time and 75 hours/.test(mt), mt);
+  ok("short term raises the weekly average", /5 hours and 21 minutes of instructional time/.test(mt), mt);
   await setNum("weeks", 15);
 
   // ---------- the format's meetings line ----------
@@ -144,7 +150,7 @@ const KEY = "uoes-credit-hour-course";
   await row(1).locator('[data-field="type"]').selectOption("webinar");
   st = await state();
   ok("changing type replaces an untouched typical time", st.rows[1].each === "1.5", st.rows[1].each);
-  ok("webinar defaults to academic work", st.rows[1].bucket === "acad");
+  ok("webinar defaults to instructional time", st.rows[1].bucket === "acad");
   await row(1).locator('[data-field="each"]').fill("2");
   await row(1).locator('[data-field="type"]').selectOption("quiz");
   st = await state();
@@ -220,7 +226,7 @@ const KEY = "uoes-credit-hour-course";
   await row(0).locator('[data-field="each"]').fill("2");
   r = await result();
   ok("academic short is a warning",
-    r.status.some(x => x.cls === "warn" && /Academic work is 7 hours and 30 minutes short/.test(x.text)),
+    r.status.some(x => x.cls === "warn" && /Instructional time is 7 hours and 30 minutes short/.test(x.text)),
     JSON.stringify(r.status));
   ok("a short bar turns red", await page.$eval("#bar-acad", f => f.classList.contains("short")));
 
@@ -285,7 +291,7 @@ const KEY = "uoes-credit-hour-course";
   await addRow("Discussion posts", "discussion", 14, 1);
   const text = await page.evaluate(() => window.__asText());
   ok("summary lists the course", /Credits:\s+3/.test(text) && /15 weeks/.test(text) && /Synchronous/.test(text));
-  ok("summary groups by bucket", /ACADEMIC WORK[\s\S]*Class meetings[\s\S]*OUT-OF-CLASS WORK[\s\S]*Discussion posts\s+14 x 1\.00\s+14\.00 hrs/.test(text), text);
+  ok("summary groups by bucket", /INSTRUCTIONAL TIME[\s\S]*Class meetings[\s\S]*OUT-OF-CLASS WORK[\s\S]*Discussion posts\s+14 x 1\.00\s+14\.00 hrs/.test(text), text);
   ok("summary states minimums", /minimum 37\.50/.test(text) && /minimum 112\.50/.test(text));
   ok("summary carries the credit line", /Ruth/.test(text) && /CC BY-NC-SA 4\.0/.test(text));
   await page.click("#btn-report");

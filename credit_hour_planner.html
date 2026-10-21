@@ -75,7 +75,7 @@
         <p class="lead">Select your course format (all synchronous meetings, mixed synchronous and self-paced work, or
           all self-paced work).</p>
         <p class="lead">List the activities in your course &mdash; how many of each, and how long each one takes a
-          student &mdash; and mark each one as academic work or out-of-class work.</p>
+          student &mdash; and mark each one as instructional time or out-of-class work.</p>
         <p class="lead">Check whether the whole course adds up to the time its credit hours require.</p>
         <p class="lead">Click a section heading to expand or collapse that section.</p>
         <p class="lead">Your work will be saved automatically as you go.</p>
@@ -91,9 +91,9 @@
           planned course activities and ensure your plan meets federal, state, and Rutgers guidelines. For
           all three, a minimum of 1
           hour of instructional time and 2 hours of student work is required per credit per week in a 15 week semester.
-          However 50 minutes of instructional/academic time is treated as an hour. </p>
+          However 50 minutes of instructional time is treated as an hour. </p>
         <p class="lead">
-          For a 3 credit course, this comes to a total of 37.5 hours of instructional or academic time and 75 hours of
+          For a 3 credit course, this comes to a total of 37.5 hours of instructional time and 75 hours of
           student work or 112.5 hours total. <br />
           Across a 15 week semester, this comes out to 2.5 hours of instructional time and 5 hours of student work per
           week. </p>
@@ -144,11 +144,10 @@
                     </div>
                   </div>
                   <div class="card-guidance">
-                    <p class="req" id="minimums">Based on the entered credits (3) and course length
-                      (15 weeks), the minimum required academic work is 150 minutes (2 hours and 30
-                      minutes) per week and the minimum additional student work is 300 minutes (5 hours)
-                      per week, for a total of 37 hours and 30 minutes of academic work and 75 hours of
-                      additional student work across the entire course.</p>
+                    <p class="req" id="minimums">Based on the entered credits (3) and course length (15 weeks), the
+                      course needs at least 37 hours and 30 minutes of instructional time and 75 hours of
+                      out-of-class work, 112 hours and 30 minutes in all. Across 15 weeks that averages 2
+                      hours and 30 minutes of instructional time and 5 hours of out-of-class work a week.</p>
                     <p class="req">Note: These minimums are based on federal and state guidelines --
                       your department may have additional requirements.</p>
                   </div>
@@ -185,7 +184,7 @@
                       <input type="radio" name="format" id="fmt-sync" value="sync" checked>
                       <div>
                         <label for="fmt-sync">Synchronous</label>
-                        <p class="hint">All of the academic work happens in scheduled meetings &mdash;
+                        <p class="hint">All of the instructional time happens in scheduled meetings &mdash;
                           in a classroom, live online, or both.</p>
                       </div>
                     </div>
@@ -193,7 +192,7 @@
                       <input type="radio" name="format" id="fmt-blended" value="blended">
                       <div>
                         <label for="fmt-blended">Blended / hybrid</label>
-                        <p class="hint">Some scheduled meetings, with the rest of the academic work
+                        <p class="hint">Some scheduled meetings, with the rest of the instructional time
                           self-paced.</p>
                       </div>
                     </div>
@@ -201,7 +200,7 @@
                       <input type="radio" name="format" id="fmt-async" value="async">
                       <div>
                         <label for="fmt-async">Asynchronous</label>
-                        <p class="hint">No scheduled meetings. The academic work is monitored
+                        <p class="hint">No scheduled meetings. Instruction is monitored
                           asynchronous material students work through on their own time.</p>
                       </div>
                     </div>
@@ -225,18 +224,18 @@
 
             <p class="step-lead lede">List everything students will do across the whole course. Give each
               activity a name, how many there are, and how long each one takes a student, and say whether it
-              counts as academic work or out-of-class work.</p>
+              counts as instructional time or out-of-class work.</p>
 
             <div class="two-col explainers">
               <details class="guide">
                     <summary>
-                      <h4>What is, and isn't, academic work?</h4>
+                      <h4>What is, and isn't, instructional time?</h4>
                     </summary>
-                    <p>Academic work is the structured, instructor-led learning that takes place during scheduled meetings or through asynchronous materials that are monitored and documented. This includes, but is not limited to, live meetings, lab or field work, internships, and other forms of experiential learning. </p>
-                    <p>Asynchronous materials that can track student engagement also count towards academic work. This can be recorded lectures, guided activities, or instructor-directed content that students work through on their own time.</p>
+                    <p>Instructional time is the structured, instructor-led learning that takes place during scheduled meetings or through asynchronous materials that are monitored and documented. This includes, but is not limited to, live meetings, lab or field work, internships, and other forms of experiential learning. </p>
+                    <p>Asynchronous materials that can track student engagement also count towards instructional time. This can be recorded lectures, guided activities, or instructor-directed content that students work through on their own time.</p>
                     <p>This is distinct from homework or out-of-class study.</p>
                     <p>For example, a 1.5-hour class and a 1-hour WeVideo lecture each week would be 2.5
-                      hours of academic work a week.</p>
+                      hours of instructional time a week.</p>
                   </details>
               <details class="guide">
                 <summary>
@@ -245,10 +244,10 @@
                 <p>Out-of-class work is what students do on their own time without direct instruction,
                   supervision or monitoring: reading, writing and other assignments, studying, and
                   preparing for exams.</p>
-                <p>The credit hour asks for at least twice as much of it as academic work &mdash; 100
+                <p>The credit hour asks for at least twice as much of it as instructional time &mdash; 100
                   minutes a week for every credit in a 15-week term.</p>
                 <p>The same activity can land on either side. A discussion an instructor monitors and
-                  documents is academic work; one students complete on their own is out-of-class
+                  documents is instructional time; one students complete on their own is out-of-class
                   work. Choose whichever describes how your course runs it.</p>
               </details>
             </div>
@@ -282,7 +281,7 @@
             </div>
             <button type="button" class="small-btn" id="btn-add">+ Add an activity</button>
 
-            <p class="subtotal"><span>Academic work</span>
+            <p class="subtotal"><span>Instructional time</span>
               <span class="v"><span id="sum-acad">0.00</span> hrs</span></p>
             <p class="subtotal"><span>Out-of-class work</span>
               <span class="v"><span id="sum-ooc">0.00</span> hrs</span></p>
@@ -305,7 +304,7 @@
             <div class="totals">
               <div class="total" id="tile-acad">
                 <span class="num" id="out-acad">0.00</span>
-                <span class="lab">Academic work</span>
+                <span class="lab">Instructional time</span>
                 <span class="sub" id="min-acad">hours, of a 0.00 minimum</span>
                 <span class="meter" aria-hidden="true"><span class="fill" id="bar-acad"></span></span>
               </div>
@@ -413,7 +412,12 @@
         var TYPE_BY_ID = {};
         TYPES.forEach(function (t) { TYPE_BY_ID[t.id] = t; });
 
-        var BUCKET_NAMES = { acad: "Academic work", ooc: "Out-of-class work" };
+        /* "Instructional time", not "academic work" (October 21, 2026). In
+           N.J.A.C. 9A:1-1.2 and Rutgers Policy 10.2.4 "academic work" is the
+           whole of it, class and outside work together, so using it for the
+           instructor-led part alone read as wrong to anyone who knows the
+           policies. The internal key stays "acad". */
+        var BUCKET_NAMES = { acad: "Instructional time", ooc: "Out-of-class work" };
 
         var FORMAT_NAMES = {
           sync: "Synchronous",
@@ -801,7 +805,7 @@
           if (acadShort > 0.005) {
             out.push({
               cls: "warn",
-              text: "Academic work is " + hhmm(acadShort) + " short of the " + hhmm(m.acad) +
+              text: "Instructional time is " + hhmm(acadShort) + " short of the " + hhmm(m.acad) +
                 " this course needs. Add instructor-led time: meetings, or asynchronous material " +
                 "that is monitored and documented."
             });
@@ -817,7 +821,7 @@
             out.push({
               cls: "note ok",
               text: "This course meets the credit-hour minimums: " + hhmm(t.acad) +
-                " of academic work and " + hhmm(t.ooc) + " of out-of-class work."
+                " of instructional time and " + hhmm(t.ooc) + " of out-of-class work."
             });
           }
           return out;
@@ -838,11 +842,11 @@
              weekly averages second. */
           var minText = "Based on the entered credits (" + m.credits + ")";
           if (m.weeks >= 1) minText += " and course length (" + m.weeks + (m.weeks === 1 ? " week" : " weeks") + ")";
-          minText += ", the course needs at least " + hhmm(m.acad) + " of academic work and " +
+          minText += ", the course needs at least " + hhmm(m.acad) + " of instructional time and " +
             hhmm(m.ooc) + " of out-of-class work, " + hhmm(minTotal) + " in all.";
           if (m.weeks >= 1 && m.credits > 0) {
             minText += " Across " + m.weeks + (m.weeks === 1 ? " week" : " weeks") + " that averages " +
-              hhmm(m.acad / m.weeks) + " of academic work and " + hhmm(m.ooc / m.weeks) +
+              hhmm(m.acad / m.weeks) + " of instructional time and " + hhmm(m.ooc / m.weeks) +
               " of out-of-class work a week.";
           }
           $("minimums").textContent = minText;
@@ -862,7 +866,7 @@
 
           $("weekly").textContent = m.weeks >= 1
             ? "Averaged over " + m.weeks + (m.weeks === 1 ? " week" : " weeks") + ": " +
-            hhmm(t.acad / m.weeks) + " of academic work and " + hhmm(t.ooc / m.weeks) +
+            hhmm(t.acad / m.weeks) + " of instructional time and " + hhmm(t.ooc / m.weeks) +
             " of out-of-class work a week, " + hhmm(t.total / m.weeks) + " in all."
             : "";
 
