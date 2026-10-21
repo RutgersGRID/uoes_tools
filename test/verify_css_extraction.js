@@ -32,7 +32,6 @@ const CONVERTED = {
   "blooms_verbs.html": ["css/base.css", "css/document.css", "css/blooms_verbs.css"],
   "course_planner.html": ["css/base.css", "css/document.css", "css/course_planner.css"],
   "credit_hour_planner.html": ["css/base.css", "css/document.css", "css/credit_hour_planner.css"],
-  "old_credit_hour_planner.html": ["css/base.css", "css/document.css", "css/old_credit_hour_planner.css"],
   // Both calculators restyled to the single-column document shell (were calculator.css).
   "learning_activity_estimator.html": ["css/base.css", "css/document.css", "css/learning_activity_estimator.css"],
 };
@@ -54,7 +53,6 @@ const TOKENS = {
 const PRINT_TARGET = {
   "course_planner.html": "main > :not(#planWrap)",
   "credit_hour_planner.html": "main > :not(#reportWrap)",
-  "old_credit_hour_planner.html": "main > :not(#reportWrap)",
   "learning_activity_estimator.html": "main > :not(#reportWrap)",
 };
 
@@ -192,9 +190,10 @@ const ok = (label, cond, detail) => {
     const files = fs.readdirSync(dir).filter((f) => f.endsWith(".css"));
     // calculator.css was deleted on September 14, 2026, once neither
     // calculator loaded it.
-    // old_credit_hour_planner.css arrived October 21, 2026 with the backup of
-    // the weekly-budget page, so the rebuilt page could change its own sheet.
-    ok("css/ holds the expected sheets", files.length === 10 && !files.includes("calculator.css"), files.join(" "));
+    // old_credit_hour_planner.css came and went on October 21, 2026, with the
+    // day-long backup of the weekly-budget credit hour planner.
+    ok("css/ holds the expected sheets", files.length === 9 && !files.includes("calculator.css") &&
+      !files.includes("old_credit_hour_planner.css"), files.join(" "));
 
     // Brand colours belong in base.css as tokens; nowhere else as raw hex.
     const BRAND = /#(CC0033|A30029|007FAC|DEF0F9|7DBFD6|f4f7f9)/gi;

@@ -1,6 +1,6 @@
 /* Verification harness for credit_hour_planner.html, the whole-course credit
- * hour planner (rebuilt October 21, 2026). The weekly-budget page it replaced
- * is old_credit_hour_planner.html, checked by verify_old_credit_hour_planner.js.
+ * hour planner (rebuilt October 21, 2026). The weekly-budget page it replaced,
+ * kept for a day as old_credit_hour_planner.html, is in git history.
  *
  * Run: node test/verify_credit_hour_planner.js
  */
@@ -87,8 +87,12 @@ const KEY = "uoes-credit-hour-course";
   ok("the page says instructional time, not academic work",
     await page.evaluate(() => !/academic work/i.test(document.querySelector("main").innerText) &&
       /Instructional time/.test(document.querySelector(".inv-row select[data-field=bucket]").innerText)));
-  ok("Learning Activity Estimator linked",
-    (await page.$$('a[href="learning_activity_estimator.html"]')).length === 1);
+  /* October 21, 2026: Maka replaced the "Not sure how long an activity
+     takes?" panel, which linked the Learning Activity Estimator, with hints
+     on breaking down larger activities; the Estimate panels do that job
+     in the page itself now. */
+  ok("breaking-down hints panel present",
+    await page.evaluate(() => Array.from(document.querySelectorAll("details.guide summary")).some(x => /Hints for breaking down larger activities/.test(x.textContent))));
 
   // ---------- minimums ----------
   let mt = await page.textContent("#minimums");
@@ -449,12 +453,6 @@ const KEY = "uoes-credit-hour-course";
   ok("cells carry their own labels on a phone", await phone.isVisible(".inv-row .inv-mini >> nth=0"));
   await phone.close();
 
-  // ---------- backup page ----------
-  const old = await browser.newPage();
-  await old.goto("file://" + path.resolve(__dirname, "..", "old_credit_hour_planner.html"));
-  ok("the old page is still there, on its own stylesheet",
-    await old.$eval('link[href="css/old_credit_hour_planner.css"]', () => true).catch(() => false));
-  await old.close();
 
   const real = errors.filter(e => !/ERR_TUNNEL_CONNECTION_FAILED|fonts\.g/.test(e));
   ok("no page errors", real.length === 0, real.join(" | "));
