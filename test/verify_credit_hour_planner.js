@@ -200,8 +200,8 @@ const KEY = "uoes-credit-hour-course";
   // Rows: 0 the meetings line, 1 the starting blank row, 2 the readings.
   await fresh();
   r = await result();
-  ok("nothing planned beyond meetings: total short",
-    r.status.some(x => x.cls === "warn" && /as a whole is 75 hours short/.test(x.text)),
+  ok("nothing planned beyond meetings: out-of-class short",
+    r.status.length === 1 && r.status[0].cls === "warn" && /Out-of-class work is 75 hours short/.test(r.status[0].text),
     JSON.stringify(r.status));
   await addRow("Readings", "readings", 15, 5);
   r = await result();
@@ -224,23 +224,25 @@ const KEY = "uoes-credit-hour-course";
     JSON.stringify(r.status));
   ok("a short bar turns red", await page.$eval("#bar-acad", f => f.classList.contains("short")));
 
+  /* October 21, 2026: the page no longer lets extra academic work cover an
+     out-of-class shortfall (Maka: avoid making that call). Lots of academic
+     work and too little out-of-class work is a warning, full stop. */
   await row(0).locator('[data-field="each"]').fill("4");
   await row(2).locator('[data-field="each"]').fill("4.5");
   r = await result();
-  // acad 60, ooc 67.5 (7.5 under), total 127.5 >= 112.5
-  ok("extra academic work covers an out-of-class shortfall",
-    r.status.length === 1 && r.status[0].cls === "note" && /extra academic work covers it/.test(r.status[0].text),
+  ok("extra academic work does not cover an out-of-class shortfall",
+    r.status.length === 1 && r.status[0].cls === "warn" && /Out-of-class work is 7 hours and 30 minutes short/.test(r.status[0].text),
     JSON.stringify(r.status));
+  ok("and the page never says it does",
+    !(await page.evaluate(() => /covers it|can be deducted|stand in for/i.test(document.querySelector("main").innerText))));
 
-  await row(0).locator('[data-field="each"]').fill("2.5");
+  await row(0).locator('[data-field="each"]').fill("2");
   r = await result();
-  ok("both short: academic is fine, total warns",
-    r.status.some(x => x.cls === "warn" && /as a whole is 7 hours and 30 minutes short/.test(x.text)),
-    JSON.stringify(r.status));
+  ok("both short: two warnings", r.status.filter(x => x.cls === "warn").length === 2, JSON.stringify(r.status));
 
   await row(2).locator('[data-field="bucket"]').selectOption("acad");
   r = await result();
-  ok("switching a row's bucket moves its hours", near(r.totals.acad, 105) && near(r.totals.ooc, 0), JSON.stringify(r.totals));
+  ok("switching a row's bucket moves its hours", near(r.totals.acad, 97.5) && near(r.totals.ooc, 0), JSON.stringify(r.totals));
 
   // ---------- persistence ----------
   await fresh();

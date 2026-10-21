@@ -777,19 +777,17 @@
           el.classList.toggle("short", need > 0 && have + 0.005 < need);
         }
 
-        /* The checks, in order of how much they matter.
+        /* The check: each kind of work against its own minimum.
 
-           1. Academic work must reach its own minimum. Out-of-class work
-              cannot stand in for instruction.
-           2. The course as a whole must reach the combined minimum.
-           3. Out-of-class work short of its own minimum is acceptable when
-              extra academic work makes up the difference, so the total still
-              holds. That is how the page describes the rule ("additional time
-              added to the academic work can be deducted from the additional
-              student work"); it is reported as a note, not a fault. */
+           The page deliberately does not decide whether extra academic work
+           can stand in for out-of-class work. New Jersey's definition allows
+           an "equivalent amount of academic work as established by an
+           institution"; the federal one names a minimum of two hours of
+           out-of-class work. That call belongs to the school, not the tool
+           (Maka, October 21, 2026), so a shortfall on either side is
+           reported as a shortfall and nothing is netted against anything. */
         function check(m, t) {
           var out = [];
-          var minTotal = m.acad + m.ooc;
           if (m.credits <= 0) {
             out.push({ cls: "note", text: "Enter the course credits to see the minimums." });
             return out;
@@ -799,7 +797,6 @@
             return out;
           }
           var acadShort = m.acad - t.acad;
-          var totalShort = minTotal - t.total;
           var oocShort = m.ooc - t.ooc;
           if (acadShort > 0.005) {
             out.push({
@@ -809,17 +806,11 @@
                 "that is monitored and documented."
             });
           }
-          if (totalShort > 0.005) {
+          if (oocShort > 0.005) {
             out.push({
               cls: "warn",
-              text: "The course as a whole is " + hhmm(totalShort) + " short of the " +
-                hhmm(minTotal) + " its credits require."
-            });
-          } else if (oocShort > 0.005 && acadShort <= 0.005) {
-            out.push({
-              cls: "note",
-              text: "Out-of-class work is " + hhmm(oocShort) + " under its own minimum, but the extra " +
-                "academic work covers it, so the course still meets the total."
+              text: "Out-of-class work is " + hhmm(oocShort) + " short of the " + hhmm(m.ooc) +
+                " this course needs."
             });
           }
           if (!out.length) {
