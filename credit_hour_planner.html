@@ -240,21 +240,20 @@
             <p class="step-lead lede">List everything students will do across the whole course. Give each
               activity a name, how many there are, and how long each one takes a student, and say whether it
               counts as instructional time or out-of-class work.</p>
-              <p>For best results, you may wish to break up larger tasks into smaller, more manageable components, that are easier to estimate and manage. For example, if a 200 page textbook is the main reading assignment, you might break it down into weekly reading assignments of 20-30 pages each.</p>
-
-
+              
             <p class="step-lead lede">Choosing a type fills in an estimated time for that activity,
-              which you can change. Estimated times are intended to be a starting point, not a requirement or exact amount.</p>
+              which you can change. Estimated times are intended to be a starting point, not a requirement or exact amount. Some activities have the option for an additional breakdown of the time required, such as reading, which allows you to specify the words-per-page density, concept complexity, and whether the expectation is that students will skim, understand, or analyze the material.</p>
 
-
+              
             <details class="guide estimator-guide">
               <summary>
-                <h4>Not sure how long an activity takes?</h4>
+                <h4>Hints for breaking down larger activities</h4>
               </summary>
-              <p>You can use our <a href="learning_activity_estimator.html" target="_blank" rel="noopener">Learning Activity Estimator</a> to get estimates for reading, writing, and a large selection of other activities. 
-              </p>
-              <p class="hint">Our estimations are based on those created by Rice University's Center for Teaching Excellence's <a href="https://cat.wfu.edu/resources/workload/estimationdetails/" target="_blank" rel="noopener">Workload Estimation Details</a> which they used to build their <a href="https://cte.rice.edu/resources/workload-estimator" target="_blank" rel="noopener">Course Workload Estimator</a>.
-              </p>
+              
+              <p class="step-lead">For larger activities, such as reading an entire textbook, you may wish to first get an estimate for the entire book, then break it down into smaller, more manageable components for planning purposes.</p>
+              <p class="step-lead">For example, a 200 page textbook with 750 words per page, many new concepts, and an expectation that students will analyze the material, has an estimated time of 40 hours, too much for a single week.</p>
+              <p class="step-lead">If this is the main reading assignment, you might break it down into weekly reading assignments of 20-30 pages each, or perhaps assign a few chapters each week (though this may require you to check page length for each chapter). This will make it easier to build out your course and likely will also help students to better manage their time and workload throughout the course.</p>
+
             </details>
 
 
@@ -354,10 +353,10 @@
       (function () {
         "use strict";
 
-        /* A new key, not "uoes-credit-hour-planner": that one belongs to the
-           weekly-budget page now kept as old_credit_hour_planner.html, and its
-           saves hold minutes-per-week fields this page has no use for. Both
-           pages can sit side by side without reading each other's work. */
+        /* A new key, not "uoes-credit-hour-planner": that one belonged to the
+           weekly-budget page this replaced (October 21, 2026), whose saves hold
+           minutes-per-week fields this page has no use for. Old saves are
+           simply ignored; there is no migration. */
         var STORAGE_KEY = "uoes-credit-hour-course";
 
         /* The credit hour, as 34 CFR 600.2 and N.J.A.C. 9A:1-1.2 state it: per
