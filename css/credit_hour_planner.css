@@ -260,6 +260,9 @@ fieldset > legend.hint {
   gap: 8px;
   align-items: center;
 }
+/* Rows line their controls up along the top, since the count and hours
+   cells can carry a line under the box (the unit, the Estimate link). */
+.inv-row { align-items: start; }
 .inv-head {
   font-size: 14px;
   font-weight: bold;
@@ -306,6 +309,54 @@ fieldset > legend.hint {
   cursor: pointer;
 }
 .row-del:hover { color: var(--red); border-color: var(--red); }
+
+/* What "how many" counts, under the box ("posts", "readings"), and the
+   Estimate link under hours each. Both sit in the cell so the row keeps its
+   columns. The link is a real button; styled as a link because it opens
+   something rather than submitting anything. */
+.inv-row .unit { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; min-height: 1em; }
+.est-btn {
+  display: inline-block;
+  min-height: 24px;
+  margin-top: 2px;
+  padding: 2px 0;
+  border: none;
+  background: none;
+  color: var(--red);
+  font-family: inherit;
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.est-btn:hover { color: var(--red-dark); }
+.est-btn[aria-expanded="true"] { font-weight: bold; }
+
+/* The estimator's inputs for one row, under it. */
+.est-panel {
+  grid-column: 1 / -1;
+  margin: 4px 0 2px;
+  padding: 10px 12px;
+  border-left: 4px solid var(--blue);
+  background: var(--blue-light);
+  border-radius: 0 6px 6px 0;
+}
+.est-panel[hidden] { display: none; }
+.est-fields { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: flex-end; }
+.est-field { display: flex; flex-direction: column; gap: 3px; }
+.est-field[hidden] { display: none; }
+.est-field label { font-size: 13px; }
+.est-field select,
+.est-field input[type="number"] {
+  font-family: inherit;
+  font-size: 14px;
+  padding: 5px 6px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+}
+.est-field input[type="number"] { width: 110px; text-align: right; }
+.est-result { margin: 8px 0 0; font-size: 14px; color: var(--text-mid); }
 
 .inv-mini { display: none; }
 .inv-hint { grid-column: 1 / -1; margin: 0; font-size: 13px; }

@@ -164,8 +164,6 @@ const KEY = "uoes-credit-hour-course";
   st = await state();
   ok("a bucket chosen by hand survives a type change", st.rows[1].bucket === "acad");
   await row(1).locator('[data-field="type"]').selectOption("readings");
-  ok("a type with no typical time points at the estimator",
-    /Learning Activity Estimator/.test(await row(1).textContent()) || (await state()).rows[1].each !== "");
 
   await row(1).locator('[data-field="count"]').fill("4");
   await row(1).locator('[data-field="each"]').fill("2.5");
@@ -184,6 +182,141 @@ const KEY = "uoes-credit-hour-course";
   await page.check("#fmt-async");
   await row(0).locator('[data-field="remove"]').click();
   ok("the list never drops to zero rows", (await rowsLoc().count()) === 1);
+
+  // ---------- estimates borrowed from the Learning Activity Estimator ----------
+  /* October 21, 2026: each row whose type has one of the estimator's
+     methods gets an Estimate link that opens that method's inputs. */
+  await fresh();
+  const units = await page.evaluate(() => {
+    const out = {};
+    ["readings", "discussion", "quiz", "meetings", "other"].forEach(t => {
+      const r = document.querySelector(".inv-row:nth-child(2) [data-field=type]");
+      r.value = t; r.dispatchEvent(new Event("change", { bubbles: true }));
+      const row = document.querySelector(".inv-row:nth-child(2)");
+      row.querySelector("[data-field=count]").value = "2";
+      row.querySelector("[data-field=count]").dispatchEvent(new Event("input", { bubbles: true }));
+      out[t] = { unit: row.querySelector(".unit").textContent, est: !!row.querySelector(".est-btn") };
+    });
+    return out;
+  });
+  ok("how many shows its unit", units.readings.unit === "readings" && units.discussion.unit === "posts" && units.quiz.unit === "quizzes", JSON.stringify(units));
+  ok("meetings and something else have no unit", units.meetings.unit === "" && units.other.unit === "");
+  ok("only typed rows with a method get an Estimate link",
+    units.readings.est && units.discussion.est && units.quiz.est && !units.meetings.est && !units.other.est);
+  ok("a discussion post starts at the estimator's 1 hour",
+    await page.evaluate(() => document.querySelector(".inv-row:nth-child(2)") && true) &&
+    (await (async () => { await row(1).locator('[data-field="type"]').selectOption("discussion"); return (await state()).rows[1].each; })()) === "1");
+
+  await fresh();
+  await row(1).locator('[data-field="name"]').fill("Textbook chapters");
+  await row(1).locator('[data-field="type"]').selectOption("readings");
+  ok("unit is singular for one", (await row(1).locator(".unit").textContent()) === "reading");
+  ok("the estimate panel starts closed", await row(1).locator(".est-panel").isHidden());
+  const eb = row(1).locator('[data-field="estimate"]');
+  ok("Estimate is a button that controls its panel",
+    (await eb.getAttribute("aria-expanded")) === "false" && (await eb.getAttribute("aria-controls")) === (await row(1).locator(".est-panel").getAttribute("id")));
+  await eb.click();
+  ok("Estimate opens the panel", (await eb.getAttribute("aria-expanded")) === "true" && await row(1).locator(".est-panel").isVisible());
+  ok("and focuses its first field", await page.evaluate(() => document.activeElement.dataset.est === "pages"));
+  ok("panel says what to fill in", /Enter the pages/.test(await row(1).locator(".est-result").textContent()));
+  await row(1).locator('[data-est="pages"]').fill("30");
+  st = await state();
+  ok("30 pages at the defaults (67 an hour) gives 0.45 h", st.rows[1].each === "0.45" && st.rows[1].estUsed, st.rows[1].each);
+  await row(1).locator('[data-est="density"]').selectOption("3");
+  await row(1).locator('[data-est="difficulty"]').selectOption("3");
+  await row(1).locator('[data-est="purpose"]').selectOption("3");
+  st = await state();
+  ok("dense, many new concepts, engage: 5 pages an hour, 6 h", st.rows[1].each === "6", st.rows[1].each);
+  ok("hours each box follows", (await row(1).locator('[data-field="each"]').inputValue()) === "6");
+  ok("result line states the rate", /At 5 pages an hour, that is 6\.00 hours for each reading/.test(await row(1).locator(".est-result").textContent()));
+  await row(1).locator('[data-field="each"]').fill("4");
+  st = await state();
+  ok("typing hours each by hand takes over", st.rows[1].each === "4" && !st.rows[1].estUsed);
+  ok("and the panel says so", /typed by hand/.test(await row(1).locator(".est-result").textContent()));
+  await row(1).locator('[data-est="pages"]').fill("20");
+  st = await state();
+  ok("changing a setting uses the estimate again", st.rows[1].each === "4" && st.rows[1].estUsed);
+  await row(1).locator('[data-est="pages"]').fill("40");
+  st = await state();
+  ok("40 dense pages at 5 an hour: 8 h", st.rows[1].each === "8");
+
+  // writing in words
+  await page.click("#btn-add");
+  await row(2).locator('[data-field="type"]').selectOption("writing");
+  await row(2).locator('[data-field="estimate"]').click();
+  await row(2).locator('[data-est="length"]').fill("1000");
+  await row(2).locator('[data-est="lengthUnit"]').selectOption("words");
+  st = await state();
+  ok("1000 words double-spaced reflection, no drafting: 4 pages x 0.75 = 3 h", st.rows[2].each === "3", st.rows[2].each);
+  await row(2).locator('[data-est="density"]').selectOption("2");
+  await row(2).locator('[data-est="genre"]').selectOption("3");
+  await row(2).locator('[data-est="drafting"]').selectOption("3");
+  st = await state();
+  ok("1000 words single-spaced research, extensive drafting: 2 pages x 10 = 20 h", st.rows[2].each === "20", st.rows[2].each);
+
+  // discussion audio/video swaps its field
+  await page.click("#btn-add");
+  await row(3).locator('[data-field="type"]').selectOption("discussion");
+  await row(3).locator('[data-field="estimate"]').click();
+  ok("text discussion shows words, not minutes",
+    await row(3).locator('[data-est="words"]').isVisible() && await row(3).locator('[data-est="minutes"]').isHidden());
+  await row(3).locator('[data-est="format"]').selectOption("av");
+  ok("audio/video shows minutes instead",
+    await row(3).locator('[data-est="minutes"]').isVisible() && await row(3).locator('[data-est="words"]').isHidden());
+  st = await state();
+  ok("3 finished minutes at 3 an hour: 1 h", st.rows[3].each === "1");
+  await row(3).locator('[data-est="minutes"]').fill("5");
+  st = await state();
+  ok("5 finished minutes: 1.67 h", st.rows[3].each === "1.67", st.rows[3].each);
+
+  // media and tests
+  await page.click("#btn-add");
+  await row(4).locator('[data-field="type"]').selectOption("minilecture");
+  await row(4).locator('[data-field="estimate"]').click();
+  await row(4).locator('[data-est="minutes"]').fill("12");
+  ok("a 12-minute video: 0.2 h", (await state()).rows[4].each === "0.2");
+  await page.click("#btn-add");
+  await row(5).locator('[data-field="type"]').selectOption("test");
+  await row(5).locator('[data-field="estimate"]').click();
+  await row(5).locator('[data-est="limit"]').fill("90");
+  await row(5).locator('[data-est="prep"]').fill("3");
+  ok("90-minute exam with 3 h preparation: 4.5 h", (await state()).rows[5].each === "4.5");
+
+  // changing type to another method resets the settings
+  await row(5).locator('[data-field="type"]').selectOption("blog");
+  st = await state();
+  ok("a new method starts from its defaults", st.rows[5].est && st.rows[5].est.genre === "1" && !("limit" in st.rows[5].est));
+  await row(5).locator('[data-field="type"]').selectOption("case");
+  ok("a type without a method has no panel", (await row(5).locator(".est-panel").count()) === 0);
+
+  // estimate labels and the summary
+  const estUnlabelled = await page.$$eval(".est-panel input, .est-panel select",
+    els => els.filter(e => !document.querySelector('label[for="' + e.id + '"]')).length);
+  ok("every estimate field has a label", estUnlabelled === 0, estUnlabelled);
+  ok("estimate field ids are unique", await page.$$eval(".est-panel [id]", els => new Set(els.map(e => e.id)).size === els.length));
+  const sum = await page.evaluate(() => window.__asText());
+  ok("summary says where an estimate came from",
+    /each estimated from 40 pages, 750 words \(textbook\), many new concepts, engage/.test(sum), sum);
+  ok("summary gives the unit", /1 reading;/.test(sum));
+
+  await page.waitForTimeout(600);
+  await page.reload();
+  st = await state();
+  ok("estimate settings survive a reload", st.rows[1].est && st.rows[1].est.pages === "40" && st.rows[1].estUsed && st.rows[1].each === "8");
+  ok("panels start closed after a reload", await row(1).locator(".est-panel").isHidden());
+
+  // the copied rate tables match the estimator's
+  const tables = await page.evaluate(async () => {
+    const grab = (src, name) => {
+      const m = src.match(new RegExp("var " + name + " = (\\{[\\s\\S]*?\\});"));
+      return m ? m[1].replace(/\s+/g, "") : null;
+    };
+    const mine = document.documentElement.outerHTML;
+    const theirs = await (await fetch("learning_activity_estimator.html")).text();
+    return ["PAGES_PER_HOUR", "HOURS_PER_PAGE", "WORDS_PER_PAGE"].map(n => [n, grab(mine, n), grab(theirs, n)]);
+  }).catch(e => String(e));
+  ok("rate tables match the Learning Activity Estimator's",
+    Array.isArray(tables) && tables.every(t => t[1] && t[1] === t[2]), JSON.stringify(tables).slice(0, 300));
 
   // ---------- accessibility of rows ----------
   await fresh();

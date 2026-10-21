@@ -369,40 +369,190 @@
         var ACADEMIC_MIN_PER_CREDIT = 50;
         var OOC_MIN_PER_CREDIT = 100;
 
-        /* Activity types. `sug` is the typical time for one of that activity,
-           in hours, carried over from the original workbook's per-cell
-           suggestions. `bucket` is the default answer to "counts as", which
-           the designer can change on any row: see the academic-work
-           explainer for why the same activity can go either way. */
+        /* Activity types.
+
+           `sug`    the typical time for one, in hours, filled in when the type
+                    is chosen. Most come from the original workbook's per-cell
+                    suggestions. Discussion posts was 3 there, a week of
+                    posting; it is 1 here because "how many" now counts posts,
+                    and 1 hour is the estimator's figure for a 250-word post.
+           `bucket` the default answer to "counts as"; the designer can change
+                    it on any row.
+           `method` which of the Learning Activity Estimator's methods the
+                    row's Estimate panel uses (see ESTIMATE below). Types with
+                    none have only the typical time.
+           `unit`   what "how many" counts, singular and plural, shown beside
+                    the box. Class meetings and Something else have none: the
+                    designer's line name says what they are. */
         var TYPES = [
           { id: "meetings", group: "Scheduled", name: "Class meetings", bucket: "acad" },
-          { id: "readings", group: "Learning activities", name: "Readings", bucket: "ooc" },
-          { id: "blog", group: "Learning activities", name: "Blog", sug: 1, bucket: "ooc" },
-          { id: "case", group: "Learning activities", name: "Case study", sug: 2, bucket: "ooc" },
-          { id: "discussion", group: "Learning activities", name: "Discussion posts", sug: 3, bucket: "ooc" },
-          { id: "experiential", group: "Learning activities", name: "Experiential learning (event, interview, field trip, lab)", sug: 2, bucket: "acad" },
-          { id: "journal", group: "Learning activities", name: "Journal posts", sug: 1.5, bucket: "ooc" },
-          { id: "minilecture", group: "Learning activities", name: "Mini-lecture video", sug: 0.3, bucket: "acad" },
-          { id: "othervideo", group: "Learning activities", name: "Other videos", sug: 0.5, bucket: "ooc" },
-          { id: "podcast", group: "Learning activities", name: "Podcast", sug: 0.5, bucket: "ooc" },
-          { id: "research", group: "Learning activities", name: "Research activities", sug: 2, bucket: "ooc" },
-          { id: "simulation", group: "Learning activities", name: "Simulation / eLearning tutorial", sug: 0.5, bucket: "acad" },
-          { id: "supplemental", group: "Learning activities", name: "Supplemental materials", sug: 2, bucket: "ooc" },
-          { id: "webinar", group: "Learning activities", name: "Webinar session", sug: 1.5, bucket: "acad" },
-          { id: "wiki", group: "Learning activities", name: "Wiki", sug: 2, bucket: "ooc" },
-          { id: "writing", group: "Assessment activities", name: "Writing assignment", bucket: "ooc" },
-          { id: "prep", group: "Assessment activities", name: "Assessment preparation", sug: 3, bucket: "ooc" },
-          { id: "group", group: "Assessment activities", name: "Group assignment", sug: 4, bucket: "ooc" },
-          { id: "individual", group: "Assessment activities", name: "Individual assignment", sug: 2, bucket: "ooc" },
-          { id: "peer", group: "Assessment activities", name: "Peer review", sug: 1.5, bucket: "ooc" },
-          { id: "preassess", group: "Assessment activities", name: "Pre-assessment", sug: 1, bucket: "ooc" },
-          { id: "quiz", group: "Assessment activities", name: "Quiz", sug: 0.5, bucket: "ooc" },
-          { id: "project", group: "Assessment activities", name: "Project / presentation", sug: 1, bucket: "ooc" },
-          { id: "test", group: "Assessment activities", name: "Test / exam", sug: 1, bucket: "acad" },
+          { id: "readings", group: "Learning activities", name: "Readings", bucket: "ooc", method: "reading", unit: ["reading", "readings"] },
+          { id: "blog", group: "Learning activities", name: "Blog", sug: 1, bucket: "ooc", method: "writing", unit: ["post", "posts"] },
+          { id: "case", group: "Learning activities", name: "Case study", sug: 2, bucket: "ooc", unit: ["case", "cases"] },
+          { id: "discussion", group: "Learning activities", name: "Discussion posts", sug: 1, bucket: "ooc", method: "discussion", unit: ["post", "posts"] },
+          { id: "experiential", group: "Learning activities", name: "Experiential learning (event, interview, field trip, lab)", sug: 2, bucket: "acad", unit: ["activity", "activities"] },
+          { id: "journal", group: "Learning activities", name: "Journal posts", sug: 1.5, bucket: "ooc", method: "writing", unit: ["entry", "entries"] },
+          { id: "minilecture", group: "Learning activities", name: "Mini-lecture video", sug: 0.3, bucket: "acad", method: "media", unit: ["video", "videos"] },
+          { id: "othervideo", group: "Learning activities", name: "Other videos", sug: 0.5, bucket: "ooc", method: "media", unit: ["video", "videos"] },
+          { id: "podcast", group: "Learning activities", name: "Podcast", sug: 0.5, bucket: "ooc", method: "media", unit: ["episode", "episodes"] },
+          { id: "research", group: "Learning activities", name: "Research activities", sug: 2, bucket: "ooc", unit: ["activity", "activities"] },
+          { id: "simulation", group: "Learning activities", name: "Simulation / eLearning tutorial", sug: 0.5, bucket: "acad", method: "media", unit: ["tutorial", "tutorials"] },
+          { id: "supplemental", group: "Learning activities", name: "Supplemental materials", sug: 2, bucket: "ooc", method: "reading", unit: ["item", "items"] },
+          { id: "webinar", group: "Learning activities", name: "Webinar session", sug: 1.5, bucket: "acad", method: "media", unit: ["session", "sessions"] },
+          { id: "wiki", group: "Learning activities", name: "Wiki", sug: 2, bucket: "ooc", method: "writing", unit: ["contribution", "contributions"] },
+          { id: "writing", group: "Assessment activities", name: "Writing assignment", bucket: "ooc", method: "writing", unit: ["assignment", "assignments"] },
+          { id: "prep", group: "Assessment activities", name: "Assessment preparation", sug: 3, bucket: "ooc", unit: ["assessment", "assessments"] },
+          { id: "group", group: "Assessment activities", name: "Group assignment", sug: 4, bucket: "ooc", unit: ["assignment", "assignments"] },
+          { id: "individual", group: "Assessment activities", name: "Individual assignment", sug: 2, bucket: "ooc", unit: ["assignment", "assignments"] },
+          { id: "peer", group: "Assessment activities", name: "Peer review", sug: 1.5, bucket: "ooc", method: "discussion", unit: ["review", "reviews"] },
+          { id: "preassess", group: "Assessment activities", name: "Pre-assessment", sug: 1, bucket: "ooc", method: "test", unit: ["pre-assessment", "pre-assessments"] },
+          { id: "quiz", group: "Assessment activities", name: "Quiz", sug: 0.5, bucket: "ooc", method: "test", unit: ["quiz", "quizzes"] },
+          { id: "project", group: "Assessment activities", name: "Project / presentation", sug: 1, bucket: "ooc", unit: ["project", "projects"] },
+          { id: "test", group: "Assessment activities", name: "Test / exam", sug: 1, bucket: "acad", method: "test", unit: ["exam", "exams"] },
           { id: "other", group: "Other", name: "Something else", bucket: "ooc" }
         ];
         var TYPE_BY_ID = {};
         TYPES.forEach(function (t) { TYPE_BY_ID[t.id] = t; });
+
+        /* ------------------------------------------------------------------
+           Estimates, borrowed from the Learning Activity Estimator.
+
+           These tables are COPIES of the ones in learning_activity_estimator.html
+           (which transcribed them from the Rice / Wake Forest Course Workload
+           Estimator's R code). The repo keeps each tool in one self-contained
+           file, so they are not shared; test/verify_credit_hour_planner.js
+           fails if the two copies ever differ. Change both or neither.
+        ------------------------------------------------------------------ */
+
+        // PAGES_PER_HOUR[density][difficulty][purpose]
+        var PAGES_PER_HOUR = {
+          1: { 1: { 1: 67, 2: 33, 3: 17 }, 2: { 1: 47, 2: 24, 3: 12 }, 3: { 1: 33, 2: 17, 3: 9 } },
+          2: { 1: { 1: 50, 2: 25, 3: 13 }, 2: { 1: 35, 2: 18, 3: 9 }, 3: { 1: 25, 2: 13, 3: 7 } },
+          3: { 1: { 1: 40, 2: 20, 3: 10 }, 2: { 1: 28, 2: 14, 3: 7 }, 3: { 1: 20, 2: 10, 3: 5 } }
+        };
+        // HOURS_PER_PAGE[genre][drafting][density]
+        var HOURS_PER_PAGE = {
+          1: { 1: { 1: 0.75, 2: 1.5 }, 2: { 1: 1, 2: 2 }, 3: { 1: 1.25, 2: 2.5 } },
+          2: { 1: { 1: 1.5, 2: 3 }, 2: { 1: 2, 2: 4 }, 3: { 1: 2.5, 2: 5 } },
+          3: { 1: { 1: 3, 2: 6 }, 2: { 1: 4, 2: 8 }, 3: { 1: 5, 2: 10 } }
+        };
+        var WORDS_PER_PAGE = { 1: 250, 2: 500 };
+        var TEXT_WORDS_PER_HOUR = 250;
+        var AV_MINUTES_PER_HOUR = 3;
+
+        /* Each method: the fields its panel shows (in order), their defaults
+           (the estimator's own), and how they turn into hours for one.
+           A select's options are [value, label]; the label is also what the
+           summary prints. compute() returns null while a needed number is
+           missing, so the panel can say what to fill in. */
+        var ESTIMATE = {
+          reading: {
+            fields: [
+              { key: "pages", label: "Pages each", type: "number", step: "1", def: "" },
+              { key: "density", label: "Page density", def: "1", options: [["1", "450 words (paperback / article)"], ["2", "600 words (academic monograph)"], ["3", "750 words (textbook)"]] },
+              { key: "difficulty", label: "Difficulty", def: "1", options: [["1", "No new concepts"], ["2", "Some new concepts"], ["3", "Many new concepts"]] },
+              { key: "purpose", label: "Purpose", def: "1", options: [["1", "Survey \u2014 skim for main ideas"], ["2", "Understand \u2014 comprehend the text"], ["3", "Engage \u2014 analyze and critique"]] }
+            ],
+            need: "Enter the pages in one reading to estimate it.",
+            compute: function (e) {
+              var pages = numVal(e.pages);
+              if (!pages) return null;
+              var rate = PAGES_PER_HOUR[e.density][e.difficulty][e.purpose];
+              return { hours: pages / rate, rate: rate + " pages an hour" };
+            }
+          },
+          writing: {
+            fields: [
+              { key: "length", label: "Length each", type: "number", step: "1", def: "" },
+              { key: "lengthUnit", label: "Measured in", def: "pages", options: [["pages", "Pages"], ["words", "Words"]] },
+              { key: "density", label: "Page density", def: "1", options: [["1", "250 words (double-spaced)"], ["2", "500 words (single-spaced)"]] },
+              { key: "genre", label: "Genre", def: "1", options: [["1", "Reflection / narrative"], ["2", "Argument"], ["3", "Research"]] },
+              { key: "drafting", label: "Drafting", def: "1", options: [["1", "No drafting"], ["2", "Minimal drafting"], ["3", "Extensive drafting"]] }
+            ],
+            need: "Enter the length of one piece to estimate it.",
+            compute: function (e) {
+              var len = numVal(e.length);
+              if (!len) return null;
+              var pages = e.lengthUnit === "words" ? len / WORDS_PER_PAGE[e.density] : len;
+              var rate = HOURS_PER_PAGE[e.genre][e.drafting][e.density];
+              return { hours: pages * rate, rate: rate + (rate === 1 ? " hour" : " hours") + " a page" };
+            }
+          },
+          discussion: {
+            fields: [
+              { key: "format", label: "Format", def: "text", options: [["text", "Text"], ["av", "Audio / video"]] },
+              { key: "words", label: "Words each", type: "number", step: "25", def: "250", when: { format: "text" } },
+              { key: "minutes", label: "Minutes of audio / video each", type: "number", step: "1", def: "3", when: { format: "av" } }
+            ],
+            need: "Enter the length of one to estimate it.",
+            compute: function (e) {
+              if (e.format === "av") {
+                var m = numVal(e.minutes);
+                return m ? { hours: m / AV_MINUTES_PER_HOUR, rate: AV_MINUTES_PER_HOUR + " finished minutes an hour" } : null;
+              }
+              var w = numVal(e.words);
+              return w ? { hours: w / TEXT_WORDS_PER_HOUR, rate: TEXT_WORDS_PER_HOUR + " words an hour" } : null;
+            }
+          },
+          media: {
+            fields: [
+              { key: "minutes", label: "Running time each (minutes)", type: "number", step: "5", def: "" }
+            ],
+            need: "Enter the running time of one to estimate it. Add any task time as its own line.",
+            compute: function (e) {
+              var m = numVal(e.minutes);
+              return m ? { hours: m / 60, rate: "running time" } : null;
+            }
+          },
+          test: {
+            fields: [
+              { key: "limit", label: "Time limit each (minutes)", type: "number", step: "5", def: "" },
+              { key: "prep", label: "Preparation each (hours)", type: "number", step: "0.5", def: "0" }
+            ],
+            need: "Enter the time limit of one to estimate it.",
+            compute: function (e) {
+              var m = numVal(e.limit);
+              if (!m && !numVal(e.prep)) return null;
+              return { hours: m / 60 + numVal(e.prep), rate: "time limit plus preparation" };
+            }
+          }
+        };
+
+        function estDefaults(method) {
+          var e = {};
+          ESTIMATE[method].fields.forEach(function (f) { e[f.key] = f.def; });
+          return e;
+        }
+
+        function fieldShown(f, e) {
+          if (!f.when) return true;
+          for (var k in f.when) if (e[k] !== f.when[k]) return false;
+          return true;
+        }
+
+        /* "25 pages, 750 words (textbook), many new concepts, understand" */
+        function estDescribe(method, e) {
+          var parts = [];
+          ESTIMATE[method].fields.forEach(function (f) {
+            if (!fieldShown(f, e) || f.key === "lengthUnit") return;
+            if (f.options) {
+              var o = f.options.filter(function (x) { return x[0] === e[f.key]; })[0];
+              if (o) parts.push(o[1].split(" \u2014 ")[0].toLowerCase());
+            } else if (numVal(e[f.key])) {
+              var unit = f.key === "length" ? (e.lengthUnit === "words" ? "words" : "pages")
+                : f.key === "pages" ? "pages" : f.key === "words" ? "words"
+                : f.key === "prep" ? "h preparation" : "min";
+              parts.push(e[f.key] + " " + unit);
+            }
+          });
+          return parts.join(", ");
+        }
+
+        function unitFor(r) {
+          var t = TYPE_BY_ID[r.type];
+          if (!t || !t.unit) return "";
+          return t.unit[numVal(r.count) === 1 ? 0 : 1];
+        }
 
         /* "Instructional time", not "academic work" (October 21, 2026). In
            N.J.A.C. 9A:1-1.2 and Rutgers Policy 10.2.4 "academic work" is the
@@ -459,7 +609,7 @@
         var meetingsDismissed = false;
 
         function blankRow() {
-          return { id: nextId++, name: "", type: "", bucket: "ooc", count: "1", each: "", auto: false, bucketSet: false };
+          return { id: nextId++, name: "", type: "", bucket: "ooc", count: "1", each: "", auto: false, bucketSet: false, est: null, estUsed: false, estOpen: false };
         }
 
         function minimums() {
@@ -513,7 +663,8 @@
           if (hasMeetings) return false;
           rows.unshift({
             id: nextId++, name: spec.name, type: "meetings", bucket: "acad",
-            count: spec.count, each: spec.each, auto: true, bucketSet: false
+            count: spec.count, each: spec.each, auto: true, bucketSet: false,
+            est: null, estUsed: false, estOpen: false
           });
           return true;
         }
@@ -631,19 +782,32 @@
             del.dataset.field = "remove";
 
             wrap.appendChild(cell("c-name", "Activity", name));
+            var countCell = cell("c-count n", "How many", count);
+            var unit = document.createElement("span");
+            unit.className = "unit";
+            unit.textContent = unitFor(r);
+            countCell.appendChild(unit);
+            var eachCell = cell("c-each n", "Hours each", each);
+            var t = TYPE_BY_ID[r.type];
+            if (t && t.method) {
+              var eb = document.createElement("button");
+              eb.type = "button";
+              eb.className = "est-btn";
+              eb.textContent = "Estimate";
+              eb.dataset.field = "estimate";
+              eb.setAttribute("aria-expanded", r.estOpen ? "true" : "false");
+              eb.setAttribute("aria-controls", "est-" + r.id);
+              eb.setAttribute("aria-label", "Estimate hours each, " + rowLabel(r, i));
+              eachCell.appendChild(eb);
+            }
             wrap.appendChild(cell("c-type", "Type", type));
             wrap.appendChild(cell("c-bucket", "Counts as", bucket));
-            wrap.appendChild(cell("c-count n", "How many", count));
-            wrap.appendChild(cell("c-each n", "Hours each", each));
+            wrap.appendChild(countCell);
+            wrap.appendChild(eachCell);
             wrap.appendChild(cell("c-total n", "Total", out));
             wrap.appendChild(cell("c-del", "", del));
 
-            if (r.type && TYPE_BY_ID[r.type] && !TYPE_BY_ID[r.type].sug && r.type !== "meetings" && !r.each) {
-              var hint = document.createElement("p");
-              hint.className = "hint inv-hint";
-              hint.textContent = "No typical time for this one. The Learning Activity Estimator can work it out.";
-              wrap.appendChild(hint);
-            }
+            if (t && t.method) wrap.appendChild(estPanel(r));
             if (r.auto) {
               var ah = document.createElement("p");
               ah.className = "hint inv-hint";
@@ -656,6 +820,89 @@
             var target = box.querySelector('[data-id="' + focusId + '"] [data-field="' + (focusField || "name") + '"]');
             if (target) target.focus();
           }
+        }
+
+        /* The Estimate panel under a row: the estimator's inputs for the
+           row's method. Its settings live on the row (r.est) and are saved
+           with it; whether it is open is not. */
+        function estPanel(r) {
+          var t = TYPE_BY_ID[r.type];
+          var method = t.method;
+          if (!r.est) r.est = estDefaults(method);
+          var panel = document.createElement("div");
+          panel.className = "est-panel";
+          panel.id = "est-" + r.id;
+          panel.hidden = !r.estOpen;
+          var fields = document.createElement("div");
+          fields.className = "est-fields";
+          ESTIMATE[method].fields.forEach(function (f) {
+            var wrapF = document.createElement("div");
+            wrapF.className = "est-field";
+            wrapF.hidden = !fieldShown(f, r.est);
+            wrapF.dataset.key = f.key;
+            var id = "e" + r.id + "-" + f.key;
+            var lab = document.createElement("label");
+            lab.setAttribute("for", id);
+            lab.textContent = f.label;
+            var ctl;
+            if (f.options) {
+              ctl = document.createElement("select");
+              f.options.forEach(function (o) {
+                var op = document.createElement("option");
+                op.value = o[0]; op.textContent = o[1];
+                ctl.appendChild(op);
+              });
+            } else {
+              ctl = document.createElement("input");
+              ctl.type = "number"; ctl.min = "0"; ctl.step = f.step;
+            }
+            ctl.id = id;
+            ctl.value = r.est[f.key];
+            ctl.dataset.est = f.key;
+            wrapF.appendChild(lab);
+            wrapF.appendChild(ctl);
+            fields.appendChild(wrapF);
+          });
+          panel.appendChild(fields);
+          var res = document.createElement("p");
+          res.className = "est-result";
+          res.setAttribute("aria-live", "polite");
+          panel.appendChild(res);
+          estResultText(r, res);
+          return panel;
+        }
+
+        function estResultText(r, res) {
+          var method = TYPE_BY_ID[r.type].method;
+          var out = ESTIMATE[method].compute(r.est);
+          if (!out) { res.textContent = ESTIMATE[method].need; return; }
+          var unit = TYPE_BY_ID[r.type].unit ? TYPE_BY_ID[r.type].unit[0] : "one";
+          var txt = "At " + out.rate + ", that is " + fmt(out.hours) + " hours for each " + unit + ".";
+          if (!r.estUsed && r.each !== "" && Math.abs(numVal(r.each) - out.hours) > 0.005) {
+            txt += " Hours each holds " + r.each + ", typed by hand; change a setting here to use the estimate instead.";
+          }
+          res.textContent = txt;
+        }
+
+        /* A setting in the panel changed: apply the estimate to hours each. */
+        function estChanged(r, key, value) {
+          r.est[key] = value;
+          if (r.auto) r.auto = false;
+          var w = $("rows").querySelector('[data-id="' + r.id + '"]');
+          var method = TYPE_BY_ID[r.type].method;
+          ESTIMATE[method].fields.forEach(function (f) {
+            var fw = w.querySelector('.est-field[data-key="' + f.key + '"]');
+            if (fw) fw.hidden = !fieldShown(f, r.est);
+          });
+          var out = ESTIMATE[method].compute(r.est);
+          if (out) {
+            r.each = String(Math.round(out.hours * 100) / 100);
+            r.estUsed = true;
+            w.querySelector('[data-field="each"]').value = r.each;
+          }
+          estResultText(r, w.querySelector(".est-result"));
+          refreshRow(r);
+          update();
         }
 
         function findRow(el) {
@@ -678,16 +925,27 @@
           w.querySelector('[data-field="count"]').setAttribute("aria-label", "How many " + lbl);
           w.querySelector('[data-field="each"]').setAttribute("aria-label", "Hours each, " + lbl);
           w.querySelector('[data-field="remove"]').setAttribute("aria-label", "Remove " + lbl);
+          w.querySelector(".unit").textContent = unitFor(r);
+          var eb = w.querySelector(".est-btn");
+          if (eb) eb.setAttribute("aria-label", "Estimate hours each, " + lbl);
+          var res = w.querySelector(".est-result");
+          if (res) estResultText(r, res);
           var out = w.querySelector(".row-total");
           out.textContent = fmt(rowHours(r));
           out.setAttribute("aria-label", "Total hours, " + lbl);
         }
 
         $("rows").addEventListener("input", function (e) {
-          var f = e.target.dataset.field;
           var r = findRow(e.target);
-          if (!r || !f || f === "type" || f === "bucket") return;
+          if (!r) return;
+          if (e.target.dataset.est) {
+            if (e.target.tagName === "INPUT") estChanged(r, e.target.dataset.est, e.target.value);
+            return;
+          }
+          var f = e.target.dataset.field;
+          if (!f || f === "type" || f === "bucket") return;
           r[f] = e.target.value;
+          if (f === "each") r.estUsed = false;
           if (r.auto) r.auto = false;
           refreshRow(r);
           update();
@@ -697,6 +955,10 @@
           var f = e.target.dataset.field;
           var r = findRow(e.target);
           if (!r) return;
+          if (e.target.dataset.est && e.target.tagName === "SELECT") {
+            estChanged(r, e.target.dataset.est, e.target.value);
+            return;
+          }
           if (f === "type") {
             var was = TYPE_BY_ID[r.type];
             var now = TYPE_BY_ID[e.target.value];
@@ -711,6 +973,13 @@
               r.each = "";
             }
             if (now && !r.bucketSet) r.bucket = now.bucket;
+            /* A new method starts from its own defaults; the old settings
+               would mean nothing to it. */
+            if (!was || !now || was.method !== now.method) {
+              r.est = now && now.method ? estDefaults(now.method) : null;
+              r.estUsed = false;
+              if (!now || !now.method) r.estOpen = false;
+            }
             /* Name an unnamed row after its type, so the summary reads. */
             if (now && !r.name.trim()) r.name = now.name;
             renderRows(r.id, "type");
@@ -724,6 +993,19 @@
         });
 
         $("rows").addEventListener("click", function (e) {
+          if (e.target.dataset.field === "estimate") {
+            var er = findRow(e.target);
+            if (!er) return;
+            er.estOpen = !er.estOpen;
+            e.target.setAttribute("aria-expanded", er.estOpen ? "true" : "false");
+            var panel = $("est-" + er.id);
+            panel.hidden = !er.estOpen;
+            if (er.estOpen) {
+              var first = panel.querySelector("input, select");
+              if (first) first.focus();
+            }
+            return;
+          }
           if (e.target.dataset.field !== "remove") return;
           var r = findRow(e.target);
           if (!r) return;
@@ -905,6 +1187,12 @@
               var label = r.name.trim() || (TYPE_BY_ID[r.type] ? TYPE_BY_ID[r.type].name : "Activity");
               lines.push("  " + pad(label, 40) + lpad(numVal(r.count) + " x " + fmt(numVal(r.each)), 14) +
                 lpad(fmt(rowHours(r)), 10) + " hrs");
+              var u = unitFor(r);
+              var t = TYPE_BY_ID[r.type];
+              var detail = [];
+              if (u) detail.push(numVal(r.count) + " " + u);
+              if (r.estUsed && r.est && t && t.method) detail.push("each estimated from " + estDescribe(t.method, r.est));
+              if (detail.length) lines.push("    " + detail.join("; "));
             });
             if (!any) lines.push("  (none)");
             lines.push("  " + pad("Total", 54) + lpad(fmt(t[b]), 10) + " hrs   (minimum " + fmt(m[b]) + ")");
@@ -956,6 +1244,23 @@
           }, 400);
         }
 
+        /* A saved row's estimate settings, checked against its type's
+           method: unknown keys dropped, select values that are not options
+           reset to the default. */
+        function loadEst(r) {
+          var t = TYPE_BY_ID[r.type];
+          if (!t || !t.method) return null;
+          var e = estDefaults(t.method);
+          var saved = r.est && typeof r.est === "object" ? r.est : {};
+          ESTIMATE[t.method].fields.forEach(function (f) {
+            if (!(f.key in saved) || saved[f.key] == null) return;
+            var v = String(saved[f.key]);
+            if (f.options && !f.options.some(function (o) { return o[0] === v; })) return;
+            e[f.key] = v;
+          });
+          return e;
+        }
+
         function load() {
           try {
             var raw = localStorage.getItem(STORAGE_KEY);
@@ -977,7 +1282,10 @@
                   count: r.count == null ? "" : String(r.count),
                   each: r.each == null ? "" : String(r.each),
                   auto: !!r.auto,
-                  bucketSet: !!r.bucketSet
+                  bucketSet: !!r.bucketSet,
+                  est: loadEst(r),
+                  estUsed: !!r.estUsed,
+                  estOpen: false
                 };
               });
             }
