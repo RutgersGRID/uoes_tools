@@ -396,14 +396,19 @@
 
         /* Each method: the fields its panel shows (in order), their defaults
            (the estimator's own), and how they turn into hours for one.
-           A select's options are [value, label]; the label is also what the
-           summary prints. compute() returns null while a needed number is
+           A select's options are [value, label] or [value, label, short];
+           the summary prints the short form when there is one, else the
+           label. The density options carry one (Maka, October 22, 2026):
+           the dropdown keeps "250 words (double-spaced)" so designers can
+           recognise the page, but density is only words per page, and
+           spacing does not change the work, so the summary says "250 words
+           per page" rather than "500 words, 250 words (double-spaced)". compute() returns null while a needed number is
            missing, so the panel can say what to fill in. */
         var ESTIMATE = {
           reading: {
             fields: [
               { key: "pages", label: "Pages each", type: "number", step: "1", def: "" },
-              { key: "density", label: "Page density", def: "1", options: [["1", "450 words (paperback / article)"], ["2", "600 words (academic monograph)"], ["3", "750 words (textbook)"]] },
+              { key: "density", label: "Page density", def: "1", options: [["1", "450 words (paperback / article)", "450 words per page"], ["2", "600 words (academic monograph)", "600 words per page"], ["3", "750 words (textbook)", "750 words per page"]] },
               { key: "difficulty", label: "Difficulty", def: "1", options: [["1", "No new concepts"], ["2", "Some new concepts"], ["3", "Many new concepts"]] },
               { key: "purpose", label: "Purpose", def: "1", options: [["1", "Survey \u2014 skim for main ideas"], ["2", "Understand \u2014 comprehend the text"], ["3", "Engage \u2014 analyze and critique"]] }
             ],
@@ -419,7 +424,7 @@
             fields: [
               { key: "length", label: "Length each", type: "number", step: "1", def: "" },
               { key: "lengthUnit", label: "Measured in", def: "pages", options: [["pages", "Pages"], ["words", "Words"]] },
-              { key: "density", label: "Page density", def: "1", options: [["1", "250 words (double-spaced)"], ["2", "500 words (single-spaced)"]] },
+              { key: "density", label: "Page density", def: "1", options: [["1", "250 words (double-spaced)", "250 words per page"], ["2", "500 words (single-spaced)", "500 words per page"]] },
               { key: "genre", label: "Genre", def: "1", options: [["1", "Reflection / narrative"], ["2", "Argument"], ["3", "Research"]] },
               { key: "drafting", label: "Drafting", def: "1", options: [["1", "No drafting"], ["2", "Minimal drafting"], ["3", "Extensive drafting"]] }
             ],
@@ -484,14 +489,14 @@
           return true;
         }
 
-        /* "25 pages, 750 words (textbook), many new concepts, understand" */
+        /* "25 pages, 750 words per page, many new concepts, understand" */
         function estDescribe(method, e) {
           var parts = [];
           ESTIMATE[method].fields.forEach(function (f) {
             if (!fieldShown(f, e) || f.key === "lengthUnit") return;
             if (f.options) {
               var o = f.options.filter(function (x) { return x[0] === e[f.key]; })[0];
-              if (o) parts.push(o[1].split(" \u2014 ")[0].toLowerCase());
+              if (o) parts.push(o[2] || o[1].split(" \u2014 ")[0].toLowerCase());
             } else if (numVal(e[f.key])) {
               var unit = f.key === "length" ? (e.lengthUnit === "words" ? "words" : "pages")
                 : f.key === "pages" ? "pages" : f.key === "words" ? "words"
@@ -1027,6 +1032,19 @@
            out-of-class work. That call belongs to the school, not the tool
            (Maka, October 21, 2026), so a shortfall on either side is
            reported as a shortfall and nothing is netted against anything. */
+        /* "a 3 credit, 15 week course": the shortfall warnings name the
+           course shape the minimum comes from, so the number reads as a
+           consequence of the designer's own inputs (Maka, October 22, 2026).
+           "an" before 8, 11 and 18 (eight, eleven, eighteen); the weeks are
+           left out while there is no valid length. */
+        function courseShape(m) {
+          var c = String(m.credits);
+          var an = /^8/.test(c) || /^1[18](\.|$)/.test(c);
+          var shape = c + " credit";
+          if (m.weeks >= 1) shape += ", " + m.weeks + " week";
+          return (an ? "an " : "a ") + shape + " course";
+        }
+
         function check(m, t) {
           var out = [];
           if (m.credits <= 0) {
@@ -1043,7 +1061,7 @@
             out.push({
               cls: "warn",
               text: "Instructional time is " + hhmm(acadShort) + " short of the " + hhmm(m.acad) +
-                " this course needs. Add instructor-led time: meetings, or asynchronous material " +
+                " " + courseShape(m) + " needs. Add instructor-led time: meetings, or asynchronous material " +
                 "that is monitored and documented."
             });
           }
@@ -1051,7 +1069,7 @@
             out.push({
               cls: "warn",
               text: "Out-of-class work is " + hhmm(oocShort) + " short of the " + hhmm(m.ooc) +
-                " this course needs."
+                " " + courseShape(m) + " needs."
             });
           }
           if (!out.length) {
