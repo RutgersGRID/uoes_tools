@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Load Rock 'n' Roll Credit Hour Test Data</title>
+  <style>
+    body {
+      font-family: Georgia, serif;
+      max-width: 620px;
+      margin: 60px auto;
+      padding: 0 20px;
+      background: #f4f7f9;
+      color: #333;
+      text-align: center;
+    }
+    .card {
+      background: white;
+      border: 2px solid #007FAC;
+      border-radius: 8px;
+      padding: 28px;
+    }
+    h1 { font-size: 24px; margin-top: 0; }
+    p { line-height: 1.6; }
+    ul { text-align: left; line-height: 1.6; margin: 0 auto 16px; max-width: 520px; }
+    li strong { color: #A30029; }
+    button {
+      font-family: inherit;
+      font-size: 18px;
+      padding: 12px 32px;
+      border: none;
+      border-radius: 8px;
+      background: #CC0033;
+      color: white;
+      cursor: pointer;
+      margin: 6px;
+    }
+    button:hover { background: #A30029; }
+    button.secondary {
+      background: white;
+      color: #CC0033;
+      border: 2px solid #CC0033;
+      font-size: 15px;
+      padding: 8px 20px;
+    }
+    button.secondary:hover { background: #CC0033; color: white; }
+    button:focus { outline: 2px solid #007FAC; outline-offset: 2px; }
+    #status { font-weight: bold; color: #A30029; min-height: 1.4em; }
+    .warn { font-size: 14px; color: #666; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Credit Hour Planner Test Data</h1>
+    <p>Fills the Credit Hour Planner with a whole course's activities from
+      <strong>Rock 'n' Roll: Origins to Present</strong> &mdash; 3 credits,
+      15 weeks, asynchronous, 13 modules &mdash; then opens it. It is built
+      to meet both minimums, but not by much:</p>
+    <ul>
+      <li><strong>Instructional time</strong> &mdash; about 38.8 of 37.5
+        hours: lecture videos, monitored discussions (switched to
+        instructional time by hand), the PlayPosit video, two live review
+        sessions, and the two exams.</li>
+      <li><strong>Out-of-class work</strong> &mdash; about 77.3 of 75
+        hours: readings, guided listening, listening responses, quizzes,
+        the Research &amp; Analysis project's pieces, peer comments, and
+        exam studying.</li>
+      <li><strong>Estimates</strong> &mdash; seven rows use their Estimate
+        panel (readings, videos, discussion posts, PlayPosit, exams,
+        listening responses, the R&amp;A progress report); two override a
+        typical time by hand (exam studying at 4 hours, the final
+        presentation at 6).</li>
+    </ul>
+    <p class="warn">This replaces anything currently saved in the Credit Hour
+      Planner in this browser. Use "Clear" afterward to empty it again.
+      Deleting the Live review sessions row (3 hours) is a quick way to see
+      the instructional-time warning.</p>
+    <button id="loadBtn">Load test data &amp; open the planner</button>
+    <br>
+    <button id="clearBtn" class="secondary">Clear Credit Hour Planner data</button>
+    <p id="status" role="status"></p>
+  </div>
+
+  <script>
+    // Must match STORAGE_KEY in credit_hour_planner.html. The shape is the
+    // page's own save: { credits, weeks, format, meetingsDismissed, rows }.
+    // load() checks every row, so a field left out takes its default; ids
+    // are reassigned on load. `est` holds a row's Estimate panel settings,
+    // as strings, keyed as in ESTIMATE in the page; `estUsed: true` means
+    // "each" came from those settings, and the numbers below are what the
+    // page computes from them, so the panels do not report a hand-typed
+    // value. Keep in step if a type id, method field or bucket changes.
+    const KEY = "uoes-credit-hour-course";
+
+    const row = (name, type, bucket, count, each, extra) =>
+      Object.assign({ name, type, bucket, count: String(count), each: String(each),
+        auto: false, bucketSet: false, est: null, estUsed: false }, extra || {});
+
+    const SEED = {
+      credits: "3",
+      weeks: "15",
+      format: "async",
+      meetingsDismissed: false,
+      rows: [
+        // ---------------- instructional time: 38.82 h ----------------
+        // three 20-minute lecture videos a module: 39 x 0.33 = 12.87
+        row("Lecture videos with guided listening", "minilecture", "acad", 39, 0.33,
+          { est: { minutes: "20" }, estUsed: true }),
+        // eight discussions, an initial post and two replies each:
+        // 24 posts x 200 words at 250 an hour = 24 x 0.8 = 19.20.
+        // Instructor-monitored, so counted as instructional time by hand.
+        row("Module discussions & debate (monitored)", "discussion", "acad", 24, 0.8,
+          { bucketSet: true, est: { format: "text", words: "200", minutes: "3" }, estUsed: true }),
+        // Module 12: one 45-minute interactive video = 0.75
+        row("I Want My MTV (PlayPosit)", "simulation", "acad", 1, 0.75,
+          { est: { minutes: "45" }, estUsed: true }),
+        // optional live exam reviews: 2 x 1.5 = 3.00
+        row("Live review sessions", "webinar", "acad", 2, 1.5),
+        // Exams 1 and 2, 90-minute windows, studying listed separately: 2 x 1.5 = 3.00
+        row("Exams 1 & 2", "test", "acad", 2, 1.5,
+          { est: { limit: "90", prep: "0" }, estUsed: true }),
+
+        // ---------------- out-of-class work: 77.28 h ----------------
+        // 28 pages of academic monograph, some new concepts, to understand:
+        // 18 pages an hour = 1.56 each; 13 x 1.56 = 20.28
+        row("Module readings", "readings", "ooc", 13, 1.56,
+          { est: { pages: "28", density: "2", difficulty: "2", purpose: "2" }, estUsed: true }),
+        // Spotify playlists, an hour a module: 13 x 1 = 13.00
+        row("Guided listening (Spotify playlists)", "other", "ooc", 13, 1),
+        // Modules 3, 5, 7, 10 and 13; 500 words, double-spaced reflection,
+        // no drafting: 2 pages x 0.75 = 1.5 each; 5 x 1.5 = 7.50
+        row("Listening responses", "writing", "ooc", 5, 1.5,
+          { est: { length: "500", lengthUnit: "words", density: "1", genre: "1", drafting: "1" }, estUsed: true }),
+        // Getting Started quiz and the two mini-quizzes: 3 x 0.5 = 1.50
+        row("Getting Started quiz & mini-quizzes", "quiz", "ooc", 3, 0.5),
+        // 1 x 2 = 2.00
+        row("Song Presentation", "project", "ooc", 1, 2),
+        // 1 x 2 = 2.00
+        row("Festival Poster", "individual", "ooc", 1, 2),
+        // 1 x 2 = 2.00
+        row("Hypothesis: Bob Marley", "research", "ooc", 1, 2),
+        // Module 12: 3 x 1.5 = 4.50
+        row("Artist Profile peer comments", "peer", "ooc", 3, 1.5),
+        // 1 x 1 = 1.00
+        row("R&A topic selection", "individual", "ooc", 1, 1),
+        // 1000 words, argument, minimal drafting, double-spaced:
+        // 4 pages x 2 = 8.00
+        row("R&A progress report", "writing", "ooc", 1, 8,
+          { est: { length: "1000", lengthUnit: "words", density: "1", genre: "2", drafting: "2" }, estUsed: true }),
+        // 1 x 1.5 = 1.50
+        row("R&A peer review", "peer", "ooc", 1, 1.5),
+        // typed by hand over the 1-hour typical time: 1 x 6 = 6.00
+        row("R&A final presentation", "project", "ooc", 1, 6),
+        // typed by hand over the 3-hour typical time: 2 x 4 = 8.00
+        row("Studying for Exams 1 & 2", "prep", "ooc", 2, 4)
+      ]
+    };
+
+    const status = document.getElementById("status");
+
+    document.getElementById("loadBtn").addEventListener("click", () => {
+      try {
+        localStorage.setItem(KEY, JSON.stringify(SEED));
+        status.textContent = "Loaded! Opening the Credit Hour Planner…";
+        setTimeout(() => { window.location.href = "../credit_hour_planner.html"; }, 400);
+      } catch (e) {
+        status.textContent = "Could not save: " + e.message;
+      }
+    });
+
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      try {
+        localStorage.removeItem(KEY);
+        status.textContent = "Credit Hour Planner data cleared.";
+      } catch (e) {
+        status.textContent = "Could not clear: " + e.message;
+      }
+    });
+  </script>
+</body>
+</html>
