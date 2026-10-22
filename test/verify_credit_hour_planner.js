@@ -349,7 +349,16 @@ const KEY = "uoes-credit-hour-course";
   ok("estimate field ids are unique", await page.$$eval(".est-panel [id]", els => new Set(els.map(e => e.id)).size === els.length));
   const sum = await page.evaluate(() => window.__asText());
   ok("summary says where an estimate came from",
-    /each estimated from 40 pages, 750 words \(textbook\), many new concepts, engage/.test(sum), sum);
+    /each estimated from 40 pages, 750 words per page, many new concepts, engage/.test(sum), sum);
+  /* Density is words per page; the summary does not talk about spacing or
+     book type (October 22, 2026). The dropdown labels still do. */
+  ok("summary gives writing density as words per page",
+    /each estimated from 1000 words, 500 words per page, research, extensive drafting/.test(sum), sum);
+  ok("summary never mentions spacing or book type",
+    // only the "estimated from" lines: a row in this run is named "Textbook chapters"
+    !sum.split("\n").filter(l => /estimated from/.test(l)).some(l => /spaced|textbook|monograph|paperback/i.test(l)), sum);
+  ok("the density dropdown still names the spacing",
+    await page.$$eval('.est-panel select[data-est="density"] option', os => os.some(o => o.textContent === "250 words (double-spaced)")));
   ok("summary gives the unit", /1 reading;/.test(sum));
 
   await page.waitForTimeout(600);
@@ -419,6 +428,24 @@ const KEY = "uoes-credit-hour-course";
     r.status.some(x => x.cls === "warn" && /Instructional time is 7 hours and 30 minutes short/.test(x.text)),
     JSON.stringify(r.status));
   ok("a short bar turns red", await page.$eval("#bar-acad", f => f.classList.contains("short")));
+  /* The warnings name the course shape the minimum comes from (October 22,
+     2026), not "this course". */
+  ok("instructional warning names the course shape",
+    r.status.some(x => x.cls === "warn" && /short of the 37 hours and 30 minutes a 3 credit, 15 week course needs\./.test(x.text)),
+    JSON.stringify(r.status));
+  ok("no warning says 'this course needs'", !r.status.some(x => /this course needs/.test(x.text)));
+  await setNum("credits", 8); await setNum("weeks", 7);
+  r = await result();
+  ok("the shape follows the inputs, with 'an' before 8",
+    r.status.some(x => x.cls === "warn" && /short of the 100 hours an 8 credit, 7 week course needs\./.test(x.text)),
+    JSON.stringify(r.status));
+  await setNum("weeks", 0);
+  r = await result();
+  ok("with no valid length the shape drops the weeks",
+    r.status.some(x => /an 8 credit course needs/.test(x.text)), JSON.stringify(r.status));
+  await setNum("credits", 3); await setNum("weeks", 15);
+  await row(0).locator('[data-field="each"]').fill("2");
+  r = await result();
 
   /* October 21, 2026: the page no longer lets extra academic work cover an
      out-of-class shortfall (Maka: avoid making that call). Lots of academic
@@ -429,6 +456,8 @@ const KEY = "uoes-credit-hour-course";
   ok("extra academic work does not cover an out-of-class shortfall",
     r.status.length === 1 && r.status[0].cls === "warn" && /Out-of-class work is 7 hours and 30 minutes short/.test(r.status[0].text),
     JSON.stringify(r.status));
+  ok("out-of-class warning names the course shape",
+    /short of the 75 hours a 3 credit, 15 week course needs\.$/.test(r.status[0].text), r.status[0].text);
   ok("and the page never says it does",
     !(await page.evaluate(() => /covers it|can be deducted|stand in for/i.test(document.querySelector("main").innerText))));
 
