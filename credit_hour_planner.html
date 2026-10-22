@@ -580,7 +580,16 @@
         /* The meetings line a format implies: one line per week of the term,
            each the weekly share of the academic minimum (all of it for a
            synchronous course, half for blended). A 3-credit, 15-week
-           synchronous course gets 15 × 2.50 hours = the 37.50-hour minimum. */
+           synchronous course gets 15 × 2.50 hours = the 37.50-hour minimum.
+
+           Hours each rounds UP to the hundredth (Maka, October 22, 2026).
+           Rounding to the nearest left many common courses a few minutes
+           short of the minimum the line was built to meet (4 credits ×
+           15 weeks gave 15 × 3.33 = 49.95 of 50 hours), so the page warned
+           about its own line. Rounding up overshoots by at most 0.6 minutes
+           a week, under 10 minutes for any term of 16 weeks or fewer. The
+           small epsilon keeps a value that is already exact, such as 250,
+           from being pushed to 251 by floating-point noise. */
         function meetingSpec() {
           var f = format();
           var m = minimums();
@@ -590,7 +599,7 @@
           return {
             name: f === "blended" ? "Class meetings (weekly, blended)" : "Class meetings (weekly)",
             count: String(Math.round(m.weeks)),
-            each: String(Math.round(weekly * 100) / 100)
+            each: String(Math.ceil(weekly * 100 - 1e-9) / 100)
           };
         }
 

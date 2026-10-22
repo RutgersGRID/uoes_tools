@@ -140,11 +140,42 @@ const KEY = "uoes-credit-hour-course";
 
   await setNum("credits", 4);
   st = await state();
-  ok("meetings follow the credits", st.rows[0].each === "3.33", st.rows[0].each);
+  /* 4 credits: 50 / 15 = 3.333…, rounded UP so the line meets the minimum
+     (October 22, 2026; it was 3.33, which fell 3 minutes short). */
+  ok("meetings follow the credits", st.rows[0].each === "3.34", st.rows[0].each);
+  r = await result();
+  ok("4 credits x 15 weeks: the meetings line is not short", !r.status.some(x => x.cls === "warn" && /Instructional/.test(x.text)) && r.totals.acad >= 50,
+    r.totals.acad);
   await setNum("weeks", 10);
   st = await state();
   ok("meetings follow the length", st.rows[0].count === "10" && st.rows[0].each === "5", JSON.stringify(st.rows[0]));
   await setNum("credits", 3); await setNum("weeks", 15);
+
+  /* The rounding regression, across the shapes a course takes: the
+     synchronous line never falls short of the instructional minimum and
+     never overshoots it by 10 minutes or more; the blended line likewise
+     against half of it. */
+  const sweep = await page.evaluate(() => {
+    const bad = [];
+    const set = (id, v) => { const el = document.getElementById(id); el.value = String(v); el.dispatchEvent(new Event("input", { bubbles: true })); };
+    for (const fmt of ["sync", "blended"]) {
+      const radio = document.getElementById("fmt-" + fmt);
+      radio.checked = true; radio.dispatchEvent(new Event("change", { bubbles: true }));
+      for (let c = 0.5; c <= 6; c += 0.5) for (let w = 1; w <= 16; w++) {
+        set("credits", c); set("weeks", w);
+        const line = window.__state().rows.find(x => x.auto);
+        const got = parseFloat(line.count) * parseFloat(line.each);
+        const need = c * 50 * 15 / 60 * (fmt === "blended" ? 0.5 : 1);
+        if (got + 1e-9 < need || (got - need) * 60 >= 10) bad.push(fmt + " " + c + "cr " + w + "wk: " + line.count + " x " + line.each + " vs " + need);
+      }
+    }
+    const s = document.getElementById("fmt-sync"); s.checked = true; s.dispatchEvent(new Event("change", { bubbles: true }));
+    set("credits", 3); set("weeks", 15);
+    return bad;
+  });
+  ok("meetings line meets the minimum, within 10 minutes, for 0.5-6 credits x 1-16 weeks", sweep.length === 0, sweep.slice(0, 5).join("; "));
+  st = await state();
+  ok("and the sweep leaves the line at 3 x 15", st.rows[0].auto && st.rows[0].each === "2.5", JSON.stringify(st.rows[0]));
 
   await row(0).locator('[data-field="each"]').fill("3");
   st = await state();
