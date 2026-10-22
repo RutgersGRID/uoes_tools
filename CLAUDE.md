@@ -1219,8 +1219,19 @@ estimator's defaults:
 - Settings are saved with the row and validated on load (unknown keys
   dropped, a select value that is not an option reset). **Whether a panel
   is open is not saved**; they all start closed.
-- The summary adds "each estimated from 25 pages, 750 words (textbook),
+- The summary adds "each estimated from 25 pages, 750 words per page,
   many new concepts, understand" under a row only while `estUsed`.
+- **Density reads as words per page in the summary** (Maka, October 22,
+  2026). The dropdowns keep "250 words (double-spaced)", "750 words
+  (textbook)" and so on, so designers recognise the page, but each density
+  option carries a short third element ("250 words per page") that the
+  summary prints instead. It used to print "500 words, 250 words
+  (double-spaced)", two word counts meaning different things. Maka's
+  point: density is only words per page and spacing does not change the
+  work. Worth knowing: when a writing length is given **in words**,
+  density cancels out — the single-spaced rates are exactly twice the
+  double-spaced ones — so the choice only matters for a length in pages.
+  Counting words would be cleaner but designers rarely know the count.
 - **`PAGES_PER_HOUR`, `HOURS_PER_PAGE` and `WORDS_PER_PAGE` are copies of
   the estimator's** — the repo keeps each tool one self-contained file.
   The harness reads both pages and fails if the copies differ. Change
@@ -1240,6 +1251,12 @@ is the school's decision, not the tool's.
 Results, in `check()`: a note if credits are 0, a note if nothing is
 planned, a red `.warn` per short bucket (the instructional one says how
 to add instructor-led time), or a green `.note.ok` when both are met.
+**The warnings name the course shape the minimum comes from** — "short of
+the 37 hours and 30 minutes a 3 credit, 15 week course needs", not "this
+course needs" (Maka, October 22, 2026), so the figure reads as a
+consequence of the designer's own credits and length. `courseShape()`
+writes it: "an" before 8, 11 and 18; the weeks are left out while the
+length is under 1.
 **Going over is fine** — the credit hour is a minimum, not a ceiling (the
 August 29 finding, 34 CFR 600.2's "not less than"); there is no overload
 warning yet (open item).
@@ -1272,6 +1289,19 @@ false); a corrupt save starts fresh and a partial one loads what it can.
 Start over (with a confirm) clears the key, the form and the rows, then
 sets up the meetings line again. `window.__state`, `__update` and
 `__asText` are exposed for the harness.
+
+**Fixture:** `test/load_rock_credit_hours.html` (October 22, 2026) seeds
+the whole Rock 'n' Roll course — 3 credits, 15 weeks, asynchronous, 18
+rows — and opens the page; the planner's counterpart to
+`load_rock_test.html` and `load_rock_activities.html`. It meets both
+minimums by a small margin (38.82 of 37.5 instructional, 77.28 of 75
+out-of-class), so deleting the Live review sessions row (3 h) shows the
+instructional warning. It exercises a hand-set bucket (monitored
+discussions as instructional time), seven rows with `estUsed` estimates
+whose `each` equals what the page computes (so no panel says "typed by
+hand"), and two hand-typed overrides of a typical time. The seed is the
+page's own save shape; keep it in step if a type id, method field or the
+key changes.
 
 ### Summary, copy and print
 
@@ -1364,7 +1394,7 @@ partial saves, "Start over", the report text and its credit line,
 print-PDF non-blankness, the print-CSS pattern, label/aria coverage,
 unique disclosure names, the focus outline, and the cross-links.
 
-For the credit hour planner, `test/verify_credit_hour_planner.js` runs 125
+For the credit hour planner, `test/verify_credit_hour_planner.js` runs 133
 checks, rewritten with the October 21, 2026 rebuild (the weekly-budget
 harness went with the old page): structure (title, three open steps in
 order, no weekly-budget leftovers such as `#f2f`, `#study` or the word
@@ -1380,10 +1410,14 @@ naming, default bucket, hand-typed values and buckets surviving a type
 change, count × each, focus kept while typing, add and remove, units);
 the Estimate panels (closed by default, button semantics, each method's
 arithmetic through the UI, hand-typed hours taking over and a setting
-taking back, settings surviving a reload, **the rate tables matching the
+taking back, density printed as words per page and never as spacing or
+book type in the summary while the dropdown keeps both, settings
+surviving a reload, **the rate tables matching the
 estimator's**, fetched from `learning_activity_estimator.html`); row
 accessibility; the check (each bucket against its own minimum, no
-netting, red bars, two warnings when both are short); persistence under
+netting, red bars, two warnings when both are short, both warnings naming
+the course shape — "a 3 credit, 15 week course", "an 8 credit, 7 week
+course", the weeks dropped with no valid length); persistence under
 `uoes-credit-hour-course`, corrupt and partial saves, the old key
 ignored, Start over; the summary text and its credit line; and the phone
 layout at 390px. Its only failure in a sandbox is the blocked-fonts
