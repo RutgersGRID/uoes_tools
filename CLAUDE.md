@@ -33,8 +33,10 @@ that no longer exist; trust this list.
   an R/Shiny app), until September 14, 2026, when it was scoped down —
   see **Learning Activity Estimator notes**. The rate tables and the
   CC BY-NC-SA credit are the port's.
-- `credit_hour_planner.html` — Credit Hour Planner, a JS port of a
-  two-sheet Excel workbook (see below).
+- `credit_hour_planner.html` — Credit Hour Planner: does the whole
+  course plan enough instructional time and out-of-class work for its
+  credits? Rebuilt October 21, 2026; until then a weekly-budget port of a
+  two-sheet Excel workbook (see **Credit Hour Planner notes**).
 
 ## Stylesheets
 
@@ -836,6 +838,9 @@ time budget and module planner already do. **Maka's call, September 14,
 2026:** stop reproducing that and make the page do the one thing the
 Credit Hour Planner cannot — estimate how long a *specific* activity
 takes a student, so the number can be typed into the module planner.
+(The module planner went with the October 21, 2026 rebuild of the Credit
+Hour Planner, whose rows now carry the estimator's methods in their own
+Estimate panels; see **Credit Hour Planner notes**.)
 The ask, in order: rename it Learning Activity Estimator, remove every
 reference to hours per week for the course, make it clearly about
 individual activities, drop the Course info section, and **give every
@@ -878,7 +883,8 @@ renders.
 
 The results block is a single Total tile, a table (Activity / Based on /
 Hours) listing only the sections with hours, and a hint pointing at the
-Credit Hour Planner's module planner. The "Based on" column repeats each
+Credit Hour Planner's module planner — **stale since October 21, 2026**;
+see the Credit Hour Planner's **Cross-links**. The "Based on" column repeats each
 section's inputs in words ("30 pages at 67 pages per hour", "1000 words,
 about 4.00 pages, at 2 hours per page") so the copy text and the report
 carry their assumptions.
@@ -966,329 +972,373 @@ dropped and `calculator.css` deleted.
 
 ## Credit Hour Planner notes
 
-Port of the **Planning Time Calculator (Rutgers, FOR FACULTY DIY Version)**,
-an Excel workbook with two sheets, initially developed by **Ruth Ronan** at
-Rutgers University (created 2018, last modified 2020). The sheets carry an
-embedded CC BY-NC-SA badge, so this port is a derivative work: the footer
-must keep the Ruth Ronan credit, the Workload Estimator authors, and the
-same license. Credit wording confirmed by Maka July 27, 2026 — do not
-reword it without asking.
+`credit_hour_planner.html`. **Rebuilt on October 21, 2026 as a
+whole-course planner.** Until then it was a port of a two-sheet Excel
+workbook that turned credits into a weekly time budget and checked one
+module against it; that page is summarised under **History: the
+weekly-budget page** at the end of this section, and its full notes are
+in this file's git history (the section of the same name, as of
+`accfb42`). The rebuild kept the file, the title, the footer credits and
+the step-card layout, and replaced everything else.
 
-Both sheets were password-protected (`Rutgers`); irrelevant in the port.
+### Credits and license
 
-### The credit hour planner takes the planner's layout
+The page still descends from two CC BY-NC-SA 4.0 works, so the footer
+keeps three paragraphs and must not lose any of them:
 
-**September 11, 2026, Maka's ask:** bring the page's layout in line with
-the course content planner. It had sat on `calculator.css` beside the
-workload estimator — a 1080px, three-column calculator with red
-uppercase card headings, a red `h1` and underlined fields. Now it links
-`base` + `document` + `credit_hour_planner` and reads like the planner:
+- the **Planning Time Calculator** (Rutgers, FOR FACULTY DIY Version),
+  initially developed by **Ruth Ronan** (created 2018, last modified
+  2020) — "Adapted from the Planning Time Calculator, initially developed
+  by Ruth Ronan at Rutgers University." Most of the activity types and
+  their typical times are the workbook's;
+- the **Course Workload Estimator** by Betsy Barre, Allen Brown and
+  Justin Esarey (Wake Forest CAT / Rice CTE) — the Estimate panels use
+  copies of its rate tables (see **Estimate panels**);
+- the license line, "this adaptation is shared under the same license".
 
-- **A 900px column of four numbered step cards** — Your course, Weekly
-  time budget, Module time planner, Does the module fit? — each a
-  `section.step` whose `h2` (with the red `.step-num` badge) is the
-  `<summary>` of a `details.step-body`. **All four start open**, unlike
-  the planner's later steps: sections 2 and 4 are live results of 1 and
-  3, and folding an input section while its results show would be odd.
-  The harness pins all four open.
-- **Inner cards take the planner's module-card treatment**: 1px Mid Blue
-  border, Light Blue header band holding the `h3`, a `.card-body`
-  wrapper. Nesting a second 2px Rutgers Blue frame inside the step's own
-  looked heavy. The harness checks the step frame (2px blue) and the
-  inner card (1px Mid Blue) separately.
-- **Section 1 is Course format and Course basics side by side** in
-  `.two-col`, with "How this is calculated" below them as a plain `h3`,
-  a `.step-lead` sentence and **two `.guide` panels** ("What counts as
-  instructional time", open; "The acceleration rate", closed). It was a
-  third card. The "A note on these two numbers" panel in Reading &
-  writing is a `.guide` too, so the page has three.
-- **Section 3 is Reading & writing full width** (its two fields in a
-  `.field-row`) over Learning activities and Assessment activities in
-  `.two-col`. The old `.grid-2` is gone.
-- **Inputs are boxed like the planner's** (1px `--rule`, 6px radius,
-  120px wide in the fields, right-aligned in the activity rows), not
-  underlined. The harness's Mid Blue rule now reads "no input *border*
-  uses Mid Blue" rather than requiring a Rutgers Blue underline.
-- **Buttons use the planner's vocabulary**: `#btn-report` is a
-  `.primary-btn` (inline in the `.actions` row rather than centred on
-  its own line), the other three are `.small-btn`. Ids and handlers are
-  untouched.
-- **The tiles are a fixed three-column grid** (one column under 640px):
-  six budget tiles make two even rows, the three balance tiles one.
-  `auto-fit` gave 4 + 2, with the second row looking like leftovers.
-- **Type comes up to the planner's sizes**: 16px body and labels, 14px
-  hints, 15px table and activity rows, 16px guide text. The `h1` is
-  black and centred, the report box is a red-bordered white card like
-  `#planWrap` (its `<pre>` lost its inline styles, including a raw
-  brand hex), and links are red.
+The text summary ends with the same credits in four lines. Credit wording
+confirmed by Maka July 27, 2026 — do not reword it without asking. One
+thing to raise rather than fix: the footer says "Reading and writing
+estimates come from…", but the discussion constants are the Workload
+Estimator's too.
 
-What did not change: every id, the JS, the math, the saved-data shape,
-the text of every label and hint, and the print rule
-(`main > :not(#reportWrap)`, now in the page sheet). The two intro lines
-under the subtitle ("Your work will be saved automatically as you go."
-and "Click a section heading to expand or collapse that section.") are
-new, copied from the planner.
+### Why it was rebuilt
 
-### Sheet 1 → "Weekly time budget"
+**Maka's diagnosis, October 21, 2026:** the page was doing three things
+at once — stating the credit-hour minimums, budgeting a week, and
+checking whether one module fit. Maka chose to make **this page the whole
+course** ("option C"). Planning week by week or module by module
+("option B") belongs to the Course Content Planner, later; nothing for it
+is built yet, and the page's Next Steps panel already points there.
 
-Four inputs (semester weeks, course credits, scheduled meeting hours per
-week, study hours per credit) drive one calculation. The original had two
-parallel blocks — fully-online/traditional and blended/hybrid — computed
-side by side. The port makes it a **course-format choice at the top of the
-page** instead, which also disambiguates the module budget.
+The old page was kept for a day as `old_credit_hour_planner.html`, with
+its CSS copy and harness, and deleted in `3e4a0c4`.
 
-### The format axis is synchronous, not online
+### The page
 
-**The three formats are Synchronous / Blended-hybrid / Asynchronous**
-(August 29, 2026, Maka's framing). They were "Fully online or traditional"
-and "Blended / hybrid" until then, and that pair stopped working the moment
-the meeting-hours field became universal: it merged exactly the two cases
-the field distinguishes. Maka's point was that both a fully online and an
-in-person course can be scheduled meetings plus out-of-class work, so the
-axis that actually drives the math is **synchronous vs. asynchronous, not
-online vs. in a room**. A live online class is meeting time; the page says
-so in the field hint, the tile sub-label ("in person or live online") and
-the explainer.
+Under the subtitle, a closed `.guide` panel, **"Hints on how to use this
+tool."** — Maka's rewrite of October 21: one line per part of the page
+(Course basics, Course format, Course activities, Course totals) and a
+line on autosave and Start over. Maka removed the "Why we built this
+tool" and "Hints for breaking down larger activities" panels the same
+day; do not bring them back.
 
-Everything named for that old axis was renamed with it — user-visible text
-only, since the state field names had to survive saved work:
+Then three numbered steps, **all open** (the harness pins it):
 
-| Was | Is |
-| --- | --- |
-| "Face-to-face meeting hours per week" | "Scheduled meeting hours per week", then "Scheduled meeting minutes per week" from September 10, 2026 |
-| "Face-to-face" tile / table row | "Scheduled meetings" |
-| "Online instructional" | "Self-paced instructional" |
-| "Online total" tile | "Self-paced total" |
-| "Weekly online hours available" | "Weekly self-paced hours available" |
+1. **Your course** — two cards in `.two-col`.
+   - *Course basics*: Course credits (`#credits`, step 0.5, default 3)
+     and Course length (weeks) (`#weeks`, default 15). Under them the
+     **minimums sentence** (`#minimums`): whole-course totals first,
+     weekly averages second ("…at least 37 hours and 30 minutes of
+     instructional time and 75 hours of out-of-class work, 112 hours and
+     30 minutes in all. Across 15 weeks that averages…"), a note that
+     departments may require more, and a closed panel, "How these
+     minimums are calculated.", citing 34 CFR 600.2, N.J.A.C. 9A and
+     Rutgers Policy 10.2.4.
+   - *Course format*: Synchronous / Blended / hybrid / Asynchronous
+     radios (`name="format"`, values `sync` / `blended` / `async`,
+     default `sync`), a line saying that the first two create a Class
+     meetings line, and at the foot of the card **one** closed explainer,
+     **"What is, and isn't, instructional time?"**, covering both kinds of
+     work: instructor-led time (live, lab, field, experiential with direct
+     instructor involvement), monitored and documented asynchronous
+     material, what out-of-class work is, the 2:1 ratio, and that the same
+     activity can land on either side. The harness checks its position
+     and each of those points.
+2. **Course activities** — two lead paragraphs, then free rows (see
+   **Activity rows**), "+ Add an activity", and two subtotals
+   (`#sum-acad`, `#sum-ooc`).
+3. **Course totals** — `#warnings`; three tiles (Instructional time,
+   Out-of-class work, Whole course), each with its minimum and a
+   decorative meter that turns red while short; the weekly averages line
+   (`#weekly`); the check (`#status`, mirrored to an `.sr-only` live
+   region); the buttons (**Create printable summary** as the
+   `.primary-btn`, Copy as text, Print, Start over); and a closed
+   **"Next Steps"** panel under the buttons, Maka's: once the totals are
+   right, plan week by week in the Course Content Planner (link opens in a
+   new tab), after saving a copy with "Create printable summary" or "Copy
+   as text".
 
-- **The input id is still `f2f`** and so is the saved field. Renaming it
-  would strand saved work for nothing; same reasoning as `evidence` and
-  `state.goals` in the course planner. `w.onlineHours` did become
-  `w.selfPacedHours` — that one is a local return value, not persisted.
-- **Stored format values are `sync` / `blended` / `async`.** `load()`
-  migrates the old `"online"` to `async` — the merged block computed no
-  meeting time at all — **and zeroes `f2f` when it does**, because a save
-  written after a spell in blended can carry meeting hours that the old
-  fully-online format ignored and the new asynchronous one would not.
-- **Choosing a format fills the meeting field**: synchronous sets it to
-  `credits × 50` minutes, asynchronous to 0, blended leaves it alone. The
-  field stays editable in every format. While the course is synchronous
-  *and* the number still equals `credits × 50`, editing the credits carries
-  the meetings along (`trackCredits()`); once it has been set by hand it is
-  left alone.
-- **The field is always visible, in Course basics, directly below Course
-  credits** — Maka's placement. It used to sit in the format card and
-  appear only for a blended course.
-- **The tiles key off the number, not the format.** With no meetings there
-  is nothing to split, so the meetings tile and the self-paced total are
-  hidden (the latter would just repeat the weekly total) and the
-  instructional tile reads "Instructional activities" rather than
-  "Self-paced instructional".
-- The default format is **synchronous**, so the page opens with meeting
-  hours equal to the credits. That is a change of default — the old page
-  opened on the merged fully-online option, i.e. no meeting time. **Watch
-  this in field testing**: the audience here mostly builds online courses,
-  and an asynchronous designer who does not notice the format will plan
-  against a module budget missing the instructional third.
+The site header's main nav on this page is trimmed to UOES Home,
+Applications Home and Course Design Tools (Maka, October 21); the other
+pages still list each tool.
 
-The math, from the blended block (rows 19–23), generalizes to both:
+### The minimums
 
-- `acceleration = 15 / weeks`. A course must deliver the same total hours
-  however long the term runs, so a 7-week term has a rate of ~2.14.
-- `MINUTES_PER_CREDIT_HOUR = 50`; one credit hour = one 50-minute period
-  of instruction per week.
-- Meeting minutes = `50 × f2f`, **never accelerated** (the original
-  hardcodes `F20 = 1`) — meetings run at their scheduled length.
-- Self-paced instructional = `50 × accel × (credits − f2f) + (50 × accel ×
-  f2f − meetingMinutes)`. The second term pushes the accelerated
-  instructional time the meetings don't cover into the self-paced total.
-  **Floored at zero**, which is what makes meeting hours above the credit
-  hours legal; see departure 2.
-- Studying = `50 × accel × credits × study`.
+    STANDARD_WEEKS = 15
+    ACADEMIC_MIN_PER_CREDIT = 50    // minutes a week
+    OOC_MIN_PER_CREDIT = 100        // minutes a week
 
-**The instructional row is seat time, and users do not infer that.** Maka
-asked whether it meant class meeting time — it does, in a synchronous
-course (3 credits = 150 min/wk = three 50-minute periods); with no meetings
-it is the asynchronous equivalent, and in between it is the seat time the
-meetings don't cover. The original merged "traditional" and "fully online"
-into one block precisely because the math is identical and only the
-delivery differs — which is why the port could keep one code path when it
-re-cut the formats. Two things carry the explanation and should be kept: an
-italic sub-label on each tile (`#desc-instr`, swapped by whether there are
-meetings, plus a static one on the meetings tile) and a `<details>` panel,
-"What counts as instructional time", in the *How this is calculated* card.
-The harness asserts both exist.
+    instructional = credits × 50 × 15 / 60   hours, whole course
+    out-of-class  = credits × 100 × 15 / 60  hours, whole course
 
-The panel was `<details open>` at first; **Maka collapsed it on August 12,
-2026**, so the tile sub-labels now carry the explanation on first read and
-the panel is there for anyone who wants the detail. The harness no longer
-asserts an open/closed state — only that the panel exists. If this turns
-out to leave people reading the instructional row as class meeting time,
-reopening it is the cheap fix.
+**The minimums are whole-course figures; the weeks only make weekly
+averages.** A course owes the same totals however long its term runs, so
+a 3-credit course needs 37.5 + 75 = 112.5 hours in 5 weeks or 15. This is
+the old page's acceleration rate (15 ÷ weeks) stated the other way round,
+and the word "acceleration" is gone from the page (harness check). The
+2:1 ratio is fixed by the definition; the old "study hours per credit"
+input is gone.
 
-Setting `f2f = 0` reduces the blended block to the fully-online one, so the
-port uses **one code path** for all three formats — the format now only
-picks the field's preset and the tile labels. Invariant worth keeping:
-semester hours equal `12.5 × credits × (1 + study)` independent of weeks
-and format, **as long as the meetings fit inside the credit hours**; past
-that they exceed it, since the self-paced row cannot go negative. The
-harness asserts equality on every in-budget case.
+Credits of 0 put a note in place of the check; fewer than 1
+week puts a warning in `#warnings` and drops the weekly averages.
+Sentences use `hhmm()` ("37 hours and 30 minutes"); tiles and tables use
+two decimals.
 
-**The word "Carnegie" does not appear on the page.** The credits field was
-labelled "Carnegie course credits" until August 28, 2026; Maka asked for the
-reference to go. The label is now plain **"Course credits"** — the Carnegie
-unit is still exactly what the math implements (the 50-minute period, the
-`12.5 × credits × (1 + study)` invariant), it just is not named in the UI or
-in the harness's check names. Do not reintroduce the term when editing
-labels or hint text.
+### Activity types
 
-### The meeting field takes minutes, not academic hours
+`TYPES` in the JS, shown grouped by `optgroup` in each row's Type
+select. "Typical" is `sug`, filled into Hours each when the type is
+chosen; "Counts as" is the default `bucket`; "Estimate" is the method of
+its Estimate panel; "Unit" is what How many counts.
 
-**Provisional, September 10, 2026.** Maka is leaning this way but wants
-the instructional designer colleagues' view before calling it settled;
-it was built now so that it can be shown to them and reverted with one
-`git revert` if they disagree. Do not build further on it until then.
+| Group | Type | Typical (h) | Counts as | Estimate | Unit |
+| --- | --- | --- | --- | --- | --- |
+| Scheduled | Class meetings | — | Instructional | — | — |
+| Learning activities | Readings | — | Out-of-class | reading | reading |
+| | Blog | 1 | Out-of-class | writing | post |
+| | Case study | 2 | Out-of-class | — | case |
+| | Discussion posts | 1 | Out-of-class | discussion | post |
+| | Experiential learning (event, interview, field trip, lab) | 2 | Instructional | — | activity |
+| | Journal posts | 1.5 | Out-of-class | writing | entry |
+| | Mini-lecture video | 0.3 | Instructional | media | video |
+| | Other videos | 0.5 | Out-of-class | media | video |
+| | Podcast | 0.5 | Out-of-class | media | episode |
+| | Research activities | 2 | Out-of-class | — | activity |
+| | Simulation / eLearning tutorial | 0.5 | Instructional | media | tutorial |
+| | Supplemental materials | 2 | Out-of-class | reading | item |
+| | Webinar session | 1.5 | Instructional | media | session |
+| | Wiki | 2 | Out-of-class | writing | contribution |
+| Assessment activities | Writing assignment | — | Out-of-class | writing | assignment |
+| | Assessment preparation | 3 | Out-of-class | — | assessment |
+| | Group assignment | 4 | Out-of-class | — | assignment |
+| | Individual assignment | 2 | Out-of-class | — | assignment |
+| | Peer review | 1.5 | Out-of-class | discussion | review |
+| | Pre-assessment | 1 | Out-of-class | test | pre-assessment |
+| | Quiz | 0.5 | Out-of-class | test | quiz |
+| | Project / presentation | 1 | Out-of-class | — | project |
+| | Test / exam | 1 | Instructional | test | exam |
+| Other | Something else | — | Out-of-class | — | — |
 
-The problem: type 3 into "Scheduled meeting hours per week" and the
-Scheduled meetings tile read 2.5. The field took 50-minute academic
-hours, because that is how credits are counted, but every tile and table
-row reports clock hours, and the only bridge was a hint that had to teach
-a conversion ("one 80-minute meeting is about 1.6") — itself the sign the
-input unit was wrong.
+- The typical times are the workbook's, except **Discussion posts: 1, not
+  3.** The workbook's 3 was a week of posting; How many now counts posts,
+  and 1 hour is the estimator's figure for one 250-word post.
+- The instructional defaults (Class meetings, Experiential, Mini-lecture
+  video, Simulation, Webinar, Test / exam) and the unit guesses for
+  Experiential ("activities") and Assessment preparation ("assessments")
+  are **Claude's, not yet reviewed with Maka**.
+- **Keep the estimator in step.** Its Projects & other section carries the
+  typical times for Case study, Experiential, Research, Individual, Group
+  and Project (2, 2, 2, 2, 4, 1) as `data-sug`, and its Quizzes & tests
+  hint cites Assessment preparation's 3 hours.
 
-Options weighed, for the record: (1) keep academic hours and echo the
-conversion under the field — smallest change, still asks people to think
-in a unit nobody schedules in; (2) **take minutes per week** — chosen;
-(3) take clock hours — the synchronous preset for a 3-credit course
-becomes 2.5, which looks like a bug on first load.
+### Activity rows
 
-What (2) looks like:
+Each row is `{ id, name, type, bucket, count, each, auto, bucketSet,
+est, estUsed, estOpen }`; `count` and `each` stay the strings typed, so
+an empty box stays empty. The row's controls are Activity (name), Type,
+Counts as (Instructional time / Out-of-class work), How many (with the
+unit under it, singular for 1), Hours each (with an **Estimate** link
+under it when the type has a method), a Total `<output>` (count × each),
+and ×.
 
-- The label is **"Scheduled meeting minutes per week"**, `step="5"`,
-  default 150. Under it a live line, `#f2f-hours`, reads
-  "= 2.50 hours a week, or 3.0 fifty-minute periods", so the number under
-  the field matches the number on the tile and the credit-hour logic stays
-  visible. The tile's sub-label repeats the minutes ("150 minutes a week,
-  in person or live online").
-- The hint no longer teaches a conversion: "Add up the week's meetings:
-  two 80-minute classes are 160."
-- `calcWeek()` converts once — `f2f = minutes / 50` — and the rest of the
-  math is untouched, still in 50-minute periods. The breakdown table's
-  credits column therefore still reads 3.0 for 150 minutes.
-- The over-the-credit-hours note speaks in minutes ("250 minutes a week …
-  more than the 150 minutes … a 3.0-credit course owes"). The text report
-  line is "Meeting minutes: 150 per week (2.50 hours)".
-- **Saves carry `f2fUnit: "min"`.** A save without that marker is the
-  pre-September-10 shape, in academic hours, and `load()` multiplies its
-  `f2f` by 50 (rounded) before the `"online"` migration zeroes it if it
-  applies. So a designer's saved 1.6 becomes 80 and computes exactly what
-  it always did. The field id and saved name are still `f2f`.
-- **The harness cases still speak in academic hours**, matching the
-  workbook's cell formulas; `setup()` multiplies by 50 on the way into
-  the field. Ten checks cover the label, the echo line (150 and 160), the
-  tile's minutes, the note's wording, presets in minutes (150, 200, 300),
-  the unit marker, and both migration directions.
+- **Choosing a type** fills Hours each with its typical time if the box
+  is empty or still holds the previous type's typical time (a number
+  typed by hand stays); clears it if the new type has none and the box
+  held the old one's; sets Counts as unless it was chosen by hand
+  (`bucketSet`); names an unnamed row after the type so the summary
+  reads; and resets the estimate settings if the method changed.
+- **Typing never rebuilds the list** — `refreshRow()` updates labels and
+  the total in place so focus stays. A type change re-renders and puts
+  focus back on the Type select. + Add and × move focus to a name box;
+  removing the last row leaves one blank row.
+- Every control's accessible name carries the row's name ("How many
+  Weekly discussion"); each row is a `role="group"`; the column header row
+  is `aria-hidden`. **At phone width** the header goes and each cell shows
+  its own `.inv-mini` label (also `aria-hidden`); no horizontal scroll at
+  390px.
+- There is still **no "fill everything with typical times" control**, for
+  the reason the old page found (all 21 suggestions at once made a 32.8-hour
+  module against a 7.5-hour budget): typical times are per-activity
+  hints, not a menu. The lead text says they are "a starting point, not a
+  requirement".
 
-If it is reverted, the `f2fUnit` marker is the thing to keep in mind:
-saves written in the meantime carry minutes, and a reverted page would
-read them as academic hours fifty times too large. A revert needs its own
-migration, dividing by 50 when the marker is present.
+### The Class meetings line
 
-### Sheet 2 → "Module time planner"
+Synchronous and Blended set up a **Class meetings** line at the top of
+the list (`auto: true`, a hint under it says so). `meetingSpec()`:
 
-A module is one week. The budget it compares against is
-`self-paced instructional + studying` (sheet 2's `B3` = `B23 + B24`), which
-excludes scheduled meeting time — correct for all three formats. It is
-`w.selfPacedHours` in the JS (called `onlineHours` before August 29, 2026)
-and the page labels it "Weekly self-paced hours available".
+- name "Class meetings (weekly)", or "Class meetings (weekly, blended)";
+- How many = the weeks, rounded;
+- Hours each = the weekly share of the instructional minimum — all of it
+  for synchronous, half for blended — **rounded up** to the hundredth. A
+  3-credit, 15-week synchronous course gets 15 × 2.50 = 37.50 hours, the
+  minimum exactly; a 4-credit one gets 15 × 3.34 = 50.10 of 50.
 
-15 learning activities and 10 assessment activities, each with a suggested
-time. Those suggestions lived in Excel **data-validation input messages** —
-`<dataValidation showInputMessage="1" promptTitle="Blog" prompt="1 hour
-suggested" sqref="B15"/>` — with no `type`/`operator`/`formula`, so they
-imposed no constraint and were invisible until you clicked the cell. They
-are surfaced here as hint text under each label. The suggestion values live
-in the `sug` field of the `LEARN` / `ASSESS` arrays in the JS.
+While `auto`, it follows credits, length and format. **Any edit to the
+line** — name, count, hours, type, counts as, an estimate — makes it the
+designer's, and it stops following. Asynchronous removes an auto line
+(not an edited one). Deleting it sets `meetingsDismissed` (saved), so it
+stays gone while credits and weeks change, until a format radio is chosen
+again. No auto line is added if a row of type Class meetings already
+exists.
 
-Readings and Writing assignments are derived rows, not inputs — they mirror
-the two reading/writing hour fields and render as read-only `<output>` with
-no underline (an underline would read as editable, and Mid Blue fails
-contrast anyway).
+**Why it rounds up (Maka, October 22, 2026).** It rounded to the
+nearest hundredth until then, which left many common courses a few
+minutes short of the minimum the line exists to meet — 4 credits × 15
+weeks gave 15 × 3.33 = 49.95 of 50 hours, and the page warned "3 minutes
+short" about its own line; 1 credit × 15 weeks and 3 credits × 13 or 16
+weeks did the same. Maka's rule: round up, as long as the overshoot stays
+within 10 minutes. It does: at most 0.6 minutes a week, so under 10 for
+any term of 16 weeks or fewer. `Math.ceil(weekly * 100 - 1e-9)` — the
+epsilon stops floating-point noise pushing an exact 250 to 251. The
+harness sweeps 0.5–6 credits × 1–16 weeks in both formats against that
+rule.
 
-### Deliberate departures from the original workbook
+### Estimate panels
 
-1. **The 50/60 scaling on reading and writing is gone.** Sheet 2 computed
-   `(B9 × 50) / 60` for readings and the same for writing, which shrank
-   both by 17%. Everything else on that sheet is plain clock hours and the
-   activity estimator reports clock hours, so the port adds them at face
-   value. Confirmed with Maka before changing. A `<details>` panel on the
-   Reading & writing card explains it.
-2. **Meeting hours may exceed the course's credit hours.** The original
-   let `f2f > credits` produce a negative online instructional total. This
-   port clamped the meeting hours to the credit hours instead — until
-   **August 29, 2026**, when Maka pointed out that put a hard ceiling of
-   three meeting hours a week on a 3-credit course, which
-   [34 CFR 600.2](https://www.ecfr.gov/current/title-34/subtitle-B/chapter-VI/part-600/subpart-A/section-600.2)
-   does not support: the credit hour is defined as *not less than* an hour
-   of instruction plus two of out-of-class work, a **minimum, not a
-   ceiling**. Labs, studios and clinicals routinely meet longer.
+A row whose type has a method gets an **Estimate** button
+(`aria-expanded` / `aria-controls`) under Hours each; it opens a compact
+panel of the Learning Activity Estimator's inputs under the row and
+focuses its first field. Methods (`ESTIMATE` in the JS), with the
+estimator's defaults:
 
-   Now the self-paced instructional row floors at zero, the weekly total
-   runs above the credit-hour minimum, and the page says so in a **blue
-   `.note`, not a red `.warn`** — it is a legitimate course shape, not a
-   mistake. The `credits` column of the breakdown table can now total more
-   than the course's credits; it always could (the studying row counts
-   toward it), because that column is 50-minute units per row, not course
-   credits.
+| Method | Fields | Hours for one |
+| --- | --- | --- |
+| reading | pages each; density (450/600/750 words); difficulty; purpose (survey/understand/engage) | pages ÷ `PAGES_PER_HOUR[density][difficulty][purpose]` |
+| writing | length each, in pages or words; density (250/500 words); genre; drafting | pages × `HOURS_PER_PAGE[genre][drafting][density]` |
+| discussion | format text or audio/video; words each (250) or minutes each (3) | words ÷ 250, or minutes ÷ 3 |
+| media | running time each (minutes) | minutes ÷ 60; "add any task time as its own line" |
+| test | time limit each (minutes); preparation each (hours, 0) | limit ÷ 60 + preparation |
 
-   **The invariant weakens accordingly.** Semester hours equal
-   `12.5 × credits × (1 + study)` exactly while meetings fit inside the
-   credit hours, and are **greater** once they do not. The harness asserts
-   equality for every in-budget case and the exact larger figure for the
-   over case.
-3. **`weeks < 1` warns instead of failing silently.** The original wrapped
-   the acceleration rate in `IFERROR(15/B4, 0)`, which quietly produced a
-   zero-hour course.
-4. **Typos fixed:** "Poscast" → Podcast (a validation prompt), and
-   "additonal" (sheet 1, A23).
+- **Changing a setting fills Hours each** (rounded to hundredths) and
+  sets `estUsed`; **typing Hours each by hand takes over** and clears it,
+  and the panel's result line then says the box holds a hand-typed number
+  until a setting changes again. While a needed number is missing the
+  result line says what to fill in.
+- Settings are saved with the row and validated on load (unknown keys
+  dropped, a select value that is not an option reset). **Whether a panel
+  is open is not saved**; they all start closed.
+- The summary adds "each estimated from 25 pages, 750 words (textbook),
+  many new concepts, understand" under a row only while `estUsed`.
+- **`PAGES_PER_HOUR`, `HOURS_PER_PAGE` and `WORDS_PER_PAGE` are copies of
+  the estimator's** — the repo keeps each tool one self-contained file.
+  The harness reads both pages and fails if the copies differ. Change
+  both or neither.
 
-### Do not add a bulk "fill with suggested times" control
+### The check: each kind of work against its own minimum
 
-An earlier draft had a "Fill blanks with suggested times" button. Maka
-caught the result in testing: it filled all 21 suggestions at once for a
-planned total of **32.80 hours against a 7.50-hour budget**, flagged as
-25.30 hours over. The ported math was correct — the button was wrong.
+Instructional time is compared with its minimum and out-of-class work
+with its own; **nothing is netted against anything.** Extra instructional
+time does not cover an out-of-class shortfall, and the page never says it
+does (both are harness checks). Maka's call, October 21, 2026: New
+Jersey's definition allows "an equivalent amount of academic work as
+established by an institution", 34 CFR 600.2 reads as two floors, and
+Rutgers 10.2.4 is a 2023 draft — whether one can stand in for the other
+is the school's decision, not the tool's.
 
-Ruth's directions box says the suggestions are read one at a time:
-*"Suggested times are provided when you click on the cell for each
-category."* Nothing in the workbook sums them; `B30` and `E25` total only
-what the user types. A bulk control silently reframes 21 independent
-per-activity hints as a menu to take wholesale, and no real module contains
-a blog *and* a case study *and* experiential learning *and* a webinar *and*
-a wiki *and* seven kinds of assessment.
+Results, in `check()`: a note if credits are 0, a note if nothing is
+planned, a red `.warn` per short bucket (the instructional one says how
+to add instructor-led time), or a green `.note.ok` when both are met.
+**Going over is fine** — the credit hour is a minimum, not a ceiling (the
+August 29 finding, 34 CFR 600.2's "not less than"); there is no overload
+warning yet (open item).
 
-The button is gone. In its place, a line above the activity cards says the
-suggestions are not a checklist. `verify_credit_hour_planner.js` has a
-regression guard asserting no bulk-apply control exists.
+### Terminology
 
-**Open question — revisit with Maka.** How to give instructors genuinely
-useful guidance on activity times without implying "use all of these."
-Ideas not yet evaluated: per-row click-to-apply; typical module *patterns*
-(e.g. a reading-and-discussion week vs. a project week) that fill a
-coherent set; showing each suggestion as a share of the weekly budget; or
-a running "you have N hours left" indicator beside the inputs as they are
-filled. Nothing here is decided.
+- **"Instructional time", never "academic work"**, anywhere visible
+  (harness check). In N.J.A.C. 9A:1-1.2 and Rutgers 10.2.4 "academic work"
+  is class and outside work together, so using it for the instructor-led
+  part alone read as wrong to anyone who knows the policies. The internal
+  key stays `acad` (`sum-acad`, `out-acad`, `bucket: "acad"`).
+- **"Carnegie" does not appear on the page** (Maka, August 28, 2026). The
+  math is still the Carnegie unit; do not name it in labels or hints.
+- Formats are **synchronous / blended / asynchronous**, not online /
+  traditional (Maka, August 29, 2026): a live online class is scheduled
+  meeting time.
+
+### Storage
+
+**Key `uoes-credit-hour-course`**, new with the rebuild. The old page's
+`uoes-credit-hour-planner` saves are ignored — no migration, since their
+weekly-budget fields mean nothing here — and the harness checks that one
+is. Saved 400 ms after each change:
+
+    { credits, weeks, format, meetingsDismissed, rows: [ …row objects ] }
+
+`load()` checks every row (unknown type → blank, bucket → `ooc` unless
+`acad`, numbers → strings, estimate settings via `loadEst()`, `estOpen`
+false); a corrupt save starts fresh and a partial one loads what it can.
+Start over (with a confirm) clears the key, the form and the rows, then
+sets up the meetings line again. `window.__state`, `__update` and
+`__asText` are exposed for the harness.
+
+### Summary, copy and print
+
+`asText()` builds the plain-text plan: CREDIT HOUR PLAN; COURSE (credits,
+length, format); one block per bucket listing each row with hours
+(`count x each` and total, plus a detail line with the unit and any
+estimate), its total and minimum; WHOLE COURSE total and average per
+week; CHECK; the credit lines. "Create printable summary" puts it in a
+`<pre>` in `#reportWrap`; Print does the same and calls `window.print()`
+(the print sheet hides `main > :not(#reportWrap)`); Copy as text uses the
+clipboard API with a textarea fallback and announces through
+`#copystatus`.
 
 ### Cross-links
 
-Sheet 2 had a red button to <https://cte.rice.edu/workload> for estimating
-reading and writing time — the tool the Learning Activity Estimator's
-reading and writing sections come from. The page links to
-**`learning_activity_estimator.html` as primary** (since September 14,
-2026 the note reads "Not sure how long an activity takes?" and covers
-every activity, not just reading and writing), with the Rice original
-credited alongside. Note this means `credit_hour_planner.html` depends on
-the estimator page, which is not yet cleared for publishing.
+- **Out:** only the Course Content Planner, from Next Steps. The page no
+  longer links the Learning Activity Estimator (the Estimate panels
+  replaced the "Not sure how long an activity takes?" note).
+- **In:** the course planner's Step 3 sentence points to both tools
+  ("…make sure you have the right amount of activities planned, try the
+  Credit Hour Planner. … estimating how long a specific activity takes,
+  try the Learning Activity Estimator."); its Resources for planning
+  panel links the page by absolute URL; the estimator and the other pages
+  link it from the header nav; index.html lists it.
+- **Stale, to fix with Maka's wording:** index.html still describes the
+  old page ("an hours-per-week budget … check whether the activities
+  planned for a module actually fit"), and the estimator's results hint
+  still says to "enter these hours in the Credit Hour Planner's module
+  planner", which no longer exists.
+- **Publishing:** the link dependency on the estimator is gone, but the
+  page carries the estimator's tables and credits the Workload Estimator
+  authors, so the same CC BY-NC-SA sign-off covers both. **Still ship the
+  two together.**
+
+### Open items
+
+To review with Maka: the default instructional types and the two unit
+guesses (see **Activity types**).
+Still open: finals week (does a 15-week term include it?); a syllabus
+credit-hour statement the page could produce; an overload warning when a
+course runs far over; always-shown estimate panels as an alternative to
+the Estimate link; the week-by-week planning that now belongs to the
+Course Content Planner.
+
+### History: the weekly-budget page
+
+For orientation only; none of this is on the page now.
+
+- **July 27, 2026** — ported from the Planning Time Calculator workbook.
+  Sheet 1 became a "Weekly time budget" (weeks, credits, meeting hours,
+  study hours per credit, an acceleration rate of 15 ÷ weeks), sheet 2 a
+  "Module time planner" of 15 learning and 10 assessment activities with
+  the workbook's suggested times (they had lived in Excel
+  data-validation input messages), and a "Does the module fit?" check.
+  Departures then: the workbook's 50/60 scaling on reading and writing
+  dropped, a `weeks < 1` guard, typos fixed ("Poscast").
+- **August 12** — the "What counts as instructional time" panel
+  collapsed.
+- **August 28–29** — "Carnegie" dropped; formats re-cut as synchronous /
+  blended / asynchronous; the clamp keeping meeting hours within the
+  credit hours removed (minimum, not a ceiling).
+- **September 10** — the meeting field took minutes per week
+  (provisional; moot now).
+- **September 11** — took the course planner's step-card layout.
+- **September 14** — linked the new Learning Activity Estimator for every
+  activity's time.
+- **October 21** — rebuilt as this page.
 
 ## Testing
 
@@ -1314,41 +1364,30 @@ partial saves, "Start over", the report text and its credit line,
 print-PDF non-blankness, the print-CSS pattern, label/aria coverage,
 unique disclosure names, the focus outline, and the cross-links.
 
-For the credit hour planner, `test/verify_credit_hour_planner.js` runs 344
-checks (its "links to the local Learning Activity Estimator" check expects
-`learning_activity_estimator.html`): 18 scenarios against an independent transcription of the workbook's
-cell formulas, the credit-hour invariant, blended-with-zero-f2f equivalence,
-the non-accelerating meetings rule, all three guards, module totals and
-the budget comparison, over/under-budget styling, the no-bulk-suggestions
-regression guard, the instructional-time explainer,
-localStorage round-trip and partial/corrupt
-saves, "Start over", report and copy text, print-PDF non-blankness,
-label/aria coverage, computed focus outlines, the design tokens, the
-Mid-Blue-border prohibition, and (since September 11, 2026) the planner
-layout: the 900px measure on `body`, the 2px step frame and 1px inner
-card, the centred black `h1`, four numbered open step disclosures, and
-three `.guide` panels.
-
-The August 29, 2026 format change added 37 of those. The uncapped meeting
-hours are a **regression guard**: a 3-credit course meeting five hours a
-week must produce a note rather than a warning, uncapped meeting hours, a
-self-paced row floored at zero, a semester total above the credit-hour
-minimum, and no `max` attribute on the field. Alongside them: the three
-format values and the synchronous default, each format's preset (credits /
-untouched / 0), the meetings number following the credits while untouched
-and being left alone once set by hand, the field living in the Course
-basics card *below* the credits input and never being called face-to-face,
-the tiles keying off the number rather than the format, the renamed table
-rows, the explainer's live-online and minimum-not-a-ceiling sentences, and
-the `"online"` → `async` save migration zeroing leftover meeting hours.
-
-`setup()` in that harness takes `format: "sync" | "blended" | "async"`; the
-older `blended: true/false` still works, with `false` mapping to `async`.
-It sets the meeting hours **last and only when the case names one**,
-because choosing a format overwrites the field — and it takes them in
-academic hours, multiplying by 50 for the minutes field (ten checks cover
-that unit change; see **The meeting field takes minutes, not academic
-hours**).
+For the credit hour planner, `test/verify_credit_hour_planner.js` runs 125
+checks, rewritten with the October 21, 2026 rebuild (the weekly-budget
+harness went with the old page): structure (title, three open steps in
+order, no weekly-budget leftovers such as `#f2f`, `#study` or the word
+"acceleration", no module-fit step), the one instructional-time explainer
+and its wording, "instructional time" never "academic work", the Next
+Steps panel; the minimums for 3 credits and a short term; the Class
+meetings line (synchronous default, blended halves it, asynchronous
+removes it, follows credits and length, rounds up to meet the minimum
+within 10 minutes across 0.5–6 credits × 1–16 weeks, becomes the
+designer's on edit,
+stays deleted until the format changes); rows (typical-time fill,
+naming, default bucket, hand-typed values and buckets surviving a type
+change, count × each, focus kept while typing, add and remove, units);
+the Estimate panels (closed by default, button semantics, each method's
+arithmetic through the UI, hand-typed hours taking over and a setting
+taking back, settings surviving a reload, **the rate tables matching the
+estimator's**, fetched from `learning_activity_estimator.html`); row
+accessibility; the check (each bucket against its own minimum, no
+netting, red bars, two warnings when both are short); persistence under
+`uoes-credit-hour-course`, corrupt and partial saves, the old key
+ignored, Start over; the summary text and its credit line; and the phone
+layout at 390px. Its only failure in a sandbox is the blocked-fonts
+"no page errors" check.
 
 For the course planner, `test/verify_course_planner_v2.js` runs 168
 checks (the count moves with almost every planner change; treat a
@@ -1435,7 +1474,19 @@ tolerate the **cross-origin Google Fonts sheet** the site header links:
 `cssRules` throws on it however the browser is launched, so it is skipped
 rather than counted as a parse failure.
 
-## Current status (August 2026)
+## Current status
+
+- **The Credit Hour Planner was rebuilt as a whole-course planner,
+  October 21, 2026** — Maka's call, on seeing the page did three jobs at
+  once. Three steps: Your course, Course activities (free rows with
+  types, buckets, units and Estimate panels), Course totals (each kind of
+  work against its own minimum). New storage key, no migration. Maka then
+  trimmed the hints, the nav and the step names and added Next Steps.
+  See **Credit Hour Planner notes**. The credit hour bullets below dated
+  August 29, September 10 and September 11 describe the old page; the
+  sections they point to are in this file's git history as of `accfb42`.
+  **Worth telling anyone field testing:** saved work on the old page is
+  not carried over, and the page no longer plans a week or a module.
 
 - **The Course Workload Estimator became the Learning Activity Estimator,
   September 14, 2026** — Maka's call, on realising the estimator's
@@ -1636,7 +1687,7 @@ rather than counted as a parse failure.
 - credit_hour_planner.html added July 27, 2026 and linked from index.html.
   Footer credit settled: "Adapted from the Planning Time Calculator,
   initially developed by Ruth Ronan at Rutgers University."
-  **Still not cleared for publishing**, for one remaining reason: it links
-  to learning_activity_estimator.html as its activity-time tool, so
-  publishing it first would expose that page before its CC BY-NC-SA
-  sign-off lands. Ship the two together.
+  **Still not cleared for publishing.** Since the October 21 rebuild it no
+  longer links learning_activity_estimator.html, but it carries copies of
+  the estimator's rate tables and credits the Workload Estimator authors,
+  so it waits on the same CC BY-NC-SA sign-off. Ship the two together.
