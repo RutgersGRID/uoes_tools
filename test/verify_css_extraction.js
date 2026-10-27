@@ -35,7 +35,9 @@ const CONVERTED = {
   // Both calculators restyled to the single-column document shell (were calculator.css).
   "learning_activity_estimator.html": ["css/base.css", "css/document.css", "css/learning_activity_estimator.css"],
 };
-for (const k of Object.keys(CONVERTED)) CONVERTED[k] = CONVERTED[k].concat(HEADER);
+// The site footer joined index.html on October 27, 2026 and every tool page
+// the same day; it loads last, after the header.
+for (const k of Object.keys(CONVERTED)) CONVERTED[k] = CONVERTED[k].concat(HEADER, "css/site_footer.css");
 
 // The tokens every page must resolve, and the values they must resolve to.
 const TOKENS = {
@@ -192,7 +194,8 @@ const ok = (label, cond, detail) => {
     // calculator loaded it.
     // old_credit_hour_planner.css came and went on October 21, 2026, with the
     // day-long backup of the weekly-budget credit hour planner.
-    ok("css/ holds the expected sheets", files.length === 9 && !files.includes("calculator.css") &&
+    // site_footer.css joined on October 27, 2026 (index page footer).
+    ok("css/ holds the expected sheets", files.length === 10 && files.includes("site_footer.css") && !files.includes("calculator.css") &&
       !files.includes("old_credit_hour_planner.css"), files.join(" "));
 
     // Brand colours belong in base.css as tokens; nowhere else as raw hex.

@@ -16,15 +16,18 @@ every file below is live. They are recoverable from git history if a
 comparison is ever wanted again. Older notes in this file may name files
 that no longer exist; trust this list.
 
-- `index.html` — landing page listing the tools. Add a `<li>` to the
-  tool list whenever a new tool page is added. It lists one entry per
-  tool. `blooms_verbs.html` is deliberately not listed — see below.
+- `index.html` — landing page: a welcome intro, the tools as a grid of
+  cards, and a "tool you'd like to see?" call to action (redesigned
+  October 26–27, 2026; see **The index page**). Add a card to the tool
+  list whenever a new tool page is added. `blooms_verbs.html` has a card
+  too, as a placeholder — see below.
 - `learning_objectives.html` — Learning Objective Builder. Out with
     instructional designers for feedback; a final version will be chosen
     after field testing.
 - `blooms_verbs.html` — Bloom's Taxonomy Verbs, a standalone reference
-  sheet linked from the objective builder (see below). Not listed on
-  index.html, on purpose.
+  sheet linked from the objective builder (see below). Listed on
+  index.html as a **placeholder**: it is eventually moving to another
+  site.
 - `course_planner.html` — Course Content Planner **v2**, the live one: a
   4-step revision built from instructional designer feedback (see below).
 - `learning_activity_estimator.html` — Learning Activity Estimator: how
@@ -41,7 +44,9 @@ that no longer exist; trust this list.
 ## Stylesheets
 
 CSS was moved out of the pages on August 12, 2026. Each page links its
-sheets in cascade order, most general first:
+sheets in cascade order, most general first, then the two shared site
+sheets — `site_header.css` (after the Google Fonts link) and
+`site_footer.css` — on every page:
 
 | Page | Sheets |
 | --- | --- |
@@ -75,6 +80,13 @@ sheets in cascade order, most general first:
   buttons and print rules each page still wanted moved into its own
   sheet. Recoverable from git history.
 - **`css/<page>.css`** — only what is unique to that page.
+- **`css/site_header.css`** and **`css/site_footer.css`** — the
+  uoes.rutgers.edu header and footer, reproduced (see **Site header and
+  footer**). Loaded last on every page, header first. They use the live
+  site's colours (black, white, greys, the dark maroon strip, the gold
+  back-to-top square) as literal values, not tokens: those are the UOES
+  site's, not this project's palette, and none is a brand hex the
+  harness forbids.
 
 Rules of thumb when editing:
 
@@ -92,7 +104,9 @@ Fonts and colors are consistent across pages. The values below are the
 tokens defined in `css/base.css`; prefer `var(--red)` over `#CC0033` in
 any new rule.
 
-- Font: Georgia, serif. Page background `#f4f7f9` (`--bg`), body text
+- Font: Georgia, serif — except the index page, which uses the site
+  header's pairing since its October 2026 redesign: PT Serif for
+  headings, Source Sans 3 for body text. Page background `#f4f7f9` (`--bg`), body text
   `#333` (`--text`), muted text `#666` (`--muted`) — or `#767676`
   (`--muted-light`) for placeholder-ish text on white.
 - **Rutgers Red `#CC0033`** (`--red`) — headers, primary buttons, links,
@@ -117,7 +131,8 @@ any new rule.
 - Red-tinted washes: `--red-wash` `#fff4f6` (warning callouts),
   `--red-tint` `#ffe3ea` (the "contact time" tag), `--red-pale` `#ffdbe4`
   (sub-label on a solid red tile).
-- Content max-width: 750px on the objective builders and index page,
+- Content max-width: 1000px on the index page (750px before its
+  October 2026 redesign), 750px on the objective builders,
   900px on the planner, the credit hour planner and the activity
   estimator (the estimator was 1080px, as a wide multi-column
   calculator, until September 14, 2026). On the `document.css` pages
@@ -203,10 +218,13 @@ the builder on August 12, 2026 and was pulled out into its own page the
 same day, because the verb list is long enough to swamp the tool it was
 supposed to support.
 
-**It is deliberately not listed on index.html.** It is a reference sheet
-supporting one tool, not a tool in its own right; the home page keeps
-listing four tools. Its only navigation is the footer link back to the
-builder — worth remembering if it ever gets linked from somewhere else.
+**It has a card on index.html, as a placeholder.** It was kept off the
+home page until Maka added it (by October 2026); Maka's note, October
+27, 2026: the page is eventually going to live on another site. When it
+moves, the index card, the objective builder's Behavior link and the
+header navs' old commented-out lists all point here and want updating.
+Its own navigation is the footer link back to the builder, plus the
+shared site header and footer.
 
 ### Sources
 
@@ -1060,8 +1078,9 @@ Then three numbered steps, **all open** (the harness pins it):
    as text".
 
 The site header's main nav on this page is trimmed to UOES Home,
-Applications Home and Course Design Tools (Maka, October 21); the other
-pages still list each tool.
+Applications Home and Course Design Tools (Maka, October 21). Every page
+now has the same three items (four of the tool pages keep the old
+per-tool list as an HTML comment); see **Site header and footer** for the one difference.
 
 ### The minimums
 
@@ -1326,11 +1345,14 @@ clipboard API with a textarea fallback and announces through
   try the Learning Activity Estimator."); its Resources for planning
   panel links the page by absolute URL; the estimator and the other pages
   link it from the header nav; index.html lists it.
-- **Stale, to fix with Maka's wording:** index.html still describes the
-  old page ("an hours-per-week budget … check whether the activities
-  planned for a module actually fit"), and the estimator's results hint
+- **Stale, to fix with Maka's wording:** the estimator's results hint
   still says to "enter these hours in the Credit Hour Planner's module
-  planner", which no longer exists.
+  planner", which no longer exists. The index card was reworded by Maka
+  on October 27, 2026 ("a time-based budget … then review whether the
+  activities planned for the course actually fit inside it"); it still
+  says "online, traditional, or blended formats", where the page itself
+  says synchronous / blended / asynchronous (see **Terminology**) —
+  raise rather than change.
 - **Publishing:** the link dependency on the estimator is gone, but the
   page carries the estimator's tables and credits the Workload Estimator
   authors, so the same CC BY-NC-SA sign-off covers both. **Still ship the
@@ -1369,6 +1391,79 @@ For orientation only; none of this is on the page now.
 - **September 14** — linked the new Learning Activity Estimator for every
   activity's time.
 - **October 21** — rebuilt as this page.
+
+## The index page
+
+Redesigned October 26–27, 2026, Maka and Claude together; Maka edited
+the wording directly between passes. Top to bottom:
+
+- **Intro** (`section.intro`): the h1, a welcome lead saying the tools
+  help faculty build out their courses, then Maka's "Looking to learn
+  more about course design?" with links to the UOES Resource Library,
+  Design Foundations (`/node/192`), active learning, the course design
+  process page and a bookings consultation link. A collapsible "Learn
+  more" panel was tried in this spot and dropped by Maka.
+- **Our Tools** (`section.tools`): a responsive card grid
+  (`repeat(auto-fill, minmax(290px, 1fr))`), one card per tool, each an
+  `h3` link with a red top edge. The **whole card is clickable** through a
+  stretched `::after` on the title link, so each card still has exactly
+  one link and one accessible name. Bloom's Verbs is the placeholder
+  card (see **Bloom's Taxonomy Verbs page**).
+- **Call to action** (`section.cta`): "Is there a tool you'd like to
+  see?" — Contact us (`mailto:emtech@uoes.rutgers.edu`, subject "UOES
+  tool suggestion") or schedule a consultation
+  (`https://go.rutgers.edu/w70pvq4g`). The intro's consultation link is
+  the long Microsoft Bookings URL; if the two go to the same place, the
+  short link could serve both.
+
+`css/index.css` holds `.intro`, `.tool-list` and `.cta`. Links on the
+light blue panel use `--red-dark` (4.5:1 or better on `--blue-light`).
+
+## Site header and footer
+
+Both reproduce the uoes.rutgers.edu site chrome, so the tools read as
+part of the UOES site.
+
+- **Header** (`css/site_header.css`, `.uoes-site-header`, `ush-*`):
+  dark maroon strip, Rutgers mark and site name, utility links and
+  search, and a three-item main nav. Every header carries `id="top"` for
+  the footer's back-to-top link.
+- **Footer** (`css/site_footer.css`, `.uoes-site-footer`, `usf-*`),
+  added October 27, 2026 to every page: black band, white Rutgers mark
+  (`images/rutgers_h_white.svg`, with an `onerror` fallback to the live
+  theme's copy, as the header logo does) with the campus links, four link
+  columns (About Us, Services We Provide, Connect, Notices), social
+  icons, the Rutgers accessibility and copyright statement, and a gold
+  back-to-top square linking `#top`. Copied from the live footer's markup
+  and computed styles on October 27, 2026; links made absolute and
+  tracking parameters dropped from the Tuition and Libraries URLs. If the
+  live footer changes, this copy will not follow on its own.
+
+Things that matter when touching them:
+
+- **Both break out to full viewport width** with the 100vw
+  negative-margin technique, so they span the window on the narrow
+  `document.css` pages too.
+- **The footer goes after `</main>`, outside it.** The print rules hide
+  `main > :not(#…Wrap)`, so anything inside `<main>` would need its own
+  exception; outside, the footer simply hides itself under `@media print`
+  (the header does the same).
+- **The tool pages keep their own credits `<footer>` inside `<main>`**
+  (licenses, authors, sources), and their sheets style a bare `footer`
+  selector. `.uoes-site-footer` therefore sets its own padding, border
+  and bottom margin to zero rather than inheriting those rules. Keep the
+  credits footers: several are license requirements (see **Credits and
+  license**).
+- `site_footer.css` sets `body { margin-bottom: 0 !important; }` so the
+  black band reaches the bottom edge on the `document.css` pages, the
+  counterpart of the header's `margin-top` override.
+- **Nav loose end:** index.html's third nav item is "Course Design
+  Toolkit", linking
+  `https://uoes.rutgers.edu/resource-library/course-design-toolkit`
+  (Maka, October 26). The five tool pages still say "Course Design Tools"
+  with `href="course_design_tools"`, a relative link to a file that does
+  not exist; and blooms_verbs.html marks UOES Home as the active item.
+  Ask Maka before aligning them.
 
 ## Testing
 
@@ -1472,9 +1567,10 @@ round-trip, migration of a v1-shaped save (string `objectives` → one row, `due
 G-number tags and field ordering, print-PDF non-blankness and print-CSS
 visibility.
 
-For the stylesheets, `test/verify_css_extraction.js` runs 168 checks: each
+For the stylesheets, `test/verify_css_extraction.js` runs 176 checks: each
 converted page links exactly the expected sheets in the expected order
-with `base.css` first, every sheet actually parses (a 404 or a typo'd
+with `base.css` first (and the Google Fonts sheet, `site_header.css` and
+`site_footer.css` last), `css/` holds exactly the ten expected sheets, every sheet actually parses (a 404 or a typo'd
 `href` yields zero rules and fails), no inline `<style>` block survives,
 all eight design tokens resolve on every page, every *visible* focusable
 control resolves the 2px Rutgers Blue outline, `.sr-only` is still clipped
@@ -1509,6 +1605,16 @@ tolerate the **cross-origin Google Fonts sheet** the site header links:
 rather than counted as a parse failure.
 
 ## Current status
+
+- **Index page redesigned and the UOES site footer added to every page,
+  October 26–27, 2026.** Maka and Claude together, on makalaptop. The
+  index now has a welcome intro with links to UOES course design
+  resources, tool cards, and a call to action for tool suggestions; every
+  page ends with a copy of the uoes.rutgers.edu footer. Bloom's Verbs has
+  a card on the index as a placeholder until it moves to another site.
+  See **The index page** and **Site header and footer**.
+  `verify_css_extraction.js` expects the new sheet on every page (176
+  checks).
 
 - **The Credit Hour Planner was rebuilt as a whole-course planner,
   October 21, 2026** — Maka's call, on seeing the page did three jobs at

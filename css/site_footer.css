@@ -1,0 +1,211 @@
+/* ============================================================
+   UOES Tools — site footer, modeled on uoes.rutgers.edu
+   ------------------------------------------------------------
+   Replicates the University Online Education Services site
+   footer (October 2026): black band, white Rutgers mark with
+   the campus links on the right, four link columns (About Us,
+   Services We Provide, Connect, Notices), social icons, and the
+   Rutgers accessibility / copyright statement, centred. The
+   gold square at the top right is the live site's back-to-top
+   control, here a plain link to #top.
+
+   Companion to site_header.css; load it after that sheet, last
+   in <head>. Like the header it breaks out to full viewport
+   width, so it works on the narrow document pages as well as
+   the index page. It goes after </main>, outside it, so the
+   print rules' `main > :not(...)` never see it; it hides itself
+   in print below.
+
+   The colours below (black, white, greys, the gold) are the
+   live footer's, deliberately not base.css brand tokens.
+   ============================================================ */
+
+.uoes-site-footer {
+  /* Full-bleed breakout, as in site_header.css. */
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  margin-top: 40px;
+  margin-bottom: 0;
+  /* The tool pages style a bare `footer` (their credits footer inside
+     <main>); zero what those rules set that this footer does not. */
+  padding: 0;
+  border: 0;
+  background: #000;
+  color: #fff;
+  font-family: 'Source Sans 3', 'Source Sans Pro', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: left;
+}
+
+body { margin-bottom: 0 !important; }  /* document.css gives body a 40px
+                                          bottom margin; the black band
+                                          should reach the bottom edge. */
+
+.uoes-site-footer,
+.uoes-site-footer * { box-sizing: border-box; }
+
+.uoes-site-footer ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.uoes-site-footer a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.uoes-site-footer a:hover,
+.uoes-site-footer a:focus {
+  text-decoration: underline;
+}
+
+.usf-inner {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 80px 50px 30px;
+}
+
+/* --- back to top (gold square on the top edge) -------------- */
+.usf-to-top {
+  position: absolute;
+  top: 0;
+  right: 50px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #EBB600;
+  color: #000 !important;
+}
+
+.usf-to-top svg {
+  width: 16px;
+  height: auto;
+  fill: currentColor;
+}
+
+/* --- top row: white mark left, campus links right ----------- */
+.usf-row-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.usf-logo img {
+  display: block;
+  width: 200px;
+  height: auto;
+}
+
+.usf-locations {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.usf-locations li + li::before {
+  content: "|";
+  color: #666;
+  margin: 0 18px;
+}
+
+/* --- link columns ------------------------------------------- */
+.usf-columns {
+  display: grid;
+  grid-template-columns: 4fr 4fr 10fr 5fr;   /* the live widths, 202/202/506/253 */
+  padding: 60px 0 45px;
+}
+
+.usf-col {
+  padding-right: 25px;
+}
+
+.usf-col h3 {
+  margin: 0 0 30px;
+  font-family: inherit;
+  color: inherit;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.usf-col li {
+  margin-bottom: 20px;
+}
+
+.usf-connect-lists {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Notices: a rule under the first item, as on the live site. */
+.usf-notices li:first-child {
+  padding-bottom: 30px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #333;
+}
+
+/* --- social icons -------------------------------------------- */
+.usf-social {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 392px;
+  padding: 20px 0;
+}
+
+.usf-social a {
+  display: block;
+  padding: 3px 6px;
+}
+
+.usf-social svg {
+  display: block;
+  height: 27px;
+  width: auto;
+  fill: currentColor;
+}
+
+/* --- accessibility statement and copyright ------------------ */
+.usf-copyright {
+  padding: 42px 116px 0;
+  text-align: center;
+  font-size: 13px;
+  line-height: 24px;
+}
+
+.usf-copyright p {
+  margin: 0 0 15px;
+}
+
+.usf-copyright a {
+  text-decoration: underline;
+}
+
+/* --- small screens ------------------------------------------- */
+@media (max-width: 920px) {
+  .usf-inner { padding: 70px 20px 24px; }
+  .usf-to-top { right: 20px; }
+  .usf-row-top { flex-direction: column; align-items: flex-start; gap: 28px; }
+  .usf-columns { grid-template-columns: 1fr 1fr; row-gap: 20px; }
+  .usf-connect { grid-column: 1 / -1; grid-row: 2; }
+  .usf-copyright { padding: 30px 0 0; }
+}
+
+@media (max-width: 600px) {
+  .usf-columns { grid-template-columns: 1fr; }
+  .usf-connect { grid-column: auto; grid-row: auto; }
+  .usf-locations { gap: 8px 22px; }
+  .usf-locations li + li::before { display: none; }   /* no orphaned bars when the row wraps */
+}
+
+/* --- print: keep reports clean ------------------------------ */
+@media print {
+  .uoes-site-footer { display: none; }
+}
