@@ -85,7 +85,7 @@ function readZip(buf) {
 
   // ---- structural / wording ----
   ok("no JS errors on load", errors.length === 0, errors.join(" | "));
-  ok("title has no version suffix", (await page.title()) === "Course Content Planner",
+  ok("title has no version suffix", (await page.title()) === "Course Map Builder",
     await page.title());
 
   // ---- steps collapse; basics and step 1 are the only ones open on load ----

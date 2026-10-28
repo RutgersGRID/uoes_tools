@@ -13,7 +13,7 @@
    ============================================================ */
 
 :root {
-  --content-width: 900px; /* same measure as the course planner */
+  --content-width: 900px; /* same measure as the Course Map Builder */
 }
 
 /* The activity rows and boxed inputs size themselves with widths that

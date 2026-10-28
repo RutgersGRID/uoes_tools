@@ -28,8 +28,13 @@ that no longer exist; trust this list.
   sheet linked from the objective builder (see below). Listed on
   index.html as a **placeholder**: it is eventually moving to another
   site.
-- `course_planner.html` — Course Content Planner **v2**, the live one: a
+- `course_planner.html` — Course Map Builder **v2**, the live one: a
   4-step revision built from instructional designer feedback (see below).
+  It was called the **Course Content Planner** until October 28, 2026,
+  when it was renamed at a user's request (Maka). Only the visible name
+  changed: the file name `course_planner.html`, its stylesheet, its test
+  file and the `uoes-course-planner` storage key are kept on purpose, so
+  existing links, bookmarks and saved plans keep working.
 - `learning_activity_estimator.html` — Learning Activity Estimator: how
   long one learning activity takes a student. It was
   `workload_estimator.html`, the Course Workload Estimator (a JS port of
@@ -158,7 +163,7 @@ any new rule.
   estimator does).
 - Where a control's visible label has to be abbreviated for space, the
   accessible name must still *contain* that visible text — see the CO1/CO2
-  alignment checkboxes in course planner v2, whose names are
+  alignment checkboxes in Course Map Builder v2, whose names are
   "CO1: <course objective text>".
 - Semantic HTML: `<main>`, `<section aria-labelledby>`, `<details>/<summary>`
   for collapsible guidance panels.
@@ -270,7 +275,7 @@ position and the lead paragraph states it in words for everyone else. The
 two callouts intentionally echo the calculators: `.avoid` is the red
 `.warn` treatment, `.note` its Light Blue counterpart.
 
-## Course Content Planner: behaviours to preserve
+## Course Map Builder: behaviours to preserve
 
 Content adapted for online/asynchronous delivery from CMU Eberly Center's
 "Course Content & Schedule" guide (credited in the page footer), reframed
@@ -304,7 +309,7 @@ describes the live one:
   itself and printed a blank page. Keep this in mind if restructuring.
 - "Start over" clears storage after a `confirm()`.
 
-## Course Content Planner v2 notes
+## Course Map Builder v2 notes
 
 `course_planner.html` (then named `course_planner_v2.html`), created
 July 29, 2026 from instructional designer feedback on the original
@@ -973,7 +978,7 @@ typical times; nothing there claims a source.
 
 ### Layout
 
-The page took the course planner's layout on September 14, 2026, on
+The page took the Course Map Builder's layout on September 14, 2026, on
 Maka's `course-planner-simplification` branch (the commit is "Restyle
 workload estimator to the course planner's layout"), a few hours before
 the rescope: a single 900px column of collapsible `section.step` cards.
@@ -1026,7 +1031,7 @@ Estimator's too.
 at once — stating the credit-hour minimums, budgeting a week, and
 checking whether one module fit. Maka chose to make **this page the whole
 course** ("option C"). Planning week by week or module by module
-("option B") belongs to the Course Content Planner, later; nothing for it
+("option B") belongs to the Course Map Builder, later; nothing for it
 is built yet, and the page's Next Steps panel already points there.
 
 The old page was kept for a day as `old_credit_hour_planner.html`, with
@@ -1073,7 +1078,7 @@ Then three numbered steps, **all open** (the harness pins it):
    region); the buttons (**Create printable summary** as the
    `.primary-btn`, Copy as text, Print, Start over); and a closed
    **"Next Steps"** panel under the buttons, Maka's: once the totals are
-   right, plan week by week in the Course Content Planner (link opens in a
+   right, plan week by week in the Course Map Builder (link opens in a
    new tab), after saving a copy with "Create printable summary" or "Copy
    as text".
 
@@ -1336,10 +1341,10 @@ clipboard API with a textarea fallback and announces through
 
 ### Cross-links
 
-- **Out:** only the Course Content Planner, from Next Steps. The page no
+- **Out:** only the Course Map Builder, from Next Steps. The page no
   longer links the Learning Activity Estimator (the Estimate panels
   replaced the "Not sure how long an activity takes?" note).
-- **In:** the course planner's Step 3 sentence points to both tools
+- **In:** the Course Map Builder's Step 3 sentence points to both tools
   ("…make sure you have the right amount of activities planned, try the
   Credit Hour Planner. … estimating how long a specific activity takes,
   try the Learning Activity Estimator."); its Resources for planning
@@ -1366,7 +1371,7 @@ Still open: finals week (does a 15-week term include it?); a syllabus
 credit-hour statement the page could produce; an overload warning when a
 course runs far over; always-shown estimate panels as an alternative to
 the Estimate link; the week-by-week planning that now belongs to the
-Course Content Planner.
+Course Map Builder.
 
 ### History: the weekly-budget page
 
@@ -1387,7 +1392,7 @@ For orientation only; none of this is on the page now.
   credit hours removed (minimum, not a ceiling).
 - **September 10** — the meeting field took minutes per week
   (provisional; moot now).
-- **September 11** — took the course planner's step-card layout.
+- **September 11** — took the Course Map Builder's step-card layout.
 - **September 14** — linked the new Learning Activity Estimator for every
   activity's time.
 - **October 21** — rebuilt as this page.
@@ -1518,7 +1523,7 @@ ignored, Start over; the summary text and its credit line; and the phone
 layout at 390px. Its only failure in a sandbox is the blocked-fonts
 "no page errors" check.
 
-For the course planner, `test/verify_course_planner_v2.js` runs 168
+For the Course Map Builder, `test/verify_course_planner_v2.js` runs 168
 checks (the count moves with almost every planner change; treat a
 mismatch as a stale note, not a failure): the three step headings and badge numbers, the collapsible-step
 defaults (all four are `<details>`, basics and Step 1 open, 2 and 3
@@ -1643,7 +1648,7 @@ rather than counted as a parse failure.
   times rather than estimating anything. The CC BY-NC-SA footer is
   unchanged and still awaits sign-off.
 
-- **Both calculators took the course planner's layout, September 11
+- **Both calculators took the Course Map Builder's layout, September 11
   and 14, 2026, and `calculator.css` is deleted.** The credit hour
   planner first (Maka's ask, to bring the pages' look together), then
   the workload estimator on a branch Maka made at the office; the two

@@ -88,7 +88,7 @@ const KEY = "uoes-credit-hour-course";
     await page.evaluate(() => !/academic work/i.test(document.querySelector("main").innerText) &&
       /Instructional time/.test(document.querySelector(".inv-row select[data-field=bucket]").innerText)));
   /* October 21, 2026: a "Next Steps" panel under the buttons points the
-     finished plan at the Course Content Planner (Maka). The breaking-down
+     finished plan at the Course Map Builder (Maka). The breaking-down
      hints panel came and went the same day. */
   const next = await page.evaluate(() => {
     const s = Array.from(document.querySelectorAll("details.guide summary")).find(x => /Next Steps/.test(x.textContent));
@@ -103,7 +103,7 @@ const KEY = "uoes-credit-hour-course";
     };
   });
   ok("Next Steps panel sits under the buttons in Course totals", next && next.afterButtons && next.inTotals, JSON.stringify(next));
-  ok("Next Steps links the Course Content Planner in a new tab", next && next.link && next.newTab);
+  ok("Next Steps links the Course Map Builder in a new tab", next && next.link && next.newTab);
   ok("Next Steps names the two save buttons", next && /Create printable summary/.test(next.text) && /Copy as text/.test(next.text));
 
   // ---------- minimums ----------
