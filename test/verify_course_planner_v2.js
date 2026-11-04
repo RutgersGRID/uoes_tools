@@ -758,7 +758,7 @@ function readZip(buf) {
   ok("plan has no Topics section", !/^\s*Topics\s*$/m.test(planText), planText.slice(0, 400));
   ok("empty modules marked not planned", /\(not planned yet\)/.test(planText));
   ok("plan heading carries the course title",
-    (await page.$eval("#planHead", n => n.textContent)) === "Intro to Ecology — Course Plan");
+    (await page.$eval("#planHead", n => n.textContent)) === "Intro to Ecology — Course Map");
 
 
   // ---- Word export --------------------------------------------------
@@ -829,7 +829,7 @@ function readZip(buf) {
   ok("course objectives are numbered in the export",
     docXml.indexOf("CO1 — Analyze a food web") !== -1);
   ok("the export carries the course title",
-    docXml.indexOf("Intro to Ecology — Course Plan") !== -1);
+    docXml.indexOf("Intro to Ecology — Course Map") !== -1);
   ok("headings come through as styled paragraphs",
     /w:val="Heading1"/.test(docXml) && /w:val="Title"/.test(docXml));
   ok("brand colour is read from the design token, not hardcoded twice",
@@ -850,7 +850,7 @@ function readZip(buf) {
   }, escaped));
   ok("the filename drops characters a filesystem rejects",
     (await page.evaluate(() => docxFilename())) ===
-    "Ecology & Field Methods - Course Plan.docx",
+    "Ecology & Field Methods - Course Map.docx",
     await page.evaluate(() => docxFilename()));
   await page.fill("#courseTitle", "Intro to Ecology");
   await page.waitForTimeout(120);

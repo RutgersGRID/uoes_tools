@@ -51,19 +51,19 @@
   <div class="card">
     <h1>Course Map Builder Test Data</h1>
     <p>Loads the <strong>Rock 'n' Roll: Origins to Present</strong> syllabus
-      (13 modules, 4 goals, full schedule) into the Course Map Builder,
+      (13 modules, 4 course objectives, full schedule) into the Course Map Builder,
       then opens it.</p>
-    <p class="warn">This replaces anything currently saved in the planner in
-      this browser. Use "Clear" afterward to empty the planner again.</p>
-    <button id="loadBtn">Load test data &amp; open planner</button>
+    <p class="warn">This replaces anything currently saved in the Course Map Builder in
+      this browser. Use "Clear" afterward to empty the builder again.</p>
+    <button id="loadBtn">Load test data &amp; open the builder</button>
     <br>
-    <button id="clearBtn" class="secondary">Clear planner data</button>
+    <button id="clearBtn" class="secondary">Clear builder data</button>
     <p id="status" role="status"></p>
   </div>
 
   <script>
     // Must match STORAGE_KEY in course_planner.html — seeding any other
-    // key just opens an empty planner. The SEED below is deliberately
+    // key just opens an empty builder. The SEED below is deliberately
     // v1-*shaped* (string `objectives`, `duedates`, `principle`,
     // `strategy`); load() migrates it on the way in, the same path
     // verify_course_planner_v2.js exercises.
@@ -279,7 +279,7 @@
     document.getElementById("loadBtn").addEventListener("click", () => {
       try {
         localStorage.setItem(KEY, JSON.stringify(SEED));
-        status.textContent = "Loaded! Opening the planner…";
+        status.textContent = "Loaded! Opening the Course Map Builder…";
         setTimeout(() => { window.location.href = "../course_planner.html"; }, 400);
       } catch (e) {
         status.textContent = "Could not save: " + e.message;
@@ -289,7 +289,7 @@
     document.getElementById("clearBtn").addEventListener("click", () => {
       try {
         localStorage.removeItem(KEY);
-        status.textContent = "Planner data cleared.";
+        status.textContent = "Course Map Builder data cleared.";
       } catch (e) {
         status.textContent = "Could not clear: " + e.message;
       }

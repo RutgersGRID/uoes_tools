@@ -242,10 +242,10 @@
         </details>
       </section>
 
-      <button type="button" class="primary-btn" id="generateBtn">Create My Course Plan</button>
+      <button type="button" class="primary-btn" id="generateBtn">Create My Course Map</button>
 
       <section id="planWrap" aria-live="polite" aria-labelledby="planHead">
-        <h2 id="planHead">Your Course Plan</h2>
+        <h2 id="planHead">Your Course Map</h2>
         <div id="plan"></div>
         <button type="button" class="small-btn" id="copyBtn">Copy as text</button>
         <button type="button" class="small-btn" id="printBtn">Print</button>
@@ -862,7 +862,7 @@
         const html = [];
         const text = [];
 
-        text.push(title + " — Course Plan", "");
+        text.push(title + " — Course Map", "");
 
         // Course objectives and their assessments, numbered CO1, CO2, … so the
         // module objectives can point back at them.
@@ -924,7 +924,7 @@
       $("generateBtn").addEventListener("click", () => {
         const built = buildPlan();
         plainPlan = built.text;
-        $("planHead").textContent = built.title + " — Course Plan";
+        $("planHead").textContent = built.title + " — Course Map";
         $("plan").innerHTML = built.html;
         const wrap = $("planWrap");
         wrap.style.display = "block";
@@ -945,7 +945,7 @@
           ta.remove();
         }
         copyBtn.textContent = "Copied!";
-        $("copyStatus").textContent = "Course plan copied to clipboard";
+        $("copyStatus").textContent = "Course map copied to clipboard";
         setTimeout(() => {
           copyBtn.textContent = "Copy as text";
           $("copyStatus").textContent = "";
@@ -1090,7 +1090,7 @@
         const numbered = numberedGoals();
         const body = [];
 
-        body.push(para(title + " — Course Plan", { style: "Title" }));
+        body.push(para(title + " — Course Map", { style: "Title" }));
 
         // Course objectives and their assessments, numbered CO1, CO2, … so the
         // module rows below can point back at them.
@@ -1199,7 +1199,7 @@
       function docxFilename() {
         const base = (state.course.trim() || "Untitled course")
           .replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 80).trim();
-        return (base || "Untitled course") + " - Course Plan.docx";
+        return (base || "Untitled course") + " - Course Map.docx";
       }
 
       $("wordBtn").addEventListener("click", () => {
@@ -1281,4 +1281,4 @@
     </script>
   </body>
 
-</html>
+</html>
