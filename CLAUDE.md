@@ -35,6 +35,13 @@ that no longer exist; trust this list.
   changed: the file name `course_planner.html`, its stylesheet, its test
   file and the `uoes-course-planner` storage key are kept on purpose, so
   existing links, bookmarks and saved plans keep working.
+  **The outputs followed on November 4, 2026** (Maka): the button is
+  "Create My Course Map", the heading "Your Course Map", the plan title
+  "<course> — Course Map" (on-page, copy text and Word), the copy
+  status "Course map copied to clipboard", and the Word file
+  "<course> - Course Map.docx". `test/load_rock_test.html` says
+  "builder" / "Course Map Builder" where it said "planner". Internal
+  notes and code comments still say "the planner" as shorthand.
 - `learning_activity_estimator.html` — Learning Activity Estimator: how
   long one learning activity takes a student. It was
   `workload_estimator.html`, the Course Workload Estimator (a JS port of
@@ -302,7 +309,7 @@ describes the live one:
   `uoes-course-planner-v2` until August 27, 2026 — see **Storage key**
   below. `load()` still migrates a v1-shaped save, and the harness still
   checks that.
-- "Create My Course Plan" renders the plan (only filled-in fields; empty
+- "Create My Course Map" renders the plan (only filled-in fields; empty
   modules show "(not planned yet)"), with Copy-as-text and Print buttons.
 - Print CSS shows only the generated plan. The hide rule must target
   `main > :not(#planWrap)` — an earlier `body > …` selector hid `<main>`
@@ -363,7 +370,7 @@ collapses to its heading.
   section's `aria-labelledby` still resolves. See **Accessibility
   conventions**.
 - The plan generator reads `state`, not the DOM, so **"Create My Course
-  Plan" works with every step collapsed** — there is a check for this.
+  Map" works with every step collapsed** — there is a check for this.
 
 **This matters for the harness.** Anything that drives a control inside
 Step 2 or Step 3 must open the step first, or Playwright times out
@@ -827,7 +834,7 @@ empty row in Word is a week you have not planned *and* somewhere to type,
 so the export doubles as a template. If a designer reads a blank row as a
 bug, this is the note to revisit.
 
-The filename is `<course title> - Course Plan.docx`, with characters
+The filename is `<course title> - Course Map.docx`, with characters
 Windows and macOS reject stripped and the title capped at 80 characters.
 
 ### Migration
