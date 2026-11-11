@@ -160,8 +160,9 @@ any new rule.
   `:focus-visible`, so the ring shows on mouse click too — that has
   always been the behaviour on the planner and the calculators, and
   `learning_objectives.html` (v2) was brought into line on August 12, 2026.
-- Generated inputs get `aria-label` (and `aria-description` for guidance
-  text where used). Decorative hint labels under blanks are
+- Generated inputs get `aria-label`, and guidance text through
+  `aria-describedby` (the objective builder used `aria-description` until
+  November 11, 2026). Decorative hint labels under blanks are
   `aria-hidden="true"`.
 - Result/output regions use `aria-live="polite"`; copy feedback uses a
   `role="status"` element with an `.sr-only` (visually hidden) class.
@@ -220,6 +221,44 @@ Shaped by instructional designer feedback on the original version
   *required* blanks still render as `______`.
 - The `<dl>` in the "What goes in each blank?" panel runs Condition,
   Audience, Behavior, Degree — sentence order, not ABCD order.
+
+### The "i" icons and guidance tooltips
+
+**November 11, 2026** — someone suggested to Maka a small "i" icon as a
+hint that each blank has a tooltip. Maka picked the icon **after each
+label under the blank** ("condition ⓘ") over one at the end of each
+blank, which crowded the commas and "will". Until then the guidance was a
+native `title` on the wrapper (mouse only) plus `aria-description` on the
+field.
+
+- **The icon** is an inline SVG (`INFO_ICON`, `.info-icon`, Rutgers
+  Blue), inside the already `aria-hidden` `.hint`, and itself
+  `aria-hidden`. It only appears on a blank that has `GUIDANCE`.
+- **The tooltip is a real element**, `.blank-tip#tip<n>`, inside
+  `.blank-wrap`, styled like the Course Map Builder's `.align-tip` (white,
+  blue border, shadow), 16px, max 320px, hanging below the label from the
+  blank's left edge. `placeTip()` shifts it left if it would leave the
+  window. The native `title` is gone (it would double up).
+- **Screen readers:** the field's `aria-describedby` points at the tip,
+  replacing `aria-description` (better supported, notably VoiceOver).
+  The tip is `aria-hidden` so it is not met twice; a description is still
+  computed from hidden content. The harness reads the computed
+  description through the accessibility tree.
+- **When it shows:** hover (only under `@media (hover: hover)` — on touch
+  `:hover` sticks and the tip could not be closed); focus while the blank
+  is **empty** (keyboard and tap users meet it on arrival; `.filled`,
+  toggled on input, stops it once they type, so it is not left over the
+  next line of blanks); and a click or tap on the label/icon
+  (`.tip-open`, whatever the blank holds, and focuses the blank).
+- **When it hides:** typing, blur, tapping the tip itself (on a phone it
+  covers the blanks below), and **Escape** (`body.tips-off`, cleared on
+  the next pointer move or focus change). Every show rule is gated on
+  `body:not(.tips-off)`, the same reason as the chip tooltip.
+- **The hover bridge** (`.blank-tip::before`) is only 6px tall. At 22px
+  it covered the label and swallowed the click that opens the tip — the
+  harness caught that.
+- No text on the page says "hover" (see **Why the key is collapsed, not
+  deleted**); the harness checks the tips don't either.
 
 ## Bloom's Taxonomy Verbs page
 
@@ -1578,6 +1617,16 @@ round-trip, migration of a v1-shaped save (string `objectives` → one row, `due
 `activities` dropped), corrupt-save recovery, plan generation with
 G-number tags and field ordering, print-PDF non-blankness and print-CSS
 visibility.
+
+For the Learning Objective Builder, `test/verify_learning_objectives.js`
+(new November 11, 2026) runs 82 checks on the "i" icons and tooltips:
+icon and `aria-hidden` per blank, label text unchanged, `aria-describedby`
+resolving to the guidance in the accessibility tree, no `title` or
+`aria-description` left, hover / keyboard focus / click showing the tip,
+typing, Escape, blur and moving away hiding it, a phone context
+(`hasTouch`, 390px) where tapping the label opens it, tapping the tip
+closes it and every tip stays inside the window, and the generated
+objective unchanged.
 
 For the stylesheets, `test/verify_css_extraction.js` runs 176 checks: each
 converted page links exactly the expected sheets in the expected order
