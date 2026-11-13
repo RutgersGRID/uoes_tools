@@ -101,10 +101,15 @@
                     </div>
                   </div>
                   <div class="card-guidance">
-                    <p class="req" id="minimums">Based on the entered credits (3) and course length (15 weeks), the
-                      course needs at least 37 hours and 30 minutes of instructional time and 75 hours of
-                      out-of-class work, 112 hours and 30 minutes in all. Across 15 weeks that averages 2
-                      hours and 30 minutes of instructional time and 5 hours of out-of-class work a week.</p>
+                    <div id="minimums">
+                      <p class="req">Based on the entered credits (3) and course length (15 weeks), the course
+                        needs at least:</p>
+                      <ul class="req-list">
+                        <li>37 hours and 30 minutes of instructional time (2 hours and 30 minutes a week)</li>
+                        <li>75 hours of out-of-class work (5 hours a week)</li>
+                        <li>112 hours and 30 minutes in all (7 hours and 30 minutes a week)</li>
+                      </ul>
+                    </div>
                     <p class="req">Note: These minimums are based on federal and state guidelines --
                       your department may have additional requirements.</p>
                   </div>
@@ -1198,18 +1203,30 @@
             wbox.appendChild(noteEl("warn", "Course length must be at least 1 week for the weekly averages."));
           }
 
-          /* The minimums sentence in Course basics: whole-course totals first,
-             weekly averages second. */
-          var minText = "Based on the entered credits (" + m.credits + ")";
-          if (m.weeks >= 1) minText += " and course length (" + m.weeks + (m.weeks === 1 ? " week" : " weeks") + ")";
-          minText += ", the course needs at least " + hhmm(m.acad) + " of instructional time and " +
-            hhmm(m.ooc) + " of out-of-class work, " + hhmm(minTotal) + " in all.";
-          if (m.weeks >= 1 && m.credits > 0) {
-            minText += " Across " + m.weeks + (m.weeks === 1 ? " week" : " weeks") + " that averages " +
-              hhmm(m.acad / m.weeks) + " of instructional time and " + hhmm(m.ooc / m.weeks) +
-              " of out-of-class work a week.";
+          /* The minimums in Course basics: a lead-in sentence, then one bullet
+             per whole-course total with its weekly average in parentheses. */
+          var minLead = "Based on the entered credits (" + m.credits + ")";
+          if (m.weeks >= 1) minLead += " and course length (" + m.weeks + (m.weeks === 1 ? " week" : " weeks") + ")";
+          minLead += ", the course needs at least:";
+          var showWeekly = m.weeks >= 1 && m.credits > 0;
+          function minItem(total, label) {
+            var li = document.createElement("li");
+            li.textContent = hhmm(total) + " " + label +
+              (showWeekly ? " (" + hhmm(total / m.weeks) + " a week)" : "");
+            return li;
           }
-          $("minimums").textContent = minText;
+          var minBox = $("minimums");
+          minBox.innerHTML = "";
+          var minP = document.createElement("p");
+          minP.className = "req";
+          minP.textContent = minLead;
+          var minList = document.createElement("ul");
+          minList.className = "req-list";
+          minList.appendChild(minItem(m.acad, "of instructional time"));
+          minList.appendChild(minItem(m.ooc, "of out-of-class work"));
+          minList.appendChild(minItem(minTotal, "in all"));
+          minBox.appendChild(minP);
+          minBox.appendChild(minList);
 
           $("sum-acad").textContent = fmt(t.acad);
           $("sum-ooc").textContent = fmt(t.ooc);

@@ -1097,10 +1097,12 @@ Then three numbered steps, **all open** (the harness pins it):
 1. **Your course** — two cards in `.two-col`.
    - *Course basics*: Course credits (`#credits`, step 0.5, default 3)
      and Course length (weeks) (`#weeks`, default 15). Under them the
-     **minimums sentence** (`#minimums`): whole-course totals first,
-     weekly averages second ("…at least 37 hours and 30 minutes of
-     instructional time and 75 hours of out-of-class work, 112 hours and
-     30 minutes in all. Across 15 weeks that averages…"), a note that
+     **minimums list** (`#minimums`, a lead-in `p.req` + `ul.req-list`,
+     bulleted Nov 13, 2026 for scanning): "…the course needs at least:"
+     then one bullet per whole-course total with its weekly average in
+     parentheses ("37 hours and 30 minutes of instructional time (2 hours
+     and 30 minutes a week)", out-of-class, "in all"; no
+     parentheses under 1 week or at 0 credits), a note that
      departments may require more, and a closed panel, "How these
      minimums are calculated.", citing 34 CFR 600.2, N.J.A.C. 9A and
      Rutgers Policy 10.2.4.

@@ -112,11 +112,15 @@ const KEY = "uoes-credit-hour-course";
   ok("minimums: 75 hours out-of-class", /75 hours of out-of-class work/.test(mt), mt);
   ok("minimums: 112h30 in all", /112 hours and 30 minutes in all/.test(mt), mt);
   ok("minimums: weekly averages for 15 weeks",
-    /2 hours and 30 minutes of instructional time and 5 hours of out-of-class work a week/.test(mt), mt);
+    /instructional time \(2 hours and 30 minutes a week/.test(mt) &&
+    /out-of-class work \(5 hours a week/.test(mt) &&
+    /in all \(7 hours and 30 minutes a week/.test(mt), mt);
+  ok("minimums: three bullets", (await page.$$("#minimums ul.req-list > li")).length === 3);
   await setNum("weeks", 7);
   mt = await page.textContent("#minimums");
-  ok("short term keeps the same totals", /37 hours and 30 minutes of instructional time and 75 hours/.test(mt), mt);
-  ok("short term raises the weekly average", /5 hours and 21 minutes of instructional time/.test(mt), mt);
+  ok("short term keeps the same totals",
+    /37 hours and 30 minutes of instructional time/.test(mt) && /75 hours of out-of-class work/.test(mt), mt);
+  ok("short term raises the weekly average", /instructional time \(5 hours and 21 minutes a week/.test(mt), mt);
   await setNum("weeks", 15);
 
   // ---------- the format's meetings line ----------

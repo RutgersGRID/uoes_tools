@@ -91,6 +91,17 @@ label { font-weight: bold; }
    length come to. */
 .card-guidance .req { margin-top: 10px; }
 
+/* The minimums as bullets under their lead-in sentence: same size and color
+   as the guidance text, so the list reads as part of it. */
+.card-guidance .req-list {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.45;
+  margin: -4px 0 8px;
+  padding-left: 22px;
+}
+.card-guidance .req-list li { margin-bottom: 2px; }
+
 /* The minimum a field is measured against, stated under its label and above
    the input. Carries the same weight as the label so the number is read before
    the box is filled, not after; the .warn notice below the input then only has
