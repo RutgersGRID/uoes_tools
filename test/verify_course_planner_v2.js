@@ -1,10 +1,10 @@
-// Headless checks for course_planner_v2.html
+// Headless checks for course_map_builder.html (formerly course_planner_v2.html, then course_planner.html)
 const { chromium } = require("playwright-core");
 const path = require("path");
 
 const { chromePath } = require("./_chrome.js");
 const EXEC = chromePath();
-const URL = "file://" + path.resolve(__dirname, "..", "course_planner.html");
+const URL = "file://" + path.resolve(__dirname, "..", "course_map_builder.html");
 
 let pass = 0, fail = 0;
 const ok = (name, cond, extra) => {

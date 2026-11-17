@@ -30,7 +30,7 @@ const CONVERTED = {
   "index.html": ["css/base.css", "css/index.css"],
   "learning_objectives.html": ["css/base.css", "css/document.css", "css/learning_objectives.css"],
   "blooms_verbs.html": ["css/base.css", "css/document.css", "css/blooms_verbs.css"],
-  "course_planner.html": ["css/base.css", "css/document.css", "css/course_planner.css"],
+  "course_map_builder.html": ["css/base.css", "css/document.css", "css/course_map_builder.css"],
   "credit_hour_planner.html": ["css/base.css", "css/document.css", "css/credit_hour_planner.css"],
   // Both calculators restyled to the single-column document shell (were calculator.css).
   "learning_activity_estimator.html": ["css/base.css", "css/document.css", "css/learning_activity_estimator.css"],
@@ -53,7 +53,7 @@ const TOKENS = {
 
 // Which page hides what when printing.
 const PRINT_TARGET = {
-  "course_planner.html": "main > :not(#planWrap)",
+  "course_map_builder.html": "main > :not(#planWrap)",
   "credit_hour_planner.html": "main > :not(#reportWrap)",
   "learning_activity_estimator.html": "main > :not(#reportWrap)",
 };

@@ -397,7 +397,7 @@ button {
 
 /* `tips-off` goes on <body> when Escape is pressed and comes off at the
    next pointer move or focus change — see the keydown handler in
-   course_planner.html. It *gates* the show rules below rather than
+   course_map_builder.html. It *gates* the show rules below rather than
    following them with a `display: none` override. An override has to
    out-specify every show rule, and when it loses it fails silently:
    Escape simply stops dismissing, with nothing to see in the stylesheet.

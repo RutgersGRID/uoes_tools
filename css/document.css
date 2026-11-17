@@ -1,7 +1,7 @@
 /* ============================================================
    UOES Tools — shared shell for the document-style pages
    ------------------------------------------------------------
-   Used by learning_objectives.html, blooms_verbs.html, course_planner.html
+   Used by learning_objectives.html, blooms_verbs.html, course_map_builder.html
    and credit_hour_planner.html:
    pages that read as a centred document at reading width rather
    than a wide calculator. Set --content-width in the page file
@@ -78,7 +78,7 @@ h1 { text-align: center; }
 }
 
 /* ---- step cards ----
-   A numbered white card per step, shared by course_planner.html and
+   A numbered white card per step, shared by course_map_builder.html and
    credit_hour_planner.html since September 11, 2026 (they were the
    planner's own until the credit hour planner took the same layout).
    Markup:

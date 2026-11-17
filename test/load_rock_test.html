@@ -62,7 +62,7 @@
   </div>
 
   <script>
-    // Must match STORAGE_KEY in course_planner.html — seeding any other
+    // Must match STORAGE_KEY in course_map_builder.html — seeding any other
     // key just opens an empty builder. The SEED below is deliberately
     // v1-*shaped* (string `objectives`, `duedates`, `principle`,
     // `strategy`); load() migrates it on the way in, the same path
@@ -280,7 +280,7 @@
       try {
         localStorage.setItem(KEY, JSON.stringify(SEED));
         status.textContent = "Loaded! Opening the Course Map Builder…";
-        setTimeout(() => { window.location.href = "../course_planner.html"; }, 400);
+        setTimeout(() => { window.location.href = "../course_map_builder.html"; }, 400);
       } catch (e) {
         status.textContent = "Could not save: " + e.message;
       }

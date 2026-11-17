@@ -94,7 +94,7 @@ const KEY = "uoes-credit-hour-course";
     const s = Array.from(document.querySelectorAll("details.guide summary")).find(x => /Next Steps/.test(x.textContent));
     if (!s) return null;
     const d = s.parentElement, actions = document.querySelector(".actions");
-    const a = d.querySelector('a[href="course_planner.html"]');
+    const a = d.querySelector('a[href="course_map_builder.html"]');
     return {
       afterButtons: !!(actions.compareDocumentPosition(d) & Node.DOCUMENT_POSITION_FOLLOWING),
       inTotals: d.closest("section").getAttribute("aria-labelledby") === "h-check",

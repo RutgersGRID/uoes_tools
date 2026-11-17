@@ -29,13 +29,20 @@ that no longer exist; trust this list.
   sheet linked from the objective builder (see below). It is moving to
   another site soon; its index card was commented out on November 13,
   2026. The objective builder still links to it.
-- `course_planner.html` — Course Map Builder **v2**, the live one: a
+- `course_map_builder.html` — Course Map Builder **v2**, the live one: a
   4-step revision built from instructional designer feedback (see below).
   It was called the **Course Content Planner** until October 28, 2026,
-  when it was renamed at a user's request (Maka). Only the visible name
-  changed: the file name `course_planner.html`, its stylesheet, its test
-  file and the `uoes-course-planner` storage key are kept on purpose, so
-  existing links, bookmarks and saved plans keep working.
+  when it was renamed at a user's request (Maka). At first only the
+  visible name changed. **On November 17, 2026 the file followed**
+  (Maka, for consistency in naming): `course_planner.html` became
+  `course_map_builder.html`, and the links to it were updated (index.html
+  card, credit_hour_planner.html, test/load_rock_test.html, the tests,
+  CSS comments). The stylesheet followed the same day:
+  `css/course_planner.css` became `css/course_map_builder.css`. Still
+  kept on purpose: the test file `test/verify_course_planner_v2.js`
+  and the `uoes-course-planner` storage key — localStorage is per site,
+  not per file, so saved plans carry over. Old bookmarks to
+  `course_planner.html` break unless a redirect is left in its place.
   **The outputs followed on November 4, 2026** (Maka): the button is
   "Create My Course Map", the heading "Your Course Map", the plan title
   "<course> — Course Map" (on-page, copy text and Word), the copy
@@ -66,7 +73,7 @@ sheets — `site_header.css` (after the Google Fonts link) and
 | `index.html` | `base` + `index` |
 | `learning_objectives.html` | `base` + `document` + `learning_objectives` |
 | `blooms_verbs.html` | `base` + `document` + `blooms_verbs` |
-| `course_planner.html` | `base` + `document` + `course_planner` |
+| `course_map_builder.html` | `base` + `document` + `course_map_builder` |
 | `credit_hour_planner.html` | `base` + `document` + `credit_hour_planner` |
 | `learning_activity_estimator.html` | `base` + `document` + `learning_activity_estimator` |
 
@@ -358,7 +365,8 @@ describes the live one:
 
 ## Course Map Builder v2 notes
 
-`course_planner.html` (then named `course_planner_v2.html`), created
+`course_map_builder.html` (named `course_planner_v2.html`, then
+`course_planner.html` until November 17, 2026), created
 July 29, 2026 from instructional designer feedback on the original
 planner, which was deleted August 26, 2026. Neither page carries a
 version in its `<title>` any more — both were dropped on August 26, when
@@ -1046,7 +1054,7 @@ dropped and `calculator.css` deleted.
 the audience doesn't need it or wouldn't understand it. Its index card is
 commented out (not deleted) and the intro no longer says "checking credit
 hours". The page itself stays and may come back. Other pages still link
-to it (course_planner.html step 3, twice; learning_activity_estimator.html's
+to it (course_map_builder.html step 3, twice; learning_activity_estimator.html's
 closing hint, plus two mentions in text); left for Maka to decide.
 
 `credit_hour_planner.html`. **Rebuilt on October 21, 2026 as a
