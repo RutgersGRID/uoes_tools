@@ -19,15 +19,16 @@ that no longer exist; trust this list.
 - `index.html` — landing page: a welcome intro, the tools as a grid of
   cards, and a "tool you'd like to see?" call to action (redesigned
   October 26–27, 2026; see **The index page**). Add a card to the tool
-  list whenever a new tool page is added. `blooms_verbs.html` has a card
-  too, as a placeholder — see below.
+  list whenever a new tool page is added. Since November 13, 2026 the
+  Credit Hour Planner and Bloom's Verbs cards are commented out (hidden,
+  not deleted), leaving three cards.
 - `learning_objectives.html` — Learning Objective Builder. Out with
     instructional designers for feedback; a final version will be chosen
     after field testing.
 - `blooms_verbs.html` — Bloom's Taxonomy Verbs, a standalone reference
-  sheet linked from the objective builder (see below). Listed on
-  index.html as a **placeholder**: it is eventually moving to another
-  site.
+  sheet linked from the objective builder (see below). It is moving to
+  another site soon; its index card was commented out on November 13,
+  2026. The objective builder still links to it.
 - `course_planner.html` — Course Map Builder **v2**, the live one: a
   4-step revision built from instructional designer feedback (see below).
   It was called the **Course Content Planner** until October 28, 2026,
@@ -1040,6 +1041,13 @@ had promoted the same rules into `document.css`, so the copy was
 dropped and `calculator.css` deleted.
 
 ## Credit Hour Planner notes
+
+**Hidden from the index on November 13, 2026.** Maka's call: most of
+the audience doesn't need it or wouldn't understand it. Its index card is
+commented out (not deleted) and the intro no longer says "checking credit
+hours". The page itself stays and may come back. Other pages still link
+to it (course_planner.html step 3, twice; learning_activity_estimator.html's
+closing hint, plus two mentions in text); left for Maka to decide.
 
 `credit_hour_planner.html`. **Rebuilt on October 21, 2026 as a
 whole-course planner.** Until then it was a port of a two-sheet Excel
