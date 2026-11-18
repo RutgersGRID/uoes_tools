@@ -244,27 +244,37 @@ field.
   `aria-hidden`. It only appears on a blank that has `GUIDANCE`.
 - **The tooltip is a real element**, `.blank-tip#tip<n>`, inside
   `.blank-wrap`, styled like the Course Map Builder's `.align-tip` (white,
-  blue border, shadow), 16px, max 320px, hanging below the label from the
-  blank's left edge. `placeTip()` shifts it left if it would leave the
-  window. The native `title` is gone (it would double up).
+  blue border, shadow), 16px, max 320px, hanging below the label.
+  `placeTip()` centres it under the label, kept inside the sentence box (or the
+  window, where the box is narrower than the tip).
+  The native `title` is gone (it would double up).
 - **Screen readers:** the field's `aria-describedby` points at the tip,
   replacing `aria-description` (better supported, notably VoiceOver).
   The tip is `aria-hidden` so it is not met twice; a description is still
   computed from hidden content. The harness reads the computed
-  description through the accessibility tree.
-- **When it shows:** hover (only under `@media (hover: hover)` — on touch
-  `:hover` sticks and the tip could not be closed); focus while the blank
-  is **empty** (keyboard and tap users meet it on arrival; `.filled`,
-  toggled on input, stops it once they type, so it is not left over the
-  next line of blanks); and a click or tap on the label/icon
-  (`.tip-open`, whatever the blank holds, and focuses the blank).
-- **When it hides:** typing, blur, tapping the tip itself (on a phone it
-  covers the blanks below), and **Escape** (`body.tips-off`, cleared on
-  the next pointer move or focus change). Every show rule is gated on
-  `body:not(.tips-off)`, the same reason as the chip tooltip.
+  description through the accessibility tree. This does not depend on
+  the tip being on screen.
+- **When it shows: only while the pointer is on the label's words and
+  icon** (`.hint-text`, an inner span, so the empty rest of the label row
+  does not count), or on the tip itself so it can be read (WCAG 1.4.13).
+  Two separate CSS rules, `.blank-wrap:has(.hint-text:hover)` and
+  `.blank-tip:hover`, both gated on `body:not(.tips-off)`; not one
+  selector list, since a browser without `:has()` would drop the whole
+  list. On a touchscreen a tap on the label shows it (sticky `:hover`) and
+  a tap anywhere else hides it.
+- **Not on the blank, and not on focus — Maka, November 18, 2026**: the
+  designers did not want the tip left up once they had clicked into a
+  blank. The first version (November 11) also showed it on hovering the
+  blank, on focusing an empty blank, and held it open after a click on the
+  label (`.tip-open`, `.filled`); all of that is gone. The consequence,
+  accepted: keyboard users never see the popup (screen reader users still
+  get the text; sighted keyboard users have the "What goes in each
+  blank?" panel). Do not add a focus trigger back without asking.
+- A click on the label still puts the cursor in its blank; moving onto
+  the blank then hides the tip.
+- **Escape** hides it (`body.tips-off`, cleared on the next pointer move).
 - **The hover bridge** (`.blank-tip::before`) is only 6px tall. At 22px
-  it covered the label and swallowed the click that opens the tip — the
-  harness caught that.
+  it covered the label itself — the harness caught that.
 - No text on the page says "hover" (see **Why the key is collapsed, not
   deleted**); the harness checks the tips don't either.
 
@@ -1637,14 +1647,16 @@ G-number tags and field ordering, print-PDF non-blankness and print-CSS
 visibility.
 
 For the Learning Objective Builder, `test/verify_learning_objectives.js`
-(new November 11, 2026) runs 82 checks on the "i" icons and tooltips:
-icon and `aria-hidden` per blank, label text unchanged, `aria-describedby`
-resolving to the guidance in the accessibility tree, no `title` or
-`aria-description` left, hover / keyboard focus / click showing the tip,
-typing, Escape, blur and moving away hiding it, a phone context
-(`hasTouch`, 390px) where tapping the label opens it, tapping the tip
-closes it and every tip stays inside the window, and the generated
-objective unchanged.
+(new November 11, 2026, rewritten November 18 for the label-only tip)
+runs 81 checks: icon and `aria-hidden` per blank, label text unchanged,
+`aria-describedby` resolving to the guidance in the accessibility tree,
+no `title` or `aria-description` left; the tip showing on the label's
+words and on the icon but not on the blank, the empty part of the label
+row, focus, clicking or typing in a blank; centred under its label,
+reachable by moving straight down onto it, hidden by Escape and by moving
+away; inside the window at 1280px and 390px, including after a blank
+grows; touch (tap the label shows it, tap the blank or elsewhere hides
+it); and the generated objective unchanged.
 
 For the stylesheets, `test/verify_css_extraction.js` runs 176 checks: each
 converted page links exactly the expected sheets in the expected order

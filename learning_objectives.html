@@ -144,8 +144,9 @@
           '<rect x="7.1" y="6.7" width="1.8" height="5.2" rx=".9" fill="currentColor"/></svg>';
 
         // The guidance tooltip for one blank. It is a real element rather than
-        // a native title attribute, so the page can style it and show it on
-        // keyboard focus and on tap as well as on hover (a title does neither).
+        // a native title attribute, so the page can style it and control
+        // exactly where it shows: only on the label (see "When the guidance
+        // tooltips show" below).
         // aria-hidden stops a screen reader meeting it twice: the blank's
         // aria-describedby already points here, and a description is still
         // read from hidden content.
@@ -177,7 +178,7 @@
                 .join("");
               wrap.innerHTML = `
             <select id="word${count}" aria-label="${label || "sentence opener"}"${describedBy(label, count)}>${optionsHtml}</select>
-            ${label ? `<span class="hint" aria-hidden="true">${label}${GUIDANCE[label] ? INFO_ICON : ""}</span>` : ""}
+            ${label ? `<span class="hint" aria-hidden="true"><span class="hint-text">${label}${GUIDANCE[label] ? INFO_ICON : ""}</span></span>` : ""}
             ${tipHtml(label, count)}
           `;
             } else {
@@ -185,7 +186,7 @@
               wrap.innerHTML = `
             <input type="text" id="word${count}" autocomplete="off"
               aria-label="${inner}"${describedBy(inner, count)}>
-            <span class="hint" aria-hidden="true">${inner}${GUIDANCE[inner] ? INFO_ICON : ""}</span>
+            <span class="hint" aria-hidden="true"><span class="hint-text">${inner}${GUIDANCE[inner] ? INFO_ICON : ""}</span></span>
             ${tipHtml(inner, count)}
           `;
             }
@@ -203,69 +204,55 @@
         });
 
         // ---- When the guidance tooltips show ----
-        // Hover: CSS (.blank-wrap:hover), and the tip is inside the wrapper, so
-        //   the pointer can move onto it without it vanishing (WCAG 1.4.13).
-        // Focus: CSS shows it while the focused blank is still empty, so
-        //   keyboard and tap users meet it as they arrive. It closes once they
-        //   start typing, rather than sitting over the next line of blanks.
-        // Tap or click on the label / "i": opens it whatever the blank holds
-        //   (.tip-open) and puts the cursor in the blank. Tapping the tip,
-        //   or anywhere outside the blank, closes it again.
-        // Hover is limited to devices with a real pointer (see the CSS).
-        // Escape: hides them all until the pointer moves or focus moves
-        //   (body.tips-off, the same pattern as the Course Map Builder's chips).
-        const closeTips = () =>
-          storyForm.querySelectorAll(".tip-open").forEach(w => w.classList.remove("tip-open"));
+        // Only while the pointer is on the label and "i" under a blank
+        // (.hint-text), or on the tip itself, so it can be read and the
+        // pointer can travel onto it (WCAG 1.4.13, Hoverable). Not on the
+        // blank, and not on focus: designers asked (November 18, 2026) that
+        // it not stay up once they click into a blank. On a touchscreen a
+        // tap on the label shows it, and a tap anywhere else (the blank
+        // included) hides it. Screen readers get the same text from each
+        // blank's aria-describedby, whatever happens on screen.
+        // Escape hides it until the pointer moves (body.tips-off, the same
+        // pattern as the Course Map Builder's chips).
 
-        // Keep a tip inside the window: it hangs from the blank's left edge,
-        // so a blank near the right of a narrow screen shifts it leftward.
+        // Centre a tip under its label, but keep it inside the sentence box
+        // (or, where it is too narrow, the window).
         const placeTip = wrap => {
           const tip = wrap.querySelector(".blank-tip");
-          if (!tip) return;
-          tip.style.left = "0px";
-          const room = document.documentElement.clientWidth - 8;
-          const r = tip.getBoundingClientRect();
-          if (r.right > room) tip.style.left = Math.round(room - r.right) + "px";
+          const label = wrap.querySelector(".hint-text");
+          if (!tip || !label) return;
+          const w = wrap.getBoundingClientRect();
+          const l = label.getBoundingClientRect();
+          // Measure the tip even while it is still hidden.
+          const shown = tip.style.display;
+          tip.style.visibility = "hidden";
+          tip.style.display = "block";
+          const tipW = tip.offsetWidth;
+          tip.style.display = shown;
+          tip.style.visibility = "";
+          // Keep it within the sentence's box where it fits, else the window.
+          const vw = document.documentElement.clientWidth;
+          const box = storyForm.getBoundingClientRect();
+          let lo = Math.max(8, box.left), hi = Math.min(vw - 8, box.right);
+          if (hi - lo < tipW) { lo = 8; hi = vw - 8; }
+          let x = l.left + l.width / 2 - tipW / 2;  // viewport coordinates
+          x = Math.max(lo, Math.min(x, hi - tipW));
+          tip.style.left = Math.round(x - w.left) + "px";
         };
 
         storyForm.querySelectorAll(".blank-wrap.has-tip").forEach(wrap => {
-          const field = wrap.querySelector("input, select");
-          wrap.addEventListener("pointerenter", () => placeTip(wrap));
-          field.addEventListener("focus", () => placeTip(wrap));
-          field.addEventListener("blur", () => wrap.classList.remove("tip-open"));
-          wrap.querySelector(".hint").addEventListener("click", () => {
-            closeTips();
-            wrap.classList.add("tip-open");
-            placeTip(wrap);
-            field.focus();
-          });
-          // Tapping the tip itself closes it (on a phone it can cover the
-          // blanks below). The tap also blurs the blank, which ends the
-          // focus rule; on a mouse, hover keeps it up while the pointer
-          // stays on it.
-          wrap.querySelector(".blank-tip").addEventListener("click", () => {
-            wrap.classList.remove("tip-open");
-          });
-        });
-
-        // Typing closes a tip opened by tap, and marks the blank as filled so
-        // the focus rule stops showing it.
-        storyForm.addEventListener("input", e => {
-          const wrap = e.target.closest(".blank-wrap");
-          if (!wrap) return;
-          wrap.classList.remove("tip-open");
-          wrap.classList.toggle("filled", e.target.value.trim() !== "");
+          const label = wrap.querySelector(".hint-text");
+          label.addEventListener("pointerenter", () => placeTip(wrap));
+          // A click on the label still puts the cursor in its blank.
+          label.addEventListener("click", () =>
+            wrap.querySelector("input, select").focus());
         });
 
         document.addEventListener("keydown", e => {
-          if (e.key === "Escape") {
-            document.body.classList.add("tips-off");
-            closeTips();
-          }
+          if (e.key === "Escape") document.body.classList.add("tips-off");
         });
-        const tipsBackOn = () => document.body.classList.remove("tips-off");
-        document.addEventListener("pointermove", tipsBackOn);
-        document.addEventListener("focusin", tipsBackOn);
+        document.addEventListener("pointermove", () =>
+          document.body.classList.remove("tips-off"));
 
         // Blanks grow as you type, since conditions and behaviors are full phrases.
         // (min-width in the CSS sets the floor.)

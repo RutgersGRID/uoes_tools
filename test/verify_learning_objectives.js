@@ -5,10 +5,12 @@
  * New on November 11, 2026, with the "i" icons and guidance tooltips on
  * the blanks. Covers: the icon after each blank's label, the tooltip text
  * reaching screen readers through aria-describedby (and not twice), no
- * native title left behind, when the tip shows (hover, keyboard focus on
- * an empty blank, a tap or click on the label) and when it hides (typing,
- * Escape, moving away), the tip staying inside a 390px window, and the
- * generated objective still reading the same.
+ * native title left behind, when the tip shows (only while the pointer is
+ * on the words and icon under a blank, or on the tip) and when it does not
+ * (on the blank, on focus, after clicking into the blank, after Escape),
+ * placement inside the window, touch, and the generated objective still
+ * reading the same. Rewritten November 18, 2026, when the tip stopped
+ * showing on the blank and on focus.
  *
  *   node test/verify_learning_objectives.js
  */
@@ -91,57 +93,76 @@ const LABELS = ["condition", "audience", "behavior", "degree (optional)"];
   ok("no tip shown on load", !(await anyTipShown()));
 
   await page.hover("#word0");
-  ok("hovering a blank shows its tip", await tipShown(0));
-  ok("…and only that tip", !(await tipShown(1)) && !(await tipShown(2)));
-  const box = await page.$eval("#tip0", t => { const r = t.getBoundingClientRect(); return { x: r.x + 20, y: r.y + r.height / 2 }; });
-  await page.mouse.move(box.x, box.y, { steps: 8 });
-  ok("moving the pointer onto the tip keeps it open", await tipShown(0));
+  ok("pointing at the blank does not show its tip", !(await tipShown(0)));
+  await page.hover("#word0 ~ .hint .hint-text");
+  ok("pointing at the label shows its tip", await tipShown(0));
+  ok("…and only that tip", !(await tipShown(1)) && !(await tipShown(2)) && !(await tipShown(3)));
+  const lab = await page.$eval("#word0 ~ .hint .hint-text", e => { const r = e.getBoundingClientRect(); return { x: r.x + r.width / 2, top: r.top, bottom: r.bottom, left: r.left, right: r.right }; });
+  const icon = await page.$eval("#word0 ~ .hint .info-icon", e => { const r = e.getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; });
+  await park();
+  await page.mouse.move(icon.x, icon.y);
+  ok("pointing at the icon shows the tip", await tipShown(0));
+  const hintRow = await page.$eval("#word0 ~ .hint", e => e.getBoundingClientRect());
+  await park();
+  await page.mouse.move(hintRow.left + 3, (lab.top + lab.bottom) / 2);
+  ok("the empty part of the label row does not", lab.left > hintRow.left + 6 ? !(await tipShown(0)) : true);
+
+  await page.mouse.move(lab.x, (lab.top + lab.bottom) / 2);
+  const tipBox = await page.$eval("#tip0", t => t.getBoundingClientRect());
+  const form = await page.$eval("#storyForm", e => e.getBoundingClientRect());
+  ok("tip sits under its label, inside the sentence box", tipBox.left <= lab.left && tipBox.right >= lab.right && tipBox.left >= form.left && tipBox.right <= form.right, JSON.stringify([tipBox.left, tipBox.right, lab.left, lab.right, form.left]));
+  await page.mouse.move(lab.x, tipBox.top + tipBox.height / 2, { steps: 12 });
+  ok("moving straight down onto the tip keeps it open", await tipShown(0));
   await page.keyboard.press("Escape");
   ok("Escape hides it with the pointer still there", !(await tipShown(0)));
-  await page.hover("#word0");
-  ok("it comes back once the pointer moves over the blank again", await tipShown(0));
+  await page.mouse.move(lab.x, (lab.top + lab.bottom) / 2);
+  ok("it comes back on the label once the pointer moves", await tipShown(0));
   await park();
   ok("moving away hides it", !(await tipShown(0)));
 
-  await page.focus("#generateBtn");
-  await page.keyboard.press("Shift+Tab"); // into the last blank
-  await page.keyboard.press("Shift+Tab");
-  await page.keyboard.press("Shift+Tab");
-  await page.keyboard.press("Shift+Tab");
-  ok("Tab into an empty blank shows its tip", (await page.evaluate(() => document.activeElement.id)) === "word0" && await tipShown(0));
-  await page.keyboard.type("Given a map");
-  ok("typing closes it", !(await tipShown(0)));
+  await page.click("#word1");
+  ok("clicking into a blank shows no tip", !(await anyTipShown()));
+  await page.keyboard.type("students");
+  ok("typing in it shows no tip", !(await anyTipShown()));
   await page.keyboard.press("Tab");
-  ok("next empty blank shows its tip", await tipShown(1));
-  ok("the previous one stays closed", !(await tipShown(0)));
-  await page.keyboard.press("Escape");
-  ok("Escape hides a focus-opened tip", !(await tipShown(1)));
-  await page.keyboard.press("Shift+Tab");
-  ok("a filled blank does not reopen on focus", !(await tipShown(0)));
+  ok("tabbing into the next empty blank shows no tip", !(await anyTipShown()));
 
-  await park();
-  await page.click("#word0 ~ .hint");
-  ok("clicking the label opens the tip on a filled blank", await tipShown(0));
-  ok("…and puts the cursor in the blank", (await page.evaluate(() => document.activeElement.id)) === "word0");
-  await park();
-  ok("a clicked-open tip stays after the pointer leaves", await tipShown(0));
-  await page.keyboard.press("End");
-  await page.keyboard.type(" of the US");
-  ok("typing closes a clicked-open tip", !(await tipShown(0)));
-  await page.click("#word2 ~ .hint");
-  await park();
-  await page.click("h1");
-  ok("clicking elsewhere closes it", !(await tipShown(2)));
+  await page.click("#word2 ~ .hint .hint-text");
+  ok("clicking the label puts the cursor in its blank", (await page.evaluate(() => document.activeElement.id)) === "word2");
+  await page.hover("#word2");
+  ok("…and the tip goes once the pointer is on the blank", !(await tipShown(2)));
+  await page.keyboard.type("label all fifty states");
+  ok("typing shows no tip", !(await anyTipShown()));
 
-  const clickTarget = await page.$eval("#word1 ~ .hint", h => h.getBoundingClientRect().height);
-  ok("label is a usable click target (>= 11px tall)", clickTarget >= 11, clickTarget);
+  console.log("\nPlacement");
+  for (const vw of [1280, 390]) {
+    const pg = await browser.newPage({ viewport: { width: vw, height: 900 } });
+    await pg.goto(PAGE);
+    for (let i = 0; i < 4; i++) {
+      await pg.hover(`#word${i} ~ .hint .hint-text`);
+      const r = await pg.$eval("#tip" + i, t => { const b = t.getBoundingClientRect(); return { shown: getComputedStyle(t).display !== "none", l: b.left, r: b.right, w: document.documentElement.clientWidth }; });
+      ok(`${LABELS[i]}: tip shown and inside the window at ${vw}px`, r.shown && r.l >= 0 && r.r <= r.w, JSON.stringify(r));
+    }
+    await pg.fill("#word0", "Given a blank map of the United States of America and a list of capitals");
+    await pg.dispatchEvent("#word0", "input");
+    await pg.mouse.move(1, 1);
+    const swBefore = await pg.evaluate(() => document.documentElement.scrollWidth);
+    await pg.hover("#word0 ~ .hint .hint-text");
+    const r = await pg.$eval("#tip0", t => { const b = t.getBoundingClientRect(); return { l: b.left, r: b.right, w: document.documentElement.clientWidth }; });
+    ok(`condition: tip still inside the window after the blank grows (${vw}px)`, r.l >= 0 && r.r <= r.w, JSON.stringify(r));
+    // A long condition already widens the page at 390px (the blank grows
+    // with its text; that predates the tips). The check is that an open
+    // tip adds nothing to it.
+    const sw = await pg.evaluate(() => document.documentElement.scrollWidth);
+    ok(`an open tip adds no horizontal scroll at ${vw}px`, sw <= Math.max(vw, swBefore), sw + " vs " + swBefore);
+    await pg.close();
+  }
 
   console.log("\nGenerated objective");
-  await page.fill("#word1", "students");
-  await page.fill("#word2", "label all fifty states");
+  await page.fill("#word0", "Given a blank map of the US");
   await page.click("#generateBtn");
   const story = await page.$eval("#storyText", e => e.innerText.replace(/\s+/g, " "));
-  ok("objective text unchanged by the tips", story.includes("Given a map of the US") && story.includes("label all fifty states") && !/circumstances/.test(story), story);
+  ok("objective text unchanged by the tips", story.includes("Given a blank map of the US") && story.includes("students") && story.includes("label all fifty states") && !/circumstances/.test(story), story);
   ok("result has no info icons", (await page.$$("#story .info-icon")).length === 0);
 
   console.log("\nPhone (touch, 390px)");
@@ -149,22 +170,17 @@ const LABELS = ["condition", "audience", "behavior", "degree (optional)"];
   const phone = await ctx.newPage();
   await phone.goto(PAGE);
   const pShown = n => phone.$eval("#tip" + n, t => getComputedStyle(t).display !== "none");
-  for (let i = 0; i < 4; i++) {
-    await phone.tap(`#word${i} ~ .hint`);
-    ok(`${LABELS[i]}: tapping the label opens the tip`, await pShown(i));
-    const r = await phone.$eval("#tip" + i, t => { const b = t.getBoundingClientRect(); return { l: b.left, r: b.right, w: document.documentElement.clientWidth }; });
-    ok(`${LABELS[i]}: tip inside the window`, r.l >= 0 && r.r <= r.w, JSON.stringify(r));
-    await phone.tap("#tip" + i);
-    ok(`${LABELS[i]}: tapping the tip closes it`, !(await pShown(i)));
-  }
+  const pAny = () => phone.$$eval(".blank-tip", ts => ts.some(t => getComputedStyle(t).display !== "none"));
   await phone.tap("#word1");
-  ok("tapping an empty blank shows its tip", await pShown(1));
-  await phone.keyboard.type("students");
-  ok("typing closes it", !(await pShown(1)));
+  ok("tapping into a blank shows no tip", !(await pAny()));
+  await phone.tap("#word1 ~ .hint .hint-text");
+  ok("tapping the label shows its tip", await pShown(1));
+  await phone.tap("#word1");
+  ok("tapping into the blank hides it", !(await pAny()));
+  await phone.tap("#word3 ~ .hint .hint-text");
+  ok("tapping another label shows that tip", await pShown(3));
   await phone.tap("h1");
-  ok("tapping elsewhere leaves no tip open", !(await phone.$$eval(".blank-tip", ts => ts.some(t => getComputedStyle(t).display !== "none"))));
-  const scrollW = await phone.evaluate(() => document.documentElement.scrollWidth);
-  ok("no horizontal scroll at 390px", scrollW <= 390, scrollW);
+  ok("tapping elsewhere hides it", !(await pAny()));
 
   console.log("\nPage");
   ok("no page errors", errors.length === 0, errors.join(" | "));

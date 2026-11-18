@@ -72,11 +72,11 @@
   margin-top: 2px;
 }
 
-/* Blanks with guidance: the label under the blank ends in a small "i",
-   and the label is clickable (it opens the tip and focuses the blank). */
-.blank-wrap.has-tip .hint {
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent; /* no grey/blue flash on tap */
+/* Blanks with guidance: the label under the blank ends in a small "i".
+   The words and icon (.hint-text) are what you point at to see the tip;
+   the rest of the label's row is not. */
+.blank-wrap.has-tip .hint-text {
+  cursor: help;
 }
 .blank-wrap .info-icon {
   width: 12px;
@@ -88,8 +88,8 @@
 
 /* The guidance tooltip. Same look as the Course Map Builder's alignment
    chip tooltip (.align-tip): white, Rutgers Blue border, soft shadow. It
-   hangs below the label, from the blank's left edge; placeTip() in the
-   page's JS shifts it left if it would run off the window. */
+   hangs below the label, centred under it by placeTip() in the page's
+   JS, which also keeps it inside the window. */
 .blank-tip {
   display: none;
   position: absolute;
@@ -113,7 +113,7 @@
 /* A bridge over the few pixels between the label and the tip, so the
    pointer can travel down onto the tip without leaving the hover area
    (WCAG 1.4.13, Hoverable). Kept short: any taller and it covers the
-   label itself and swallows the click that opens the tip. */
+   label itself. */
 .blank-tip::before {
   content: "";
   position: absolute;
@@ -123,24 +123,17 @@
   height: 6px;
 }
 
-/* Every show rule is gated on body:not(.tips-off), so Escape can hide
-   them without a later override having to out-specify each one. Same
-   pattern, and same reason, as the alignment chip tooltip. Kept as
-   separate rules so a browser without :has() still gets the others. */
-body:not(.tips-off) .blank-wrap.tip-open .blank-tip {
+/* Shown only while the pointer is on the label and "i", or on the tip
+   itself. Not on the blank and not on focus: designers did not want it
+   left up once they had clicked into a blank (November 18, 2026). Gated
+   on body:not(.tips-off) so Escape can hide it without an override that
+   has to out-specify this rule (same pattern as the alignment chip
+   tooltip). Two separate rules, not one selector list: a browser that
+   cannot read :has() drops the whole rule it appears in. */
+body:not(.tips-off) .blank-wrap:has(.hint-text:hover) .blank-tip {
   display: block;
 }
-/* Hover only where there is a real pointer. On a touchscreen :hover
-   sticks to whatever was last tapped, so the tip could not be closed by
-   tapping it, and an open tip covers the blanks on the line below. */
-@media (hover: hover) {
-  body:not(.tips-off) .blank-wrap:hover .blank-tip {
-    display: block;
-  }
-}
-/* Shown on focus while the blank is still empty, so keyboard and tap
-   users meet it on arrival; it closes once they start typing. */
-body:not(.tips-off) .blank-wrap:not(.filled):has(input:focus, select:focus) .blank-tip {
+body:not(.tips-off) .blank-tip:hover {
   display: block;
 }
 
