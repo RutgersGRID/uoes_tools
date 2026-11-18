@@ -58,14 +58,20 @@
   border-radius: 4px 4px 0 0;
 }
 
-/* The subscript label hangs below the blank without affecting alignment */
-.blank-wrap .hint {
+/* The italic label hanging below each part of the objective, without
+   affecting alignment. One rule for all three places it appears: under
+   the blanks (.hint), under the guide panel's example (.ex-label) and
+   under the generated objective (.blank-label). 13px everywhere since
+   November 18, 2026 (Maka; was 11px). */
+.blank-wrap .hint,
+.guide .ex-label,
+#story .blank-label {
   position: absolute;
   top: 100%;
   left: 0;
   width: 100%;
   text-align: center;
-  font-size: 11px;
+  font-size: 13px;
   font-style: italic;
   color: var(--muted);
   line-height: 1;
@@ -77,12 +83,21 @@
    the rest of the label's row is not. */
 .blank-wrap.has-tip .hint-text {
   cursor: help;
+  /* A bigger area to point at, with no visible change (Maka, November 18,
+     2026): invisible padding grows the target to about 24px tall, the
+     size the site uses for click targets, and the matching negative
+     margin keeps the label exactly where it was. It grows down and to the
+     sides only. Upward it stops at the blank's bottom edge, so pointing at
+     the blank itself still shows nothing. */
+  display: inline-block;
+  padding: 2px 10px 10px;
+  margin: -2px -10px -10px;
 }
 .blank-wrap .info-icon {
-  width: 12px;
-  height: 12px;
+  width: 14px;  /* was 12px, raised with the label (Maka, November 18, 2026) */
+  height: 14px;
   margin-left: 3px;
-  vertical-align: -2px;
+  vertical-align: -2.5px;
   color: var(--blue); /* 4.5:1+ on white, so it clears the 3:1 for icons */
 }
 
@@ -123,9 +138,9 @@
   height: 6px;
 }
 
-/* Shown only while the pointer is on the label and "i", or on the tip
-   itself. Not on the blank and not on focus: designers did not want it
-   left up once they had clicked into a blank (November 18, 2026). Gated
+/* With a mouse, shown only while the pointer is on the label and "i", or
+   on the tip itself. Not on the blank: designers did not want it left up
+   once they had clicked into a blank (November 18, 2026). Gated
    on body:not(.tips-off) so Escape can hide it without an override that
    has to out-specify this rule (same pattern as the alignment chip
    tooltip). Two separate rules, not one selector list: a browser that
@@ -135,6 +150,77 @@ body:not(.tips-off) .blank-wrap:has(.hint-text:hover) .blank-tip {
 }
 body:not(.tips-off) .blank-tip:hover {
   display: block;
+}
+/* Keyboard: Tab or Shift+Tab onto an empty blank shows its tip (the
+   page's JS adds .tip-kbd; typing, leaving or Escape removes it). A click
+   or tap into a blank never does (Maka, November 18, 2026). */
+body:not(.tips-off) .blank-wrap.tip-kbd .blank-tip {
+  display: block;
+}
+
+/* ---- narrow screens: one part of the objective per row ----
+   On narrow screens the inline sentence wrapped wherever it ran out of
+   room, leaving lines like "will ____" with the degree blank stranded on
+   its own (Maka, November 18, 2026). Maka asked for 575px; measured, the
+   odd wrapping runs up to about 615px (575-583px: one blank per line with
+   "will" trailing the audience blank; 584-615px: three uneven lines), so
+   the switch is at 640px, the breakpoint the other pages already stack
+   at. Each .seg (built in the page's JS: a blank
+   plus the word before it and the punctuation after it) becomes its own
+   full-width row instead:
+       ______________ ,      condition
+       ______________        audience
+       will
+       ______________        behavior
+       ______________ .      degree (optional)
+   No lower limit: this layout still works at 320px, the width WCAG 1.4.10
+   (Reflow) asks for, which is also a desktop browser zoomed to 400%. */
+@media (max-width: 639.98px) {
+  #storyForm {
+    padding: 20px 16px 4px;
+    line-height: normal;
+  }
+  #storyForm .seg {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.3em;
+    margin-bottom: 30px; /* room for the label hanging under the blank */
+    /* Matches the punctuation slot + gap on the right (below), so the
+       blanks sit centred in the box (Maka, November 18, 2026). */
+    padding-left: 0.7em;
+  }
+  /* "will" gets a row of its own, so all four blanks are the same width
+     (Maka, November 18, 2026). */
+  #storyForm .seg .seg-word {
+    /* Full row width, reaching back over the row's left padding so the
+       word centres on the box, not on the padded content. */
+    flex: 0 0 calc(100% + 0.7em);
+    margin: 0 0 6px -0.7em;
+    text-align: center;
+  }
+  /* The comma and period sit in a fixed slot at the end of their row, and
+     rows without one keep an empty slot of the same width, so all four
+     blanks come out exactly the same width. */
+  #storyForm .seg .seg-punct {
+    flex: 0 0 0.4em;
+  }
+  #storyForm .seg:not(:has(.seg-punct))::after {
+    content: "";
+    flex: 0 0 0.4em;
+  }
+  #storyForm .seg .blank-wrap {
+    flex: 1 1 0; /* basis 0, or a full-width blank pushes the comma or
+                    period down onto a line of its own */
+    min-width: 0;
+    margin: 0;
+  }
+  /* Full width, whatever the auto-grow script last wrote inline. */
+  #storyForm .seg .blank-wrap input {
+    width: 100% !important;
+    min-width: 0;
+    box-sizing: border-box; /* its 2px side padding stays inside the row */
+  }
 }
 
 /* ---- guidance panel extras (the base panel is in document.css) ---- */
@@ -148,33 +234,22 @@ body:not(.tips-off) .blank-tip:hover {
    css/blooms_verbs.css rather than staying here unused. */
 
 .guide .example {
-  margin: 14px 0 4px 0;
+  margin: 14px 0 10px 0; /* 10px below, not 4px: room under the 13px labels */
   padding-top: 10px;
   border-top: 1px solid var(--blue-mid);
   font-style: italic;
   line-height: 2.8; /* room for the labels hanging under each part */
 }
 
-/* Underlined phrases in the example, labeled just like the form's blanks */
-.guide .ex-part {
+/* Underlined phrases, labeled just like the form's blanks: the guide's
+   example and the filled-in parts of the generated objective. */
+.guide .ex-part,
+#story .blank {
   display: inline-block;
   position: relative;
   border-bottom: 2px solid var(--blue);
   line-height: normal;
   margin: 0 1px;
-}
-
-.guide .ex-label {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  font-size: 11px;
-  font-style: italic;
-  color: var(--muted);
-  line-height: 1;
-  margin-top: 2px;
 }
 
 /* ---- buttons and generated objective ---- */
@@ -201,27 +276,6 @@ button:hover { background: var(--red-dark); }
   font-size: 18px;
   line-height: 2.8; /* room for the labels hanging under each part */
   margin-top: 20px;
-}
-
-/* Filled-in parts: underlined and labeled, same as the guide's example */
-#story .blank {
-  display: inline-block;
-  position: relative;
-  border-bottom: 2px solid var(--blue);
-  line-height: normal;
-  margin: 0 1px;
-}
-#story .blank-label {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  font-size: 11px;
-  font-style: italic;
-  color: var(--muted);
-  line-height: 1;
-  margin-top: 2px;
 }
 
 /* Small secondary copy button inside the result box */

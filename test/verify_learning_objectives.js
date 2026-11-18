@@ -10,7 +10,9 @@
  * (on the blank, on focus, after clicking into the blank, after Escape),
  * placement inside the window, touch, and the generated objective still
  * reading the same. Rewritten November 18, 2026, when the tip stopped
- * showing on the blank and on focus.
+ * showing on the blank and on focus. "Layout by width" (also November 18)
+ * covers the one-part-per-row layout under 640px and blanks never pushing
+ * the page sideways.
  *
  *   node test/verify_learning_objectives.js
  */
@@ -124,15 +126,70 @@ const LABELS = ["condition", "audience", "behavior", "degree (optional)"];
   ok("clicking into a blank shows no tip", !(await anyTipShown()));
   await page.keyboard.type("students");
   ok("typing in it shows no tip", !(await anyTipShown()));
+  await park();
   await page.keyboard.press("Tab");
-  ok("tabbing into the next empty blank shows no tip", !(await anyTipShown()));
+  ok("Tab into an empty blank shows its tip", (await page.evaluate(() => document.activeElement.id)) === "word2" && await tipShown(2));
+  ok("…and only that tip", !(await tipShown(0)) && !(await tipShown(1)) && !(await tipShown(3)));
+  await page.keyboard.press("Escape");
+  ok("Escape hides it", !(await tipShown(2)));
+  await page.keyboard.press("Tab");
+  ok("Tab on to the next empty blank shows that one, even after Escape", await tipShown(3) && !(await tipShown(2)));
+  await page.keyboard.type("with 90% accuracy");
+  ok("typing closes it", !(await anyTipShown()));
+  await page.keyboard.press("Shift+Tab");
+  ok("Shift+Tab back into an empty blank shows its tip", await tipShown(2));
+  await page.keyboard.press("Shift+Tab");
+  ok("Shift+Tab into a filled blank shows none", !(await anyTipShown()));
+  await page.fill("#word3", "");
+  await page.click("#word3");
+  ok("clicking into an empty blank still shows no tip", !(await anyTipShown()));
+  await page.keyboard.press("Shift+Tab");
+  await page.keyboard.press("Tab");
+  ok("…but Tab back into it does", await tipShown(3));
+  await page.keyboard.press("Tab");
+  ok("leaving the blank closes it", !(await tipShown(3)));
 
+  await park();
   await page.click("#word2 ~ .hint .hint-text");
   ok("clicking the label puts the cursor in its blank", (await page.evaluate(() => document.activeElement.id)) === "word2");
   await page.hover("#word2");
   ok("…and the tip goes once the pointer is on the blank", !(await tipShown(2)));
   await page.keyboard.type("label all fifty states");
   ok("typing shows no tip", !(await anyTipShown()));
+
+  console.log("\nTarget size");
+  {
+    const pg = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    await pg.goto(PAGE);
+    const show = n => pg.$eval("#tip" + n, t => getComputedStyle(t).display !== "none");
+    for (let i = 0; i < 4; i++) {
+      const g = await pg.evaluate(n => {
+        const t = document.querySelector(`#word${n} ~ .hint .hint-text`).getBoundingClientRect();
+        const icon = document.querySelector(`#word${n} ~ .hint .info-icon`).getBoundingClientRect();
+        const inp = document.getElementById("word" + n).getBoundingClientRect();
+        return { h: t.height, top: t.top, bottom: t.bottom, left: t.left, right: t.right,
+          iconBottom: icon.bottom, iconRight: icon.right, inpBottom: inp.bottom, mid: (t.left + t.right) / 2 };
+      }, i);
+      ok(`${LABELS[i]}: pointing area at least 24px tall`, g.h >= 24, g.h);
+      ok(`${LABELS[i]}: pointing area does not reach up into the blank`, g.top >= g.inpBottom - 0.5, JSON.stringify([g.top, g.inpBottom]));
+      await pg.mouse.move(5, 5);
+      await pg.mouse.move(g.mid, g.iconBottom + 6);
+      ok(`${LABELS[i]}: 6px below the label still shows the tip`, await show(i));
+      await pg.mouse.move(5, 5);
+      await pg.mouse.move(g.iconRight + 6, g.iconBottom - 4);
+      ok(`${LABELS[i]}: 6px right of the icon still shows the tip`, await show(i));
+      await pg.mouse.move(5, 5);
+      await pg.mouse.move(g.mid, g.inpBottom - 3);
+      ok(`${LABELS[i]}: the blank's bottom edge still shows nothing`, !(await show(i)));
+    }
+    const shift = await pg.evaluate(() => [...document.querySelectorAll(".hint-text")].map(t => {
+      const r = t.getBoundingClientRect(), cs = getComputedStyle(t);
+      return Math.round(r.top + parseFloat(cs.paddingTop));
+    }));
+    const inputs = await pg.$$eval("#storyForm input", is => is.map(i => Math.round(i.getBoundingClientRect().bottom)));
+    ok("label text still sits 2-4px under its blank", shift.every((y, k) => y - inputs[k] >= 1 && y - inputs[k] <= 5), JSON.stringify([shift, inputs]));
+    await pg.close();
+  }
 
   console.log("\nPlacement");
   for (const vw of [1280, 390]) {
@@ -164,6 +221,14 @@ const LABELS = ["condition", "audience", "behavior", "degree (optional)"];
   const story = await page.$eval("#storyText", e => e.innerText.replace(/\s+/g, " "));
   ok("objective text unchanged by the tips", story.includes("Given a blank map of the US") && story.includes("students") && story.includes("label all fifty states") && !/circumstances/.test(story), story);
   ok("result has no info icons", (await page.$$("#story .info-icon")).length === 0);
+  const sizes = await page.evaluate(() => {
+    document.getElementById("guide").open = true;
+    const px = sel => [...document.querySelectorAll(sel)].map(e => getComputedStyle(e).fontSize);
+    return { hint: px(".blank-wrap .hint"), ex: px(".guide .ex-label"), out: px("#story .blank-label") };
+  });
+  ok("labels are 13px under the blanks, in the guide example and in the result",
+    sizes.hint.length === 4 && sizes.ex.length === 4 && sizes.out.length >= 3 &&
+    [...sizes.hint, ...sizes.ex, ...sizes.out].every(v => v === "13px"), JSON.stringify(sizes));
 
   console.log("\nPhone (touch, 390px)");
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
@@ -181,6 +246,77 @@ const LABELS = ["condition", "audience", "behavior", "degree (optional)"];
   ok("tapping another label shows that tip", await pShown(3));
   await phone.tap("h1");
   ok("tapping elsewhere hides it", !(await pAny()));
+
+  console.log("\nLayout by width");
+  const LONG = "Given a blank map of the United States of America and a printed list of all fifty state capitals";
+  for (const vw of [1280, 640, 639, 600, 574, 400, 320, 280]) {
+    const pg = await browser.newPage({ viewport: { width: vw, height: 900 } });
+    await pg.goto(PAGE);
+    const segs = await pg.$$eval("#storyForm .seg", ss => ss.map(s => ({
+      text: s.textContent.replace(/\s+/g, " ").trim(),
+      top: Math.round(s.querySelector("input").getBoundingClientRect().top),
+      seg: s.getBoundingClientRect().width,
+      input: s.querySelector("input").getBoundingClientRect().width,
+    })));
+    if (vw === 1280) {
+      ok("four segments, one per blank", segs.length === 4, segs.length);
+      ok("comma stays with condition", segs[0] && /^condition.*,$/.test(segs[0].text), segs[0] && segs[0].text);
+      ok("\"will\" rides with behavior", segs[2] && /^will /.test(segs[2].text), segs[2] && segs[2].text);
+      ok("period stays with degree", segs[3] && /\.$/.test(segs[3].text), segs[3] && segs[3].text);
+    }
+    const rows = new Set(segs.map(x => x.top)).size;
+    if (vw >= 640) {
+      ok(`${vw}px: sentence flows inline (condition and audience share a row)`, segs[0].top === segs[1].top, JSON.stringify(segs.map(x => x.top)));
+    } else {
+      ok(`${vw}px: each part on its own row`, rows === 4, JSON.stringify(segs.map(x => x.top)));
+      ok(`${vw}px: rows in sentence order`, segs.every((x, i) => i === 0 || x.top > segs[i - 1].top));
+      ok(`${vw}px: every blank fills its row`,
+        [0, 1, 2, 3].every(i => segs[i].input >= segs[i].seg - 30), JSON.stringify(segs.map(x => [x.seg, x.input])));
+      const will = await pg.$eval("#storyForm .seg-word", w => {
+        const r = w.getBoundingClientRect(), i = w.parentElement.querySelector("input").getBoundingClientRect();
+        return { text: w.textContent, bottom: r.bottom, inputTop: i.top };
+      });
+      ok(`${vw}px: "will" sits on its own row above the behavior blank`, will.text === "will" && will.bottom <= will.inputTop + 1, JSON.stringify(will));
+      const widths = [0, 1, 2, 3].map(i => segs[i].input);
+      const punct = await pg.$$eval("#storyForm .seg-punct", ps => ps.map(p => {
+        const r = p.getBoundingClientRect(), i = p.parentElement.querySelector("input").getBoundingClientRect();
+        return { mark: p.textContent, onRow: r.top < i.bottom && r.bottom > i.top, after: r.left >= i.right - 1 };
+      }));
+      ok(`${vw}px: comma and period stay on their blank's row, after it`,
+        punct.length === 2 && punct.every(x => x.onRow && x.after), JSON.stringify(punct));
+      ok(`${vw}px: all four blanks are the same width`,
+        Math.max(...widths) - Math.min(...widths) < 1, JSON.stringify(widths));
+      const centre = await pg.evaluate(() => {
+        const f = document.getElementById("storyForm"), cs = getComputedStyle(f), r = f.getBoundingClientRect();
+        const mid = r.left + f.clientLeft + parseFloat(cs.paddingLeft) +
+          (f.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)) / 2;
+        const off = el => { const b = el.getBoundingClientRect(); return Math.abs(b.left + b.width / 2 - mid); };
+        const w = document.querySelector("#storyForm .seg-word");
+        const range = document.createRange(); range.selectNodeContents(w);
+        const t = range.getBoundingClientRect();
+        return {
+          blanks: [...f.querySelectorAll(".seg input")].map(off),
+          labels: [...f.querySelectorAll(".seg .hint-text")].map(off),
+          will: Math.abs(t.left + t.width / 2 - mid),
+        };
+      });
+      ok(`${vw}px: blanks, labels and "will" centred in the box`,
+        [...centre.blanks, ...centre.labels, centre.will].every(d => d < 1.5), JSON.stringify(centre));
+      const lefts = await pg.$$eval("#storyForm .seg input", is => is.map(i => Math.round(i.getBoundingClientRect().left)));
+      ok(`${vw}px: and start at the same left edge`, new Set(lefts).size === 1, JSON.stringify(lefts));
+    }
+    await pg.fill("#word0", LONG);
+    await pg.dispatchEvent("#word0", "input");
+    const sw = await pg.evaluate(() => document.documentElement.scrollWidth);
+    ok(`${vw}px: a long condition does not widen the page`, sw <= vw, sw);
+    const fit = await pg.evaluate(() => {
+      const f = document.getElementById("storyForm").getBoundingClientRect();
+      const i = document.getElementById("word0").getBoundingClientRect();
+      return i.right <= f.right + 0.5 && i.left >= f.left - 0.5;
+    });
+    ok(`${vw}px: the long condition's blank stays inside the sentence box`, fit);
+    await pg.close();
+  }
 
   console.log("\nPage");
   ok("no page errors", errors.length === 0, errors.join(" | "));

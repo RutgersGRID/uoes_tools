@@ -203,17 +203,71 @@
           }
         });
 
+        // Group the sentence into one .seg per blank, so a narrow screen can
+        // give each part of the objective its own row (see the CSS). Words
+        // before a blank ride with it in a .seg-word ("will" + behavior),
+        // which takes a row of its own on a narrow screen so every blank is
+        // the same width; punctuation right after a blank stays on its line
+        // ("condition," and "degree.").
+        // On a wide screen the segments are inline and the sentence reads
+        // exactly as before.
+        (() => {
+          const out = [];
+          let seg = null, lead = [];
+          const newSeg = () => {
+            seg = document.createElement("span");
+            seg.className = "seg";
+            out.push(seg);
+          };
+          [...storyForm.childNodes].forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE) {
+              let t = node.data;
+              const punct = t.match(/^[^\s\w]+/);
+              if (punct && seg) {
+                const mark = document.createElement("span");
+                mark.className = "seg-punct";
+                mark.textContent = punct[0];
+                seg.append(mark);
+                t = t.slice(punct[0].length);
+              }
+              const space = t.match(/^\s*/)[0];
+              if (space) out.push(document.createTextNode(space));
+              const words = t.slice(space.length);
+              if (words) lead.push(words);
+            } else if (node.classList && node.classList.contains("blank-wrap")) {
+              newSeg();
+              if (lead.length) {
+                // The words before a blank get their own span, so a narrow
+                // screen can give them a row of their own (see the CSS).
+                const word = document.createElement("span");
+                word.className = "seg-word";
+                word.textContent = lead.join("").trim();
+                seg.append(word, " ");
+              }
+              lead = [];
+              seg.append(node);
+            } else {
+              out.push(node); // a <br> from a \n in the template
+              seg = null;
+            }
+          });
+          if (lead.length) out.push(document.createTextNode(lead.join("")));
+          storyForm.replaceChildren(...out);
+        })();
+
         // ---- When the guidance tooltips show ----
-        // Only while the pointer is on the label and "i" under a blank
+        // Mouse: only while the pointer is on the label and "i" under a blank
         // (.hint-text), or on the tip itself, so it can be read and the
         // pointer can travel onto it (WCAG 1.4.13, Hoverable). Not on the
-        // blank, and not on focus: designers asked (November 18, 2026) that
-        // it not stay up once they click into a blank. On a touchscreen a
-        // tap on the label shows it, and a tap anywhere else (the blank
-        // included) hides it. Screen readers get the same text from each
-        // blank's aria-describedby, whatever happens on screen.
-        // Escape hides it until the pointer moves (body.tips-off, the same
-        // pattern as the Course Map Builder's chips).
+        // blank: designers asked (November 18, 2026) that it not stay up
+        // once they click into a blank. On a touchscreen a tap on the label
+        // shows it, and a tap anywhere else (the blank included) hides it.
+        // Keyboard: when Tab (or Shift+Tab) lands on an EMPTY blank, its tip
+        // shows (.tip-kbd) until the user types, leaves, or presses Escape.
+        // A click or tap into a blank never does this. Screen readers get
+        // the same text from each blank's aria-describedby either way.
+        // Escape hides tips until the pointer moves or focus moves on
+        // (body.tips-off, the same pattern as the Course Map Builder's chips).
 
         // Centre a tip under its label, but keep it inside the sentence box
         // (or, where it is too narrow, the window).
@@ -248,17 +302,45 @@
             wrap.querySelector("input, select").focus());
         });
 
+        // Remember whether focus is arriving by Tab or by pointer.
+        let tabbing = false;
         document.addEventListener("keydown", e => {
-          if (e.key === "Escape") document.body.classList.add("tips-off");
-        });
+          if (e.key === "Tab") tabbing = true;
+          if (e.key === "Escape") {
+            document.body.classList.add("tips-off");
+            storyForm.querySelectorAll(".tip-kbd")
+              .forEach(w => w.classList.remove("tip-kbd"));
+          }
+        }, true);
+        document.addEventListener("pointerdown", () => { tabbing = false; }, true);
         document.addEventListener("pointermove", () =>
           document.body.classList.remove("tips-off"));
 
+        storyForm.querySelectorAll(".blank-wrap.has-tip").forEach(wrap => {
+          const field = wrap.querySelector("input, select");
+          field.addEventListener("focus", () => {
+            document.body.classList.remove("tips-off");
+            if (tabbing && !field.value.trim()) {
+              wrap.classList.add("tip-kbd");
+              placeTip(wrap);
+            }
+          });
+          field.addEventListener("blur", () => wrap.classList.remove("tip-kbd"));
+          field.addEventListener("input", () => wrap.classList.remove("tip-kbd"));
+        });
+
         // Blanks grow as you type, since conditions and behaviors are full phrases.
-        // (min-width in the CSS sets the floor.)
+        // (min-width in the CSS sets the floor.) They stop at the width of the
+        // sentence box, so a long phrase scrolls inside its blank instead of
+        // pushing the page sideways. Under 640px the CSS makes every blank
+        // full width and this inline width is overridden.
         storyForm.addEventListener("input", e => {
           if (e.target.tagName === "INPUT") {
-            e.target.style.width = (e.target.value.length + 2) + "ch";
+            const cs = getComputedStyle(storyForm);
+            const room = storyForm.clientWidth -
+              parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 16;
+            e.target.style.width =
+              `min(${e.target.value.length + 2}ch, ${Math.max(140, Math.floor(room))}px)`;
           }
         });
 

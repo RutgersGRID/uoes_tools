@@ -262,21 +262,85 @@ field.
   selector list, since a browser without `:has()` would drop the whole
   list. On a touchscreen a tap on the label shows it (sticky `:hover`) and
   a tap anywhere else hides it.
-- **Not on the blank, and not on focus — Maka, November 18, 2026**: the
+- **Not on the blank, and not on a click — Maka, November 18, 2026**: the
   designers did not want the tip left up once they had clicked into a
   blank. The first version (November 11) also showed it on hovering the
   blank, on focusing an empty blank, and held it open after a click on the
-  label (`.tip-open`, `.filled`); all of that is gone. The consequence,
-  accepted: keyboard users never see the popup (screen reader users still
-  get the text; sighted keyboard users have the "What goes in each
-  blank?" panel). Do not add a focus trigger back without asking.
+  label (`.tip-open`, `.filled`); all of that is gone.
+- **Tab shows it — Maka, same day.** For a few hours keyboard users never
+  saw the popup; then Maka chose this over a focusable "i" button (which
+  would have added four Tab stops that screen reader users also land on,
+  repeating what the blank's description already says). When **Tab or
+  Shift+Tab** lands on an **empty** blank, its wrapper gets `.tip-kbd`
+  and the tip shows; typing, leaving the blank or Escape removes it. The
+  page tells Tab from a click by a `tabbing` flag: a capturing `keydown`
+  for Tab sets it, a capturing `pointerdown` clears it. A click on the
+  label focuses the blank with the flag cleared, so it shows nothing.
+  Screen reader users are unaffected (the tip is `aria-hidden`; they hear
+  the description). The cost, accepted: while open, the tip covers part of
+  the line below.
+- **The area you point at is bigger than the label looks** (Maka,
+  November 18, 2026). `.hint-text` is an inline-block with invisible
+  padding (2px top, 10px sides, 10px bottom) cancelled by a matching
+  negative margin, so the target is about 24px tall (the site's click
+  target size) and the page renders pixel-identical. It grows down and
+  sideways only; the top stops at the blank's bottom edge so pointing at
+  the blank still shows nothing.
+- **The label under each blank is 13px and its icon 14px** (Maka, same
+  day; were 11px and 12px), for readability as well as a bigger target.
+  The guide panel's example labels (`.ex-label`) and the generated
+  objective's labels (`.blank-label`) followed, so all three are 13px and
+  share one CSS rule (as do the example's and the objective's underlined
+  parts, `.ex-part` and `#story .blank`). Change the size in that one
+  rule.
 - A click on the label still puts the cursor in its blank; moving onto
   the blank then hides the tip.
-- **Escape** hides it (`body.tips-off`, cleared on the next pointer move).
+- **Escape** hides it (`body.tips-off`, cleared on the next pointer move
+  or when a blank takes focus) and drops any `.tip-kbd`.
 - **The hover bridge** (`.blank-tip::before`) is only 6px tall. At 22px
   it covered the label itself — the harness caught that.
 - No text on the page says "hover" (see **Why the key is collapsed, not
   deleted**); the harness checks the tips don't either.
+
+### Narrow screens: one part per row
+
+**November 18, 2026** (Maka). Under about 615px the inline sentence
+wrapped wherever it ran out of room ("will ____" mid-line, the degree
+blank stranded alone), and blanks grew past the screen edge with long
+text.
+
+- After building the sentence, the JS groups it into one **`.seg` per
+  blank**: the words before a blank ride with it ("will" + behavior),
+  punctuation right after it stays on its line ("condition ,",
+  "degree ."). On a wide screen `.seg` is inline and nothing changes.
+- **Under 640px** each `.seg` is a full-width flex row and the blanks fill
+  it (`width: 100% !important` beats the auto-grow inline width).
+  **"will" has a row of its own** (`.seg-word`, `flex-basis: 100%`) so
+  all four blanks are equal (Maka, same day). The comma and period sit in
+  a fixed 0.4em slot (`.seg-punct`); rows without one get an empty
+  `::after` slot of the same width, so the blanks are exactly the same
+  width and line up. The blank is `flex: 1 1 0`: with an `auto` basis the
+  full-width input pushed the punctuation onto a line of its own at
+  320px.
+- **Everything is centred in the box** (Maka, same day; asked for "below
+  600px", applied to the whole stacked layout so 600–639px matches). Each
+  row has `padding-left: 0.7em`, matching the punctuation slot plus gap
+  on the right, so the blanks sit centred; "will" is centred across the
+  full row (its `.seg-word` reaches back over that padding); the labels
+  were already centred under their blanks. The input is
+  `box-sizing: border-box`, or its 2px side padding pushes it 4px past
+  its row and 2px off centre. Maka
+  asked for 575px; measured, the odd wrapping runs to about 615px, so it
+  uses 640px, the breakpoint the other pages stack at.
+- **No "rotate your phone" message below 325px**, though Maka asked
+  about one: WCAG 1.4.10 (Reflow) expects content to work at 320px
+  without sideways scrolling, and 320px is also a desktop browser at 400%
+  zoom, where "rotate your phone" would be wrong; 1.3.4 (Orientation)
+  rules out requiring one orientation. The stacked layout works down to
+  280px (harness), so the message isn't needed. Ask Maka before adding
+  one.
+- **Auto-grow is capped** at the sentence box's width at every size, so
+  a long phrase scrolls inside its blank instead of widening the page.
 
 ## Bloom's Taxonomy Verbs page
 
@@ -1648,15 +1712,25 @@ visibility.
 
 For the Learning Objective Builder, `test/verify_learning_objectives.js`
 (new November 11, 2026, rewritten November 18 for the label-only tip)
-runs 81 checks: icon and `aria-hidden` per blank, label text unchanged,
+runs these checks: icon and `aria-hidden` per blank, label text unchanged,
 `aria-describedby` resolving to the guidance in the accessibility tree,
 no `title` or `aria-description` left; the tip showing on the label's
 words and on the icon but not on the blank, the empty part of the label
-row, focus, clicking or typing in a blank; centred under its label,
+row, clicking or typing in a blank; Tab and Shift+Tab into an empty blank
+showing it (not into a filled one, not after a click), typing, leaving
+and Escape closing it; the pointing area at least 24px tall, triggering
+6px below the label and 6px right of the icon but not on the blank's
+bottom edge, with the label text not moved; centred under its label,
 reachable by moving straight down onto it, hidden by Escape and by moving
 away; inside the window at 1280px and 390px, including after a blank
 grows; touch (tap the label shows it, tap the blank or elsewhere hides
-it); and the generated objective unchanged.
+it); the generated objective unchanged; and layout by width (four
+`.seg`s with the comma, "will" and period in the right ones; inline at
+1280 and 640px; at 639, 600, 574, 400, 320 and 280px one row each, in
+order, "will" on its own row, punctuation on its blank's row, all four
+blanks the same width and left edge, blanks, labels and "will" centred
+in the box; a long condition never widening the page or leaving the
+sentence box). 181 checks as of November 18, 2026.
 
 For the stylesheets, `test/verify_css_extraction.js` runs 176 checks: each
 converted page links exactly the expected sheets in the expected order
