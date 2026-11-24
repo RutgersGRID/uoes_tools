@@ -126,7 +126,7 @@ any new rule.
 
 - Fonts follow **uoes.rutgers.edu** (the unit's own site) on every
   page: **PT Serif** for headings (`main h1`–`h4`), **Source Sans 3**
-  for body text, nav and footer — stacks `'PT Serif', Georgia, serif`
+  for body text and the whole header and footer (site name included) — stacks `'PT Serif', Georgia, serif`
   and `'Source Sans 3', 'Source Sans Pro', Helvetica, Arial, sans-serif`,
   loaded from Google Fonts. Source Sans 3 loads real italics (400, 600,
   700) as the unit site does — without them `<em>` and the italic hints
@@ -1582,7 +1582,12 @@ part of the UOES site.
 - **Header** (`css/site_header.css`, `.uoes-site-header`, `ush-*`):
   dark maroon strip, Rutgers mark and site name, utility links and
   search, and a three-item main nav. Every header carries `id="top"` for
-  the footer's back-to-top link.
+  the footer's back-to-top link. All header type is Source Sans, matched
+  to the live site's computed styles on November 24, 2026: site name 400
+  16px/1.25 (19px/1.3158 from 1200px), utility links 700 13px, main nav
+  700 18px. Until then the site name was PT Serif 23px, utility links
+  14px and main nav 600 — the original note claiming the live site name
+  was PT Serif was wrong.
 - **Footer** (`css/site_footer.css`, `.uoes-site-footer`, `usf-*`),
   added October 27, 2026 to every page: black band, white Rutgers mark
   (`images/rutgers_h_white.svg`, with an `onerror` fallback to the live

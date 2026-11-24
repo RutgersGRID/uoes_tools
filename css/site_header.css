@@ -6,10 +6,12 @@
    the left, bold utility links + search at top right, and the
    main navigation row below, right-aligned.
 
-   Fonts match the live theme (Source Sans Pro for nav/utility,
-   PT Serif for the site name); pages load them from Google
-   Fonts as "Source Sans 3" (the current name for Source Sans
-   Pro) with Helvetica/Arial and Georgia fallbacks.
+   Type matches the live theme, measured on uoes.rutgers.edu on
+   November 24, 2026: everything in the header is Source Sans Pro
+   (site name 400 at 16px, 19px from 1200px up; utility links 700
+   13px; main nav 700 18px). PT Serif is for page headings only.
+   Pages load it from Google Fonts as "Source Sans 3" (the current
+   name for Source Sans Pro) with Helvetica/Arial fallbacks.
 
    Load this LAST in each page's <head>, after the page styles:
    it zeroes body's top margin (document.css sets one) and
@@ -81,10 +83,10 @@ body { margin-top: 0 !important; }  /* document.css gives body a 40px top
 }
 
 .ush-site-name {
-  font-family: 'PT Serif', Georgia, serif;
+  font-family: 'Source Sans 3', 'Source Sans Pro', Helvetica, Arial, sans-serif;
   font-weight: 400;
-  font-size: 23px;
-  line-height: 1.35;
+  font-size: 16px;
+  line-height: 1.25;
   color: #000;
 }
 
@@ -106,7 +108,7 @@ body { margin-top: 0 !important; }  /* document.css gives body a 40px top
 .ush-utility nav a {
   font-family: 'Source Sans 3', 'Source Sans Pro', Helvetica, Arial, sans-serif;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 13px;
   color: #000;
   text-decoration: none;
   white-space: nowrap;
@@ -141,7 +143,7 @@ body { margin-top: 0 !important; }  /* document.css gives body a 40px top
 
 .ush-mainnav a {
   font-family: 'Source Sans 3', 'Source Sans Pro', Helvetica, Arial, sans-serif;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 18px;
   color: #000;
   text-decoration: none;
@@ -158,6 +160,11 @@ body { margin-top: 0 !important; }  /* document.css gives body a 40px top
 
 .ush-mainnav a.active {
   border-bottom-color: var(--red);
+}
+
+/* The live site steps the site name up at 1200px. */
+@media (min-width: 1200px) {
+  .ush-site-name { font-size: 19px; line-height: 1.3158; }
 }
 
 /* --- small screens ----------------------------------------- */
