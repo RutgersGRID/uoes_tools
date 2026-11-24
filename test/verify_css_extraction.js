@@ -21,7 +21,7 @@ const ROOT = path.resolve(__dirname, "..");
 
 // Appended to every page by the shared site header. FONTS is cross-origin,
 // so its rules are unreadable from file:// however the browser is launched.
-const FONTS = "https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap";
+const FONTS = "https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap";
 const HEADER = [FONTS, "css/site_header.css"];
 
 // Pages converted to external CSS, with the page's own sheets in order; the

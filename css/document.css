@@ -8,15 +8,29 @@
    to change the measure (750px if unset).
 
    Load order: base.css -> document.css -> <page>.css
+
+   Type follows uoes.rutgers.edu, the unit's own site: PT Serif for
+   headings, Source Sans 3 for everything else. Both come from the
+   Google Fonts sheet each page links. The Rutgers visual identity
+   guide requires a font (FF Meta Pro) only inside the logo signature,
+   so this is a house choice, not a brand rule. Headings are scoped to
+   <main> so the footer's column headings keep the footer's own type.
    ============================================================ */
 
 body {
-  font-family: Georgia, serif;
+  font-family: 'Source Sans 3', 'Source Sans Pro', Helvetica, Arial, sans-serif;
   max-width: var(--content-width, 750px);
   margin: 40px auto;
   padding: 0 20px;
   background: var(--bg);
   color: var(--text);
+}
+
+main h1,
+main h2,
+main h3,
+main h4 {
+  font-family: 'PT Serif', Georgia, serif;
 }
 
 h1 { text-align: center; }

@@ -4,8 +4,9 @@
 
    The landing page has its own shell (the shared Rutgers site
    header from site_header.css above the page content), so it does
-   not use document.css. Type follows the header: PT Serif for
-   headings, Source Sans 3 for body copy, both loaded by index.html.
+   not use document.css. Type follows uoes.rutgers.edu and the header:
+   PT Serif for headings, Source Sans 3 for body copy, both loaded by
+   index.html. document.css uses the same pairing for the tool pages.
    ============================================================ */
 
 body {

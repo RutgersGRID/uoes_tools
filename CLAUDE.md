@@ -124,9 +124,21 @@ Fonts and colors are consistent across pages. The values below are the
 tokens defined in `css/base.css`; prefer `var(--red)` over `#CC0033` in
 any new rule.
 
-- Font: Georgia, serif — except the index page, which uses the site
-  header's pairing since its October 2026 redesign: PT Serif for
-  headings, Source Sans 3 for body text. Page background `#f4f7f9` (`--bg`), body text
+- Fonts follow **uoes.rutgers.edu** (the unit's own site) on every
+  page: **PT Serif** for headings (`main h1`–`h4`), **Source Sans 3**
+  for body text, nav and footer — stacks `'PT Serif', Georgia, serif`
+  and `'Source Sans 3', 'Source Sans Pro', Helvetica, Arial, sans-serif`,
+  loaded from Google Fonts. Source Sans 3 loads real italics (400, 600,
+  700) as the unit site does — without them `<em>` and the italic hints
+  were browser-slanted fakes. Set in `index.css` for the index and
+  `document.css` for the five tool pages (which used Georgia throughout
+  until November 24, 2026). The Rutgers Visual Identity System guide
+  requires a font (FF Meta Pro) only inside the logo signature, and the
+  header uses the logo as an image, so this is a house choice that
+  matches the unit site rather than a brand rule. uoes.rutgers.edu also
+  uses Oswald for its big statistic numerals; the tools have no use for
+  it. The Credit Hour Planner report's `<pre>` stays Consolas on
+  purpose (columns). Page background `#f4f7f9` (`--bg`), body text
   `#333` (`--text`), muted text `#666` (`--muted`) — or `#767676`
   (`--muted-light`) for placeholder-ish text on white.
 - **Rutgers Red `#CC0033`** (`--red`) — headers, primary buttons, links,
