@@ -18,9 +18,7 @@
    is this page's own.
    ============================================================ */
 
-:root {
-  --content-width: 900px; /* matches the Course Map Builder */
-}
+/* Width: the shared 1000px measure from document.css. */
 
 /* ---- intro ----
    The subtitle takes document.css unchanged: centred under the centred

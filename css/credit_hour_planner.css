@@ -5,26 +5,21 @@
    Until September 11, 2026 this page sat on calculator.css beside the
    workload estimator: a 1080px, three-column calculator with red
    uppercase headings and underlined fields. It now takes the course
-   planner's layout instead — a 900px column of numbered step cards
+   planner's layout instead — a column of numbered step cards
    (section.step, from document.css), boxed inputs, black headings and
    the .guide panel for explanatory text. What is left of the
    calculator idiom is the part with no planner equivalent: the stat
    tiles, the breakdown table, the activity rows and the two callouts.
    ============================================================ */
 
-:root {
-  --content-width: 900px; /* same measure as the Course Map Builder */
-}
+/* Width: the shared 1000px measure from document.css.
 
-/* The activity rows and boxed inputs size themselves with widths that
-   include their padding; body is left out so the 900px measure is the
-   same content width the planner gets. */
+   The activity rows and boxed inputs size themselves with widths that
+   include their padding; body is left out so the 1000px measure is the
+   same content width every other page gets. */
 main, main * { box-sizing: border-box; }
 
 .subtitle {
-  max-width: 900px;
-  margin-left: auto;
-  margin-right: auto;
   line-height: 1.5;
 }
 

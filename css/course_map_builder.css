@@ -3,14 +3,9 @@
    Loaded after base.css and document.css.
    ============================================================ */
 
-:root {
-  --content-width: 900px; /* wider than the default document measure */
-}
+/* Width: the shared 1000px measure from document.css. */
 
 .subtitle {
-  max-width: 900px;
-  margin-left: auto;
-  margin-right: auto;
   line-height: 1.5;
 }
 

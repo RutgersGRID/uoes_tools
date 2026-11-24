@@ -88,8 +88,8 @@ sheets — `site_header.css` (after the Google Fonts link) and
   `.primary-btn` / `.small-btn` pair. Those were the planner's own until
   the credit hour planner adopted the same layout; they moved verbatim
   and the planner renders byte-identically. The measure is
-  `var(--content-width, 750px)`; the planner and the credit hour planner
-  each set `--content-width: 900px` in their own sheet. The `.guide` panel takes a `var(--blue)` border and
+  `var(--content-width, 1000px)`, and no page overrides it (see
+  **Design system**, content max-width). The `.guide` panel takes a `var(--blue)` border and
   16px text (both changed August 26, 2026 — see **Accessibility
   conventions**).
 - **`css/calculator.css` is gone** (deleted September 14, 2026). It was
@@ -163,12 +163,17 @@ any new rule.
 - Red-tinted washes: `--red-wash` `#fff4f6` (warning callouts),
   `--red-tint` `#ffe3ea` (the "contact time" tag), `--red-pale` `#ffdbe4`
   (sub-label on a solid red tile).
-- Content max-width: 1000px on the index page (750px before its
-  October 2026 redesign), 750px on the objective builders,
-  900px on the planner, the credit hour planner and the activity
-  estimator (the estimator was 1080px, as a wide multi-column
-  calculator, until September 14, 2026). On the `document.css` pages
-  this is the `--content-width` token.
+- Content max-width: **1000px on every page** since November 24, 2026
+  (Maka: be consistent across the index and the tools). The index sets
+  it on `main` in `index.css`; the tool pages get it on `body` from
+  `document.css`'s `--content-width` default, and no page sheet
+  overrides it. Both add 20px padding each side. Before: index 1000px
+  (750px before its October 2026 redesign), objective builders and
+  Bloom's verbs 750px, the Course Map Builder, credit hour planner and
+  activity estimator 900px (the estimator was 1080px until September
+  14, 2026), each subtitle capped at 900px. The header and footer
+  columns stay at 1320px; 1260px would have lined the content up with
+  the header's logo and search icon.
 
 ## Accessibility conventions
 

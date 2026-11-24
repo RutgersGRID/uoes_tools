@@ -4,8 +4,10 @@
    Used by learning_objectives.html, blooms_verbs.html, course_map_builder.html
    and credit_hour_planner.html:
    pages that read as a centred document at reading width rather
-   than a wide calculator. Set --content-width in the page file
-   to change the measure (750px if unset).
+   than a wide calculator. Every page uses the default 1000px
+   measure, the same as the index's <main> (November 24, 2026; the
+   objective builders were 750px and the planners 900px before).
+   A page can still set --content-width in its own file.
 
    Load order: base.css -> document.css -> <page>.css
 
@@ -19,7 +21,7 @@
 
 body {
   font-family: 'Source Sans 3', 'Source Sans Pro', Helvetica, Arial, sans-serif;
-  max-width: var(--content-width, 750px);
+  max-width: var(--content-width, 1000px);
   margin: 40px auto;
   padding: 0 20px;
   background: var(--bg);
