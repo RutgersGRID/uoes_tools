@@ -721,10 +721,12 @@ function readZip(buf) {
   // the plan reflects several objectives with their tags
   await page.click("#generateBtn");
   await page.waitForTimeout(200);
-  const planAlign = await page.$eval("#plan", n => n.innerText);
-  ok("plan lists both objectives with their alignment tags",
-    /Objectives: Trace energy through a web \[aligns with CO1\]; Predict effects of a removal \[aligns with CO1\]/
-      .test(planAlign), planAlign.slice(0, 600));
+  const alignObjs = await page.$$eval(
+    "#plan tbody tr:first-child td:nth-of-type(2) p", ns => ns.map(n => n.textContent));
+  ok("plan lists both objectives with their alignment tags, one paragraph each",
+    JSON.stringify(alignObjs) === JSON.stringify([
+      "Trace energy through a web [aligns with CO1]",
+      "Predict effects of a removal [aligns with CO1]"]), JSON.stringify(alignObjs));
 
   // ---- plan generation ----
   await page.evaluate(() => localStorage.clear());
@@ -751,12 +753,48 @@ function readZip(buf) {
   ok("plan goals heading drops activities",
     /Course objectives & assessments/i.test(planText) ||
     !/goals, assessments & activities/i.test(planText));
-  ok("plan module order is Objectives, Materials, Assessments, Activities",
-    /Objectives: Identify trophic levels \[aligns with CO1\][\s\S]*Materials: Chapter 3[\s\S]*Assessments: Quiz 1[\s\S]*Activities: Intro video/.test(planText),
-    planText.slice(0, 400));
+  // The module schedule is a table matching the Word export.
+  const planHeads = await page.$$eval("#plan thead th", ns => ns.map(n => n.textContent));
+  ok("plan table columns match the Word export",
+    JSON.stringify(planHeads) ===
+      JSON.stringify(await page.evaluate(() => DOCX_COLS.map(c => c[0]))),
+    JSON.stringify(planHeads));
+  ok("plan table has one row per module",
+    (await page.$$eval("#plan tbody tr", ns => ns.length)) ===
+      (await page.evaluate(() => state.modules.length)));
+  const row1 = await page.$$eval("#plan tbody tr:first-child > *", ns => ns.map(n => n.innerText.trim()));
+  ok("plan row reads Module, Topic, Objectives, Materials, Assessments, Activities",
+    JSON.stringify(row1) === JSON.stringify(["Module 1", "",
+      "Identify trophic levels [aligns with CO1]", "Chapter 3", "Quiz 1", "Intro video"]),
+    JSON.stringify(row1));
+  ok("each row is headed by its module, for screen readers",
+    (await page.$eval("#plan tbody tr:first-child > :first-child", n =>
+      n.tagName + "/" + n.getAttribute("scope"))) === "TH/row");
+  ok("the table scrolls in a named, focusable region",
+    await page.$eval("#plan .plan-table-scroll", n =>
+      n.getAttribute("role") === "region" && n.tabIndex === 0 &&
+      document.getElementById(n.getAttribute("aria-labelledby")).textContent === "Module schedule"));
+  const colPct = await page.$$eval("#plan col", ns => ns.map(n => parseFloat(n.style.width)));
+  ok("table column proportions come from DOCX_COLS",
+    Math.abs(colPct.reduce((a, b) => a + b, 0) - 100) < 0.5 && colPct[2] > colPct[0],
+    JSON.stringify(colPct));
+  // copy carries the same table as HTML, and a plain-text version
+  const clip = await page.evaluate(() => ({ rich: richPlan, text: plainPlan }));
+  ok("copied HTML is the same table",
+    /<table[\s\S]*>Module<\/th>[\s\S]*>Activities<\/th>[\s\S]*<b>Module 1<\/b>[\s\S]*Identify trophic levels \[aligns with CO1\][\s\S]*Chapter 3[\s\S]*Quiz 1[\s\S]*Intro video/.test(clip.rich),
+    clip.rich.slice(0, 400));
+  ok("copied HTML carries its own borders (a paste has no stylesheet)",
+    /border:1px solid #[0-9A-F]{6}/.test(clip.rich));
+  ok("plain-text copy keeps the module order",
+    /Module 1\n  Objectives: Identify trophic levels \[aligns with CO1\]\n  Materials: Chapter 3\n  Assessments: Quiz 1\n  Activities: Intro video/.test(clip.text),
+    clip.text.slice(0, 400));
+  ok("the copy button is named Copy",
+    (await page.$eval("#copyBtn", n => n.textContent)) === "Copy");
   ok("plan has no due dates row", !/Due dates/i.test(planText));
   ok("plan has no Topics section", !/^\s*Topics\s*$/m.test(planText), planText.slice(0, 400));
-  ok("empty modules marked not planned", /\(not planned yet\)/.test(planText));
+  const emptyRow = await page.$$eval("#plan tbody tr:nth-child(3) td", ns => ns.map(n => n.innerText.trim()));
+  ok("an unplanned module keeps its row with empty cells, as in Word",
+    emptyRow.length === 5 && emptyRow.every(t => t === ""), JSON.stringify(emptyRow));
   ok("plan heading carries the course title",
     (await page.$eval("#planHead", n => n.textContent)) === "Intro to Ecology — Course Map");
 
@@ -878,14 +916,10 @@ function readZip(buf) {
     JSON.stringify(mod2Objs));
   await page.click("#generateBtn");
   await page.waitForTimeout(200);
-  const gapPlan = await page.$eval("#plan", n => n.innerText);
-  const mod2Block = gapPlan.split(/\n(?=Module )/)
-    .filter(s => /^Module 2\b/.test(s))[0] || "";
+  const mod2Objs2 = await page.$eval(
+    "#plan tbody tr:nth-child(2) td:nth-of-type(2)", n => n.innerText.trim());
   ok("the plan keeps the row and marks the missing objective",
-    /Objectives: \(objective not written yet\) \[aligns with CO1\]/.test(mod2Block),
-    JSON.stringify(mod2Block));
-  ok("a module with an alignment is no longer called unplanned",
-    !/\(not planned yet\)/.test(mod2Block), JSON.stringify(mod2Block));
+    mod2Objs2 === "(objective not written yet) [aligns with CO1]", JSON.stringify(mod2Objs2));
   const gapDocx = await page.evaluate(() =>
     docxParts().filter(p => p.name === "word/document.xml")[0].text);
   ok("the Word export keeps it too",

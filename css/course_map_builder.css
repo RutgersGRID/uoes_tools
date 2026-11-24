@@ -509,8 +509,23 @@ body:not(.tips-off) .align-chip-wrap:has(input:focus-visible) .align-tip {
   margin-bottom: 10px;
 }
 
+/* The module table: same columns, in the same order and proportions, as
+   the Word export (widths come from DOCX_COLS via <col>). On a narrow
+   screen it scrolls sideways inside its own region rather than squeezing
+   six columns into a phone's width. */
+#plan .plan-table-scroll {
+  overflow-x: auto;
+  padding: 1px; /* keeps the table's outer border clear of the clip */
+}
+
+#plan .plan-table-scroll:focus-visible {
+  outline: 3px solid var(--blue-mid);
+  outline-offset: 2px;
+}
+
 #plan table {
   width: 100%;
+  min-width: 640px;
   border-collapse: collapse;
 }
 
@@ -522,15 +537,24 @@ body:not(.tips-off) .align-chip-wrap:has(input:focus-visible) .align-tip {
   text-align: left;
   font-size: 15px;
   line-height: 1.5;
+  overflow-wrap: break-word;
 }
 
-#plan th {
+#plan thead th {
   background: var(--blue-light);
 }
 
-#plan .plan-module {
-  margin-bottom: 12px;
-  line-height: 1.6;
+/* "Module 12" stays on one line. */
+#plan tr> :first-child {
+  white-space: nowrap;
+}
+
+#plan td p {
+  margin: 0 0 6px;
+}
+
+#plan td p:last-child {
+  margin-bottom: 0;
 }
 
 #plan ul {
@@ -585,4 +609,29 @@ a:focus {
     border: none;
     padding: 0;
   }
+
+  /* The table prints whole, across the page, like the Word file. */
+  #plan .plan-table-scroll {
+    overflow: visible;
+  }
+
+  #plan table {
+    min-width: 0;
+  }
+
+  #plan th,
+  #plan td {
+    font-size: 10pt;
+    padding: 4px 6px;
+  }
+
+  #plan tr {
+    break-inside: avoid;
+  }
+}
+
+/* Landscape, as the Word export is: six columns need the width. */
+@page {
+  size: letter landscape;
+  margin: 0.6in;
 }

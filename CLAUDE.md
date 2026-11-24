@@ -447,8 +447,9 @@ describes the live one:
   `uoes-course-planner-v2` until August 27, 2026 — see **Storage key**
   below. `load()` still migrates a v1-shaped save, and the harness still
   checks that.
-- "Create My Course Map" renders the plan (only filled-in fields; empty
-  modules show "(not planned yet)"), with Copy-as-text and Print buttons.
+- "Create My Course Map" renders the plan in the Word export's layout
+  (see **v2 plan output**), with Copy, Print and Download as Word
+  buttons.
 - Print CSS shows only the generated plan. The hide rule must target
   `main > :not(#planWrap)` — an earlier `body > …` selector hid `<main>`
   itself and printed a blank page. Keep this in mind if restructuring.
@@ -891,27 +892,52 @@ Escape dismissing while the pointer is still on the chip.
 
 ### v2 plan output
 
+**Since November 24, 2026 the on-page plan, Copy and Print all use the
+Word export's layout** (Maka: "We're very happy with the Word output").
+Before that the page showed one text block per module.
+
 - Heading is "Course objectives & assessments" — there is no per-objective
-  activities line any more.
-- Course objectives are printed with their numbers: "CO1 — Analyze a food
-  web".
-- Module objectives print as one line, semicolon-separated, each tagged;
-  an unwritten one that carries alignments prints as the `UNWRITTEN`
-  placeholder rather than vanishing:
-  `Objectives: Identify trophic levels [aligns with CO1]; Trace energy
-  through a web [aligns with CO1, CO2]`. Tags are emitted in course
-  objective order, not click order.
-- Module fields print in the same order as the card: Objectives,
-  Materials, Assessments, Activities. Keep the two in step if either
-  changes.
+  activities line any more. Course objectives are listed with their
+  numbers: "CO1 — Analyze a food web", then "Assessment: …".
+- Then **"Module schedule" as a table, one row per module**, with the
+  columns, order and proportions of `DOCX_COLS` (Module, Topic,
+  Objectives, Materials, Assessments, Activities). The `<col>` widths are
+  computed from `DOCX_COLS`, so changing the Word columns changes the
+  page too. The module cell is a `<th scope="row">`.
+- Module objectives are one paragraph each inside the Objectives cell,
+  tagged `[aligns with CO1, CO2]` (course objective order, not click
+  order); an unwritten one that carries alignments shows the `UNWRITTEN`
+  placeholder rather than vanishing. A textarea's line breaks are kept.
+- **An unplanned module keeps its row with empty cells**, as in Word. The
+  old "(not planned yet)" text is gone.
+- `planRows()` feeds all three of `buildPlan()`'s outputs and
+  `moduleObjectiveList()` is shared with `docxParts()`, so the page, the
+  clipboard and the Word file cannot drift.
+- **Narrow screens:** the table has a 640px minimum width and scrolls
+  sideways inside `.plan-table-scroll`, a focusable `role="region"`
+  labelled by the "Module schedule" heading (keyboard users can scroll
+  it). Six columns squeezed to a phone's width were unreadable; stacking
+  rows as cards would have lost the table that is the point.
+- **Copy** (was "Copy as text") puts two versions on the clipboard via
+  `ClipboardItem`: `text/html` — the same table with **inline** styles and
+  brand colours from `token()`, because a paste carries no stylesheet —
+  and `text/plain`, one module after another
+  (`Module 1` / `  Objectives: …; …` / `  Materials: …`), for anywhere
+  that won't take a table. Word, Google Docs and the LMS rich-text editor
+  paste the table. If `navigator.clipboard.write` is refused, a `copy`
+  event handler sets both types through `execCommand("copy")`.
+- **Print** is landscape Letter (`@page`, 0.6in margins), 10pt cells,
+  rows kept whole across page breaks; the header row repeats on each
+  page. The `main > :not(#planWrap)` hide rule is unchanged.
 
 ### Word export
 
 "Download as Word" sits beside Copy-as-text and Print inside `#planWrap`,
 added August 27, 2026 at Maka's request: the plan wanted to leave the page
 as a Word table with **one row per module (week)**, editable, pasteable
-into a syllabus, and circulable for comment. Print is unchanged and still
-prints the on-page plan.
+into a syllabus, and circulable for comment. Since November 24, 2026 the
+on-page plan, Copy and Print follow this layout too — see **v2 plan
+output**.
 
 **It writes the `.docx` by hand — file format and archive both.** A .docx
 is a ZIP of XML parts, and this repo has no build step and no
@@ -967,8 +993,8 @@ paragraph each inside the cell, tagged `[aligns with CO1, CO2]` exactly as
 the on-page plan tags them: `moduleObjectiveList()` was factored out of
 `buildPlan()` so the two cannot drift.
 
-**An unplanned module keeps its row with empty cells** rather than saying
-"(not planned yet)" the way the on-page plan does. That is deliberate — an
+**An unplanned module keeps its row with empty cells** (and since
+November 24, 2026 so does the on-page table). That is deliberate — an
 empty row in Word is a week you have not planned *and* somewhere to type,
 so the export doubles as a template. If a designer reads a blank row as a
 bug, this is the note to revisit.
@@ -1683,7 +1709,7 @@ ignored, Start over; the summary text and its credit line; and the phone
 layout at 390px. Its only failure in a sandbox is the blocked-fonts
 "no page errors" check.
 
-For the Course Map Builder, `test/verify_course_planner_v2.js` runs 168
+For the Course Map Builder, `test/verify_course_planner_v2.js` runs 176
 checks (the count moves with almost every planner change; treat a
 mismatch as a stale note, not a failure): the three step headings and badge numbers, the collapsible-step
 defaults (all four are `<details>`, basics and Step 1 open, 2 and 3
@@ -1792,6 +1818,13 @@ tolerate the **cross-origin Google Fonts sheet** the site header links:
 rather than counted as a parse failure.
 
 ## Current status
+
+- **Course Map Builder output follows the Word layout, November 24,
+  2026** (makalaptop, Maka's request). "Create My Course Map" now shows
+  the module schedule as a table with the Word export's columns; Copy
+  puts that table on the clipboard as HTML (plus plain text) and Print
+  prints it landscape. The Word export itself is unchanged. "Copy as
+  text" is now "Copy". See **v2 plan output**. Tests 168 → 176.
 
 - **Index page redesigned and the UOES site footer added to every page,
   October 26–27, 2026.** Maka and Claude together, on makalaptop. The

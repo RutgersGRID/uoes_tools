@@ -247,7 +247,7 @@
       <section id="planWrap" aria-live="polite" aria-labelledby="planHead">
         <h2 id="planHead">Your Course Map</h2>
         <div id="plan"></div>
-        <button type="button" class="small-btn" id="copyBtn">Copy as text</button>
+        <button type="button" class="small-btn" id="copyBtn">Copy</button>
         <button type="button" class="small-btn" id="printBtn">Print</button>
         <button type="button" class="small-btn" id="wordBtn">Download as Word</button>
         <span id="copyStatus" role="status" class="sr-only"></span>
@@ -857,73 +857,129 @@
           });
       }
 
+      // The on-page plan, the copied plan and the Word file all share one
+      // layout: course objectives first, then a module table with one row
+      // per module and the columns in DOCX_COLS. An unplanned module keeps
+      // its row with empty cells, as it does in Word.
+      function planRows(numbered) {
+        return state.modules.map((m, i) => ({
+          module: "Module " + (i + 1),
+          cells: [
+            m.topic.trim(),
+            moduleObjectiveList(m, numbered),
+            m.materials.trim(),
+            m.assessments.trim(),
+            m.activities.trim()
+          ]
+        }));
+      }
+
       function buildPlan() {
         const title = state.course.trim() || "Untitled course";
-        const html = [];
-        const text = [];
-
-        text.push(title + " — Course Map", "");
-
-        // Course objectives and their assessments, numbered CO1, CO2, … so the
-        // module objectives can point back at them.
-        html.push("<h3>Course objectives &amp; assessments</h3>");
         const numbered = numberedGoals();
-        const numOf = id => {
-          const e = numbered.filter(x => x.id === id)[0];
-          return e ? e.num : null;
-        };
-        const goals = state.goals.filter(g => g.text.trim());
+        const goals = state.goals.filter(g => g.text.trim()).map(g => {
+          const e = numbered.filter(x => x.id === g.id)[0];
+          return { label: (e ? e.num + " — " : "") + g.text.trim(), evidence: g.evidence.trim() };
+        });
+        const rows = planRows(numbered);
+        const pct = c => (c[1] / DOCX_TABLE_W * 100).toFixed(1) + "%";
+        // A cell's text keeps its line breaks; a list of module objectives
+        // becomes one paragraph each, as in the Word cell.
+        const cellHtml = v => Array.isArray(v)
+          ? v.map(o => "<p>" + esc(o) + "</p>").join("")
+          : esc(v).replace(/\r?\n/g, "<br>");
+
+        // ---- on the page ----
+        const html = [];
+        html.push('<h3 id="planGoalsHead">Course objectives &amp; assessments</h3>');
         if (goals.length) {
           html.push("<ul>");
-          text.push("COURSE OBJECTIVES & ASSESSMENTS");
-          goals.forEach(g => {
-            const ev = g.evidence.trim();
-            const tag = numOf(g.id) ? numOf(g.id) + " — " : "";
-            html.push("<li><strong>" + esc(tag + g.text.trim()) + "</strong><br>" +
-              (ev ? "Assessment: " + esc(ev)
-                : '<span class="muted">No assessment planned yet</span>') + "</li>");
-            text.push("- " + tag + g.text.trim());
-            text.push("  Assessment: " + (ev || "(none planned yet)"));
-          });
+          goals.forEach(g => html.push("<li><strong>" + esc(g.label) + "</strong><br>" +
+            (g.evidence ? "Assessment: " + esc(g.evidence)
+              : '<span class="muted">No assessment planned yet</span>') + "</li>"));
           html.push("</ul>");
-          text.push("");
         } else {
           html.push('<p class="muted">No objectives written yet.</p>');
         }
+        html.push('<h3 id="planModulesHead">Module schedule</h3>');
+        // The scroll region lets six columns stay a table on a phone; it is
+        // focusable so a keyboard user can scroll it too.
+        html.push('<div class="plan-table-scroll" role="region" ' +
+          'aria-labelledby="planModulesHead" tabindex="0">');
+        html.push('<table class="plan-table"><colgroup>' +
+          DOCX_COLS.map(c => '<col style="width:' + pct(c) + '">').join("") +
+          "</colgroup><thead><tr>" +
+          DOCX_COLS.map(c => '<th scope="col">' + c[0] + "</th>").join("") +
+          "</tr></thead><tbody>");
+        rows.forEach(r => html.push('<tr><th scope="row">' + r.module + "</th>" +
+          r.cells.map(v => "<td>" + cellHtml(v) + "</td>").join("") + "</tr>"));
+        html.push("</tbody></table></div>");
 
-        // Module schedule
-        html.push("<h3>Module schedule</h3>");
-        text.push("MODULE SCHEDULE");
-        state.modules.forEach((m, i) => {
-          const title = "Module " + (i + 1) + (m.topic.trim() ? ": " + m.topic.trim() : "");
-          const objText = moduleObjectiveList(m, numbered).join("; ");
-          const fields = [
-            ["Objectives", objText],
-            ["Materials", m.materials],
-            ["Assessments", m.assessments],
-            ["Activities", m.activities]
-          ].filter(f => (f[1] || "").trim());
-          const lines = fields.map(f => f[0] + ": " + f[1].trim());
-          html.push('<div class="plan-module"><strong>' + esc(title) + "</strong>" +
-            (lines.length
-              ? "<br>" + lines.map(esc).join("<br>")
-              : '<br><span class="muted">(not planned yet)</span>') + "</div>");
-          text.push(title);
-          if (lines.length) lines.forEach(l => text.push("  " + l));
-          else text.push("  (not planned yet)");
+        // ---- on the clipboard, as HTML ----
+        // Word, Google Docs and Canvas's editor all paste this as a real
+        // table. Styles are inline because a paste carries no stylesheet;
+        // the colours come from the same tokens as the Word export.
+        const red = "#" + token("--red", "CC0033");
+        const band = "#" + token("--blue-light", "DEF0F9");
+        const rule = "#" + token("--blue-mid", "7DBFD6");
+        const box = "border:1px solid " + rule + ";padding:4px 6px;" +
+          "vertical-align:top;text-align:left;";
+        const p0 = s => '<p style="margin:0 0 4px 0">' + s + "</p>";
+        const rich = [];
+        rich.push('<h1 style="color:' + red + '">' + esc(title) + " — Course Map</h1>");
+        rich.push('<h2 style="color:' + red + '">Course objectives &amp; assessments</h2>');
+        if (goals.length) {
+          goals.forEach(g => rich.push('<p style="margin:0 0 8px 0"><b>' + esc(g.label) +
+            "</b><br>Assessment: " + esc(g.evidence || "(none planned yet)") + "</p>"));
+        } else {
+          rich.push("<p><i>No objectives written yet.</i></p>");
+        }
+        rich.push('<h2 style="color:' + red + '">Module schedule</h2>');
+        rich.push('<table border="1" cellspacing="0" cellpadding="4" ' +
+          'style="border-collapse:collapse;width:100%"><thead><tr>' +
+          DOCX_COLS.map(c => '<th style="' + box + "background:" + band +
+            ";width:" + pct(c) + '">' + c[0] + "</th>").join("") +
+          "</tr></thead><tbody>");
+        rows.forEach(r => rich.push('<tr><td style="' + box + '"><b>' + r.module + "</b></td>" +
+          r.cells.map(v => '<td style="' + box + '">' + (Array.isArray(v)
+            ? v.map(o => p0(esc(o))).join("")
+            : esc(v).replace(/\r?\n/g, "<br>")) + "</td>").join("") + "</tr>"));
+        rich.push("</tbody></table>");
+
+        // ---- on the clipboard, as plain text ----
+        // For anywhere that will not take a table: the same content, one
+        // module after another.
+        const text = [title + " — Course Map", "", "COURSE OBJECTIVES & ASSESSMENTS"];
+        if (goals.length) {
+          goals.forEach(g => text.push("- " + g.label,
+            "  Assessment: " + (g.evidence || "(none planned yet)")));
+        } else {
+          text.push("(no objectives written yet)");
+        }
+        text.push("", "MODULE SCHEDULE");
+        rows.forEach(r => {
+          text.push(r.module);
+          r.cells.forEach((v, n) => {
+            const val = Array.isArray(v) ? v.join("; ") : v;
+            if (val) text.push("  " + DOCX_COLS[n + 1][0] + ": " +
+              val.replace(/\r?\n/g, "\n    "));
+          });
         });
 
         return {
           title: title,
           html: html.join("\n"),
-          text: text.join("\n").replace(/\n{3,}/g, "\n\n")
+          rich: rich.join("\n"),
+          text: text.join("\n")
         };
       }
 
       let plainPlan = "";
+      let richPlan = "";
       $("generateBtn").addEventListener("click", () => {
         const built = buildPlan();
         plainPlan = built.text;
+        richPlan = built.rich;
         $("planHead").textContent = built.title + " — Course Map";
         $("plan").innerHTML = built.html;
         const wrap = $("planWrap");
@@ -931,23 +987,39 @@
         wrap.scrollIntoView({ behavior: "smooth" });
       });
 
-      // Copy the plain-text plan, with brief feedback
+      // Copy the plan as a table (HTML) with a plain-text version alongside,
+      // so it pastes as a table into Word, Google Docs or the LMS editor and
+      // as readable text anywhere else.
       const copyBtn = $("copyBtn");
+      function copyFallback() {
+        const onCopy = e => {
+          e.clipboardData.setData("text/html", richPlan);
+          e.clipboardData.setData("text/plain", plainPlan);
+          e.preventDefault();
+        };
+        const ta = document.createElement("textarea");
+        ta.value = plainPlan;
+        document.body.appendChild(ta);
+        ta.select();
+        document.addEventListener("copy", onCopy);
+        try { document.execCommand("copy"); } finally {
+          document.removeEventListener("copy", onCopy);
+          ta.remove();
+        }
+      }
       copyBtn.addEventListener("click", async () => {
         try {
-          await navigator.clipboard.writeText(plainPlan);
+          await navigator.clipboard.write([new ClipboardItem({
+            "text/html": new Blob([richPlan], { type: "text/html" }),
+            "text/plain": new Blob([plainPlan], { type: "text/plain" })
+          })]);
         } catch (err) {
-          const ta = document.createElement("textarea");
-          ta.value = plainPlan;
-          document.body.appendChild(ta);
-          ta.select();
-          document.execCommand("copy");
-          ta.remove();
+          copyFallback();
         }
         copyBtn.textContent = "Copied!";
         $("copyStatus").textContent = "Course map copied to clipboard";
         setTimeout(() => {
-          copyBtn.textContent = "Copy as text";
+          copyBtn.textContent = "Copy";
           $("copyStatus").textContent = "";
         }, 1500);
       });
