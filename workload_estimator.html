@@ -4,10 +4,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Learning Activity Estimator</title>
+    <title>Workload Estimator</title>
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/document.css">
-    <link rel="stylesheet" href="css/learning_activity_estimator.css">
+    <link rel="stylesheet" href="css/workload_estimator.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -55,7 +55,7 @@
 
     <main>
 
-      <h1>Learning Activity Estimator</h1>
+      <h1>Workload Estimator</h1>
       <p class="subtitle">You can use this tool to estimate how long a learning activity will take your
         students.<br />Click a section heading to expand or collapse it.</p>
 
@@ -724,10 +724,12 @@
         var TEXT_WORDS_PER_HOUR = 250;   // composing discussion prose
         var AV_MINUTES_PER_HOUR = 3;     // 20 min of work per finished minute
 
-        /* A new key: the Course Workload Estimator this page replaced saved a
-           different set of fields under "uoes-workload-estimator", and none of
-           its per-week figures mean anything here. Deliberately not read. */
-        var STORAGE_KEY = "uoes-activity-estimator";
+        /* Was "uoes-activity-estimator" from September 14 to November 25,
+           2026, while the page was the Learning Activity Estimator. Back to
+           the original key with the original name (Maka's call; nobody else
+           had saved work). Fields a pre-September course-level save holds
+           are not in FIELDS, so such a save simply loads as defaults. */
+        var STORAGE_KEY = "uoes-workload-estimator";
 
         var FIELDS = [
           "pages", "readingdensity", "difficulty", "readingpurpose",
@@ -998,7 +1000,7 @@
            have anything in them, so each heading carries its own estimate.
 
            Written into `data-sum` on the <summary> and drawn by CSS generated
-           content (see the ::after rule in learning_activity_estimator.css).
+           content (see the ::after rule in workload_estimator.css).
            It must NOT be a child element: as a floated <span> the rendered
            label picks up a space the summary's text content does not have,
            which breaks WCAG 2.5.3 label-in-name. Empty string when a section

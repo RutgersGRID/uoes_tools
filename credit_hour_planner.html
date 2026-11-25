@@ -442,7 +442,7 @@
                     and 1 hour is the estimator's figure for a 250-word post.
            `bucket` the default answer to "counts as"; the designer can change
                     it on any row.
-           `method` which of the Learning Activity Estimator's methods the
+           `method` which of the Workload Estimator's methods the
                     row's Estimate panel uses (see ESTIMATE below). Types with
                     none have only the typical time.
            `unit`   what "how many" counts, singular and plural, shown beside
@@ -479,9 +479,9 @@
         TYPES.forEach(function (t) { TYPE_BY_ID[t.id] = t; });
 
         /* ------------------------------------------------------------------
-           Estimates, borrowed from the Learning Activity Estimator.
+           Estimates, borrowed from the Workload Estimator.
 
-           These tables are COPIES of the ones in learning_activity_estimator.html
+           These tables are COPIES of the ones in workload_estimator.html
            (which transcribed them from the Rice / Wake Forest Course Workload
            Estimator's R code). The repo keeps each tool in one self-contained
            file, so they are not shared; test/verify_credit_hour_planner.js

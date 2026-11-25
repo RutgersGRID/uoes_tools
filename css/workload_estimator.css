@@ -1,11 +1,11 @@
 /* ============================================================
-   Learning Activity Estimator — page-specific styles
+   Workload Estimator — page-specific styles
    Loaded after base.css and document.css.
    ------------------------------------------------------------
    This page was the Course Workload Estimator until September 14,
    2026, when it was scoped down from a per-week course workload
    calculator to an estimator for individual learning activities
-   (see CLAUDE.md, "Learning Activity Estimator notes"). The
+   (see CLAUDE.md, "Workload Estimator notes"). The
    stylesheet is the estimator's restyle of the same day, with the
    course-level pieces (the independent/contact tag, the share bar,
    the slider) removed.

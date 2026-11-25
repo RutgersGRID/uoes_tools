@@ -51,8 +51,8 @@
 </head>
 <body>
   <div class="card">
-    <h1>Learning Activity Estimator Test Data</h1>
-    <p>Fills every section of the Learning Activity Estimator with one
+    <h1>Workload Estimator Test Data</h1>
+    <p>Fills every section of the Workload Estimator with one
       activity from <strong>Rock 'n' Roll: Origins to Present</strong>, then
       opens it. The estimator has no field for an activity's name, so this is
       what each section will be holding:</p>
@@ -83,12 +83,12 @@
   </div>
 
   <script>
-    // Must match STORAGE_KEY in learning_activity_estimator.html — seeding
+    // Must match STORAGE_KEY in workload_estimator.html — seeding
     // any other key just opens an empty estimator. The shape is the page's
     // own save: one entry per field id, values as strings (a select's option
     // value, a number field's text) and checkboxes as booleans. load() copies
     // each straight into its control, so anything left out keeps its default.
-    const KEY = "uoes-activity-estimator";
+    const KEY = "uoes-workload-estimator";
     const SEED = {
       // Reading — Module 7 readings
       "pages": "28",
@@ -139,7 +139,7 @@
       try {
         localStorage.setItem(KEY, JSON.stringify(SEED));
         status.textContent = "Loaded! Opening the estimator…";
-        setTimeout(() => { window.location.href = "../learning_activity_estimator.html"; }, 400);
+        setTimeout(() => { window.location.href = "../workload_estimator.html"; }, 400);
       } catch (e) {
         status.textContent = "Could not save: " + e.message;
       }

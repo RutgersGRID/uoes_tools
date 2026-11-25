@@ -1,5 +1,5 @@
 /*
- * Verification harness for learning_activity_estimator.html.
+ * Verification harness for workload_estimator.html.
  *
  * The page estimates one learning activity per section and totals the
  * sections; it has no course-level figures at all. These checks cover the
@@ -12,14 +12,14 @@
  * speaks of hours per week or of independent/contact time, and every
  * activity on the Credit Hour Planner's lists has a home here.
  *
- *   node test/verify_activity_estimator.js
+ *   node test/verify_workload_estimator.js
  */
 const path = require("path");
 const { chromium } = require("playwright-core");
 const { chromePath } = require("./_chrome");
 
 const ROOT = path.resolve(__dirname, "..");
-const PAGE = "file://" + path.join(ROOT, "learning_activity_estimator.html");
+const PAGE = "file://" + path.join(ROOT, "workload_estimator.html");
 
 let pass = 0, fail = 0;
 function ok(name, cond, detail) {
@@ -67,8 +67,8 @@ function near(name, got, exp, eps) {
         .map((h) => h.textContent.trim()),
       open: Array.from(document.querySelectorAll("section.step > details.step-body")).map((d) => d.open),
     }));
-    ok("title is Learning Activity Estimator", t.title === "Learning Activity Estimator", t.title);
-    ok("h1 matches", t.h1 === "Learning Activity Estimator", t.h1);
+    ok("title is Workload Estimator", t.title === "Workload Estimator", t.title);
+    ok("h1 matches", t.h1 === "Workload Estimator", t.h1);
     ok("no Course info section / class-weeks field", !t.classweeks && !/Course info/.test(t.text));
     ok("no course-level fields survive", t.ids.length === 0, t.ids.join(","));
     ok("nothing on the page says per week", !/per week|hrs\/wk|hours\/week|a week/i.test(t.text));
@@ -331,8 +331,8 @@ function near(name, got, exp, eps) {
     await set("pr_pages", 30);
     await page.waitForTimeout(600);
     const keys = await page.evaluate(() => Object.keys(localStorage));
-    ok("saves under uoes-activity-estimator", keys.includes("uoes-activity-estimator"), keys.join(","));
-    ok("never writes the old estimator's key", !keys.includes("uoes-workload-estimator"), keys.join(","));
+    ok("saves under uoes-workload-estimator", keys.includes("uoes-workload-estimator"), keys.join(","));
+    ok("never writes the Learning Activity Estimator's key", !keys.includes("uoes-activity-estimator"), keys.join(","));
     const before = await calc();
 
     await page.goto(PAGE); await page.waitForTimeout(150); await openAll();
@@ -346,22 +346,23 @@ function near(name, got, exp, eps) {
     near("project hours survive reload", after.rows[5].hours, before.rows[5].hours);
 
     // A save from before the reading/writing/reviewing rows keeps its hours as Other.
-    await page.evaluate(() => localStorage.setItem("uoes-activity-estimator", JSON.stringify({ othertype: "group", otherhours: "4" })));
+    await page.evaluate(() => localStorage.setItem("uoes-workload-estimator", JSON.stringify({ othertype: "group", otherhours: "4" })));
     await page.goto(PAGE); await page.waitForTimeout(150); await openAll();
     ok("an old single projects figure is kept as Other", (await page.$eval("#projother", (e) => e.value)) === "4");
 
-    // An old Course Workload Estimator save is ignored, not migrated.
+    // A pre-September Course Workload Estimator save under the same key has
+    // none of this page's fields, so it loads as defaults.
     await page.evaluate(() => {
       localStorage.clear();
       localStorage.setItem("uoes-workload-estimator", JSON.stringify({ classweeks: "15", weeklypages: "99" }));
     });
     await page.goto(PAGE); await page.waitForTimeout(150); await openAll();
-    ok("an old estimator save is ignored", (await page.$eval("#pages", (e) => e.value)) === "0");
+    ok("a pre-September course-level save loads as defaults", (await page.$eval("#pages", (e) => e.value)) === "0");
 
-    await page.evaluate(() => localStorage.setItem("uoes-activity-estimator", "{not json"));
+    await page.evaluate(() => localStorage.setItem("uoes-workload-estimator", "{not json"));
     await page.goto(PAGE); await page.waitForTimeout(150); await openAll();
     ok("a corrupt save falls back to defaults", (await page.$eval("#pages", (e) => e.value)) === "0");
-    await page.evaluate(() => localStorage.setItem("uoes-activity-estimator", JSON.stringify({ pages: "5" })));
+    await page.evaluate(() => localStorage.setItem("uoes-workload-estimator", JSON.stringify({ pages: "5" })));
     await page.goto(PAGE); await page.waitForTimeout(150); await openAll();
     ok("a partial save fills what it has", (await page.$eval("#pages", (e) => e.value)) === "5");
     ok("and leaves the rest at defaults", (await page.$eval("#length", (e) => e.value)) === "0");
@@ -371,7 +372,7 @@ function near(name, got, exp, eps) {
     await page.waitForTimeout(100);
     ok("Start over clears the fields", (await page.$eval("#pages", (e) => e.value)) === "0");
     ok("Start over clears storage",
-      await page.evaluate(() => localStorage.getItem("uoes-activity-estimator") === null));
+      await page.evaluate(() => localStorage.getItem("uoes-workload-estimator") === null));
   }
 
   /* ===== 9. Report, copy text, print ===== */

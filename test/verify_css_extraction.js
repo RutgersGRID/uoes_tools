@@ -33,7 +33,7 @@ const CONVERTED = {
   "course_map_builder.html": ["css/base.css", "css/document.css", "css/course_map_builder.css"],
   "credit_hour_planner.html": ["css/base.css", "css/document.css", "css/credit_hour_planner.css"],
   // Both calculators restyled to the single-column document shell (were calculator.css).
-  "learning_activity_estimator.html": ["css/base.css", "css/document.css", "css/learning_activity_estimator.css"],
+  "workload_estimator.html": ["css/base.css", "css/document.css", "css/workload_estimator.css"],
 };
 // The site footer joined index.html on October 27, 2026 and every tool page
 // the same day; it loads last, after the header.
@@ -55,7 +55,7 @@ const TOKENS = {
 const PRINT_TARGET = {
   "course_map_builder.html": "main > :not(#planWrap)",
   "credit_hour_planner.html": "main > :not(#reportWrap)",
-  "learning_activity_estimator.html": "main > :not(#reportWrap)",
+  "workload_estimator.html": "main > :not(#reportWrap)",
 };
 
 let pass = 0, fail = 0;

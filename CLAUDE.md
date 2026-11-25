@@ -50,11 +50,13 @@ that no longer exist; trust this list.
   "<course> - Course Map.docx". `test/load_rock_test.html` says
   "builder" / "Course Map Builder" where it said "planner". Internal
   notes and code comments still say "the planner" as shorthand.
-- `learning_activity_estimator.html` — Learning Activity Estimator: how
-  long one learning activity takes a student. It was
-  `workload_estimator.html`, the Course Workload Estimator (a JS port of
-  an R/Shiny app), until September 14, 2026, when it was scoped down —
-  see **Learning Activity Estimator notes**. The rate tables and the
+- `workload_estimator.html` — Workload Estimator: how long one
+  learning activity takes a student. It was the Course Workload
+  Estimator (a JS port of an R/Shiny app) until September 14, 2026, when
+  it was scoped down and renamed the Learning Activity Estimator
+  (`learning_activity_estimator.html`); the name and filename went back
+  to Workload Estimator / `workload_estimator.html` on November 25, 2026 —
+  see **Workload Estimator notes**. The rate tables and the
   CC BY-NC-SA credit are the port's.
 - `credit_hour_planner.html` — Credit Hour Planner: does the whole
   course plan enough instructional time and out-of-class work for its
@@ -75,7 +77,7 @@ sheets — `site_header.css` (after the Google Fonts link) and
 | `blooms_verbs.html` | `base` + `document` + `blooms_verbs` |
 | `course_map_builder.html` | `base` + `document` + `course_map_builder` |
 | `credit_hour_planner.html` | `base` + `document` + `credit_hour_planner` |
-| `learning_activity_estimator.html` | `base` + `document` + `learning_activity_estimator` |
+| `workload_estimator.html` | `base` + `document` + `workload_estimator` |
 
 - **`css/base.css`** — the `:root` design tokens, the `.sr-only` helper,
   `[hidden]`, and the one focus-visibility rule. Loaded by every page and
@@ -442,8 +444,9 @@ describes the live one:
 - Auto-save to `localStorage` (debounced ~400ms, try/catch-wrapped).
   **Never rename an existing state field without a migration in
   `load()`.**
-- **The storage key is `uoes-course-planner`**, matching
-  `uoes-workload-estimator` and `uoes-credit-hour-planner`. It was
+- **The storage key is `uoes-course-planner`** — named for the page's
+  old filename (`course_planner.html`) and kept through the Course Map
+  Builder rename, since changing it would orphan saved work. It was
   `uoes-course-planner-v2` until August 27, 2026 — see **Storage key**
   below. `load()` still migrates a v1-shaped save, and the harness still
   checks that.
@@ -1013,10 +1016,11 @@ copy-as-text, "Start over", the CMU Eberly Center footer credit — is
 unchanged from v1. A saved `topics` array is deleted too, the same way
 `duedates`, `principle` and `strategy` are.
 
-## Learning Activity Estimator notes
+## Workload Estimator notes
 
-`learning_activity_estimator.html`. **Until September 14, 2026 this was
-the Course Workload Estimator** (`workload_estimator.html`), a port of
+`workload_estimator.html`. **Named the Learning Activity Estimator
+(`learning_activity_estimator.html`) from September 14 to November 25,
+2026; before that it was the Course Workload Estimator**, a port of
 the **Enhanced Course Workload Estimator** by Betsy Barre, Allen Brown,
 and Justin Esarey (Wake Forest CAT / Rice CTE), originally an R/Shiny app
 (`ui.R` + `server.R`). **Licensed CC BY-NC-SA 4.0** — the page is a
@@ -1102,11 +1106,12 @@ carry their assumptions.
 
 ### Storage
 
-**A new key, `uoes-activity-estimator`, and no migration.** The old
-`uoes-workload-estimator` saves hold a different set of fields whose
-per-week figures mean nothing here; `load()` never reads that key and
-the harness checks that an old save is ignored. Same reasoning as the
-planner's key rename: nothing worth carrying forward. New fields keep
+**The key is `uoes-workload-estimator`, no migration.** It was
+`uoes-activity-estimator` from September 14 to November 25, 2026; it went
+back to the original key with the original name (Maka's call: nobody but
+Maka had saved work, so nothing was carried over). A pre-September
+course-level save under this key holds none of the page's fields, so it
+loads as defaults, and the harness checks that. New fields keep
 their defaults when a save lacks them; a corrupt save falls back to
 defaults.
 
@@ -1187,7 +1192,7 @@ dropped and `calculator.css` deleted.
 the audience doesn't need it or wouldn't understand it. Its index card is
 commented out (not deleted) and the intro no longer says "checking credit
 hours". The page itself stays and may come back. Other pages still link
-to it (course_map_builder.html step 3, twice; learning_activity_estimator.html's
+to it (course_map_builder.html step 3, twice; workload_estimator.html's
 closing hint, plus two mentions in text); left for Maka to decide.
 
 `credit_hour_planner.html`. **Rebuilt on October 21, 2026 as a
@@ -1420,7 +1425,7 @@ rule.
 
 A row whose type has a method gets an **Estimate** button
 (`aria-expanded` / `aria-controls`) under Hours each; it opens a compact
-panel of the Learning Activity Estimator's inputs under the row and
+panel of the Workload Estimator's inputs under the row and
 focuses its first field. Methods (`ESTIMATE` in the JS), with the
 estimator's defaults:
 
@@ -1539,12 +1544,12 @@ clipboard API with a textarea fallback and announces through
 ### Cross-links
 
 - **Out:** only the Course Map Builder, from Next Steps. The page no
-  longer links the Learning Activity Estimator (the Estimate panels
+  longer links the Workload Estimator (the Estimate panels
   replaced the "Not sure how long an activity takes?" note).
 - **In:** the Course Map Builder's Step 3 sentence points to both tools
   ("…make sure you have the right amount of activities planned, try the
   Credit Hour Planner. … estimating how long a specific activity takes,
-  try the Learning Activity Estimator."); its Resources for planning
+  try the Workload Estimator."); its Resources for planning
   panel links the page by absolute URL; the estimator and the other pages
   link it from the header nav; index.html lists it.
 - **Stale, to fix with Maka's wording:** the estimator's results hint
@@ -1679,7 +1684,7 @@ form rendering, live sync between steps, plan generation, localStorage
 persistence/migration, and print-to-PDF output. Worth repeating for
 anything touching the planner's state handling or print CSS.
 
-For the Learning Activity Estimator, `test/verify_activity_estimator.js`
+For the Workload Estimator, `test/verify_workload_estimator.js`
 runs 111 checks (new with the September 14, 2026 rescope — the old
 estimator's `verify.js`, 123 checks against the R math, was never in the
 repo and its per-week scenarios no longer apply): identity and scope
@@ -1691,7 +1696,8 @@ through the UI, each section's arithmetic, the manual overrides and their
 warning, the words-to-pages conversion at both densities, the
 typical-time fill and refill in Projects & other, the total and table
 and heading readouts (including the `::after` content), persistence
-under `uoes-activity-estimator` with the old key ignored, corrupt and
+under `uoes-workload-estimator` (never `uoes-activity-estimator`), a
+pre-September course-level save loading as defaults, corrupt and
 partial saves, "Start over", the report text and its credit line,
 print-PDF non-blankness, the print-CSS pattern, label/aria coverage,
 unique disclosure names, the focus outline, and the cross-links.
@@ -1715,7 +1721,7 @@ arithmetic through the UI, hand-typed hours taking over and a setting
 taking back, density printed as words per page and never as spacing or
 book type in the summary while the dropdown keeps both, settings
 surviving a reload, **the rate tables matching the
-estimator's**, fetched from `learning_activity_estimator.html`); row
+estimator's**, fetched from `workload_estimator.html`); row
 accessibility; the check (each bucket against its own minimum, no
 netting, red bars, two warnings when both are short, both warnings naming
 the course shape — "a 3 credit, 15 week course", "an 8 credit, 7 week
@@ -1835,6 +1841,21 @@ rather than counted as a parse failure.
 
 ## Current status
 
+- **The Learning Activity Estimator is the Workload Estimator again,
+  November 25, 2026** (Maka's call, after merging the
+  `learning-activity-project-experiment` branch into `main`). Renamed
+  `learning_activity_estimator.html` → `workload_estimator.html`,
+  `css/learning_activity_estimator.css` → `css/workload_estimator.css`,
+  `test/verify_activity_estimator.js` → `test/verify_workload_estimator.js`;
+  the title, h1, index card, Course Map Builder step 3 link, and the
+  comments and test labels that named the tool follow. The storage key
+  went back to `uoes-workload-estimator` too (only Maka had saved work,
+  so no migration). **Deliberately unchanged:** the report heading
+  "Learning activity estimate"; the "Adapted from the Course Workload
+  Estimator" credit; and dated history notes in this file. No redirect
+  for `learning_activity_estimator.html` (Maka: only Maka and a few
+  colleagues had the link).
+
 - **Course Map Builder output follows the Word layout, November 24,
   2026** (makalaptop, Maka's request). "Create My Course Map" now shows
   the module schedule as a table with the Word export's columns; Copy
@@ -1871,7 +1892,7 @@ rather than counted as a parse failure.
   planner's lists, grouped by how each is estimated; the file is
   `learning_activity_estimator.html`, the storage key is new, and the
   index entry and the credit hour planner's cross-links follow. See
-  **Learning Activity Estimator notes** for the section-to-activity
+  **Workload Estimator notes** for the section-to-activity
   mapping. **Worth telling anyone field testing:** the old page's saved
   entries are not carried over, the credit hour planner now points at it
   for *every* activity rather than reading and writing only, and the
@@ -2053,7 +2074,8 @@ rather than counted as a parse failure.
   CO1/CO2 by design, with the key carrying the full text; and the "What makes a
   good assessment online?" panel appears in both Step 2 and Step 3
   deliberately.
-- The estimator page (now `learning_activity_estimator.html`) was added
+- The estimator page (`workload_estimator.html`; `learning_activity_estimator.html`
+  from September 14 to November 25, 2026) was added
   as workload_estimator.html on July 27, 2026 and linked from index.html.
   **Not cleared for publishing yet.** The CC BY-NC-SA footer wording reads
   fine to Maka but is awaiting sign-off from institutional stakeholders.
@@ -2064,6 +2086,6 @@ rather than counted as a parse failure.
   Footer credit settled: "Adapted from the Planning Time Calculator,
   initially developed by Ruth Ronan at Rutgers University."
   **Still not cleared for publishing.** Since the October 21 rebuild it no
-  longer links learning_activity_estimator.html, but it carries copies of
+  longer links workload_estimator.html, but it carries copies of
   the estimator's rate tables and credits the Workload Estimator authors,
   so it waits on the same CC BY-NC-SA sign-off. Ship the two together.

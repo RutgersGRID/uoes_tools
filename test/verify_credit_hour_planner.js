@@ -240,7 +240,7 @@ const KEY = "uoes-credit-hour-course";
   await row(0).locator('[data-field="remove"]').click();
   ok("the list never drops to zero rows", (await rowsLoc().count()) === 1);
 
-  // ---------- estimates borrowed from the Learning Activity Estimator ----------
+  // ---------- estimates borrowed from the Workload Estimator ----------
   /* October 21, 2026: each row whose type has one of the estimator's
      methods gets an Estimate link that opens that method's inputs. */
   await fresh();
@@ -378,10 +378,10 @@ const KEY = "uoes-credit-hour-course";
       return m ? m[1].replace(/\s+/g, "") : null;
     };
     const mine = document.documentElement.outerHTML;
-    const theirs = await (await fetch("learning_activity_estimator.html")).text();
+    const theirs = await (await fetch("workload_estimator.html")).text();
     return ["PAGES_PER_HOUR", "HOURS_PER_PAGE", "WORDS_PER_PAGE"].map(n => [n, grab(mine, n), grab(theirs, n)]);
   }).catch(e => String(e));
-  ok("rate tables match the Learning Activity Estimator's",
+  ok("rate tables match the Workload Estimator's",
     Array.isArray(tables) && tables.every(t => t[1] && t[1] === t[2]), JSON.stringify(tables).slice(0, 300));
 
   // ---------- accessibility of rows ----------
