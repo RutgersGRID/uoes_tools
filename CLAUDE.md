@@ -40,8 +40,8 @@ that no longer exist; trust this list.
   CSS comments). The stylesheet followed the same day:
   `css/course_planner.css` became `css/course_map_builder.css`. Still
   kept on purpose: the test file `test/verify_course_planner_v2.js`
-  and the `uoes-course-planner` storage key — localStorage is per site,
-  not per file, so saved plans carry over. Old bookmarks to
+  and (until November 25, 2026) the `uoes-course-planner` storage key —
+  localStorage is per site, not per file, so saved plans carried over. Old bookmarks to
   `course_planner.html` break unless a redirect is left in its place.
   **The outputs followed on November 4, 2026** (Maka): the button is
   "Create My Course Map", the heading "Your Course Map", the plan title
@@ -444,11 +444,10 @@ describes the live one:
 - Auto-save to `localStorage` (debounced ~400ms, try/catch-wrapped).
   **Never rename an existing state field without a migration in
   `load()`.**
-- **The storage key is `uoes-course-planner`** — named for the page's
-  old filename (`course_planner.html`) and kept through the Course Map
-  Builder rename, since changing it would orphan saved work. It was
-  `uoes-course-planner-v2` until August 27, 2026 — see **Storage key**
-  below. `load()` still migrates a v1-shaped save, and the harness still
+- **The storage key is `uoes-course-map-builder`**, matching the page's
+  name. It was `uoes-course-planner` (the page's old name) until
+  November 25, 2026, and `uoes-course-planner-v2` until August 27,
+  2026 — see **Storage key** below. `load()` still migrates a v1-shaped save, and the harness still
   checks that.
 - "Create My Course Map" renders the plan in the Word export's layout
   (see **v2 plan output**), with Copy, Print and Download as Word
@@ -469,7 +468,10 @@ the v1 pages went and the suffix stopped meaning anything.
 
 ### Storage key
 
-The planner saves to **`uoes-course-planner`**. It used
+The builder saves to **`uoes-course-map-builder`** since **November 25,
+2026** (Maka's call: only Maka had saved work, so a clean break like the
+one below; anything under `uoes-course-planner` is now invisible). It
+used `uoes-course-planner` from August 27 to November 25, and
 `uoes-course-planner-v2` from July 29 to **August 27, 2026**: while both
 planners existed the keys had to be separate, and the suffix outlived
 that reason by a day short of a month. Maka's call to rename it, on the
@@ -1774,7 +1776,8 @@ objective rows, per-objective alignment saved as ids, unticking, pruning
 and renumbering after one is deleted (surviving ticks must stay ticked), and
 the guarantee that a module never drops to zero objective rows.
 
-Plus: saving under `uoes-course-planner` and leaving no stale `-v2` key,
+Plus: saving under `uoes-course-map-builder` and leaving no stale
+`uoes-course-planner` or `-v2` key,
 round-trip, migration of a v1-shaped save (string `objectives` → one row, `duedates` and goal
 `activities` dropped), corrupt-save recovery, plan generation with
 G-number tags and field ordering, print-PDF non-blankness and print-CSS
@@ -1850,7 +1853,9 @@ rather than counted as a parse failure.
   the title, h1, index card, Course Map Builder step 3 link, and the
   comments and test labels that named the tool follow. The storage key
   went back to `uoes-workload-estimator` too (only Maka had saved work,
-  so no migration). **Deliberately unchanged:** the report heading
+  so no migration), and the Course Map Builder's key changed the same day
+  from `uoes-course-planner` to `uoes-course-map-builder` (clean break; see
+  **Storage key**). **Deliberately unchanged:** the report heading
   "Learning activity estimate"; the "Adapted from the Course Workload
   Estimator" credit; and dated history notes in this file. No redirect
   for `learning_activity_estimator.html` (Maka: only Maka and a few

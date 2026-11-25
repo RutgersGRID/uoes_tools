@@ -283,7 +283,7 @@ function readZip(buf) {
     })());
 
   // put the page back the way the rest of the harness expects it
-  await page.evaluate(() => localStorage.removeItem("uoes-course-planner"));
+  await page.evaluate(() => localStorage.removeItem("uoes-course-map-builder"));
   await page.reload();
   await openAll();
 
@@ -415,12 +415,14 @@ function readZip(buf) {
 
   // ---- localStorage under the one planner key ----
   const keys = await page.evaluate(() => Object.keys(localStorage));
-  ok("saves under uoes-course-planner", keys.includes("uoes-course-planner"), JSON.stringify(keys));
-  // Guards a half-finished rename: the planner must not still be writing,
-  // or leaving behind, the old -v2 key.
+  ok("saves under uoes-course-map-builder", keys.includes("uoes-course-map-builder"), JSON.stringify(keys));
+  // Guards a half-finished rename: the builder must not still be writing,
+  // or leaving behind, either old key.
   ok("leaves no stale -v2 key behind",
     !keys.includes("uoes-course-planner-v2"), JSON.stringify(keys));
-  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-course-planner")));
+  ok("leaves no stale uoes-course-planner key behind",
+    !keys.includes("uoes-course-planner"), JSON.stringify(keys));
+  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-course-map-builder")));
   ok("saved module has no duedates field", !("duedates" in saved.modules[0]), JSON.stringify(saved.modules[0]));
   ok("saved state carries no principle or strategy",
     !("principle" in saved) && !("strategy" in saved), JSON.stringify(Object.keys(saved)));
@@ -449,7 +451,7 @@ function readZip(buf) {
 
   // ---- migration: a v1-shaped save (with duedates) loaded under the planner key ----
   await page.evaluate(() => {
-    localStorage.setItem("uoes-course-planner", JSON.stringify({
+    localStorage.setItem("uoes-course-map-builder", JSON.stringify({
       course: "Legacy", moduleCount: 2,
       goals: [{ id: 0, text: "Old goal", evidence: "Old exam" }],
       topics: [{ id: 1, text: "Old topic", priority: "Essential" }],
@@ -478,7 +480,7 @@ function readZip(buf) {
   await page.fill("#courseTitle", "Legacy edited");
   await page.waitForTimeout(700);
   const migrated = await page.evaluate(
-    () => JSON.parse(localStorage.getItem("uoes-course-planner")));
+    () => JSON.parse(localStorage.getItem("uoes-course-map-builder")));
   ok("migration: a legacy principle and strategy are discarded",
     !("principle" in migrated) && !("strategy" in migrated),
     JSON.stringify(Object.keys(migrated)));
@@ -492,7 +494,7 @@ function readZip(buf) {
     JSON.stringify(migrated.modules[0].objectives));
 
   // corrupt save
-  await page.evaluate(() => localStorage.setItem("uoes-course-planner", "{not json"));
+  await page.evaluate(() => localStorage.setItem("uoes-course-map-builder", "{not json"));
   await page.reload();
   await openAll();
   await page.waitForTimeout(200);
@@ -659,9 +661,9 @@ function readZip(buf) {
   await page.locator(boxes(2)).nth(1).check();
   await page.locator(boxes(3)).nth(1).check();
   await page.waitForTimeout(700);
-  const st = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-course-planner")));
+  const st = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-course-map-builder")));
   const gIds = await page.evaluate(() =>
-    JSON.parse(localStorage.getItem("uoes-course-planner")).goals.map(g => g.id));
+    JSON.parse(localStorage.getItem("uoes-course-map-builder")).goals.map(g => g.id));
   ok("alignments saved per objective",
     JSON.stringify(st.modules[0].objectives.map(o => o.align)) ===
     JSON.stringify([[gIds[0]], [gIds[0], gIds[1]], [gIds[1]]]),
@@ -670,7 +672,7 @@ function readZip(buf) {
   // unticking removes it
   await page.locator(boxes(2)).nth(0).uncheck();
   await page.waitForTimeout(700);
-  const st2 = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-course-planner")));
+  const st2 = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-course-map-builder")));
   ok("unticking removes the alignment",
     JSON.stringify(st2.modules[0].objectives[1].align) === JSON.stringify([gIds[1]]),
     JSON.stringify(st2.modules[0].objectives[1].align));
@@ -679,7 +681,7 @@ function readZip(buf) {
   // deleting a goal prunes stale alignments and renumbers
   await page.click("#goalsList li:first-child .remove-btn");
   await page.waitForTimeout(700);
-  const st3 = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-course-planner")));
+  const st3 = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-course-map-builder")));
   ok("deleting a goal drops its id from every objective",
     JSON.stringify(st3.modules[0].objectives.map(o => o.align)) ===
     JSON.stringify([[], [gIds[1]], [gIds[1]]]),
@@ -701,7 +703,7 @@ function readZip(buf) {
   ok("removing an objective leaves the others intact",
     (await page.inputValue("#mod0-obj0")) === "Trace energy through a web" &&
     (await page.$$eval("#moduleCards .mod-card:first-child .obj-row", ns => ns.length)) === 2);
-  const st4 = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-course-planner")));
+  const st4 = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-course-map-builder")));
   ok("removing an objective keeps the remaining alignments",
     JSON.stringify(st4.modules[0].objectives.map(o => o.align)) ===
     JSON.stringify([[gIds[1]], [gIds[1]]]),

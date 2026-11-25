@@ -372,7 +372,10 @@
       // State: one object holds everything the instructor types, so it
       // can be saved to this browser and rebuilt into the plan.
       // ---------------------------------------------------------------
-      const STORAGE_KEY = "uoes-course-planner";
+      // Was "uoes-course-planner" (the page's old name) until November 25,
+      // 2026, and "uoes-course-planner-v2" before August 27. Clean breaks,
+      // no read-fallback: Maka was the only one with saved work.
+      const STORAGE_KEY = "uoes-course-map-builder";
       let seq = 0; // id counter for course objective rows
 
       const state = {
