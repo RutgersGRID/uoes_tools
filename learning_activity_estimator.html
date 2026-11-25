@@ -56,7 +56,8 @@
     <main>
 
       <h1>Learning Activity Estimator</h1>
-      <p class="subtitle">You can use this tool to estimate how long a learning activity will take your students.<br />Click a section heading to expand or collapse it.</p>
+      <p class="subtitle">You can use this tool to estimate how long a learning activity will take your
+        students.<br />Click a section heading to expand or collapse it.</p>
 
       <details class="guide">
         <summary>
@@ -68,7 +69,8 @@
           trips, research activities, etc).</p>
         <p>Click a section heading to expand or collapse that section. A running total will appear at the bottom of the
           section and a total for all activities entered will appear at the bottom of the form.</p>
-        <p>At the bottom of the Reading, Writing, and Discussion sections, you'll find information on how estimations are calculated.</p>
+        <p>At the bottom of the Reading, Writing, and Discussion sections, you'll find information on how estimations
+          are calculated.</p>
         <p>Your entries will be saved automatically in your browser's cookies as you go. Clearing cookies
           will delete your saved entries.</p>
       </details>
@@ -245,7 +247,7 @@
         <section class="step" aria-labelledby="s-disc">
           <details class="step-body">
             <summary id="sum-disc" data-sum="">
-              <h2 id="s-disc">Discussion &amp; peer feedback</h2>
+              <h2 id="s-disc">Discussion &amp; Peer Feedback</h2>
             </summary>
             <p class="step-lead">Discussion posts and replies, peer review comments, and comments on
               classmates&rsquo; blogs, journals or wiki pages. Count the posts one student writes
@@ -308,7 +310,7 @@
         <section class="step" aria-labelledby="s-media">
           <details class="step-body">
             <summary id="sum-media" data-sum="">
-              <h2 id="s-media">Media &amp; live sessions</h2>
+              <h2 id="s-media">Media &amp; Live Sessions</h2>
             </summary>
             <p class="step-lead">Mini-lecture videos, other videos, podcasts, webinar sessions, and
               simulations or eLearning tutorials. Count the items and their running time.</p>
@@ -336,7 +338,7 @@
         <section class="step" aria-labelledby="s-tests">
           <details class="step-body">
             <summary id="sum-tests" data-sum="">
-              <h2 id="s-tests">Quizzes &amp; tests</h2>
+              <h2 id="s-tests">Quizzes &amp; Tests</h2>
             </summary>
             <p class="step-lead">A quiz, test or pre-assessment: the time students spend sitting
               it, plus any preparation you expect.</p>
@@ -363,34 +365,142 @@
         <section class="step" aria-labelledby="s-other">
           <details class="step-body">
             <summary id="sum-other" data-sum="">
-              <h2 id="s-other">Projects &amp; other activities</h2>
+              <h2 id="s-other">Projects &amp; Other Activities</h2>
             </summary>
             <p class="step-lead">Case studies, experiential learning, research activities,
-              individual and group assignments, projects and presentations. There is no
-              research-based rate for these, so the Credit Hour Planner&rsquo;s typical time is
-              filled in as a starting point for you to adjust.</p>
+              projects and presentations. There is no research-based rate for these activities
+              as they can vary dramatically, however the majority of the work is usually a mix
+              of reading, writing, or reviewing media. Enter the hours for each part, or use
+              Estimate to work one out.</p>
 
-            <div class="fields">
-              <div class="field">
-                <label for="othertype">Activity</label>
-                <select id="othertype">
-                  <option value="case" data-sug="2">Case study</option>
-                  <option value="experiential" data-sug="2">Experiential learning</option>
-                  <option value="research" data-sug="2">Research activities</option>
-                  <option value="individual" data-sug="2">Individual assignment</option>
-                  <option value="group" data-sug="4">Group assignment</option>
-                  <option value="project" data-sug="1">Project / presentation</option>
-                  <option value="other" data-sug="0">Something else</option>
-                </select>
+            <div class="proj-rows">
+              <div class="proj-row">
+                <label for="projread">Reading</label>
+                <div class="proj-hours">
+                  <input type="number" id="projread" min="0" step="0.25" value="0">
+                  <span class="proj-unit">hours</span>
+                </div>
+                <button type="button" class="est-btn" data-proj="read" aria-expanded="false"
+                  aria-controls="est-projread" aria-label="Estimate reading hours">Estimate</button>
+                <div class="est-panel" id="est-projread" data-proj="read" hidden>
+                  <div class="est-fields">
+                    <div class="est-field">
+                      <label for="pr_pages">Pages</label>
+                      <input type="number" id="pr_pages" min="0" step="1" value="">
+                    </div>
+                    <div class="est-field">
+                      <label for="pr_density">Page density</label>
+                      <select id="pr_density">
+                        <option value="1">450 words (paperback / article)</option>
+                        <option value="2">600 words (academic monograph)</option>
+                        <option value="3">750 words (textbook)</option>
+                      </select>
+                    </div>
+                    <div class="est-field">
+                      <label for="pr_difficulty">Difficulty</label>
+                      <select id="pr_difficulty">
+                        <option value="1">No new concepts</option>
+                        <option value="2">Some new concepts</option>
+                        <option value="3">Many new concepts</option>
+                      </select>
+                    </div>
+                    <div class="est-field">
+                      <label for="pr_purpose">Purpose</label>
+                      <select id="pr_purpose">
+                        <option value="1">Survey &mdash; skim for main ideas</option>
+                        <option value="2">Understand &mdash; comprehend the text</option>
+                        <option value="3">Engage &mdash; analyze and critique</option>
+                      </select>
+                    </div>
+                  </div>
+                  <p class="est-result" aria-live="polite"></p>
+                </div>
               </div>
-              <div class="field">
-                <label for="otherhours">Hours</label>
-                <input type="number" id="otherhours" min="0" step="0.5" value="0">
+
+              <div class="proj-row">
+                <label for="projwrite">Writing</label>
+                <div class="proj-hours">
+                  <input type="number" id="projwrite" min="0" step="0.25" value="0">
+                  <span class="proj-unit">hours</span>
+                </div>
+                <button type="button" class="est-btn" data-proj="write" aria-expanded="false"
+                  aria-controls="est-projwrite" aria-label="Estimate writing hours">Estimate</button>
+                <div class="est-panel" id="est-projwrite" data-proj="write" hidden>
+                  <div class="est-fields">
+                    <div class="est-field">
+                      <label for="pw_length">Length</label>
+                      <input type="number" id="pw_length" min="0" step="1" value="">
+                    </div>
+                    <div class="est-field">
+                      <label for="pw_unit">Measured in</label>
+                      <select id="pw_unit">
+                        <option value="pages">Pages</option>
+                        <option value="words">Words</option>
+                      </select>
+                    </div>
+                    <div class="est-field">
+                      <label for="pw_density">Page density</label>
+                      <select id="pw_density">
+                        <option value="1">250 words (double-spaced)</option>
+                        <option value="2">500 words (single-spaced)</option>
+                      </select>
+                    </div>
+                    <div class="est-field">
+                      <label for="pw_genre">Genre</label>
+                      <select id="pw_genre">
+                        <option value="1">Reflection / narrative</option>
+                        <option value="2">Argument</option>
+                        <option value="3">Research</option>
+                      </select>
+                    </div>
+                    <div class="est-field">
+                      <label for="pw_drafting">Drafting</label>
+                      <select id="pw_drafting">
+                        <option value="1">No drafting</option>
+                        <option value="2">Minimal drafting</option>
+                        <option value="3">Extensive drafting</option>
+                      </select>
+                    </div>
+                  </div>
+                  <p class="est-result" aria-live="polite"></p>
+                </div>
+              </div>
+
+              <div class="proj-row">
+                <label for="projreview">Reviewing media</label>
+                <div class="proj-hours">
+                  <input type="number" id="projreview" min="0" step="0.25" value="0">
+                  <span class="proj-unit">hours</span>
+                </div>
+                <button type="button" class="est-btn" data-proj="review" aria-expanded="false"
+                  aria-controls="est-projreview" aria-label="Estimate reviewing media hours">Estimate</button>
+                <div class="est-panel" id="est-projreview" data-proj="review" hidden>
+                  <div class="est-fields">
+                    <div class="est-field">
+                      <label for="pm_count">Number of items</label>
+                      <input type="number" id="pm_count" min="0" step="1" value="1">
+                    </div>
+                    <div class="est-field">
+                      <label for="pm_minutes">Running time each (minutes)</label>
+                      <input type="number" id="pm_minutes" min="0" step="5" value="">
+                    </div>
+                  </div>
+                  <p class="est-result" aria-live="polite"></p>
+                </div>
+              </div>
+
+              <div class="proj-row">
+                <label for="projother">Other</label>
+                <div class="proj-hours">
+                  <input type="number" id="projother" min="0" step="0.25" value="0">
+                  <span class="proj-unit">hours</span>
+                </div>
               </div>
             </div>
             <p class="hint">Experiential learning is attending an event, an interview, a field
-              trip, a lab. Choosing an activity fills in its typical time; edit the hours to fit
-              yours.</p>
+              trip, a lab. Reviewing media is counted at running time; put note-taking or
+              rewatching under Other. Estimate uses the same rates as the Reading and Writing
+              sections above.</p>
 
             <p class="rate"><span class="est">About <strong id="out-other">0.00</strong>
                 hours</span></p>
@@ -511,7 +621,8 @@
             <h3 id="usf-connect">Connect</h3>
             <div class="usf-connect-lists">
               <ul>
-                <li><a href="https://academicaffairs.rutgers.edu/academic-calendar-directory">Academic Calendars</a></li>
+                <li><a href="https://academicaffairs.rutgers.edu/academic-calendar-directory">Academic Calendars</a>
+                </li>
                 <li><a href="https://app.meadowfi.com/rutgers">Net Price Calculator</a></li>
               </ul>
               <ul>
@@ -534,21 +645,24 @@
           <li>
             <a href="https://www.facebook.com/RutgersUOES/" aria-label="Facebook">
               <svg viewBox="0 0 15.4 27.4" aria-hidden="true" focusable="false">
-                <path d="M15.4,0.3C15,0.3,13.2,0,11.2,0C7.4,0,4.6,2.2,4.6,6.5v3.6H0v4.8h4.6v12.5h5.5V14.9h4.6l0.7-4.8H10V6.9 c0-1.4,0.4-2.2,2.5-2.2h2.8V0.3H15.4z" />
+                <path
+                  d="M15.4,0.3C15,0.3,13.2,0,11.2,0C7.4,0,4.6,2.2,4.6,6.5v3.6H0v4.8h4.6v12.5h5.5V14.9h4.6l0.7-4.8H10V6.9 c0-1.4,0.4-2.2,2.5-2.2h2.8V0.3H15.4z" />
               </svg>
             </a>
           </li>
           <li>
             <a href="https://www.youtube.com/channel/UC2DvOwr4dQn6xhfv2JVpw2g" aria-label="YouTube">
               <svg viewBox="0 0 32 21.9" aria-hidden="true" focusable="false">
-                <path d="M31.4,4.7c0,0-0.4-2.1-1.3-3.1c-1.2-1.3-2.6-1.3-3.2-1.3C22.6,0,15.9,0,15.9,0l0,0c0,0-6.7,0-11.1,0.4 c-0.7,0-2,0-3.3,1.3C0.6,2.6,0.4,4.7,0.4,4.7S0,7.2,0,9.8v2.4c0,2.5,0.4,5.1,0.4,5.1s0.4,2.1,1.3,3.1c1.2,1.3,2.8,1.2,3.5,1.3 C7.8,21.8,16,21.9,16,21.9s6.7,0,11.2-0.4c0.6-0.1,2-0.1,3.2-1.3c0.9-0.9,1.3-3.1,1.3-3.1s0.4-2.5,0.4-5.1V9.8 C31.8,7.2,31.4,4.7,31.4,4.7z M12.6,15.3V6.5l8.5,4.2L12.6,15.3z" />
+                <path
+                  d="M31.4,4.7c0,0-0.4-2.1-1.3-3.1c-1.2-1.3-2.6-1.3-3.2-1.3C22.6,0,15.9,0,15.9,0l0,0c0,0-6.7,0-11.1,0.4 c-0.7,0-2,0-3.3,1.3C0.6,2.6,0.4,4.7,0.4,4.7S0,7.2,0,9.8v2.4c0,2.5,0.4,5.1,0.4,5.1s0.4,2.1,1.3,3.1c1.2,1.3,2.8,1.2,3.5,1.3 C7.8,21.8,16,21.9,16,21.9s6.7,0,11.2-0.4c0.6-0.1,2-0.1,3.2-1.3c0.9-0.9,1.3-3.1,1.3-3.1s0.4-2.5,0.4-5.1V9.8 C31.8,7.2,31.4,4.7,31.4,4.7z M12.6,15.3V6.5l8.5,4.2L12.6,15.3z" />
               </svg>
             </a>
           </li>
           <li>
             <a href="https://www.linkedin.com/showcase/rutgers-online-education-services/" aria-label="LinkedIn">
               <svg viewBox="0 0 28 28" aria-hidden="true" focusable="false">
-                <path d="M28,22.7c0,2.9-2.4,5.3-5.3,5.3H5.3C2.4,28,0,25.6,0,22.7V5.3C0,2.4,2.4,0,5.3,0h17.5C25.6,0,28,2.4,28,5.3 V22.7z M6.5,4.7c-1.5,0-2.4,0.9-2.4,2.2C4,8.2,4.9,9.1,6.4,9.1l0,0c1.5,0,2.4-0.9,2.4-2.2S7.8,4.7,6.5,4.7z M8.5,23.5V10.7H4.4v12.7 H8.5z M23.6,23.5v-7.3c0-3.8-2-5.6-4.9-5.6c-2.2,0-3.1,1.3-3.6,2.2l0,0v-1.8h-4.2c0,0,0,1.3,0,12.7h4.2v-7.3c0-0.4,0-0.7,0.2-1.1 c0.2-0.7,0.9-1.5,2.2-1.5c1.5,0,2.2,1.1,2.2,2.9v6.7H23.6L23.6,23.5z" />
+                <path
+                  d="M28,22.7c0,2.9-2.4,5.3-5.3,5.3H5.3C2.4,28,0,25.6,0,22.7V5.3C0,2.4,2.4,0,5.3,0h17.5C25.6,0,28,2.4,28,5.3 V22.7z M6.5,4.7c-1.5,0-2.4,0.9-2.4,2.2C4,8.2,4.9,9.1,6.4,9.1l0,0c1.5,0,2.4-0.9,2.4-2.2S7.8,4.7,6.5,4.7z M8.5,23.5V10.7H4.4v12.7 H8.5z M23.6,23.5v-7.3c0-3.8-2-5.6-4.9-5.6c-2.2,0-3.1,1.3-3.6,2.2l0,0v-1.8h-4.2c0,0,0,1.3,0,12.7h4.2v-7.3c0-0.4,0-0.7,0.2-1.1 c0.2-0.7,0.9-1.5,2.2-1.5c1.5,0,2.2,1.1,2.2,2.9v6.7H23.6L23.6,23.5z" />
               </svg>
             </a>
           </li>
@@ -561,11 +675,13 @@
             <a href="mailto:accessibility@rutgers.edu">accessibility@rutgers.edu</a> or
             complete the
             <a href="https://it.rutgers.edu/it-accessibility-initiative/barrierform/">Report
-              Accessibility Barrier / Provide Feedback</a> form.</p>
+              Accessibility Barrier / Provide Feedback</a> form.
+          </p>
           <p><a href="https://www.rutgers.edu/copyright-information">Copyright &copy;2026</a>,
             <a href="https://www.rutgers.edu/">Rutgers, The State University of New Jersey</a>.
             All rights reserved.
-            <a href="https://rutgers.ca1.qualtrics.com/jfe/form/SV_9HtHk5YbcMaZlhb">Contact webmaster</a></p>
+            <a href="https://rutgers.ca1.qualtrics.com/jfe/form/SV_9HtHk5YbcMaZlhb">Contact webmaster</a>
+          </p>
         </div>
       </div>
     </footer>
@@ -622,7 +738,10 @@
           "setdiscussion", "overridediscussion",
           "mediacount", "medialength",
           "testlength", "testprep",
-          "othertype", "otherhours"
+          "projread", "pr_pages", "pr_density", "pr_difficulty", "pr_purpose",
+          "projwrite", "pw_length", "pw_unit", "pw_density", "pw_genre", "pw_drafting",
+          "projreview", "pm_count", "pm_minutes",
+          "projother"
         ];
 
         var el = {};
@@ -644,6 +763,98 @@
         }
         function plural(n, one, many) {
           return n === 1 ? one : many;
+        }
+
+        /* ---------------- projects & other: estimate panels ----------------
+
+           Experiment (branch learning-activity-project-experiment, November
+           19, 2026): the section had no model, only the Credit Hour
+           Planner's typical time for the chosen activity. It is now four
+           rows of hours (reading, writing, reviewing media, other) that add
+           up to the section's total. The first three each have an Estimate
+           button that opens a panel under the row, the same disclosure as
+           the Credit Hour Planner's Estimate under hours each, using this
+           page's own rate tables. Changing a setting in a panel writes its
+           estimate into the row's hours; hours typed by hand stay until a
+           setting is changed again. Other has no model, so no Estimate. */
+        var PROJ_PARTS = [
+          {
+            key: "read", hours: "projread", label: "reading",
+            need: "Enter the pages to estimate the reading.",
+            compute: function () {
+              var pages = num("pr_pages");
+              if (!(pages > 0)) return null;
+              var rate = PAGES_PER_HOUR[opt("pr_density")][opt("pr_difficulty")][opt("pr_purpose")];
+              return {
+                hours: pages / rate, rate: rate + " pages per hour",
+                describe: pages + " " + plural(pages, "page", "pages") + " at " + rate + " pages per hour"
+              };
+            }
+          },
+          {
+            key: "write", hours: "projwrite", label: "writing",
+            need: "Enter the length to estimate the writing.",
+            compute: function () {
+              var len = num("pw_length");
+              if (!(len > 0)) return null;
+              var words = el.pw_unit.value === "words";
+              var pages = words ? len / WORDS_PER_PAGE[opt("pw_density")] : len;
+              var rate = HOURS_PER_PAGE[opt("pw_genre")][opt("pw_drafting")][opt("pw_density")];
+              return {
+                hours: pages * rate, rate: rate + " " + plural(rate, "hour", "hours") + " per page",
+                describe: (words ? len + " words, about " + fmt(pages) + " pages," : len + " " + plural(len, "page", "pages")) +
+                  " at " + rate + " " + plural(rate, "hour", "hours") + " per page"
+              };
+            }
+          },
+          {
+            key: "review", hours: "projreview", label: "reviewing media",
+            need: "Enter the running time to estimate the reviewing.",
+            compute: function () {
+              var n = num("pm_count"), m = num("pm_minutes");
+              if (!(n > 0) || !(m > 0)) return null;
+              return {
+                hours: n * m / 60, rate: "running time",
+                describe: n + " " + plural(n, "item", "items") + " of " + m + " " + plural(m, "minute", "minutes")
+              };
+            }
+          },
+          { key: "other", hours: "projother", label: "other", compute: null }
+        ];
+        var PROJ_BY_KEY = {};
+        PROJ_PARTS.forEach(function (p) { PROJ_BY_KEY[p.key] = p; });
+
+        /* The line under a panel's settings: the estimate, and a note when
+           the hours box holds something else typed by hand. */
+        function projResultText(part) {
+          var res = document.querySelector("#est-" + part.hours + " .est-result");
+          if (!res) return;
+          var out = part.compute();
+          if (!out) { res.textContent = part.need; return; }
+          var txt = "At " + out.rate + ", that is " + fmt(out.hours) + " hours.";
+          var held = el[part.hours].value;
+          if (Math.abs(num(part.hours) - out.hours) > 0.005) {
+            txt += " Hours holds " + (held === "" ? "nothing" : held) +
+              ", typed by hand; change a setting here to use the estimate instead.";
+          }
+          res.textContent = txt;
+        }
+
+        /* A setting in a panel changed: put its estimate in the row's hours.
+           Runs on the panel, so before the form's own listener renders. */
+        function projEstChanged(part) {
+          var out = part.compute();
+          if (out) el[part.hours].value = String(Math.round(out.hours * 100) / 100);
+        }
+
+        function closeProjPanels() {
+          PROJ_PARTS.forEach(function (part) {
+            var panel = document.getElementById("est-" + part.hours);
+            if (!panel) return;
+            panel.hidden = true;
+            var b = document.querySelector('.est-btn[data-proj="' + part.key + '"]');
+            if (b) b.setAttribute("aria-expanded", "false");
+          });
         }
 
         /* ---------------- calculation ---------------- */
@@ -708,8 +919,20 @@
           var testHours = sitHours + prepHours;
 
           // --- projects & other ---
-          var otherHours = num("otherhours");
-          var otherName = el.othertype.options[el.othertype.selectedIndex].textContent;
+          // No model for the activity as a whole: it is the sum of its
+          // reading, writing, reviewing-media and other hours.
+          var projParts = [];
+          var otherHours = 0;
+          PROJ_PARTS.forEach(function (part) {
+            var h = num(part.hours);
+            if (!isFinite(h) || h < 0) h = 0;
+            otherHours += h;
+            if (h > 0) {
+              var est = part.compute ? part.compute() : null;
+              var how = est && Math.abs(est.hours - h) <= 0.005 ? " (" + est.describe + ")" : "";
+              projParts.push(part.label + " " + fmt(h) + " " + plural(h, "hour", "hours") + how);
+            }
+          });
 
           var rows = [
             {
@@ -737,8 +960,8 @@
                 (prepHours > 0 ? " plus " + prepHours + " " + plural(prepHours, "hour", "hours") + " of preparation" : "")
             },
             {
-              id: "other", name: otherName, hours: otherHours,
-              detail: el.othertype.value === "other" ? "hours you entered" : "typical time from the Credit Hour Planner, adjusted by you"
+              id: "other", name: "Projects & other activities", hours: otherHours,
+              detail: projParts.join("; ")
             }
           ];
 
@@ -815,6 +1038,7 @@
           document.getElementById("foot-hours").textContent = fmt(r.total);
 
           renderSectionSums(r);
+          PROJ_PARTS.forEach(function (part) { if (part.compute) projResultText(part); });
 
           var body = document.getElementById("breakdown");
           body.innerHTML = "";
@@ -930,17 +1154,33 @@
               if (e.type === "checkbox") e.checked = !!data[id];
               else e.value = data[id];
             });
+            /* Saves from before the reading/writing/reviewing rows held one
+               figure, "otherhours". Keep it, as Other. */
+            if (!("projother" in data) && "otherhours" in data) el.projother.value = data.otherhours;
           } catch (err) { /* corrupt or unavailable; ignore */ }
         }
 
         /* ---------------- wiring ---------------- */
 
-        /* Choosing an activity in "Projects & other activities" fills in the
-           Credit Hour Planner's typical time for it. This listener is on the
-           select itself, so it runs before the form's change handler renders. */
-        el.othertype.addEventListener("change", function () {
-          var o = el.othertype.options[el.othertype.selectedIndex];
-          el.otherhours.value = o.getAttribute("data-sug") || "0";
+        /* Projects & other: the Estimate buttons open and close their panel;
+           a setting changed in a panel fills in that row's hours. */
+        Array.prototype.forEach.call(document.querySelectorAll(".est-btn[data-proj]"), function (b) {
+          b.addEventListener("click", function () {
+            var panel = document.getElementById(b.getAttribute("aria-controls"));
+            var open = panel.hidden;
+            panel.hidden = !open;
+            b.setAttribute("aria-expanded", open ? "true" : "false");
+            if (open) {
+              var first = panel.querySelector("input, select");
+              if (first) first.focus();
+            }
+          });
+        });
+        Array.prototype.forEach.call(document.querySelectorAll(".est-panel[data-proj]"), function (panel) {
+          var part = PROJ_BY_KEY[panel.getAttribute("data-proj")];
+          var handler = function () { projEstChanged(part); };
+          panel.addEventListener("input", handler);
+          panel.addEventListener("change", handler);
         });
 
         document.getElementById("f").addEventListener("input", render);
@@ -987,6 +1227,7 @@
           if (!window.confirm("Clear all entries and start over?")) return;
           try { localStorage.removeItem(STORAGE_KEY); } catch (e) { }
           document.getElementById("f").reset();
+          closeProjPanels();
           document.getElementById("reportWrap").hidden = true;
           render();
         });

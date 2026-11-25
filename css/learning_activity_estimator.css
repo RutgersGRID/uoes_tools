@@ -173,6 +173,64 @@ select:focus { background: var(--blue-light); }
 }
 
 /* ============================================================
+   Projects & other activities: hours rows with Estimate panels
+   (experiment, November 19, 2026). The Estimate link and panel are
+   the Credit Hour Planner's (.est-btn, .est-panel, .est-field in
+   credit_hour_planner.css), copied so each page keeps its own
+   sheet. Change both if the look changes.
+   ============================================================ */
+
+.proj-rows { margin: 8px 0 4px; }
+
+.proj-row {
+  display: grid;
+  /* The last track takes up the slack, so an open panel (which spans
+     every track) does not stretch the hours or Estimate columns. */
+  grid-template-columns: 150px max-content max-content minmax(0, 1fr);
+  align-items: center;
+  gap: 6px 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--blue-light);
+}
+
+.proj-hours { display: flex; align-items: center; gap: 8px; }
+.proj-unit { font-size: 15px; color: var(--text-mid); }
+
+.est-btn {
+  display: inline-block;
+  min-height: 24px;
+  padding: 2px 0;
+  border: none;
+  background: none;
+  color: var(--red);
+  font-family: inherit;
+  font-size: 14px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.est-btn:hover { color: var(--red-dark); }
+.est-btn[aria-expanded="true"] { font-weight: bold; }
+
+.est-panel {
+  grid-column: 1 / -1;
+  margin: 4px 0 2px;
+  padding: 10px 12px;
+  border-left: 4px solid var(--blue);
+  background: var(--blue-light);
+  border-radius: 0 6px 6px 0;
+}
+.est-panel[hidden] { display: none; }
+.est-fields { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: flex-end; }
+.est-field { display: flex; flex-direction: column; gap: 3px; }
+.est-field label { font-size: 13px; font-weight: normal; }
+.est-field select,
+.est-field input[type="number"] {
+  font-size: 14px;
+  padding: 5px 6px;
+}
+.est-result { margin: 8px 0 0; font-size: 14px; color: var(--text-mid); }
+
+/* ============================================================
    Results
    ============================================================ */
 
@@ -328,4 +386,7 @@ footer a { color: var(--blue); }
   .fields > .field { flex: 1 1 100%; }
   select, input[type="number"] { width: 100%; }
   .rate .est { margin-left: 0; }
+  .proj-row { grid-template-columns: max-content max-content minmax(0, 1fr); }
+  .proj-row > label { grid-column: 1 / -1; }
+  .proj-hours input[type="number"] { width: 110px; }
 }

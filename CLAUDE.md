@@ -1066,15 +1066,31 @@ that mapping is the design, so here it is in one place:
 | Discussion & peer feedback | Discussion posts, Peer review, comments on classmates' blogs/journals/wikis | posts × words ÷ 250 per hour, or A/V minutes ÷ 3 per hour, or manual hours |
 | Media & live sessions | Mini-lecture video, Other videos, Podcast, Webinar session, Simulation / eLearning tutorial | items × running time. Counted at running time; the hint says to add task time separately |
 | Quizzes & tests | Quiz, Test, Pre-assessment, Assessment preparation time | time limit ÷ 60 + preparation hours (default 0; the hint cites the planner's 3-hour suggestion) |
-| Projects & other activities | Case study, Experiential learning, Research activities, Individual assignment, Group assignment, Project / presentation, "Something else" | **no model** — choosing an activity fills in the Credit Hour Planner's typical time (2, 2, 2, 2, 4, 1 hours; 0 for Something else) and the hours stay editable |
+| Projects & other activities | Case study, Experiential learning, Research activities, Project / presentation | **no model for the whole** — four rows of hours (Reading, Writing, Reviewing media, Other) that add up. The first three have an **Estimate** panel using the reading and writing tables and items × running time; Other is hours only |
 
-The last row is honest about itself: the page says there is no
-research-based rate for those and that the figure is a starting point.
-The typical times are the planner's `sug` values, carried as
-`data-sug` on the `<option>`s; **keep the two lists in step** if the
-planner's suggestions ever change. The fill happens in a `change`
-listener on the select itself, which runs before the form's handler
-renders.
+**Projects & other, experiment (branch
+`learning-activity-project-experiment`, November 19, 2026).** The
+section used to be an activity dropdown that filled in the Credit Hour
+Planner's typical time (`data-sug`). Maka found that a strange thing to
+list since nothing was being estimated, so the lead now says there is no
+research-based rate for these activities, that they vary dramatically,
+and that most of the work is reading, writing or reviewing media. Under
+it are four hours rows (`projread`, `projwrite`, `projreview`,
+`projother`). Each of the first three has an **Estimate** link that opens
+a panel under the row — the Credit Hour Planner's disclosure
+(`.est-btn` / `.est-panel` / `.est-field`, CSS copied into this page's
+sheet) — with this page's own `PAGES_PER_HOUR` / `HOURS_PER_PAGE` lookups
+or items × running time. Changing a panel setting writes the estimate
+into the row's hours (a listener on the panel, so it runs before the
+form's render); hours typed by hand stay, and the panel says so, until a
+setting changes again. Panel open state is not saved; its settings are
+(`pr_*`, `pw_*`, `pm_*` in `FIELDS`). The results table names the row
+"Projects & other activities" and its "Based on" lists each non-zero part,
+with its estimate basis when the hours still match it. An old save's
+`otherhours` is loaded into Other. Gone with the dropdown: Group and
+Individual assignment are no longer named anywhere on the page (Maka had
+already taken them out of the lead), so the scope guard no longer
+requires them.
 
 The results block is a single Total tile, a table (Activity / Based on /
 Hours) listing only the sections with hours, and a hint pointing at the
