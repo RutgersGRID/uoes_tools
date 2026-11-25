@@ -247,6 +247,12 @@ select:focus { background: var(--blue-light); }
   padding: 20px 24px;
 }
 
+/* Optional weekly breakdown (November 25, 2026): a checkbox that reveals
+   Credits and Weeks above the table and adds a Weekly Hours column. */
+.weekly { margin: 0 0 1rem; }
+.weekly .check { margin-top: 0; }
+.weekly .fields { margin-top: 10px; }
+
 .totals {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));

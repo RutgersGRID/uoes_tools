@@ -56,13 +56,15 @@
     <main>
 
       <h1>Workload Estimator</h1>
-      <p class="subtitle">You can use this tool to estimate how long a learning activity will take your
-        students.<br />Click a section heading to expand or collapse it.</p>
+      <p class="subtitle">You can use this tool to estimate how long your students will spend on a single
+        learning activity, a module, or your whole course.<br />Click a section heading to expand or collapse
+        it.</p>
 
       <details class="guide">
         <summary>
           <h2>Hints on how to use this tool.</h2>
         </summary>
+        <h3>Quickstart:</h3>
         <p>Use the section that most closely matches your activity, reading, writing, discussion & peer feedback (which
           includes reviewing others' work), media & live sessions (podcasts, videos, webinars, etc), quizzes & tests
           (including time for studying and taking the test), and projects or other activities (case studies, field
@@ -71,8 +73,32 @@
           section and a total for all activities entered will appear at the bottom of the form.</p>
         <p>At the bottom of the Reading, Writing, and Discussion sections, you'll find information on how estimations
           are calculated.</p>
-        <p>Your entries will be saved automatically in your browser's cookies as you go. Clearing cookies
-          will delete your saved entries.</p>
+        <p>Your entries are saved automatically in this browser as you go, so you can close the page and
+          come back to them. They are kept in the browser's local storage (not cookies) on this device only:
+          they are not sent anywhere, other browsers and devices won't see them, and clearing your browser's
+          site data, or choosing Start over, deletes them.</p>
+
+        <h3>What Learning Activities Are Covered In This Tool?</h3>
+        <p>This tool is broken into several sections based on a broad interpretation of learning activities.</p>
+        <ul>
+        <li>Reading - Use this for texts, supplemental materials, case studies, blogs, journal entries, and more. Options allow you to adjust the estimates based on page density, difficulty, and what expectations you have for your students.</li>
+        <li>Writing - Use this for papers, blog posts, journal entries, wiki contributions, and more. Options allow you to adjust based on page density, genre, and whether you require the student to complete drafts.</li>
+        <li>Discussion & Peer Feedback - Use this for discussion posts and replies, peer review comments, or comments on blogs, journals, or wiki pages. Options allow for selecting text, audio, or video responses, and the average length expected each post.</li>
+        <li>Media & Live Session - Use this for any videos, webinars, simulations, or eLearning tutorials. Options allow for setting the number of assignments and running time of each.</li>
+        <li>Quizzes & Tests - Use this for any assessments. Options include the amount of time for assessments and how long a student is expected to prepare for an assessment.</li>
+        <li>Projects or Other Activities - Use this for case studies, experiential learning, research activities, projects, or presentations. These types of activities can vary significantly, and there's no way to offer an estimate without specific information, so this section allows you to enter the expected reading, writing, or media that might part of a larger learning activity.</li>
+        </ul>
+
+        <h3>Estimating the workload for a module or whole course</h3>
+        <p>When using this tool to estimate the workload for a module or whole course, enter the totals for each activity that you expect to cover in a module or over the full course.</p>
+        <p>If the materials differ a lot (for example, short articles alongside a dense textbook), choose the
+          settings that fit most of them, or estimate each kind on its own, note or print the total, and add
+          the totals together.</p>
+        <p>Divide the total hours by the number of weeks in the term to get the average weekly workload. As a
+          guide, federal and state guidelines expect at least 50 minutes of instruction and another 100 minutes of
+          out-of-class work per credit, each week, for 15 weeks. A 3-credit, 15-week course needs at least 37
+          hours and 30 minutes of instructional time and 75 hours of out-of-class work (5 hours a week). Your
+          department may have additional requirements.</p>
       </details>
 
       <form id="f" autocomplete="off">
@@ -87,8 +113,8 @@
               supplemental materials,
               case studies, blogs, journal entries, and more. Refine the estimate with the page
               density, difficulty and reading purpose dropdowns (the panel below explains what
-              each one means). Describe one reading assignment at a time, or estimate the total
-              time for a larger work and divide it across your course.</p>
+              each one means). Describe one reading assignment, or enter the total pages for a
+              module or the whole course.</p>
 
             <div class="fields">
               <div class="field">
@@ -168,8 +194,9 @@
               <h2 id="s-writing">Writing</h2>
             </summary>
             <p class="step-lead">Papers and writing assignments, blog posts, journal entries, wiki
-              contributions, and the written report for a project. Describe one piece of writing:
-              how long it is and what kind of writing it is.</p>
+              contributions, and the written report for a project. Describe one piece of writing
+              (how long it is and what kind of writing it is), or enter the combined length of
+              all writing.</p>
 
             <div class="fields">
               <div class="field">
@@ -251,7 +278,8 @@
             </summary>
             <p class="step-lead">Discussion posts and replies, peer review comments, and comments on
               classmates&rsquo; blogs, journals or wiki pages. Count the posts one student writes
-              for the activity, including replies, and how long each one is.</p>
+              for the activity, or for the whole course, including replies, and how long each one
+              is.</p>
 
             <div class="fields">
               <div class="field">
@@ -274,7 +302,7 @@
                 <input type="number" id="postlength_av" min="0" step="1" value="3">
               </div>
             </div>
-            <p class="hint">An initial post plus two replies is three posts. The time includes
+            <p class="hint">Treat an initial post plus two replies as three posts. The time includes
               reading what classmates wrote.</p>
 
             <p class="rate"><span class="est">About <strong id="out-discussion">0.00</strong>
@@ -313,7 +341,7 @@
               <h2 id="s-media">Media &amp; Live Sessions</h2>
             </summary>
             <p class="step-lead">Mini-lecture videos, other videos, podcasts, webinar sessions, and
-              simulations or eLearning tutorials. Count the items and their running time.</p>
+              simulations or eLearning tutorials. Count the items and their average running time when estimating for a module or whole course.</p>
 
             <div class="fields">
               <div class="field">
@@ -341,7 +369,7 @@
               <h2 id="s-tests">Quizzes &amp; Tests</h2>
             </summary>
             <p class="step-lead">A quiz, test or pre-assessment: the time students spend sitting
-              it, plus any preparation you expect.</p>
+              it, plus any preparation you expect. For several assessments across the module or whole course, add their time limits together and expected preparation time together.</p>
 
             <div class="fields">
               <div class="field">
@@ -353,8 +381,6 @@
                 <input type="number" id="testprep" min="0" step="0.5" value="0">
               </div>
             </div>
-            <p class="hint">The Credit Hour Planner suggests about 3 hours of preparation for an
-              assessment. Leave it at zero for a low-stakes quiz or a pre-assessment.</p>
 
             <p class="rate"><span class="est">About <strong id="out-tests">0.00</strong>
                 hours</span></p>
@@ -371,7 +397,7 @@
               projects and presentations. There is no research-based rate for these activities
               as they can vary dramatically, however the majority of the work is usually a mix
               of reading, writing, or reviewing media. Enter the hours for each part, or use
-              Estimate to work one out.</p>
+              Estimate to work one out. For a module or whole course, add the total hours for each activity.</p>
 
             <div class="proj-rows">
               <div class="proj-row">
@@ -498,8 +524,8 @@
               </div>
             </div>
             <p class="hint">Experiential learning is attending an event, an interview, a field
-              trip, a lab. Reviewing media is counted at running time; put note-taking or
-              rewatching under Other. Estimate uses the same rates as the Reading and Writing
+              trip, a lab, and many other real-world experiences. Reviewing media is counted by
+              running time; put note-taking or unlisted activities under Other. Estimates use the same rates as the Reading and Writing
               sections above.</p>
 
             <p class="rate"><span class="est">About <strong id="out-other">0.00</strong>
@@ -522,6 +548,23 @@
           </p>
         </div>
 
+        <div class="weekly">
+          <div class="check">
+            <input type="checkbox" id="weekly" aria-controls="wrap-weekly">
+            <label for="weekly">Show a weekly breakdown</label>
+          </div>
+          <div class="fields" id="wrap-weekly" hidden>
+            <div class="field">
+              <label for="credits">Credits</label>
+              <input type="number" id="credits" min="0.5" step="0.5" value="3">
+            </div>
+            <div class="field">
+              <label for="weeks">Weeks</label>
+              <input type="number" id="weeks" min="1" step="1" value="15">
+            </div>
+          </div>
+        </div>
+
         <table>
           <caption>Estimated time by activity</caption>
           <thead>
@@ -529,6 +572,7 @@
               <th scope="col">Activity</th>
               <th scope="col">Based on</th>
               <th scope="col" class="num">Hours</th>
+              <th scope="col" class="num" id="th-weekly" hidden>Weekly Hours</th>
             </tr>
           </thead>
           <tbody id="breakdown"></tbody>
@@ -537,14 +581,16 @@
               <td>Total</td>
               <td></td>
               <td class="num" id="foot-hours">0.00</td>
+              <td class="num" id="foot-weekly" hidden>0.00</td>
             </tr>
           </tfoot>
         </table>
 
-        <p class="hint">Each section estimates one activity at a time. To check a whole module
-          against its time budget, enter these hours in the
-          <a href="credit_hour_planner.html">Credit Hour Planner</a>&rsquo;s module planner.
-        </p>
+        <p class="hint">The total covers whatever you entered: one activity, a module, or the whole
+          course. For a module or whole course, turn on the weekly breakdown to see the average weekly
+          workload.</p>
+
+        <p class="hint" id="weekly-guide" hidden></p>
 
         <p class="sr-only" aria-live="polite" id="live"></p>
 
@@ -743,7 +789,9 @@
           "projread", "pr_pages", "pr_density", "pr_difficulty", "pr_purpose",
           "projwrite", "pw_length", "pw_unit", "pw_density", "pw_genre", "pw_drafting",
           "projreview", "pm_count", "pm_minutes",
-          "projother"
+          "projother",
+          // Weekly breakdown (results section, outside the form)
+          "weekly", "credits", "weeks"
         ];
 
         var el = {};
@@ -765,6 +813,49 @@
         }
         function plural(n, one, many) {
           return n === 1 ? one : many;
+        }
+
+        /* ---------------- weekly breakdown ----------------
+
+           Optional (November 25, 2026, Maka's ask). Off by default. When on,
+           each activity's hours are divided by Weeks for a "Weekly Hours"
+           column, and Credits and Weeks give the credit hour guideline the
+           hints panel describes: per credit, 50 minutes of instruction and
+           100 minutes of out-of-class work a week over 15 weeks, scaled to
+           the term (a shorter term needs more each week). Weeks below 1 or
+           credits below 0 give no weekly figures rather than nonsense. */
+        var WEEKLY_DEFAULTS = { credits: "3", weeks: "15" };
+
+        function weeklyInfo() {
+          if (!on("weekly")) return null;
+          var weeks = num("weeks"), credits = num("credits");
+          if (weeks < 1) return { weeks: 0, credits: credits, ok: false };
+          return { weeks: weeks, credits: credits, ok: true };
+        }
+        function perWeek(hours, w) { return w && w.ok ? hours / w.weeks : NaN; }
+        function wfmt(hours, w) { return w && w.ok ? fmt(perWeek(hours, w)) : "\u2014"; }
+
+        function hm(minutes) {
+          var m = Math.round(minutes);
+          var h = Math.floor(m / 60), r = m % 60;
+          var parts = [];
+          if (h) parts.push(h + " " + plural(h, "hour", "hours"));
+          if (r) parts.push(r + " " + plural(r, "minute", "minutes"));
+          return parts.length ? parts.join(" and ") : "0 minutes";
+        }
+        function numText(n) { return String(Math.round(n * 100) / 100); }
+
+        function guidelineText(w) {
+          if (!w) return "";
+          if (!w.ok) return "Enter at least 1 week to see weekly hours.";
+          if (w.credits <= 0) return "Enter the course's credits to compare with the credit hour guidelines.";
+          var scale = 15 / w.weeks;
+          var inst = w.credits * 50 * scale, out = w.credits * 100 * scale;
+          return "For " + numText(w.credits) + " " + plural(w.credits, "credit", "credits") +
+            " over " + numText(w.weeks) + " " + plural(w.weeks, "week", "weeks") +
+            ", federal and state guidelines expect at least " + hm(inst) +
+            " of instruction and " + hm(out) + " of out-of-class work each week (" +
+            hm(inst + out) + " in all).";
         }
 
         /* ---------------- projects & other: estimate panels ----------------
@@ -1039,6 +1130,17 @@
           document.getElementById("out-total").textContent = fmt(r.total);
           document.getElementById("foot-hours").textContent = fmt(r.total);
 
+          var w = weeklyInfo();
+          document.getElementById("wrap-weekly").hidden = !w;
+          document.getElementById("weekly").setAttribute("aria-expanded", w ? "true" : "false");
+          document.getElementById("th-weekly").hidden = !w;
+          var fw = document.getElementById("foot-weekly");
+          fw.hidden = !w;
+          fw.textContent = wfmt(r.total, w);
+          var wg = document.getElementById("weekly-guide");
+          wg.hidden = !w;
+          wg.textContent = guidelineText(w);
+
           renderSectionSums(r);
           PROJ_PARTS.forEach(function (part) { if (part.compute) projResultText(part); });
 
@@ -1060,13 +1162,19 @@
             td3.textContent = fmt(x.hours);
 
             [td1, td2, td3].forEach(function (td) { tr.appendChild(td); });
+            if (w) {
+              var td4 = document.createElement("td");
+              td4.className = "num weekly-cell";
+              td4.textContent = wfmt(x.hours, w);
+              tr.appendChild(td4);
+            }
             body.appendChild(tr);
           });
 
           if (!body.children.length) {
             var tr = document.createElement("tr");
             var td = document.createElement("td");
-            td.colSpan = 3;
+            td.colSpan = w ? 4 : 3;
             td.className = "empty";
             td.textContent = "Nothing entered yet.";
             tr.appendChild(td);
@@ -1084,7 +1192,8 @@
 
           document.getElementById("live").textContent =
             "Total " + fmt(r.total) + " hours across " + r.count + " " +
-            plural(r.count, "activity", "activities") + ".";
+            plural(r.count, "activity", "activities") + "." +
+            (w && w.ok ? " About " + wfmt(r.total, w) + " hours a week over " + numText(w.weeks) + " weeks." : "");
 
           save();
           return r;
@@ -1097,15 +1206,27 @@
           var lines = [];
           lines.push("LEARNING ACTIVITY ESTIMATE");
           lines.push("");
+          var w = weeklyInfo();
+          var weeklyOk = w && w.ok;
           r.rows.forEach(function (x) {
             if (x.hours <= 0) return;
             var pad = (x.name + "                            ").slice(0, 28);
-            lines.push("  " + pad + fmt(x.hours) + " hrs   (" + x.detail + ")");
+            lines.push("  " + pad + fmt(x.hours) + " hrs" +
+              (weeklyOk ? "   " + wfmt(x.hours, w) + " hrs/week" : "") +
+              "   (" + x.detail + ")");
           });
           if (!r.count) lines.push("  Nothing entered yet.");
           lines.push("");
           lines.push("Total: " + fmt(r.total) + " hours for " + r.count + " " +
             plural(r.count, "activity", "activities"));
+          if (weeklyOk) {
+            lines.push("Weekly: about " + wfmt(r.total, w) + " hours a week over " +
+              numText(w.weeks) + " " + plural(w.weeks, "week", "weeks"));
+          }
+          if (w) {
+            lines.push("");
+            lines.push(guidelineText(w));
+          }
           lines.push("");
           lines.push("Adapted from the Course Workload Estimator by Betsy Barre,");
           lines.push("Allen Brown, and Justin Esarey. CC BY-NC-SA 4.0.");
@@ -1187,6 +1308,10 @@
 
         document.getElementById("f").addEventListener("input", render);
         document.getElementById("f").addEventListener("change", render);
+        ["weekly", "credits", "weeks"].forEach(function (id) {
+          el[id].addEventListener("input", render);
+          el[id].addEventListener("change", render);
+        });
 
         document.getElementById("btn-report").addEventListener("click", function () {
           buildReport();
@@ -1229,6 +1354,9 @@
           if (!window.confirm("Clear all entries and start over?")) return;
           try { localStorage.removeItem(STORAGE_KEY); } catch (e) { }
           document.getElementById("f").reset();
+          el.weekly.checked = false;
+          el.credits.value = WEEKLY_DEFAULTS.credits;
+          el.weeks.value = WEEKLY_DEFAULTS.weeks;
           closeProjPanels();
           document.getElementById("reportWrap").hidden = true;
           render();

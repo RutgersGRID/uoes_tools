@@ -1049,6 +1049,42 @@ activity on the Credit Hour Planner's lists a home**, grouped where the
 estimation logic is the same ("reading from texts is not unlike reading a
 blog or journal entry").
 
+**Whole-course guidance came back as text, November 25, 2026** (Maka's
+ask, with the rename back to Workload Estimator). The page still has no
+course-level fields and still estimates by section, but the subtitle now
+says "a single learning activity, a module, or your whole course"; the
+hints panel ends with **Estimating the workload for a whole course**
+(enter course totals per section; for mixed materials pick the
+majority's settings or run each kind separately and add; divide by the
+term's weeks for a weekly average; the credit hour minimums in the
+Credit Hour Planner's wording — 50 + 100 minutes per credit per week for
+15 weeks, 37 h 30 min + 75 h for 3 credits); the Reading, Writing,
+Discussion and Quizzes leads each say how to enter several at once; and
+the results hint says the total covers whatever was entered. Maka then
+reworked the hints the same day (a Quickstart heading, a "What Learning
+Activities Are Covered In This Tool?" list, the heading now **Estimating
+the workload for a module or whole course**, the Quizzes lead's Credit
+Hour Planner preparation hint and the Credit Hour Planner link removed).
+The "nothing says per week" guard is gone from the harness. **Maka's
+wording: change it only when asked.**
+
+**Optional weekly breakdown, November 25, 2026** (Maka's spec). In the
+results section, above the table, a "Show a weekly breakdown" checkbox
+(off by default) reveals **Credits** (default 3) and **Weeks** (default
+15) and adds a **Weekly Hours** column (each activity's hours ÷ Weeks;
+the total too). Credits do not change the weekly hours; they drive a hint
+under the table giving the credit hour guideline for that term ("For 3
+credits over 15 weeks, federal and state guidelines expect at least 2
+hours and 30 minutes of instruction and 5 hours of out-of-class work each
+week (7 hours and 30 minutes in all)"), scaled by 15 ÷ Weeks. Weeks below
+1 show "—" and ask for at least 1 week. The three controls are in
+`FIELDS`, so they save and load with everything else (they sit outside
+`#f`, so they have their own input/change listeners, and "Start over"
+resets them by hand: off, 3, 15). With the breakdown on, the report and
+copy text add "x.xx hrs/week" per activity, a "Weekly: about …" line and
+the guideline; with it off they carry no weekly figures. The results hint
+now says to turn the breakdown on for a weekly average.
+
 What went: the Course info section (class weeks), the per-week division
 everywhere, the Total / Independent / Contact tiles, the share bar and
 the independent/contact tag in the table, the Exams (per semester), Other
@@ -1099,9 +1135,11 @@ already taken them out of the lead), so the scope guard no longer
 requires them.
 
 The results block is a single Total tile, a table (Activity / Based on /
-Hours) listing only the sections with hours, and a hint pointing at the
-Credit Hour Planner's module planner — **stale since October 21, 2026**;
-see the Credit Hour Planner's **Cross-links**. The "Based on" column repeats each
+Hours) listing only the sections with hours, and a hint that the total
+covers whatever was entered (one activity, a module or the whole course)
+and how to turn a course total into a weekly average. Until November 25,
+2026 the hint pointed at the Credit Hour Planner's module planner, which
+went away on October 21. The "Based on" column repeats each
 section's inputs in words ("30 pages at 67 pages per hour", "1000 words,
 about 4.00 pages, at 2 hours per page") so the copy text and the report
 carry their assumptions.
@@ -1125,6 +1163,23 @@ final presentation) and opens the page — the estimator's counterpart to
 name, so the loader's card lists what each section holds. The seed is
 the page's own save shape, keyed by field id; keep it in step with
 `FIELDS` if a field is renamed.
+
+**Since November 25, 2026 it has two buttons.** "Load one activity per
+section" is the seed above (27.04 hours, weekly breakdown off). "Load the
+whole course" (`COURSE_SEED`) holds totals for all 13 modules of
+`load_rock_test.html`'s course map, with the weekly breakdown on for 3
+credits over 15 weeks: 360 pages; 2,500 words (five Listening Responses
+plus the progress report); 23 posts (seven graded discussions × 3 plus
+two peer reviews, optional Open Forums left out); 53 videos of 25
+minutes; 225 minutes of quizzes and exams plus 8 hours of studying; and
+Projects & other at 15.50 hours. Total 107.73 hours, 7.18 a week, just
+under the 7 h 30 min guideline. The counts follow the module list; page
+counts and lengths are estimates. Both seeds name every field in
+`FIELDS`, so loading one never leaves values from the other behind. The
+harness (section 11) loads both through the buttons and checks the
+field coverage, every value, the totals, the weekly state, and that the
+stored Projects hours equal what the Estimate panels work out — **if a
+rate or field changes, update the seeds and the totals on the card.**
 
 ### Lookup tables
 
@@ -1194,8 +1249,9 @@ dropped and `calculator.css` deleted.
 the audience doesn't need it or wouldn't understand it. Its index card is
 commented out (not deleted) and the intro no longer says "checking credit
 hours". The page itself stays and may come back. Other pages still link
-to it (course_map_builder.html step 3, twice; workload_estimator.html's
-closing hint, plus two mentions in text); left for Maka to decide.
+to it (course_map_builder.html step 3, twice, plus two mentions in
+text); left for Maka to decide. The Workload Estimator no longer links
+or mentions it (Maka, November 25, 2026).
 
 `credit_hour_planner.html`. **Rebuilt on October 21, 2026 as a
 whole-course planner.** Until then it was a port of a two-sheet Excel
@@ -1554,9 +1610,9 @@ clipboard API with a textarea fallback and announces through
   try the Workload Estimator."); its Resources for planning
   panel links the page by absolute URL; the estimator and the other pages
   link it from the header nav; index.html lists it.
-- **Stale, to fix with Maka's wording:** the estimator's results hint
-  still says to "enter these hours in the Credit Hour Planner's module
-  planner", which no longer exists. The index card was reworded by Maka
+- The estimator's results hint no longer mentions the module planner
+  (rewritten November 25, 2026), and since that day the estimator does not
+  link this page at all. The index card was reworded by Maka
   on October 27, 2026 ("a time-based budget … then review whether the
   activities planned for the course actually fit inside it"); it still
   says "online, traditional, or blended formats", where the page itself
@@ -1687,10 +1743,11 @@ persistence/migration, and print-to-PDF output. Worth repeating for
 anything touching the planner's state handling or print CSS.
 
 For the Workload Estimator, `test/verify_workload_estimator.js`
-runs 111 checks (new with the September 14, 2026 rescope — the old
+runs 157 checks (new with the September 14, 2026 rescope — the old
 estimator's `verify.js`, 123 checks against the R math, was never in the
 repo and its per-week scenarios no longer apply): identity and scope
-(title, no Course info, no course-level fields, no per-week wording, no
+(title, no Course info, no course-level fields, the whole-course hints
+and weekly-average wording, no "module planner", no
 independent/contact split, six collapsible sections with Reading open,
 every Credit Hour Planner activity named on the page), the corners and
 monotonicity of the reading table and the corners of the writing table
@@ -1701,8 +1758,12 @@ and heading readouts (including the `::after` content), persistence
 under `uoes-workload-estimator` (never `uoes-activity-estimator`), a
 pre-September course-level save loading as defaults, corrupt and
 partial saves, "Start over", the report text and its credit line,
-print-PDF non-blankness, the print-CSS pattern, label/aria coverage,
-unique disclosure names, the focus outline, and the cross-links.
+print-PDF non-blankness, the print-CSS pattern, the weekly breakdown (off
+by default, defaults 3 / 15, the fourth column and colspan, hours ÷ weeks,
+the guideline at 15 and 5 weeks and at 1 credit, the dash below 1 week,
+the report lines, persistence, "Start over"), label/aria coverage,
+unique disclosure names, the focus outline, the methodology and
+licence links, and both Rock seeds in `load_rock_activities.html`.
 
 For the credit hour planner, `test/verify_credit_hour_planner.js` runs 133
 checks, rewritten with the October 21, 2026 rebuild (the weekly-budget
@@ -1859,7 +1920,10 @@ rather than counted as a parse failure.
   "Learning activity estimate"; the "Adapted from the Course Workload
   Estimator" credit; and dated history notes in this file. No redirect
   for `learning_activity_estimator.html` (Maka: only Maka and a few
-  colleagues had the link).
+  colleagues had the link). The page's text now also explains how to
+  estimate a whole course, and an optional weekly breakdown (Credits,
+  Weeks, a Weekly Hours column) — see **Whole-course guidance came back as
+  text** and **Optional weekly breakdown** in **Workload Estimator notes**.
 
 - **Course Map Builder output follows the Word layout, November 24,
   2026** (makalaptop, Maka's request). "Create My Course Map" now shows

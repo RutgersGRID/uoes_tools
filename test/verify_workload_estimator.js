@@ -1,15 +1,17 @@
 /*
  * Verification harness for workload_estimator.html.
  *
- * The page estimates one learning activity per section and totals the
- * sections; it has no course-level figures at all. These checks cover the
+ * The page estimates one learning activity (or a module's or a whole
+ * course's worth of one kind of activity) per section and totals the
+ * sections; it has no course-level fields, but since November 25, 2026 its
+ * hints explain how to use it for a whole course. These checks cover the
  * rate tables, each section's arithmetic, the manual overrides, the
  * words-to-pages conversion, the typical-time fill for "Projects & other
  * activities", the per-section heading readouts, the results table,
  * localStorage under the page's own key (and never the old estimator's),
  * "Start over", the report and copy text, print output, label/aria
- * coverage, the focus outline, and two scope guards: nothing on the page
- * speaks of hours per week or of independent/contact time, and every
+ * coverage, the focus outline, the whole-course guidance, and two scope
+ * guards: nothing on the page speaks of independent/contact time, and every
  * activity on the Credit Hour Planner's lists has a home here.
  *
  *   node test/verify_workload_estimator.js
@@ -71,7 +73,11 @@ function near(name, got, exp, eps) {
     ok("h1 matches", t.h1 === "Workload Estimator", t.h1);
     ok("no Course info section / class-weeks field", !t.classweeks && !/Course info/.test(t.text));
     ok("no course-level fields survive", t.ids.length === 0, t.ids.join(","));
-    ok("nothing on the page says per week", !/per week|hrs\/wk|hours\/week|a week/i.test(t.text));
+    // Since November 25, 2026 the page explains how to use it for a whole
+    // course, including the weekly average and the credit hour minimums.
+    ok("explains estimating a whole course", /Estimating the workload for a (module or )?whole course/.test(t.text));
+    ok("explains the weekly average", /average weekly workload/.test(t.text));
+    ok("no longer points at the module planner", !/module planner/i.test(t.text));
     ok("no independent/contact split", !/Independent|Contact time/.test(t.text));
     ok("six activity sections, each a collapsible step",
       t.sections.length === 6, t.sections.join(" | "));
@@ -392,7 +398,7 @@ function near(name, got, exp, eps) {
     ok("report is headed as a learning activity estimate", /Learning activity estimate/.test(rep.h2), rep.h2);
     ok("report lists each activity with its basis", /Reading\s+0\.30 hrs\s+\(20 pages at 67 pages per hour\)/.test(rep.text), rep.text.slice(0, 200));
     ok("report totals in plain hours", /Total: 1\.05 hours for 2 activities/.test(rep.text), rep.text);
-    ok("report never says per week", !/per week|hrs\/wk/i.test(rep.text));
+    ok("report has no weekly figures while the breakdown is off", !/per week|hrs\/wk|hrs\/week|Weekly:/i.test(rep.text));
     ok("report keeps the CC BY-NC-SA credit", /Barre[\s\S]*CC BY-NC-SA 4\.0/.test(rep.text));
     ok("report <pre> carries no inline styles", rep.inline === null, rep.inline);
 
@@ -417,6 +423,84 @@ function near(name, got, exp, eps) {
           Array.from(r.cssRules).some((x) => x.selectorText === "main > :not(#reportWrap)"));
       }));
     ok("print CSS uses the main > :not(#reportWrap) pattern", printRule);
+  }
+
+  /* ===== 9b. Weekly breakdown ===== */
+  console.log("\n9b. Weekly breakdown");
+  {
+    await reset();
+    const state = () => page.evaluate(() => ({
+      fields: document.getElementById("wrap-weekly").hidden,
+      th: document.getElementById("th-weekly").hidden,
+      thText: document.getElementById("th-weekly").textContent.trim(),
+      foot: document.getElementById("foot-weekly"),
+      footText: document.getElementById("foot-weekly").textContent,
+      footHidden: document.getElementById("foot-weekly").hidden,
+      guide: document.getElementById("weekly-guide").hidden,
+      guideText: document.getElementById("weekly-guide").textContent,
+      credits: document.getElementById("credits").value,
+      weeks: document.getElementById("weeks").value,
+      checked: document.getElementById("weekly").checked,
+      expanded: document.getElementById("weekly").getAttribute("aria-expanded"),
+      cells: Array.from(document.querySelectorAll("#breakdown tr")).map((tr) =>
+        Array.from(tr.children).map((td) => td.textContent)),
+      colspan: (document.querySelector("#breakdown td.empty") || {}).colSpan,
+    }));
+    let w = await state();
+    ok("weekly breakdown is off by default", !w.checked && w.fields && w.th && w.footHidden && w.guide);
+    ok("empty table spans three columns when off", w.colspan === 3, w.colspan);
+    ok("Credits defaults to 3 and Weeks to 15", w.credits === "3" && w.weeks === "15", w.credits + "/" + w.weeks);
+
+    await tick("weekly", true);
+    w = await state();
+    ok("turning it on shows Credits and Weeks", !w.fields);
+    ok("and the checkbox reports it is expanded", w.expanded === "true", w.expanded);
+    ok("adds a Weekly Hours column", !w.th && w.thText === "Weekly Hours", w.thText);
+    ok("empty table spans four columns when on", w.colspan === 4, w.colspan);
+
+    // 67 pages at the lightest settings is 1 hour; one 60-minute video is 1 hour.
+    await set("pages", 67); await set("mediacount", 1); await set("medialength", 60);
+    w = await state();
+    ok("each row gets a fourth cell", w.cells.length === 2 && w.cells.every((c) => c.length === 4), JSON.stringify(w.cells));
+    ok("weekly hours are hours divided by weeks", w.cells.every((c) => c[3] === "0.07"), JSON.stringify(w.cells));
+    ok("weekly total is the total divided by weeks", !w.footHidden && w.footText === "0.13", w.footText);
+    ok("guideline for 3 credits over 15 weeks",
+      /3 credits over 15 weeks.*2 hours and 30 minutes of instruction and 5 hours of out-of-class work each week \(7 hours and 30 minutes in all\)/.test(w.guideText), w.guideText);
+
+    await set("weeks", 5);
+    w = await state();
+    ok("a 5-week term triples the weekly hours", w.footText === "0.40" && w.cells[0][3] === "0.20", w.footText);
+    ok("and the guideline scales to the term",
+      /7 hours and 30 minutes of instruction and 15 hours of out-of-class work/.test(w.guideText), w.guideText);
+    await set("credits", 1);
+    w = await state();
+    ok("credits change the guideline, not the weekly hours",
+      /1 credit over 5 weeks.*2 hours and 30 minutes of instruction and 5 hours/.test(w.guideText) && w.footText === "0.40", w.guideText);
+
+    await set("weeks", 0);
+    w = await state();
+    ok("fewer than 1 week shows a dash, not a number", w.cells.every((c) => c[3] === "\u2014") && w.footText === "\u2014", JSON.stringify(w.cells));
+    ok("and says what to enter", /at least 1 week/.test(w.guideText), w.guideText);
+
+    await set("weeks", 15); await set("credits", 3);
+    const text = await page.evaluate(() => { document.getElementById("btn-report").click(); return document.querySelector("#reportWrap pre").textContent; });
+    ok("report adds weekly hours to each activity", /Reading\s+1\.00 hrs\s+0\.07 hrs\/week/.test(text), text.slice(0, 200));
+    ok("report gives the weekly total", /Weekly: about 0\.13 hours a week over 15 weeks/.test(text), text);
+    ok("report gives the guideline", /federal and state guidelines expect at least 2 hours and 30 minutes/.test(text));
+
+    await page.waitForTimeout(600);
+    await page.goto(PAGE); await page.waitForTimeout(150);
+    w = await state();
+    ok("the breakdown setting, credits and weeks survive a reload",
+      w.checked && !w.th && w.credits === "3" && w.weeks === "15", JSON.stringify([w.checked, w.credits, w.weeks]));
+
+    await set("weeks", 10);
+    page.once("dialog", (d) => d.accept());
+    await page.click("#btn-reset");
+    await page.waitForTimeout(100);
+    w = await state();
+    ok("Start over turns it off and restores 3 credits / 15 weeks",
+      !w.checked && w.th && w.credits === "3" && w.weeks === "15", JSON.stringify([w.checked, w.credits, w.weeks]));
   }
 
   /* ===== 10. Labels, aria, focus, links ===== */
@@ -459,12 +543,63 @@ function near(name, got, exp, eps) {
     }
 
     const links = await page.$$eval("a[href]", (els) => els.map((e) => e.getAttribute("href")));
-    ok("links to the Credit Hour Planner", links.includes("credit_hour_planner.html"));
     ok("links the original methodology", links.some((h) => /cat\.wfu\.edu\/resources\/workload/.test(h)));
     ok("links the CC licence", links.some((h) => /creativecommons\.org\/licenses\/by-nc-sa\/4\.0/.test(h)));
     const footer = await page.$eval("footer", (e) => e.textContent.replace(/\s+/g, " "));
     ok("footer credits Barre, Brown and Esarey", /Betsy Barre, Allen Brown, and Justin Esarey/.test(footer));
     ok("footer keeps the same licence", /shared under the same license/.test(footer));
+  }
+
+
+  /* ===== 11. Rock test data =====
+     test/load_rock_activities.html seeds the estimator two ways. Both must
+     name every saved field (so nothing is left over from an earlier load),
+     load without a mismatch, keep the stored Projects hours equal to what
+     the Estimate panels work out, and give the totals the page states. */
+  console.log("\n11. Rock test data (load_rock_activities.html)");
+  {
+    const LOADER = "file://" + path.join(ROOT, "test", "load_rock_activities.html");
+    const fields = await page.evaluate(() =>
+      (document.documentElement.outerHTML.match(/var FIELDS = \[([\s\S]*?)\];/)[1].match(/"([^"]+)"/g) || [])
+        .map((x) => x.slice(1, -1)));
+    for (const [btn, label, total, weekly] of [
+      ["#loadBtn", "one activity per section", "27.04", null],
+      ["#loadCourseBtn", "whole course", "107.73", "7.18"],
+    ]) {
+      await page.evaluate(() => { try { localStorage.clear(); } catch (e) { } });
+      await page.goto(LOADER); await page.waitForTimeout(100);
+      await page.click(btn);
+      await page.waitForURL(/workload_estimator\.html/); await page.waitForTimeout(200);
+      const seed = await page.evaluate(() => JSON.parse(localStorage.getItem("uoes-workload-estimator")));
+      const missing = fields.filter((f) => !(f in seed));
+      const extra = Object.keys(seed).filter((k) => !fields.includes(k));
+      ok(label + ": seed names every saved field and nothing else",
+        !missing.length && !extra.length, "missing " + missing.join(",") + " extra " + extra.join(","));
+      const mism = await page.evaluate((seed) => Object.entries(seed).filter(([k, v]) => {
+        const e = document.getElementById(k);
+        return !e || String(e.type === "checkbox" ? e.checked : e.value) !== String(v);
+      }).map(([k]) => k), seed);
+      ok(label + ": every value loads into its control", !mism.length, mism.join(","));
+      const got = await page.evaluate(() => ({
+        total: document.getElementById("out-total").textContent,
+        weeklyOn: !document.getElementById("th-weekly").hidden,
+        weekly: document.getElementById("foot-weekly").textContent,
+      }));
+      ok(label + ": total is " + total + " hours", got.total === total, got.total);
+      if (weekly) ok(label + ": weekly breakdown on, " + weekly + " hours a week", got.weeklyOn && got.weekly === weekly, got.weekly);
+      else ok(label + ": weekly breakdown off", !got.weeklyOn);
+      // Re-run each Estimate panel on its stored settings; the hours must not move.
+      await openAll();
+      const before = await page.evaluate(() => ["projread", "projwrite", "projreview"].map((id) => document.getElementById(id).value));
+      for (const [b, input] of [["read", "#pr_pages"], ["write", "#pw_length"], ["review", "#pm_count"]]) {
+        await page.click('.est-btn[data-proj="' + b + '"]');
+        const v = await page.$eval(input, (e) => e.value);
+        await page.fill(input, v); await page.dispatchEvent(input, "input");
+      }
+      const after = await page.evaluate(() => ["projread", "projwrite", "projreview"].map((id) => document.getElementById(id).value));
+      ok(label + ": stored Projects hours match the Estimate panels", JSON.stringify(before) === JSON.stringify(after),
+        before.join(",") + " vs " + after.join(","));
+    }
   }
 
   await browser.close();

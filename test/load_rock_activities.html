@@ -21,6 +21,7 @@
       padding: 28px;
     }
     h1 { font-size: 24px; margin-top: 0; }
+    h2 { font-size: 19px; margin: 26px 0 6px; }
     p { line-height: 1.6; }
     ul { text-align: left; line-height: 1.6; margin: 0 auto 16px; max-width: 520px; }
     li strong { color: #A30029; }
@@ -52,10 +53,13 @@
 <body>
   <div class="card">
     <h1>Workload Estimator Test Data</h1>
-    <p>Fills every section of the Workload Estimator with one
-      activity from <strong>Rock 'n' Roll: Origins to Present</strong>, then
-      opens it. The estimator has no field for an activity's name, so this is
-      what each section will be holding:</p>
+    <p>Two sets of test data from <strong>Rock 'n' Roll: Origins to
+      Present</strong> (07:700:235). Each one fills every section of the
+      Workload Estimator, then opens it. The estimator has no field for an
+      activity's name, so the lists below say what each section will be
+      holding.</p>
+
+    <h2>One activity per section</h2>
     <ul>
       <li><strong>Reading</strong> &mdash; Module 7 readings (Meet the Beatles /
         The British Blues Boom): 28 pages of academic monograph, some new
@@ -74,9 +78,48 @@
         a 3-page reflection with extensive drafting, two 15-minute recordings
         to review, and 2 hours of rehearsal under Other (7.92 hours).</li>
     </ul>
+    <p>Total: 27.04 hours. The weekly breakdown stays off.</p>
+    <button id="loadBtn">Load one activity per section</button>
+
+    <h2>The whole course</h2>
+    <p>Totals for all 13 modules, worked out from the Course Map Builder's
+      Rock test data (<code>load_rock_test.html</code>), with the weekly
+      breakdown turned on for <strong>3 credits</strong> over <strong>15
+      weeks</strong>. The counts follow the module list; page counts and
+      lengths are estimates.</p>
+    <ul>
+      <li><strong>Reading</strong> &mdash; about 28 pages a module: 360
+        pages of academic monograph, some new concepts, read to
+        understand.</li>
+      <li><strong>Writing</strong> &mdash; five Listening Responses
+        (modules 3, 5, 7, 10, 13) of about 300 words and the 1,000-word R&amp;A
+        progress report: 2,500 words, argument, minimal drafting,
+        double-spaced.</li>
+      <li><strong>Discussion &amp; peer feedback</strong> &mdash; seven graded
+        discussions (Musical Terminology; Celebrity Singers &amp; Bobbysoxers;
+        Student's Choice; the Beatles / Beach Boys / Stones debate; Electric
+        Dylan; Civil Rights &amp; the Protest Song; Artist Profile peer
+        comments) at three posts each, plus two R&amp;A peer reviews: 23 posts
+        of about 200 words. The optional Open Forums are left out.</li>
+      <li><strong>Media &amp; live sessions</strong> &mdash; four 25-minute
+        lecture videos a module plus the I Want My MTV interactive video: 53
+        items of 25 minutes.</li>
+      <li><strong>Quizzes &amp; tests</strong> &mdash; the Getting Started
+        Quiz and two mini-quizzes at 15 minutes and Exams 1 and 2 at 90
+        minutes: 225 minutes, with 4 hours of studying for each exam (8
+        hours).</li>
+      <li><strong>Projects &amp; other activities</strong> &mdash; the R&amp;A
+        project sequence and the creative assignments: 60 pages of sources to
+        understand, 4 pages of reflection with extensive drafting (topic
+        selection and the final presentation), four 15-minute recordings to
+        review, and 7 hours under Other (Song Presentation, Festival Poster,
+        Hypothesis annotation, rehearsal) (15.50 hours).</li>
+    </ul>
+    <p>Total: 107.73 hours, about 7.18 hours a week, just under the 7 hours
+      and 30 minutes a week the guidelines expect for 3 credits.</p>
+    <button id="loadCourseBtn">Load the whole course</button>
     <p class="warn">This replaces anything currently saved in the estimator in
       this browser. Use "Clear" afterward to empty it again.</p>
-    <button id="loadBtn">Load test data &amp; open estimator</button>
     <br>
     <button id="clearBtn" class="secondary">Clear estimator data</button>
     <p id="status" role="status"></p>
@@ -89,6 +132,9 @@
     // value, a number field's text) and checkboxes as booleans. load() copies
     // each straight into its control, so anything left out keeps its default.
     const KEY = "uoes-workload-estimator";
+
+    // One activity per section. The weekly breakdown fields are left at
+    // their defaults (off, 3 credits, 15 weeks).
     const SEED = {
       // Reading — Module 7 readings
       "pages": "28",
@@ -130,20 +176,77 @@
       "pw_length": "3", "pw_unit": "pages", "pw_density": "1", "pw_genre": "1", "pw_drafting": "3",
       "projreview": "0.5",
       "pm_count": "2", "pm_minutes": "15",
-      "projother": "2"
+      "projother": "2",
+
+      // Weekly breakdown off
+      "weekly": false, "credits": "3", "weeks": "15"
+    };
+
+    // The whole course: totals for all 13 modules of the Course Map
+    // Builder's Rock test data (load_rock_test.html). The projread /
+    // projwrite / projreview hours are what the Estimate panels work out
+    // from the panel settings beside them; keep the two in step.
+    const COURSE_SEED = {
+      // Reading — ~28 pages a module, 13 modules
+      "pages": "360",
+      "readingdensity": "2",      // 600 words (academic monograph)
+      "difficulty": "2",          // some new concepts
+      "readingpurpose": "2",      // understand
+      "setreadingrate": false,
+      "overridepagesperhour": "10",
+
+      // Writing — 5 Listening Responses (~300 words) + R&A progress report (1,000)
+      "length": "2500",
+      "lengthunit": "words",
+      "writtendensity": "1",      // 250 words (double-spaced)
+      "writingpurpose": "2",      // argument
+      "draftrevise": "2",         // minimal drafting
+      "setwritingrate": false,
+      "overridehoursperwriting": "0.5",
+
+      // Discussion — 7 graded discussions x 3 posts + 2 R&A peer reviews
+      "posts": "23",
+      "postformat": "1",          // text
+      "postlength_text": "200",
+      "postlength_av": "3",
+      "setdiscussion": false,
+      "overridediscussion": "1",
+
+      // Media — 4 lecture videos a module x 13 + 1 interactive video
+      "mediacount": "53",
+      "medialength": "25",
+
+      // Quizzes & tests — Getting Started + 2 mini-quizzes (15 min each),
+      // Exams 1 & 2 (90 min each); 4 hours of studying per exam
+      "testlength": "225",
+      "testprep": "8",
+
+      // Projects & other — R&A sequence and creative assignments
+      "projread": "2.5",
+      "pr_pages": "60", "pr_density": "1", "pr_difficulty": "2", "pr_purpose": "2",
+      "projwrite": "5",
+      "pw_length": "4", "pw_unit": "pages", "pw_density": "1", "pw_genre": "1", "pw_drafting": "3",
+      "projreview": "1",
+      "pm_count": "4", "pm_minutes": "15",
+      "projother": "7",
+
+      // Weekly breakdown on
+      "weekly": true, "credits": "3", "weeks": "15"
     };
 
     const status = document.getElementById("status");
 
-    document.getElementById("loadBtn").addEventListener("click", () => {
+    function loadAndOpen(seed) {
       try {
-        localStorage.setItem(KEY, JSON.stringify(SEED));
+        localStorage.setItem(KEY, JSON.stringify(seed));
         status.textContent = "Loaded! Opening the estimator…";
         setTimeout(() => { window.location.href = "../workload_estimator.html"; }, 400);
       } catch (e) {
         status.textContent = "Could not save: " + e.message;
       }
-    });
+    }
+    document.getElementById("loadBtn").addEventListener("click", () => loadAndOpen(SEED));
+    document.getElementById("loadCourseBtn").addEventListener("click", () => loadAndOpen(COURSE_SEED));
 
     document.getElementById("clearBtn").addEventListener("click", () => {
       try {
