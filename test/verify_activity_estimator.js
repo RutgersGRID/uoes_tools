@@ -83,7 +83,9 @@ function near(name, got, exp, eps) {
       "Blog", "Case stud", "Discussion post", "Experiential learning", "Journal",
       "Mini-lecture video", "other videos", "Podcast", "Reading", "Research activities",
       "Simulation", "eLearning tutorial", "Supplemental materials", "Webinar", "Wiki",
-      "Peer review", "Pre-assessment", "Quiz", "Group assignment", "Individual assignment",
+      // Group and Individual assignment left the page with the activity
+      // dropdown (learning-activity-project-experiment, November 19, 2026).
+      "Peer review", "Pre-assessment", "Quiz",
       "Project", "presentation", "Test", "Writing assignment", "preparation",
     ];
     const missing = PLANNER.filter((n) => !new RegExp(n, "i").test(t.text));
@@ -230,20 +232,53 @@ function near(name, got, exp, eps) {
     near("quiz with no preparation is its time limit", (await row("tests")).hours, 1);
     ok("no preparation clause when it is zero", !/preparation/.test((await row("tests")).detail));
 
-    await page.selectOption("#othertype", "group");
-    let hrs = await page.$eval("#otherhours", (e) => e.value);
-    ok("choosing Group assignment fills in the planner's 4 hours", hrs === "4", hrs);
-    near("and the row carries it", (await row("other")).hours, 4);
-    ok("row is named for the activity", (await row("other")).name === "Group assignment");
-    await set("otherhours", 6);
-    near("hours stay editable", (await row("other")).hours, 6);
-    await page.selectOption("#othertype", "project");
-    hrs = await page.$eval("#otherhours", (e) => e.value);
-    ok("changing the activity refills the typical time", hrs === "1", hrs);
-    await page.selectOption("#othertype", "other");
-    hrs = await page.$eval("#otherhours", (e) => e.value);
-    ok("Something else starts at zero", hrs === "0", hrs);
-    ok("Something else names no typical time", /hours you entered/.test((await row("other")).detail));
+    // Projects & other: four rows of hours that add up, three with an
+    // Estimate panel (experiment, November 19, 2026).
+    const lead = await page.$eval("#s-other", (h) => h.closest("details").querySelector(".step-lead").textContent.replace(/\s+/g, " "));
+    ok("lead says there is no research-based rate", /no research-based rate for these activities/.test(lead), lead);
+    ok("no activity dropdown or typical times", await page.evaluate(() =>
+      !document.getElementById("othertype") && !document.querySelector("[data-sug]")));
+    const btns = await page.$$eval(".est-btn[data-proj]", (bs) => bs.map((b) => b.dataset.proj + ":" + b.getAttribute("aria-expanded")));
+    ok("Estimate on reading, writing and reviewing, none on Other",
+      btns.join(",") === "read:false,write:false,review:false", btns.join(","));
+    ok("panels start closed", await page.$$eval(".est-panel", (ps) => ps.every((p) => p.hidden)));
+
+    await set("projother", 1.5);
+    near("Other hours count", (await row("other")).hours, 1.5);
+
+    await page.click('.est-btn[data-proj="read"]');
+    ok("Estimate opens its panel", await page.$eval("#est-projread", (p) => !p.hidden));
+    ok("and says so", (await page.getAttribute('.est-btn[data-proj="read"]', "aria-expanded")) === "true");
+    ok("focus moves into the panel", (await page.evaluate(() => document.activeElement.id)) === "pr_pages");
+    ok("panel asks for pages first", /Enter the pages/.test(await page.$eval("#est-projread .est-result", (p) => p.textContent)));
+    await pick("pr_density", 1); await pick("pr_difficulty", 2); await pick("pr_purpose", 2);
+    await set("pr_pages", 48);                                     // 48 / 24 = 2
+    ok("estimate fills in reading hours", (await page.$eval("#projread", (e) => e.value)) === "2");
+    ok("panel states the rate", /At 24 pages per hour, that is 2\.00 hours/.test(await page.$eval("#est-projread .est-result", (p) => p.textContent)));
+    near("section adds reading to other", (await row("other")).hours, 3.5);
+
+    await set("projread", 3);
+    ok("hours typed by hand stay", (await page.$eval("#projread", (e) => e.value)) === "3");
+    ok("panel notes the hand-typed figure", /typed by hand/.test(await page.$eval("#est-projread .est-result", (p) => p.textContent)));
+    await pick("pr_purpose", 3);                                   // 48 / 12 = 4
+    ok("changing a setting uses the estimate again", (await page.$eval("#projread", (e) => e.value)) === "4");
+
+    await page.click('.est-btn[data-proj="write"]');
+    await pick("pw_unit", "words"); await pick("pw_density", 1); await pick("pw_genre", 2); await pick("pw_drafting", 2);
+    await set("pw_length", 1000);                                  // 4 pages x 2 h
+    ok("writing estimate in words", (await page.$eval("#projwrite", (e) => e.value)) === "8");
+
+    await page.click('.est-btn[data-proj="review"]');
+    await set("pm_count", 2); await set("pm_minutes", 45);         // 1.5 h
+    ok("reviewing media estimate", (await page.$eval("#projreview", (e) => e.value)) === "1.5");
+    near("section total is the four rows", (await row("other")).hours, 4 + 8 + 1.5 + 1.5);
+    const d = (await row("other")).detail;
+    ok("detail lists each part with its basis",
+      /reading 4\.00 hours \(48 pages at 12 pages per hour\)/.test(d) && /writing 8\.00 hours \(1000 words, about 4\.00 pages, at 2 hours per page\)/.test(d) &&
+      /reviewing media 1\.50 hours \(2 items of 45 minutes\)/.test(d) && /other 1\.50 hours$/.test(d), d);
+
+    await page.click('.est-btn[data-proj="read"]');
+    ok("Estimate closes its panel again", await page.$eval("#est-projread", (p) => p.hidden));
   }
 
   /* ===== 7. Totals, table, readouts ===== */
@@ -291,7 +326,9 @@ function near(name, got, exp, eps) {
     await set("pages", 12); await pick("readingpurpose", 3);
     await pick("lengthunit", "words"); await set("length", 750);
     await tick("setdiscussion", true); await set("overridediscussion", 2);
-    await page.selectOption("#othertype", "research");
+    await set("projother", 2);
+    await page.click('.est-btn[data-proj="read"]');
+    await set("pr_pages", 30);
     await page.waitForTimeout(600);
     const keys = await page.evaluate(() => Object.keys(localStorage));
     ok("saves under uoes-activity-estimator", keys.includes("uoes-activity-estimator"), keys.join(","));
@@ -305,8 +342,13 @@ function near(name, got, exp, eps) {
     ok("word unit survives reload", (await page.$eval("#lengthunit", (e) => e.value)) === "words");
     ok("manual discussion checkbox survives reload", await page.$eval("#setdiscussion", (e) => e.checked));
     near("manual discussion hours survive reload", after.rows[2].hours, 2);
-    ok("activity choice survives reload", (await page.$eval("#othertype", (e) => e.value)) === "research");
-    near("its typical time survives reload", after.rows[5].hours, 2);
+    ok("panel settings survive reload", (await page.$eval("#pr_pages", (e) => e.value)) === "30");
+    near("project hours survive reload", after.rows[5].hours, before.rows[5].hours);
+
+    // A save from before the reading/writing/reviewing rows keeps its hours as Other.
+    await page.evaluate(() => localStorage.setItem("uoes-activity-estimator", JSON.stringify({ othertype: "group", otherhours: "4" })));
+    await page.goto(PAGE); await page.waitForTimeout(150); await openAll();
+    ok("an old single projects figure is kept as Other", (await page.$eval("#projother", (e) => e.value)) === "4");
 
     // An old Course Workload Estimator save is ignored, not migrated.
     await page.evaluate(() => {
